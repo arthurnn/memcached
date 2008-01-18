@@ -1,4 +1,4 @@
 %module memcached
 %{
-#include "libmemcached.h"
+#include <libmemcached/memcached.h>
 %}
