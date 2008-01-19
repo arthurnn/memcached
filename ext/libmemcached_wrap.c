@@ -1527,12 +1527,14 @@ SWIG_Ruby_SetModule(swig_module_info *pointer)
 #define SWIGTYPE_p_p_f_p_struct_memcached_st_p_struct_memcached_result_st_p_void__unsigned_int swig_types[15]
 #define SWIGTYPE_p_size_t swig_types[16]
 #define SWIGTYPE_p_time_t swig_types[17]
-#define SWIGTYPE_p_uint32_t swig_types[18]
-#define SWIGTYPE_p_uint64_t swig_types[19]
-#define SWIGTYPE_p_unsigned_int swig_types[20]
-#define SWIGTYPE_p_void swig_types[21]
-static swig_type_info *swig_types[23];
-static swig_module_info swig_module = {swig_types, 22, 0, 0, 0, 0};
+#define SWIGTYPE_p_uint16_t swig_types[18]
+#define SWIGTYPE_p_uint32_t swig_types[19]
+#define SWIGTYPE_p_uint64_t swig_types[20]
+#define SWIGTYPE_p_uint8_t swig_types[21]
+#define SWIGTYPE_p_unsigned_int swig_types[22]
+#define SWIGTYPE_p_void swig_types[23]
+static swig_type_info *swig_types[25];
+static swig_module_info swig_module = {swig_types, 24, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1574,6 +1576,27 @@ struct timeval rb_time_timeval(VALUE);
 #endif
 
 
+  static memcached_return *new_memcached_returnp() { 
+    return (memcached_return *)malloc(sizeof(memcached_return));
+  }
+  
+  static memcached_return *copy_memcached_returnp(memcached_return value) { 
+    return (memcached_return *)memcpy((memcached_return *)malloc(sizeof(memcached_return)),&value,sizeof(memcached_return));
+  }
+
+  static void delete_memcached_returnp(memcached_return *self) { 
+    if (self) free((char*)self);
+  }
+
+  static void memcached_returnp_assign(memcached_return *self, memcached_return value) {
+    *self = value;
+  }
+
+  static memcached_return memcached_returnp_value(memcached_return *self) {
+    return *self;
+  }
+
+
 #include <limits.h>
 #ifndef LLONG_MIN
 # define LLONG_MIN	LONG_LONG_MIN
@@ -1586,6 +1609,58 @@ struct timeval rb_time_timeval(VALUE);
 #endif
 
 
+SWIGINTERN VALUE
+SWIG_ruby_failed(void)
+{
+  return Qnil;
+} 
+
+
+/*@SWIG:%ruby_aux_method@*/
+SWIGINTERN VALUE SWIG_AUX_NUM2LONG(VALUE *args)
+{
+  VALUE obj = args[0];
+  VALUE type = TYPE(obj);
+  long *res = (long *)(args[1]);
+  *res = type == T_FIXNUM ? NUM2LONG(obj) : rb_big2long(obj);
+  return obj;
+}
+/*@SWIG@*/
+
+SWIGINTERN int
+SWIG_AsVal_long (VALUE obj, long* val)
+{
+  VALUE type = TYPE(obj);
+  if ((type == T_FIXNUM) || (type == T_BIGNUM)) {
+    long v;
+    VALUE a[2];
+    a[0] = obj;
+    a[1] = (VALUE)(&v);
+    if (rb_rescue(RUBY_METHOD_FUNC(SWIG_AUX_NUM2LONG), (VALUE)a, RUBY_METHOD_FUNC(SWIG_ruby_failed), 0) != Qnil) {
+      if (val) *val = v;
+      return SWIG_OK;
+    }
+  }
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_int (VALUE obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = (int)(v);
+    }
+  }  
+  return res;
+}
+
+
   #define SWIG_From_long   LONG2NUM 
 
 
@@ -1593,6 +1668,101 @@ SWIGINTERNINLINE VALUE
 SWIG_From_int  (int value)
 {    
   return SWIG_From_long  (value);
+}
+
+
+  static uint32_t *new_uint32_tp() { 
+    return (uint32_t *)malloc(sizeof(uint32_t));
+  }
+  
+  static uint32_t *copy_uint32_tp(uint32_t value) { 
+    return (uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&value,sizeof(uint32_t));
+  }
+
+  static void delete_uint32_tp(uint32_t *self) { 
+    if (self) free((char*)self);
+  }
+
+  static void uint32_tp_assign(uint32_t *self, uint32_t value) {
+    *self = value;
+  }
+
+  static uint32_t uint32_tp_value(uint32_t *self) {
+    return *self;
+  }
+
+
+  static size_t *new_size_tp() { 
+    return (size_t *)malloc(sizeof(size_t));
+  }
+  
+  static size_t *copy_size_tp(size_t value) { 
+    return (size_t *)memcpy((size_t *)malloc(sizeof(size_t)),&value,sizeof(size_t));
+  }
+
+  static void delete_size_tp(size_t *self) { 
+    if (self) free((char*)self);
+  }
+
+  static void size_tp_assign(size_t *self, size_t value) {
+    *self = value;
+  }
+
+  static size_t size_tp_value(size_t *self) {
+    return *self;
+  }
+
+
+/*@SWIG:%ruby_aux_method@*/
+SWIGINTERN VALUE SWIG_AUX_NUM2ULONG(VALUE *args)
+{
+  VALUE obj = args[0];
+  VALUE type = TYPE(obj);
+  unsigned long *res = (unsigned long *)(args[1]);
+  *res = type == T_FIXNUM ? NUM2ULONG(obj) : rb_big2ulong(obj);
+  return obj;
+}
+/*@SWIG@*/
+
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_long (VALUE obj, unsigned long *val) 
+{
+  VALUE type = TYPE(obj);
+  if ((type == T_FIXNUM) || (type == T_BIGNUM)) {
+    unsigned long v;
+    VALUE a[2];
+    a[0] = obj;
+    a[1] = (VALUE)(&v);
+    if (rb_rescue(RUBY_METHOD_FUNC(SWIG_AUX_NUM2ULONG), (VALUE)a, RUBY_METHOD_FUNC(SWIG_ruby_failed), 0) != Qnil) {
+      if (val) *val = v;
+      return SWIG_OK;
+    }
+  }
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERNINLINE int
+SWIG_AsVal_size_t (VALUE obj, size_t *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, val ? &v : 0);
+  if (SWIG_IsOK(res) && val) *val = (size_t)(v);
+  return res;
+}
+
+
+SWIGINTERNINLINE VALUE
+SWIG_From_unsigned_SS_long  (unsigned long value)
+{
+  return ULONG2NUM(value); 
+}
+
+
+SWIGINTERNINLINE VALUE
+SWIG_From_size_t  (size_t value)
+{    
+  return SWIG_From_unsigned_SS_long  ((unsigned long)(value));
 }
 
 
@@ -1688,42 +1858,6 @@ SWIG_FromCharPtrAndSize(const char* carray, size_t size)
 }
 
 
-SWIGINTERN VALUE
-SWIG_ruby_failed(void)
-{
-  return Qnil;
-} 
-
-
-/*@SWIG:%ruby_aux_method@*/
-SWIGINTERN VALUE SWIG_AUX_NUM2ULONG(VALUE *args)
-{
-  VALUE obj = args[0];
-  VALUE type = TYPE(obj);
-  unsigned long *res = (unsigned long *)(args[1]);
-  *res = type == T_FIXNUM ? NUM2ULONG(obj) : rb_big2ulong(obj);
-  return obj;
-}
-/*@SWIG@*/
-
-SWIGINTERN int
-SWIG_AsVal_unsigned_SS_long (VALUE obj, unsigned long *val) 
-{
-  VALUE type = TYPE(obj);
-  if ((type == T_FIXNUM) || (type == T_BIGNUM)) {
-    unsigned long v;
-    VALUE a[2];
-    a[0] = obj;
-    a[1] = (VALUE)(&v);
-    if (rb_rescue(RUBY_METHOD_FUNC(SWIG_AUX_NUM2ULONG), (VALUE)a, RUBY_METHOD_FUNC(SWIG_ruby_failed), 0) != Qnil) {
-      if (val) *val = v;
-      return SWIG_OK;
-    }
-  }
-  return SWIG_TypeError;
-}
-
-
 SWIGINTERN int
 SWIG_AsVal_unsigned_SS_int (VALUE obj, unsigned int *val)
 {
@@ -1741,78 +1875,9 @@ SWIG_AsVal_unsigned_SS_int (VALUE obj, unsigned int *val)
 
 
 SWIGINTERNINLINE VALUE
-SWIG_From_unsigned_SS_long  (unsigned long value)
-{
-  return ULONG2NUM(value); 
-}
-
-
-SWIGINTERNINLINE VALUE
 SWIG_From_unsigned_SS_int  (unsigned int value)
 {    
   return SWIG_From_unsigned_SS_long  (value);
-}
-
-
-/*@SWIG:%ruby_aux_method@*/
-SWIGINTERN VALUE SWIG_AUX_NUM2LONG(VALUE *args)
-{
-  VALUE obj = args[0];
-  VALUE type = TYPE(obj);
-  long *res = (long *)(args[1]);
-  *res = type == T_FIXNUM ? NUM2LONG(obj) : rb_big2long(obj);
-  return obj;
-}
-/*@SWIG@*/
-
-SWIGINTERN int
-SWIG_AsVal_long (VALUE obj, long* val)
-{
-  VALUE type = TYPE(obj);
-  if ((type == T_FIXNUM) || (type == T_BIGNUM)) {
-    long v;
-    VALUE a[2];
-    a[0] = obj;
-    a[1] = (VALUE)(&v);
-    if (rb_rescue(RUBY_METHOD_FUNC(SWIG_AUX_NUM2LONG), (VALUE)a, RUBY_METHOD_FUNC(SWIG_ruby_failed), 0) != Qnil) {
-      if (val) *val = v;
-      return SWIG_OK;
-    }
-  }
-  return SWIG_TypeError;
-}
-
-
-SWIGINTERN int
-SWIG_AsVal_int (VALUE obj, int *val)
-{
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v < INT_MIN || v > INT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = (int)(v);
-    }
-  }  
-  return res;
-}
-
-
-SWIGINTERNINLINE int
-SWIG_AsVal_size_t (VALUE obj, size_t *val)
-{
-  unsigned long v;
-  int res = SWIG_AsVal_unsigned_SS_long (obj, val ? &v : 0);
-  if (SWIG_IsOK(res) && val) *val = (size_t)(v);
-  return res;
-}
-
-
-SWIGINTERNINLINE VALUE
-SWIG_From_size_t  (size_t value)
-{    
-  return SWIG_From_unsigned_SS_long  ((unsigned long)(value));
 }
 
 
@@ -1898,6 +1963,360 @@ SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
 memcached_server_st* memcached_select_server_at(memcached_st* in_ptr, int index) {
   return &(in_ptr->hosts[index]);
 };
+
+SWIGINTERN VALUE
+_wrap_new_memcached_returnp(int argc, VALUE *argv, VALUE self) {
+  memcached_return *result = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (memcached_return *)new_memcached_returnp();
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_return, 0 |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_copy_memcached_returnp(int argc, VALUE *argv, VALUE self) {
+  memcached_return arg1 ;
+  memcached_return *result = 0 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  ecode1 = SWIG_AsVal_int(argv[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "copy_memcached_returnp" "', argument " "1"" of type '" "memcached_return""'");
+  } 
+  arg1 = (memcached_return)(val1);
+  result = (memcached_return *)copy_memcached_returnp(arg1);
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_return, 0 |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_delete_memcached_returnp(int argc, VALUE *argv, VALUE self) {
+  memcached_return *arg1 = (memcached_return *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_memcached_returnp" "', argument " "1"" of type '" "memcached_return *""'"); 
+  }
+  arg1 = (memcached_return *)(argp1);
+  delete_memcached_returnp(arg1);
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_memcached_returnp_assign(int argc, VALUE *argv, VALUE self) {
+  memcached_return *arg1 = (memcached_return *) 0 ;
+  memcached_return arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_returnp_assign" "', argument " "1"" of type '" "memcached_return *""'"); 
+  }
+  arg1 = (memcached_return *)(argp1);
+  ecode2 = SWIG_AsVal_int(argv[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "memcached_returnp_assign" "', argument " "2"" of type '" "memcached_return""'");
+  } 
+  arg2 = (memcached_return)(val2);
+  memcached_returnp_assign(arg1,arg2);
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_memcached_returnp_value(int argc, VALUE *argv, VALUE self) {
+  memcached_return *arg1 = (memcached_return *) 0 ;
+  memcached_return result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_returnp_value" "', argument " "1"" of type '" "memcached_return *""'"); 
+  }
+  arg1 = (memcached_return *)(argp1);
+  result = (memcached_return)memcached_returnp_value(arg1);
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_new_uint_32_tp(int argc, VALUE *argv, VALUE self) {
+  uint32_t *result = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (uint32_t *)new_uint32_tp();
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_uint32_t, 0 |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_copy_uint_32_tp(int argc, VALUE *argv, VALUE self) {
+  uint32_t arg1 ;
+  uint32_t *result = 0 ;
+  void *argp1 ;
+  int res1 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  {
+    res1 = SWIG_ConvertPtr(argv[0], &argp1, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "copy_uint32_tp" "', argument " "1"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp1) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "copy_uint32_tp" "', argument " "1"" of type '" "uint32_t""'");
+    } else {
+      arg1 = *((uint32_t *)(argp1));
+    }
+  }
+  result = (uint32_t *)copy_uint32_tp(arg1);
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_uint32_t, 0 |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_delete_uint_32_tp(int argc, VALUE *argv, VALUE self) {
+  uint32_t *arg1 = (uint32_t *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_uint32_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_uint32_tp" "', argument " "1"" of type '" "uint32_t *""'"); 
+  }
+  arg1 = (uint32_t *)(argp1);
+  delete_uint32_tp(arg1);
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_uint_32_tp_assign(int argc, VALUE *argv, VALUE self) {
+  uint32_t *arg1 = (uint32_t *) 0 ;
+  uint32_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_uint32_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "uint32_tp_assign" "', argument " "1"" of type '" "uint32_t *""'"); 
+  }
+  arg1 = (uint32_t *)(argp1);
+  {
+    res2 = SWIG_ConvertPtr(argv[1], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "uint32_tp_assign" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "uint32_tp_assign" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
+  uint32_tp_assign(arg1,arg2);
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_uint_32_tp_value(int argc, VALUE *argv, VALUE self) {
+  uint32_t *arg1 = (uint32_t *) 0 ;
+  uint32_t result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_uint32_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "uint32_tp_value" "', argument " "1"" of type '" "uint32_t *""'"); 
+  }
+  arg1 = (uint32_t *)(argp1);
+  result = uint32_tp_value(arg1);
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_new_size_tp(int argc, VALUE *argv, VALUE self) {
+  size_t *result = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  result = (size_t *)new_size_tp();
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_size_t, 0 |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_copy_size_tp(int argc, VALUE *argv, VALUE self) {
+  size_t arg1 ;
+  size_t *result = 0 ;
+  size_t val1 ;
+  int ecode1 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  ecode1 = SWIG_AsVal_size_t(argv[0], &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "copy_size_tp" "', argument " "1"" of type '" "size_t""'");
+  } 
+  arg1 = (size_t)(val1);
+  result = (size_t *)copy_size_tp(arg1);
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_size_t, 0 |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_delete_size_tp(int argc, VALUE *argv, VALUE self) {
+  size_t *arg1 = (size_t *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_size_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_size_tp" "', argument " "1"" of type '" "size_t *""'"); 
+  }
+  arg1 = (size_t *)(argp1);
+  delete_size_tp(arg1);
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_size_tp_assign(int argc, VALUE *argv, VALUE self) {
+  size_t *arg1 = (size_t *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_size_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "size_tp_assign" "', argument " "1"" of type '" "size_t *""'"); 
+  }
+  arg1 = (size_t *)(argp1);
+  ecode2 = SWIG_AsVal_size_t(argv[1], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "size_tp_assign" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = (size_t)(val2);
+  size_tp_assign(arg1,arg2);
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_size_tp_value(int argc, VALUE *argv, VALUE self) {
+  size_t *arg1 = (size_t *) 0 ;
+  size_t result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_size_t, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "size_tp_value" "', argument " "1"" of type '" "size_t *""'"); 
+  }
+  arg1 = (size_t *)(argp1);
+  result = size_tp_value(arg1);
+  vresult = SWIG_From_size_t((size_t)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
 
 swig_class cMemcachedServerSt;
 
@@ -2697,8 +3116,8 @@ _wrap_MemcachedServerSt_major_version_set(int argc, VALUE *argv, VALUE self) {
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -2708,11 +3127,17 @@ _wrap_MemcachedServerSt_major_version_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "major_version" "', argument " "1"" of type '" "struct memcached_server_st *""'"); 
   }
   arg1 = (struct memcached_server_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "major_version" "', argument " "2"" of type '" "uint8_t""'");
-  } 
-  arg2 = (uint8_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint8_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "major_version" "', argument " "2"" of type '" "uint8_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "major_version" "', argument " "2"" of type '" "uint8_t""'");
+    } else {
+      arg2 = *((uint8_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->major_version = arg2;
   
   return Qnil;
@@ -2738,7 +3163,7 @@ _wrap_MemcachedServerSt_major_version_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_server_st *)(argp1);
   result =  ((arg1)->major_version);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint8_t *)memcpy((uint8_t *)malloc(sizeof(uint8_t)),&result,sizeof(uint8_t)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -2751,8 +3176,8 @@ _wrap_MemcachedServerSt_minor_version_set(int argc, VALUE *argv, VALUE self) {
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -2762,11 +3187,17 @@ _wrap_MemcachedServerSt_minor_version_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "minor_version" "', argument " "1"" of type '" "struct memcached_server_st *""'"); 
   }
   arg1 = (struct memcached_server_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "minor_version" "', argument " "2"" of type '" "uint8_t""'");
-  } 
-  arg2 = (uint8_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint8_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "minor_version" "', argument " "2"" of type '" "uint8_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "minor_version" "', argument " "2"" of type '" "uint8_t""'");
+    } else {
+      arg2 = *((uint8_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->minor_version = arg2;
   
   return Qnil;
@@ -2792,7 +3223,7 @@ _wrap_MemcachedServerSt_minor_version_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_server_st *)(argp1);
   result =  ((arg1)->minor_version);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint8_t *)memcpy((uint8_t *)malloc(sizeof(uint8_t)),&result,sizeof(uint8_t)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -2805,8 +3236,8 @@ _wrap_MemcachedServerSt_micro_version_set(int argc, VALUE *argv, VALUE self) {
   uint8_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -2816,11 +3247,17 @@ _wrap_MemcachedServerSt_micro_version_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "micro_version" "', argument " "1"" of type '" "struct memcached_server_st *""'"); 
   }
   arg1 = (struct memcached_server_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "micro_version" "', argument " "2"" of type '" "uint8_t""'");
-  } 
-  arg2 = (uint8_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint8_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "micro_version" "', argument " "2"" of type '" "uint8_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "micro_version" "', argument " "2"" of type '" "uint8_t""'");
+    } else {
+      arg2 = *((uint8_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->micro_version = arg2;
   
   return Qnil;
@@ -2846,7 +3283,7 @@ _wrap_MemcachedServerSt_micro_version_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_server_st *)(argp1);
   result =  ((arg1)->micro_version);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint8_t *)memcpy((uint8_t *)malloc(sizeof(uint8_t)),&result,sizeof(uint8_t)), SWIGTYPE_p_uint8_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -2859,8 +3296,8 @@ _wrap_MemcachedServerSt_count_set(int argc, VALUE *argv, VALUE self) {
   uint16_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -2870,11 +3307,17 @@ _wrap_MemcachedServerSt_count_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "count" "', argument " "1"" of type '" "struct memcached_server_st *""'"); 
   }
   arg1 = (struct memcached_server_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "count" "', argument " "2"" of type '" "uint16_t""'");
-  } 
-  arg2 = (uint16_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint16_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "count" "', argument " "2"" of type '" "uint16_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "count" "', argument " "2"" of type '" "uint16_t""'");
+    } else {
+      arg2 = *((uint16_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->count = arg2;
   
   return Qnil;
@@ -2900,7 +3343,7 @@ _wrap_MemcachedServerSt_count_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_server_st *)(argp1);
   result =  ((arg1)->count);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint16_t *)memcpy((uint16_t *)malloc(sizeof(uint16_t)),&result,sizeof(uint16_t)), SWIGTYPE_p_uint16_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -2952,8 +3395,8 @@ _wrap_MemcachedStatSt_pid_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -2963,11 +3406,17 @@ _wrap_MemcachedStatSt_pid_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "pid" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "pid" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "pid" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "pid" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->pid = arg2;
   
   return Qnil;
@@ -2993,7 +3442,7 @@ _wrap_MemcachedStatSt_pid_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->pid);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3006,8 +3455,8 @@ _wrap_MemcachedStatSt_uptime_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3017,11 +3466,17 @@ _wrap_MemcachedStatSt_uptime_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "uptime" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "uptime" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "uptime" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "uptime" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->uptime = arg2;
   
   return Qnil;
@@ -3047,7 +3502,7 @@ _wrap_MemcachedStatSt_uptime_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->uptime);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3060,8 +3515,8 @@ _wrap_MemcachedStatSt_threads_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3071,11 +3526,17 @@ _wrap_MemcachedStatSt_threads_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "threads" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "threads" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "threads" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "threads" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->threads = arg2;
   
   return Qnil;
@@ -3101,7 +3562,7 @@ _wrap_MemcachedStatSt_threads_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->threads);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3114,8 +3575,8 @@ _wrap_MemcachedStatSt_time_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3125,11 +3586,17 @@ _wrap_MemcachedStatSt_time_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "time" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "time" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "time" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "time" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->time = arg2;
   
   return Qnil;
@@ -3155,7 +3622,7 @@ _wrap_MemcachedStatSt_time_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->time);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3168,8 +3635,8 @@ _wrap_MemcachedStatSt_pointer_size_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3179,11 +3646,17 @@ _wrap_MemcachedStatSt_pointer_size_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "pointer_size" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "pointer_size" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "pointer_size" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "pointer_size" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->pointer_size = arg2;
   
   return Qnil;
@@ -3209,7 +3682,7 @@ _wrap_MemcachedStatSt_pointer_size_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->pointer_size);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3222,8 +3695,8 @@ _wrap_MemcachedStatSt_rusage_user_seconds_set(int argc, VALUE *argv, VALUE self)
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3233,11 +3706,17 @@ _wrap_MemcachedStatSt_rusage_user_seconds_set(int argc, VALUE *argv, VALUE self)
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "rusage_user_seconds" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "rusage_user_seconds" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "rusage_user_seconds" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "rusage_user_seconds" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->rusage_user_seconds = arg2;
   
   return Qnil;
@@ -3263,7 +3742,7 @@ _wrap_MemcachedStatSt_rusage_user_seconds_get(int argc, VALUE *argv, VALUE self)
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->rusage_user_seconds);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3276,8 +3755,8 @@ _wrap_MemcachedStatSt_rusage_user_microseconds_set(int argc, VALUE *argv, VALUE 
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3287,11 +3766,17 @@ _wrap_MemcachedStatSt_rusage_user_microseconds_set(int argc, VALUE *argv, VALUE 
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "rusage_user_microseconds" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "rusage_user_microseconds" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "rusage_user_microseconds" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "rusage_user_microseconds" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->rusage_user_microseconds = arg2;
   
   return Qnil;
@@ -3317,7 +3802,7 @@ _wrap_MemcachedStatSt_rusage_user_microseconds_get(int argc, VALUE *argv, VALUE 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->rusage_user_microseconds);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3330,8 +3815,8 @@ _wrap_MemcachedStatSt_rusage_system_seconds_set(int argc, VALUE *argv, VALUE sel
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3341,11 +3826,17 @@ _wrap_MemcachedStatSt_rusage_system_seconds_set(int argc, VALUE *argv, VALUE sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "rusage_system_seconds" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "rusage_system_seconds" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "rusage_system_seconds" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "rusage_system_seconds" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->rusage_system_seconds = arg2;
   
   return Qnil;
@@ -3371,7 +3862,7 @@ _wrap_MemcachedStatSt_rusage_system_seconds_get(int argc, VALUE *argv, VALUE sel
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->rusage_system_seconds);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3384,8 +3875,8 @@ _wrap_MemcachedStatSt_rusage_system_microseconds_set(int argc, VALUE *argv, VALU
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3395,11 +3886,17 @@ _wrap_MemcachedStatSt_rusage_system_microseconds_set(int argc, VALUE *argv, VALU
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "rusage_system_microseconds" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "rusage_system_microseconds" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "rusage_system_microseconds" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "rusage_system_microseconds" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->rusage_system_microseconds = arg2;
   
   return Qnil;
@@ -3425,7 +3922,7 @@ _wrap_MemcachedStatSt_rusage_system_microseconds_get(int argc, VALUE *argv, VALU
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->rusage_system_microseconds);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3438,8 +3935,8 @@ _wrap_MemcachedStatSt_curr_items_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3449,11 +3946,17 @@ _wrap_MemcachedStatSt_curr_items_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "curr_items" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "curr_items" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "curr_items" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "curr_items" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->curr_items = arg2;
   
   return Qnil;
@@ -3479,7 +3982,7 @@ _wrap_MemcachedStatSt_curr_items_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->curr_items);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3492,8 +3995,8 @@ _wrap_MemcachedStatSt_total_items_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3503,11 +4006,17 @@ _wrap_MemcachedStatSt_total_items_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "total_items" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "total_items" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "total_items" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "total_items" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->total_items = arg2;
   
   return Qnil;
@@ -3533,7 +4042,7 @@ _wrap_MemcachedStatSt_total_items_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->total_items);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3546,8 +4055,8 @@ _wrap_MemcachedStatSt_limit_maxbytes_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3557,11 +4066,17 @@ _wrap_MemcachedStatSt_limit_maxbytes_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "limit_maxbytes" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "limit_maxbytes" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "limit_maxbytes" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "limit_maxbytes" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->limit_maxbytes = arg2;
   
   return Qnil;
@@ -3587,7 +4102,7 @@ _wrap_MemcachedStatSt_limit_maxbytes_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->limit_maxbytes);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3600,8 +4115,8 @@ _wrap_MemcachedStatSt_curr_connections_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3611,11 +4126,17 @@ _wrap_MemcachedStatSt_curr_connections_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "curr_connections" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "curr_connections" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "curr_connections" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "curr_connections" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->curr_connections = arg2;
   
   return Qnil;
@@ -3641,7 +4162,7 @@ _wrap_MemcachedStatSt_curr_connections_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->curr_connections);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3654,8 +4175,8 @@ _wrap_MemcachedStatSt_total_connections_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3665,11 +4186,17 @@ _wrap_MemcachedStatSt_total_connections_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "total_connections" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "total_connections" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "total_connections" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "total_connections" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->total_connections = arg2;
   
   return Qnil;
@@ -3695,7 +4222,7 @@ _wrap_MemcachedStatSt_total_connections_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->total_connections);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3708,8 +4235,8 @@ _wrap_MemcachedStatSt_connection_structures_set(int argc, VALUE *argv, VALUE sel
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3719,11 +4246,17 @@ _wrap_MemcachedStatSt_connection_structures_set(int argc, VALUE *argv, VALUE sel
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "connection_structures" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "connection_structures" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "connection_structures" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "connection_structures" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->connection_structures = arg2;
   
   return Qnil;
@@ -3749,7 +4282,7 @@ _wrap_MemcachedStatSt_connection_structures_get(int argc, VALUE *argv, VALUE sel
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->connection_structures);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3762,8 +4295,8 @@ _wrap_MemcachedStatSt_bytes_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3773,11 +4306,17 @@ _wrap_MemcachedStatSt_bytes_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bytes" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "bytes" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "bytes" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "bytes" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->bytes = arg2;
   
   return Qnil;
@@ -3803,7 +4342,7 @@ _wrap_MemcachedStatSt_bytes_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->bytes);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3816,8 +4355,8 @@ _wrap_MemcachedStatSt_cmd_get_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3827,11 +4366,17 @@ _wrap_MemcachedStatSt_cmd_get_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "cmd_get" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cmd_get" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "cmd_get" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "cmd_get" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->cmd_get = arg2;
   
   return Qnil;
@@ -3857,7 +4402,7 @@ _wrap_MemcachedStatSt_cmd_get_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->cmd_get);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3870,8 +4415,8 @@ _wrap_MemcachedStatSt_cmd_set_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3881,11 +4426,17 @@ _wrap_MemcachedStatSt_cmd_set_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "cmd_set" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cmd_set" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "cmd_set" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "cmd_set" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->cmd_set = arg2;
   
   return Qnil;
@@ -3911,7 +4462,7 @@ _wrap_MemcachedStatSt_cmd_set_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->cmd_set);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3924,8 +4475,8 @@ _wrap_MemcachedStatSt_get_hits_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3935,11 +4486,17 @@ _wrap_MemcachedStatSt_get_hits_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "get_hits" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_hits" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "get_hits" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "get_hits" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->get_hits = arg2;
   
   return Qnil;
@@ -3965,7 +4522,7 @@ _wrap_MemcachedStatSt_get_hits_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->get_hits);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -3978,8 +4535,8 @@ _wrap_MemcachedStatSt_get_misses_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -3989,11 +4546,17 @@ _wrap_MemcachedStatSt_get_misses_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "get_misses" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "get_misses" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "get_misses" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "get_misses" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->get_misses = arg2;
   
   return Qnil;
@@ -4019,7 +4582,7 @@ _wrap_MemcachedStatSt_get_misses_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->get_misses);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -4032,8 +4595,8 @@ _wrap_MemcachedStatSt_evictions_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -4043,11 +4606,17 @@ _wrap_MemcachedStatSt_evictions_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "evictions" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "evictions" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "evictions" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "evictions" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->evictions = arg2;
   
   return Qnil;
@@ -4073,7 +4642,7 @@ _wrap_MemcachedStatSt_evictions_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->evictions);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -4086,8 +4655,8 @@ _wrap_MemcachedStatSt_bytes_read_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -4097,11 +4666,17 @@ _wrap_MemcachedStatSt_bytes_read_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bytes_read" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "bytes_read" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "bytes_read" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "bytes_read" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->bytes_read = arg2;
   
   return Qnil;
@@ -4127,7 +4702,7 @@ _wrap_MemcachedStatSt_bytes_read_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->bytes_read);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -4140,8 +4715,8 @@ _wrap_MemcachedStatSt_bytes_written_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -4151,11 +4726,17 @@ _wrap_MemcachedStatSt_bytes_written_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "bytes_written" "', argument " "1"" of type '" "struct memcached_stat_st *""'"); 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "bytes_written" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "bytes_written" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "bytes_written" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->bytes_written = arg2;
   
   return Qnil;
@@ -4181,7 +4762,7 @@ _wrap_MemcachedStatSt_bytes_written_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->bytes_written);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -4948,8 +5529,6 @@ _wrap_MemcachedResultSt_flags_set(int argc, VALUE *argv, VALUE self) {
   uint32_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -4959,11 +5538,9 @@ _wrap_MemcachedResultSt_flags_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "flags" "', argument " "1"" of type '" "struct memcached_result_st *""'"); 
   }
   arg1 = (struct memcached_result_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "flags" "', argument " "2"" of type '" "uint32_t""'");
-  } 
-  arg2 = (uint32_t)(val2);
+  {
+    arg2 = (uint32_t) NUM2ULONG(argv[0]);
+  }
   if (arg1) (arg1)->flags = arg2;
   
   return Qnil;
@@ -4989,7 +5566,7 @@ _wrap_MemcachedResultSt_flags_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_result_st *)(argp1);
   result =  ((arg1)->flags);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -5002,8 +5579,8 @@ _wrap_MemcachedResultSt_cas_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -5013,11 +5590,17 @@ _wrap_MemcachedResultSt_cas_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "cas" "', argument " "1"" of type '" "struct memcached_result_st *""'"); 
   }
   arg1 = (struct memcached_result_st *)(argp1);
-  ecode2 = SWIG_AsVal_int(argv[0], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "cas" "', argument " "2"" of type '" "uint64_t""'");
-  } 
-  arg2 = (uint64_t)(val2);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "cas" "', argument " "2"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "cas" "', argument " "2"" of type '" "uint64_t""'");
+    } else {
+      arg2 = *((uint64_t *)(argp2));
+    }
+  }
   if (arg1) (arg1)->cas = arg2;
   
   return Qnil;
@@ -5043,7 +5626,7 @@ _wrap_MemcachedResultSt_cas_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_result_st *)(argp1);
   result =  ((arg1)->cas);
-  vresult = SWIG_From_int((int)(result));
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -6044,7 +6627,7 @@ _wrap_memcached_delete(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
   {
     if (NIL_P(argv[2]))
@@ -6070,8 +6653,8 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
+  void *argp4 ;
+  int res4 = 0 ;
   void *argp5 = 0 ;
   int res5 = 0 ;
   VALUE vresult = Qnil;
@@ -6086,13 +6669,19 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
-  ecode4 = SWIG_AsVal_int(argv[2], &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "memcached_increment" "', argument " "4"" of type '" "uint32_t""'");
-  } 
-  arg4 = (uint32_t)(val4);
+  {
+    res4 = SWIG_ConvertPtr(argv[2], &argp4, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res4)) {
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_increment" "', argument " "4"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp4) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_increment" "', argument " "4"" of type '" "uint32_t""'");
+    } else {
+      arg4 = *((uint32_t *)(argp4));
+    }
+  }
   res5 = SWIG_ConvertPtr(argv[3], &argp5,SWIGTYPE_p_uint64_t, 0 |  0 );
   if (!SWIG_IsOK(res5)) {
     SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_increment" "', argument " "5"" of type '" "uint64_t *""'"); 
@@ -6116,8 +6705,8 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
+  void *argp4 ;
+  int res4 = 0 ;
   void *argp5 = 0 ;
   int res5 = 0 ;
   VALUE vresult = Qnil;
@@ -6132,13 +6721,19 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
-  ecode4 = SWIG_AsVal_int(argv[2], &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "memcached_decrement" "', argument " "4"" of type '" "uint32_t""'");
-  } 
-  arg4 = (uint32_t)(val4);
+  {
+    res4 = SWIG_ConvertPtr(argv[2], &argp4, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res4)) {
+      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_decrement" "', argument " "4"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp4) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_decrement" "', argument " "4"" of type '" "uint32_t""'");
+    } else {
+      arg4 = *((uint32_t *)(argp4));
+    }
+  }
   res5 = SWIG_ConvertPtr(argv[3], &argp5,SWIGTYPE_p_uint64_t, 0 |  0 );
   if (!SWIG_IsOK(res5)) {
     SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_decrement" "', argument " "5"" of type '" "uint64_t *""'"); 
@@ -6192,13 +6787,12 @@ _wrap_memcached_stat(int argc, VALUE *argv, VALUE self) {
   int res2 ;
   char *buf2 = 0 ;
   int alloc2 = 0 ;
-  memcached_return temp3 ;
-  int res3 = SWIG_TMPOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
   VALUE vresult = Qnil;
   
-  arg3 = &temp3;
-  if ((argc < 2) || (argc > 2)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  if ((argc < 3) || (argc > 3)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -6210,14 +6804,13 @@ _wrap_memcached_stat(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_stat" "', argument " "2"" of type '" "char *""'");
   }
   arg2 = buf2;
+  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_stat" "', argument " "3"" of type '" "memcached_return *""'"); 
+  }
+  arg3 = (memcached_return *)(argp3);
   result = (memcached_stat_st *)memcached_stat(arg1,arg2,arg3);
   vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_stat_st, 0 |  0 );
-  if (SWIG_IsTmpObj(res3)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg3)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res3) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg3), SWIGTYPE_p_memcached_return, new_flags));
-  }
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -6478,8 +7071,6 @@ _wrap_memcached_set(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 5) || (argc > 5)) {
@@ -6492,11 +7083,11 @@ _wrap_memcached_set(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (int) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING(argv[2])->len;
   }
   {
     if (NIL_P(argv[3]))
@@ -6504,11 +7095,9 @@ _wrap_memcached_set(int argc, VALUE *argv, VALUE self) {
     else
     arg6 = NUM2LONG(rb_funcall(argv[3], rb_intern("tv_sec"), 0));
   }
-  ecode7 = SWIG_AsVal_int(argv[4], &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "memcached_set" "', argument " "7"" of type '" "uint32_t""'");
-  } 
-  arg7 = (uint32_t)(val7);
+  {
+    arg7 = (uint32_t) NUM2ULONG(argv[4]);
+  }
   result = (memcached_return)memcached_set(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -6529,8 +7118,6 @@ _wrap_memcached_add(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 5) || (argc > 5)) {
@@ -6543,11 +7130,11 @@ _wrap_memcached_add(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (int) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING(argv[2])->len;
   }
   {
     if (NIL_P(argv[3]))
@@ -6555,11 +7142,9 @@ _wrap_memcached_add(int argc, VALUE *argv, VALUE self) {
     else
     arg6 = NUM2LONG(rb_funcall(argv[3], rb_intern("tv_sec"), 0));
   }
-  ecode7 = SWIG_AsVal_int(argv[4], &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "memcached_add" "', argument " "7"" of type '" "uint32_t""'");
-  } 
-  arg7 = (uint32_t)(val7);
+  {
+    arg7 = (uint32_t) NUM2ULONG(argv[4]);
+  }
   result = (memcached_return)memcached_add(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -6580,8 +7165,6 @@ _wrap_memcached_replace(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 5) || (argc > 5)) {
@@ -6594,11 +7177,11 @@ _wrap_memcached_replace(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (int) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING(argv[2])->len;
   }
   {
     if (NIL_P(argv[3]))
@@ -6606,11 +7189,9 @@ _wrap_memcached_replace(int argc, VALUE *argv, VALUE self) {
     else
     arg6 = NUM2LONG(rb_funcall(argv[3], rb_intern("tv_sec"), 0));
   }
-  ecode7 = SWIG_AsVal_int(argv[4], &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "memcached_replace" "', argument " "7"" of type '" "uint32_t""'");
-  } 
-  arg7 = (uint32_t)(val7);
+  {
+    arg7 = (uint32_t) NUM2ULONG(argv[4]);
+  }
   result = (memcached_return)memcached_replace(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -6631,8 +7212,6 @@ _wrap_memcached_append(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 5) || (argc > 5)) {
@@ -6645,11 +7224,11 @@ _wrap_memcached_append(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (int) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING(argv[2])->len;
   }
   {
     if (NIL_P(argv[3]))
@@ -6657,11 +7236,9 @@ _wrap_memcached_append(int argc, VALUE *argv, VALUE self) {
     else
     arg6 = NUM2LONG(rb_funcall(argv[3], rb_intern("tv_sec"), 0));
   }
-  ecode7 = SWIG_AsVal_int(argv[4], &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "memcached_append" "', argument " "7"" of type '" "uint32_t""'");
-  } 
-  arg7 = (uint32_t)(val7);
+  {
+    arg7 = (uint32_t) NUM2ULONG(argv[4]);
+  }
   result = (memcached_return)memcached_append(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -6682,8 +7259,6 @@ _wrap_memcached_prepend(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 5) || (argc > 5)) {
@@ -6696,11 +7271,11 @@ _wrap_memcached_prepend(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (int) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING(argv[2])->len;
   }
   {
     if (NIL_P(argv[3]))
@@ -6708,11 +7283,9 @@ _wrap_memcached_prepend(int argc, VALUE *argv, VALUE self) {
     else
     arg6 = NUM2LONG(rb_funcall(argv[3], rb_intern("tv_sec"), 0));
   }
-  ecode7 = SWIG_AsVal_int(argv[4], &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "memcached_prepend" "', argument " "7"" of type '" "uint32_t""'");
-  } 
-  arg7 = (uint32_t)(val7);
+  {
+    arg7 = (uint32_t) NUM2ULONG(argv[4]);
+  }
   result = (memcached_return)memcached_prepend(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -6734,10 +7307,8 @@ _wrap_memcached_cas(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int val7 ;
-  int ecode7 = 0 ;
-  int val8 ;
-  int ecode8 = 0 ;
+  void *argp8 ;
+  int res8 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 6) || (argc > 6)) {
@@ -6750,11 +7321,11 @@ _wrap_memcached_cas(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (int) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING(argv[2])->len;
   }
   {
     if (NIL_P(argv[3]))
@@ -6762,16 +7333,20 @@ _wrap_memcached_cas(int argc, VALUE *argv, VALUE self) {
     else
     arg6 = NUM2LONG(rb_funcall(argv[3], rb_intern("tv_sec"), 0));
   }
-  ecode7 = SWIG_AsVal_int(argv[4], &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "memcached_cas" "', argument " "7"" of type '" "uint32_t""'");
-  } 
-  arg7 = (uint32_t)(val7);
-  ecode8 = SWIG_AsVal_int(argv[5], &val8);
-  if (!SWIG_IsOK(ecode8)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "memcached_cas" "', argument " "8"" of type '" "uint64_t""'");
-  } 
-  arg8 = (uint64_t)(val8);
+  {
+    arg7 = (uint32_t) NUM2ULONG(argv[4]);
+  }
+  {
+    res8 = SWIG_ConvertPtr(argv[5], &argp8, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res8)) {
+      SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "memcached_cas" "', argument " "8"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp8) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_cas" "', argument " "8"" of type '" "uint64_t""'");
+    } else {
+      arg8 = *((uint64_t *)(argp8));
+    }
+  }
   result = (memcached_return)memcached_cas(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
   vresult = SWIG_From_int((int)(result));
   return vresult;
@@ -6791,19 +7366,16 @@ _wrap_memcached_get(int argc, VALUE *argv, VALUE self) {
   char *result = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  size_t temp4 ;
-  int res4 = SWIG_TMPOBJ ;
-  uint32_t temp5 ;
-  int res5 = SWIG_TMPOBJ ;
-  memcached_return temp6 ;
-  int res6 = SWIG_TMPOBJ ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
   VALUE vresult = Qnil;
   
-  arg4 = &temp4;
-  arg5 = &temp5;
-  arg6 = &temp6;
-  if ((argc < 2) || (argc > 2)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  if ((argc < 5) || (argc > 5)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 5)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -6812,28 +7384,25 @@ _wrap_memcached_get(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (int) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING(argv[1])->len;
   }
+  res4 = SWIG_ConvertPtr(argv[2], &argp4,SWIGTYPE_p_size_t, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_get" "', argument " "4"" of type '" "size_t *""'"); 
+  }
+  arg4 = (size_t *)(argp4);
+  res5 = SWIG_ConvertPtr(argv[3], &argp5,SWIGTYPE_p_uint32_t, 0 |  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_get" "', argument " "5"" of type '" "uint32_t *""'"); 
+  }
+  arg5 = (uint32_t *)(argp5);
+  res6 = SWIG_ConvertPtr(argv[4], &argp6,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "memcached_get" "', argument " "6"" of type '" "memcached_return *""'"); 
+  }
+  arg6 = (memcached_return *)(argp6);
   result = (char *)memcached_get(arg1,arg2,arg3,arg4,arg5,arg6);
   vresult = SWIG_FromCharPtr(result);
-  if (SWIG_IsTmpObj(res4)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_size_t((*arg4)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res4) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg4), SWIGTYPE_p_size_t, new_flags));
-  }
-  if (SWIG_IsTmpObj(res5)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg5)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res5) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg5), SWIGTYPE_p_uint32_t, new_flags));
-  }
-  if (SWIG_IsTmpObj(res6)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg6)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res6) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg6), SWIGTYPE_p_memcached_return, new_flags));
-  }
   return vresult;
 fail:
   return Qnil;
@@ -6904,19 +7473,16 @@ _wrap_memcached_fetch(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   void *argp3 = 0 ;
   int res3 = 0 ;
-  size_t temp4 ;
-  int res4 = SWIG_TMPOBJ ;
-  uint32_t temp5 ;
-  int res5 = SWIG_TMPOBJ ;
-  memcached_return temp6 ;
-  int res6 = SWIG_TMPOBJ ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
   VALUE vresult = Qnil;
   
-  arg4 = &temp4;
-  arg5 = &temp5;
-  arg6 = &temp6;
-  if ((argc < 3) || (argc > 3)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
+  if ((argc < 6) || (argc > 6)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 6)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -6933,26 +7499,23 @@ _wrap_memcached_fetch(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_fetch" "', argument " "3"" of type '" "size_t *""'"); 
   }
   arg3 = (size_t *)(argp3);
+  res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_size_t, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_fetch" "', argument " "4"" of type '" "size_t *""'"); 
+  }
+  arg4 = (size_t *)(argp4);
+  res5 = SWIG_ConvertPtr(argv[4], &argp5,SWIGTYPE_p_uint32_t, 0 |  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_fetch" "', argument " "5"" of type '" "uint32_t *""'"); 
+  }
+  arg5 = (uint32_t *)(argp5);
+  res6 = SWIG_ConvertPtr(argv[5], &argp6,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "memcached_fetch" "', argument " "6"" of type '" "memcached_return *""'"); 
+  }
+  arg6 = (memcached_return *)(argp6);
   result = (char *)memcached_fetch(arg1,arg2,arg3,arg4,arg5,arg6);
   vresult = SWIG_FromCharPtr(result);
-  if (SWIG_IsTmpObj(res4)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_size_t((*arg4)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res4) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg4), SWIGTYPE_p_size_t, new_flags));
-  }
-  if (SWIG_IsTmpObj(res5)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg5)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res5) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg5), SWIGTYPE_p_uint32_t, new_flags));
-  }
-  if (SWIG_IsTmpObj(res6)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg6)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res6) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg6), SWIGTYPE_p_memcached_return, new_flags));
-  }
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -6971,13 +7534,12 @@ _wrap_memcached_fetch_result(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   void *argp2 = 0 ;
   int res2 = 0 ;
-  memcached_return temp3 ;
-  int res3 = SWIG_TMPOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
   VALUE vresult = Qnil;
   
-  arg3 = &temp3;
-  if ((argc < 2) || (argc > 2)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  if ((argc < 3) || (argc > 3)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -6989,14 +7551,13 @@ _wrap_memcached_fetch_result(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_fetch_result" "', argument " "2"" of type '" "memcached_result_st *""'"); 
   }
   arg2 = (memcached_result_st *)(argp2);
+  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_fetch_result" "', argument " "3"" of type '" "memcached_return *""'"); 
+  }
+  arg3 = (memcached_return *)(argp3);
   result = (memcached_result_st *)memcached_fetch_result(arg1,arg2,arg3);
   vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_result_st, 0 |  0 );
-  if (SWIG_IsTmpObj(res3)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg3)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res3) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg3), SWIGTYPE_p_memcached_return, new_flags));
-  }
   return vresult;
 fail:
   return Qnil;
@@ -7191,13 +7752,12 @@ _wrap_memcached_server_list_append(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   unsigned int val3 ;
   int ecode3 = 0 ;
-  memcached_return temp4 ;
-  int res4 = SWIG_TMPOBJ ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
   VALUE vresult = Qnil;
   
-  arg4 = &temp4;
-  if ((argc < 3) || (argc > 3)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
+  if ((argc < 4) || (argc > 4)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 4)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_server_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -7214,14 +7774,13 @@ _wrap_memcached_server_list_append(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "memcached_server_list_append" "', argument " "3"" of type '" "unsigned int""'");
   } 
   arg3 = (unsigned int)(val3);
+  res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_server_list_append" "', argument " "4"" of type '" "memcached_return *""'"); 
+  }
+  arg4 = (memcached_return *)(argp4);
   result = (memcached_server_st *)memcached_server_list_append(arg1,arg2,arg3,arg4);
   vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_server_st, 0 |  0 );
-  if (SWIG_IsTmpObj(res4)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg4)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res4) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg4), SWIGTYPE_p_memcached_return, new_flags));
-  }
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7295,13 +7854,12 @@ _wrap_memcached_stat_get_value(int argc, VALUE *argv, VALUE self) {
   int res3 ;
   char *buf3 = 0 ;
   int alloc3 = 0 ;
-  memcached_return temp4 ;
-  int res4 = SWIG_TMPOBJ ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
   VALUE vresult = Qnil;
   
-  arg4 = &temp4;
-  if ((argc < 3) || (argc > 3)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
+  if ((argc < 4) || (argc > 4)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 4)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -7318,14 +7876,13 @@ _wrap_memcached_stat_get_value(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_stat_get_value" "', argument " "3"" of type '" "char *""'");
   }
   arg3 = buf3;
+  res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_stat_get_value" "', argument " "4"" of type '" "memcached_return *""'"); 
+  }
+  arg4 = (memcached_return *)(argp4);
   result = (char *)memcached_stat_get_value(arg1,arg2,arg3,arg4);
   vresult = SWIG_FromCharPtr(result);
-  if (SWIG_IsTmpObj(res4)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg4)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res4) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg4), SWIGTYPE_p_memcached_return, new_flags));
-  }
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
   return vresult;
 fail:
@@ -7344,13 +7901,12 @@ _wrap_memcached_stat_get_keys(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   void *argp2 = 0 ;
   int res2 = 0 ;
-  memcached_return temp3 ;
-  int res3 = SWIG_TMPOBJ ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
   VALUE vresult = Qnil;
   
-  arg3 = &temp3;
-  if ((argc < 2) || (argc > 2)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  if ((argc < 3) || (argc > 3)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -7362,14 +7918,13 @@ _wrap_memcached_stat_get_keys(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_stat_get_keys" "', argument " "2"" of type '" "memcached_stat_st *""'"); 
   }
   arg2 = (memcached_stat_st *)(argp2);
+  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_stat_get_keys" "', argument " "3"" of type '" "memcached_return *""'"); 
+  }
+  arg3 = (memcached_return *)(argp3);
   result = (char **)memcached_stat_get_keys(arg1,arg2,arg3);
   vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_char, 0 |  0 );
-  if (SWIG_IsTmpObj(res3)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg3)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res3) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg3), SWIGTYPE_p_memcached_return, new_flags));
-  }
   return vresult;
 fail:
   return Qnil;
@@ -7394,19 +7949,16 @@ _wrap_memcached_get_by_key(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   size_t val3 ;
   int ecode3 = 0 ;
-  size_t temp6 ;
-  int res6 = SWIG_TMPOBJ ;
-  uint32_t temp7 ;
-  int res7 = SWIG_TMPOBJ ;
-  memcached_return temp8 ;
-  int res8 = SWIG_TMPOBJ ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
+  void *argp8 = 0 ;
+  int res8 = 0 ;
   VALUE vresult = Qnil;
   
-  arg6 = &temp6;
-  arg7 = &temp7;
-  arg8 = &temp8;
-  if ((argc < 4) || (argc > 4)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 4)",argc); SWIG_fail;
+  if ((argc < 7) || (argc > 7)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 7)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
@@ -7425,28 +7977,25 @@ _wrap_memcached_get_by_key(int argc, VALUE *argv, VALUE self) {
   arg3 = (size_t)(val3);
   {
     arg4 = STR2CSTR(argv[3]);
-    arg5 = (int) RSTRING(argv[3])->len;
+    arg5 = (size_t) RSTRING(argv[3])->len;
   }
+  res6 = SWIG_ConvertPtr(argv[4], &argp6,SWIGTYPE_p_size_t, 0 |  0 );
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "memcached_get_by_key" "', argument " "6"" of type '" "size_t *""'"); 
+  }
+  arg6 = (size_t *)(argp6);
+  res7 = SWIG_ConvertPtr(argv[5], &argp7,SWIGTYPE_p_uint32_t, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "memcached_get_by_key" "', argument " "7"" of type '" "uint32_t *""'"); 
+  }
+  arg7 = (uint32_t *)(argp7);
+  res8 = SWIG_ConvertPtr(argv[6], &argp8,SWIGTYPE_p_memcached_return, 0 |  0 );
+  if (!SWIG_IsOK(res8)) {
+    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "memcached_get_by_key" "', argument " "8"" of type '" "memcached_return *""'"); 
+  }
+  arg8 = (memcached_return *)(argp8);
   result = (char *)memcached_get_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
   vresult = SWIG_FromCharPtr(result);
-  if (SWIG_IsTmpObj(res6)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_size_t((*arg6)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res6) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg6), SWIGTYPE_p_size_t, new_flags));
-  }
-  if (SWIG_IsTmpObj(res7)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg7)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res7) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg7), SWIGTYPE_p_uint32_t, new_flags));
-  }
-  if (SWIG_IsTmpObj(res8)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg8)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res8) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg8), SWIGTYPE_p_memcached_return, new_flags));
-  }
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7541,8 +8090,6 @@ _wrap_memcached_set_by_key(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   size_t val3 ;
   int ecode3 = 0 ;
-  int val9 ;
-  int ecode9 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 7) || (argc > 7)) {
@@ -7565,11 +8112,11 @@ _wrap_memcached_set_by_key(int argc, VALUE *argv, VALUE self) {
   arg3 = (size_t)(val3);
   {
     arg4 = STR2CSTR(argv[3]);
-    arg5 = (int) RSTRING(argv[3])->len;
+    arg5 = (size_t) RSTRING(argv[3])->len;
   }
   {
     arg6 = STR2CSTR(argv[4]);
-    arg7 = (int) RSTRING(argv[4])->len;
+    arg7 = (size_t) RSTRING(argv[4])->len;
   }
   {
     if (NIL_P(argv[5]))
@@ -7577,11 +8124,9 @@ _wrap_memcached_set_by_key(int argc, VALUE *argv, VALUE self) {
     else
     arg8 = NUM2LONG(rb_funcall(argv[5], rb_intern("tv_sec"), 0));
   }
-  ecode9 = SWIG_AsVal_int(argv[6], &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "memcached_set_by_key" "', argument " "9"" of type '" "uint32_t""'");
-  } 
-  arg9 = (uint32_t)(val9);
+  {
+    arg9 = (uint32_t) NUM2ULONG(argv[6]);
+  }
   result = (memcached_return)memcached_set_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
@@ -7611,8 +8156,6 @@ _wrap_memcached_add_by_key(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   size_t val3 ;
   int ecode3 = 0 ;
-  int val9 ;
-  int ecode9 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 7) || (argc > 7)) {
@@ -7635,11 +8178,11 @@ _wrap_memcached_add_by_key(int argc, VALUE *argv, VALUE self) {
   arg3 = (size_t)(val3);
   {
     arg4 = STR2CSTR(argv[3]);
-    arg5 = (int) RSTRING(argv[3])->len;
+    arg5 = (size_t) RSTRING(argv[3])->len;
   }
   {
     arg6 = STR2CSTR(argv[4]);
-    arg7 = (int) RSTRING(argv[4])->len;
+    arg7 = (size_t) RSTRING(argv[4])->len;
   }
   {
     if (NIL_P(argv[5]))
@@ -7647,11 +8190,9 @@ _wrap_memcached_add_by_key(int argc, VALUE *argv, VALUE self) {
     else
     arg8 = NUM2LONG(rb_funcall(argv[5], rb_intern("tv_sec"), 0));
   }
-  ecode9 = SWIG_AsVal_int(argv[6], &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "memcached_add_by_key" "', argument " "9"" of type '" "uint32_t""'");
-  } 
-  arg9 = (uint32_t)(val9);
+  {
+    arg9 = (uint32_t) NUM2ULONG(argv[6]);
+  }
   result = (memcached_return)memcached_add_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
@@ -7681,8 +8222,6 @@ _wrap_memcached_replace_by_key(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   size_t val3 ;
   int ecode3 = 0 ;
-  int val9 ;
-  int ecode9 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 7) || (argc > 7)) {
@@ -7705,11 +8244,11 @@ _wrap_memcached_replace_by_key(int argc, VALUE *argv, VALUE self) {
   arg3 = (size_t)(val3);
   {
     arg4 = STR2CSTR(argv[3]);
-    arg5 = (int) RSTRING(argv[3])->len;
+    arg5 = (size_t) RSTRING(argv[3])->len;
   }
   {
     arg6 = STR2CSTR(argv[4]);
-    arg7 = (int) RSTRING(argv[4])->len;
+    arg7 = (size_t) RSTRING(argv[4])->len;
   }
   {
     if (NIL_P(argv[5]))
@@ -7717,11 +8256,9 @@ _wrap_memcached_replace_by_key(int argc, VALUE *argv, VALUE self) {
     else
     arg8 = NUM2LONG(rb_funcall(argv[5], rb_intern("tv_sec"), 0));
   }
-  ecode9 = SWIG_AsVal_int(argv[6], &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "memcached_replace_by_key" "', argument " "9"" of type '" "uint32_t""'");
-  } 
-  arg9 = (uint32_t)(val9);
+  {
+    arg9 = (uint32_t) NUM2ULONG(argv[6]);
+  }
   result = (memcached_return)memcached_replace_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
@@ -7751,8 +8288,6 @@ _wrap_memcached_prepend_by_key(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   size_t val3 ;
   int ecode3 = 0 ;
-  int val9 ;
-  int ecode9 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 7) || (argc > 7)) {
@@ -7775,11 +8310,11 @@ _wrap_memcached_prepend_by_key(int argc, VALUE *argv, VALUE self) {
   arg3 = (size_t)(val3);
   {
     arg4 = STR2CSTR(argv[3]);
-    arg5 = (int) RSTRING(argv[3])->len;
+    arg5 = (size_t) RSTRING(argv[3])->len;
   }
   {
     arg6 = STR2CSTR(argv[4]);
-    arg7 = (int) RSTRING(argv[4])->len;
+    arg7 = (size_t) RSTRING(argv[4])->len;
   }
   {
     if (NIL_P(argv[5]))
@@ -7787,11 +8322,9 @@ _wrap_memcached_prepend_by_key(int argc, VALUE *argv, VALUE self) {
     else
     arg8 = NUM2LONG(rb_funcall(argv[5], rb_intern("tv_sec"), 0));
   }
-  ecode9 = SWIG_AsVal_int(argv[6], &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "memcached_prepend_by_key" "', argument " "9"" of type '" "uint32_t""'");
-  } 
-  arg9 = (uint32_t)(val9);
+  {
+    arg9 = (uint32_t) NUM2ULONG(argv[6]);
+  }
   result = (memcached_return)memcached_prepend_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
@@ -7821,8 +8354,6 @@ _wrap_memcached_append_by_key(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   size_t val3 ;
   int ecode3 = 0 ;
-  int val9 ;
-  int ecode9 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 7) || (argc > 7)) {
@@ -7845,11 +8376,11 @@ _wrap_memcached_append_by_key(int argc, VALUE *argv, VALUE self) {
   arg3 = (size_t)(val3);
   {
     arg4 = STR2CSTR(argv[3]);
-    arg5 = (int) RSTRING(argv[3])->len;
+    arg5 = (size_t) RSTRING(argv[3])->len;
   }
   {
     arg6 = STR2CSTR(argv[4]);
-    arg7 = (int) RSTRING(argv[4])->len;
+    arg7 = (size_t) RSTRING(argv[4])->len;
   }
   {
     if (NIL_P(argv[5]))
@@ -7857,11 +8388,9 @@ _wrap_memcached_append_by_key(int argc, VALUE *argv, VALUE self) {
     else
     arg8 = NUM2LONG(rb_funcall(argv[5], rb_intern("tv_sec"), 0));
   }
-  ecode9 = SWIG_AsVal_int(argv[6], &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "memcached_append_by_key" "', argument " "9"" of type '" "uint32_t""'");
-  } 
-  arg9 = (uint32_t)(val9);
+  {
+    arg9 = (uint32_t) NUM2ULONG(argv[6]);
+  }
   result = (memcached_return)memcached_append_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
@@ -7892,10 +8421,8 @@ _wrap_memcached_cas_by_key(int argc, VALUE *argv, VALUE self) {
   int alloc2 = 0 ;
   size_t val3 ;
   int ecode3 = 0 ;
-  int val9 ;
-  int ecode9 = 0 ;
-  int val10 ;
-  int ecode10 = 0 ;
+  void *argp10 ;
+  int res10 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 8) || (argc > 8)) {
@@ -7918,11 +8445,11 @@ _wrap_memcached_cas_by_key(int argc, VALUE *argv, VALUE self) {
   arg3 = (size_t)(val3);
   {
     arg4 = STR2CSTR(argv[3]);
-    arg5 = (int) RSTRING(argv[3])->len;
+    arg5 = (size_t) RSTRING(argv[3])->len;
   }
   {
     arg6 = STR2CSTR(argv[4]);
-    arg7 = (int) RSTRING(argv[4])->len;
+    arg7 = (size_t) RSTRING(argv[4])->len;
   }
   {
     if (NIL_P(argv[5]))
@@ -7930,16 +8457,20 @@ _wrap_memcached_cas_by_key(int argc, VALUE *argv, VALUE self) {
     else
     arg8 = NUM2LONG(rb_funcall(argv[5], rb_intern("tv_sec"), 0));
   }
-  ecode9 = SWIG_AsVal_int(argv[6], &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "memcached_cas_by_key" "', argument " "9"" of type '" "uint32_t""'");
-  } 
-  arg9 = (uint32_t)(val9);
-  ecode10 = SWIG_AsVal_int(argv[7], &val10);
-  if (!SWIG_IsOK(ecode10)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode10), "in method '" "memcached_cas_by_key" "', argument " "10"" of type '" "uint64_t""'");
-  } 
-  arg10 = (uint64_t)(val10);
+  {
+    arg9 = (uint32_t) NUM2ULONG(argv[6]);
+  }
+  {
+    res10 = SWIG_ConvertPtr(argv[7], &argp10, SWIGTYPE_p_uint64_t,  0 );
+    if (!SWIG_IsOK(res10)) {
+      SWIG_exception_fail(SWIG_ArgError(res10), "in method '" "memcached_cas_by_key" "', argument " "10"" of type '" "uint64_t""'"); 
+    }  
+    if (!argp10) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_cas_by_key" "', argument " "10"" of type '" "uint64_t""'");
+    } else {
+      arg10 = *((uint64_t *)(argp10));
+    }
+  }
   result = (memcached_return)memcached_cas_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
@@ -7988,7 +8519,7 @@ _wrap_memcached_delete_by_key(int argc, VALUE *argv, VALUE self) {
   arg3 = (size_t)(val3);
   {
     arg4 = STR2CSTR(argv[3]);
-    arg5 = (int) RSTRING(argv[3])->len;
+    arg5 = (size_t) RSTRING(argv[3])->len;
   }
   {
     if (NIL_P(argv[4]))
@@ -8206,8 +8737,10 @@ static swig_type_info _swigt__p_p_char = {"_p_p_char", "char **", 0, 0, (void*)0
 static swig_type_info _swigt__p_p_f_p_struct_memcached_st_p_struct_memcached_result_st_p_void__unsigned_int = {"_p_p_f_p_struct_memcached_st_p_struct_memcached_result_st_p_void__unsigned_int", "unsigned int (**)(struct memcached_st *,struct memcached_result_st *,void *)|unsigned int (**)(memcached_st *,memcached_result_st *,void *)", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_size_t = {"_p_size_t", "size_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_time_t = {"_p_time_t", "time_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_uint16_t = {"_p_uint16_t", "uint16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_uint32_t = {"_p_uint32_t", "uint32_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_uint64_t = {"_p_uint64_t", "uint64_t *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_uint8_t = {"_p_uint8_t", "uint8_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_unsigned_int = {"_p_unsigned_int", "unsigned int *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
@@ -8230,8 +8763,10 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_p_f_p_struct_memcached_st_p_struct_memcached_result_st_p_void__unsigned_int,
   &_swigt__p_size_t,
   &_swigt__p_time_t,
+  &_swigt__p_uint16_t,
   &_swigt__p_uint32_t,
   &_swigt__p_uint64_t,
+  &_swigt__p_uint8_t,
   &_swigt__p_unsigned_int,
   &_swigt__p_void,
 };
@@ -8254,8 +8789,10 @@ static swig_cast_info _swigc__p_p_char[] = {  {&_swigt__p_p_char, 0, 0, 0},{0, 0
 static swig_cast_info _swigc__p_p_f_p_struct_memcached_st_p_struct_memcached_result_st_p_void__unsigned_int[] = {  {&_swigt__p_p_f_p_struct_memcached_st_p_struct_memcached_result_st_p_void__unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_size_t[] = {  {&_swigt__p_size_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_time_t[] = {  {&_swigt__p_time_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_uint16_t[] = {  {&_swigt__p_uint16_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_uint32_t[] = {  {&_swigt__p_uint32_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_uint64_t[] = {  {&_swigt__p_uint64_t, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_uint8_t[] = {  {&_swigt__p_uint8_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_unsigned_int[] = {  {&_swigt__p_unsigned_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 
@@ -8278,8 +8815,10 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_p_f_p_struct_memcached_st_p_struct_memcached_result_st_p_void__unsigned_int,
   _swigc__p_size_t,
   _swigc__p_time_t,
+  _swigc__p_uint16_t,
   _swigc__p_uint32_t,
   _swigc__p_uint64_t,
+  _swigc__p_uint8_t,
   _swigc__p_unsigned_int,
   _swigc__p_void,
 };
@@ -8514,6 +9053,21 @@ SWIGEXPORT void Init_libmemcached(void) {
   }
   
   SWIG_RubyInitializeTrackings();
+  rb_define_module_function(mLibmemcached, "new_memcached_returnp", _wrap_new_memcached_returnp, -1);
+  rb_define_module_function(mLibmemcached, "copy_memcached_returnp", _wrap_copy_memcached_returnp, -1);
+  rb_define_module_function(mLibmemcached, "delete_memcached_returnp", _wrap_delete_memcached_returnp, -1);
+  rb_define_module_function(mLibmemcached, "memcached_returnp_assign", _wrap_memcached_returnp_assign, -1);
+  rb_define_module_function(mLibmemcached, "memcached_returnp_value", _wrap_memcached_returnp_value, -1);
+  rb_define_module_function(mLibmemcached, "new_uint_32_tp", _wrap_new_uint_32_tp, -1);
+  rb_define_module_function(mLibmemcached, "copy_uint_32_tp", _wrap_copy_uint_32_tp, -1);
+  rb_define_module_function(mLibmemcached, "delete_uint_32_tp", _wrap_delete_uint_32_tp, -1);
+  rb_define_module_function(mLibmemcached, "uint_32_tp_assign", _wrap_uint_32_tp_assign, -1);
+  rb_define_module_function(mLibmemcached, "uint_32_tp_value", _wrap_uint_32_tp_value, -1);
+  rb_define_module_function(mLibmemcached, "new_size_tp", _wrap_new_size_tp, -1);
+  rb_define_module_function(mLibmemcached, "copy_size_tp", _wrap_copy_size_tp, -1);
+  rb_define_module_function(mLibmemcached, "delete_size_tp", _wrap_delete_size_tp, -1);
+  rb_define_module_function(mLibmemcached, "size_tp_assign", _wrap_size_tp_assign, -1);
+  rb_define_module_function(mLibmemcached, "size_tp_value", _wrap_size_tp_value, -1);
   rb_define_const(mLibmemcached, "MEMCACHED_VERSION_STRING", SWIG_From_int((int)(12)));
   rb_define_const(mLibmemcached, "MEMCACHED_DEFAULT_PORT", SWIG_From_int((int)(11211)));
   rb_define_const(mLibmemcached, "MEMCACHED_DEFAULT_COMMAND_SIZE", SWIG_From_int((int)(350)));

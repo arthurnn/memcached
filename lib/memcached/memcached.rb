@@ -33,9 +33,12 @@ class Memcached
     )
   end
   
-  def get(key, raw=false)
-    value_size, flags, return_code = Libmemcached.memcached_get(@struct, key)
-    check_return_code(return_code)
+  def get(key, raw=false, exception=false)
+#    debugger
+    value_size, flags, return_code = Libmemcached.new_size_tp, Libmemcached.new_uint_32_tp, Libmemcached.new_memcached_returnp
+    value = Libmemcached.memcached_get(@struct, key, value_size, flags, return_code)
+#    debugger
+    check_return_code(Libmemcached.memcached_returnp_value(return_code))
     value = Marshal.load(value) unless raw
     value
   end

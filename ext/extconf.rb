@@ -5,6 +5,7 @@ if `which swig` !~ /no swig/
 end
 
 require 'mkmf'
+$CFLAGS << " -ggdb -DHAVE_DEBUG"
 dir_config 'libmemcached'
 # find_header 'libmemcached/memcached.h'
 find_library 'memcached', 'memcached_server_add'

@@ -1,10 +1,7 @@
 
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-begin
-  require 'ruby-debug'
-rescue LoadError
-end
+require 'ruby-debug' if ENV['DEBUG']
 
 class ClassTest < Test::Unit::TestCase
 
@@ -54,11 +51,11 @@ class ClassTest < Test::Unit::TestCase
     end
   end
 
-#  def test_get
-#    @cache.set 'test_get', @value
-#    result = @cache.get 'test_get'
-#    assert_equal @value, result
-#  end
+  def test_get
+    @cache.set 'test_get', @value
+    result = @cache.get 'test_get'
+    assert_equal @value, result
+  end
   
 #
 #  def test_get_bad
