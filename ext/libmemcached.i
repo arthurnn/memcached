@@ -12,20 +12,9 @@
 
 %include "typemaps.i"
 
-%apply unsigned int { 
-  uint8_t, 
-  uint16_t, 
-  uint32_t
-  uint64_t, 
-  memcached_return
-};
-
-%typemap(in) (uint32_t flags) {
-  $1 = (uint32_t) NUM2ULONG($input);
-};
-%typemap(argout) uint64_t *OUTPUT {
-  $result = (uint64_t) OFFT2NUM(*$1);
-};
+%apply unsigned short { uint8_t };
+%apply unsigned int { uint16_t };
+%apply unsigned long { uint32_t flags };
 
 %typemap(in) (char *str, size_t len) {
  $1 = STR2CSTR($input);
@@ -41,7 +30,7 @@
 %apply unsigned int *OUTPUT {memcached_return *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}
-%apply uint64_t *OUTPUT {uint64_t *value}
+%apply unsigned long long *OUTPUT {uint64_t *value}
 
 %include "libmemcached.h"
 
