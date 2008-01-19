@@ -68,7 +68,7 @@ class ClassTest < Test::Unit::TestCase
       @cache.instance_variable_get("@struct"), 
       'test_get'
     ).first
-    assert_not_equal result.size, non_wrapped_result.size      
+    assert result.size > non_wrapped_result.size      
   end  
 
   def test_get_invalid_key
