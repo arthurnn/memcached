@@ -14,7 +14,7 @@ class ClassTest < Test::Unit::TestCase
       :namespace => 'test'
     )
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
-    @unmarshalled_value = Marshal.dump(@value)
+    @marshalled_value = Marshal.dump(@value)
   end
 
   def test_initialize
@@ -90,7 +90,7 @@ class ClassTest < Test::Unit::TestCase
   def test_set_and_get_unmarshalled
     @cache.set 'test_set_and_get_unmarshalled', @value
     result = @cache.get 'test_set_and_get_unmarshalled', false
-    assert_equal @unmarshalled_value, result
+    assert_equal @marshalled_value, result
   end
 
   def test_set
@@ -152,7 +152,7 @@ class ClassTest < Test::Unit::TestCase
 
   def test_unmarshalled_add
     @cache.delete 'test_unmarshalled_add' rescue nil
-    @cache.add 'test_unmarshalled_add', @value, 0, false
+    @cache.add 'test_unmarshalled_add', @marshalled_value, 0, false
   end
 
   def test_increment
