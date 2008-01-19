@@ -1,7 +1,7 @@
 
 if `which swig` !~ /no swig/
   puts "running SWIG"
-  $stdout.write `swig -I/opt/local/include -ruby memcached.i`
+  $stdout.write `swig -I/opt/local/include -ruby -autorename memcached.i`
 end
 
 require 'mkmf'

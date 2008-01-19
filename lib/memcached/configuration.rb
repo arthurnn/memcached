@@ -1,0 +1,4 @@
+
+class Memcached::Configuration
+
+end

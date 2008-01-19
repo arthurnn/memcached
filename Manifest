@@ -1,0 +1,11 @@
+CHANGELOG
+examples/libmemcached.xs
+ext/extconf.rb
+ext/memcached.h
+ext/memcached.i
+ext/memcached_wrap.c
+lib/memcached/configuration.rb
+lib/memcached.rb
+test/unit/binding_test.rb
+test/unit/class_test.rb
+Manifest
