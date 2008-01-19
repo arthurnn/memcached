@@ -37,7 +37,6 @@ class Memcached
   def get(key, raw=false, exception=false)
     raise ClientError, "Invalid key" if key =~ /\s/ # XXX Server doesn't validate. Possibly a performance problem.
     value, flags, return_code = Libmemcached.memcached_get_ruby_string(@struct, key)
-    STDERR.puts [value, flags, return_code].inspect
     check_return_code(return_code)
     value = Marshal.load(value) unless raw
     value
