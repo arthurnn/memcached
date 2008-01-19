@@ -52,6 +52,8 @@
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
+  // SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because of the
+  // retval/argout split, which means it truncates values with \0 in them.
   char* svalue;
   size_t* value_length;
   svalue = memcached_get(ptr, key, key_length, value_length, flags, error);
