@@ -8,3 +8,8 @@ require 'ostruct'
 
 class GenericClass
 end
+
+class Memcached
+  class StubError < Error
+  end
+end

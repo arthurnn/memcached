@@ -119,9 +119,9 @@ class ClassTest < Test::Unit::TestCase
   def test_delete
     @cache.set 'test_delete', @value
     @cache.delete 'test_delete'
-    assert_raise(Memcached::Notfound) do
+#    assert_raise(Memcached::Notfound) do
       @cache.get 'test_delete'
-    end
+#    end
   end  
 
   def test_successful_add
@@ -158,9 +158,9 @@ class ClassTest < Test::Unit::TestCase
 
   def test_missing_increment
     @cache.delete 'test_missing_increment' rescue nil
-#    assert_raise do
+    assert_raise(Memcached::StubError) do
       @cache.increment 'test_missing_increment'
-#    end
+    end
   end
 
   def test_decrement
@@ -170,9 +170,9 @@ class ClassTest < Test::Unit::TestCase
 
   def test_missing_decrement
     @cache.delete 'test_missing_decrement' rescue nil
-#    assert_raise do
+    assert_raise(Memcached::StubError) do
       @cache.decrement 'test_missing_decrement'
-#    end
+    end
   end
   
   def test_replace
