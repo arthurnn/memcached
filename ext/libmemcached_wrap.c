@@ -6247,8 +6247,8 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp4 ;
-  int res4 = 0 ;
+  unsigned long val4 ;
+  int ecode4 = 0 ;
   uint64_t temp5 ;
   int res5 = SWIG_TMPOBJ ;
   VALUE vresult = Qnil;
@@ -6266,17 +6266,11 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
     arg2 = STR2CSTR(argv[1]);
     arg3 = (size_t) RSTRING(argv[1])->len;
   }
-  {
-    res4 = SWIG_ConvertPtr(argv[2], &argp4, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_increment" "', argument " "4"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp4) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_increment" "', argument " "4"" of type '" "uint32_t""'");
-    } else {
-      arg4 = *((uint32_t *)(argp4));
-    }
-  }
+  ecode4 = SWIG_AsVal_unsigned_SS_long(argv[2], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "memcached_increment" "', argument " "4"" of type '" "uint32_t""'");
+  } 
+  arg4 = (uint32_t)(val4);
   result = (memcached_return)memcached_increment(arg1,arg2,arg3,arg4,arg5);
   vresult = SWIG_From_int((int)(result));
   if (SWIG_IsTmpObj(res5)) {
@@ -6301,8 +6295,8 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
   memcached_return result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp4 ;
-  int res4 = 0 ;
+  unsigned long val4 ;
+  int ecode4 = 0 ;
   uint64_t temp5 ;
   int res5 = SWIG_TMPOBJ ;
   VALUE vresult = Qnil;
@@ -6320,17 +6314,11 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
     arg2 = STR2CSTR(argv[1]);
     arg3 = (size_t) RSTRING(argv[1])->len;
   }
-  {
-    res4 = SWIG_ConvertPtr(argv[2], &argp4, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_decrement" "', argument " "4"" of type '" "uint32_t""'"); 
-    }  
-    if (!argp4) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_decrement" "', argument " "4"" of type '" "uint32_t""'");
-    } else {
-      arg4 = *((uint32_t *)(argp4));
-    }
-  }
+  ecode4 = SWIG_AsVal_unsigned_SS_long(argv[2], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "memcached_decrement" "', argument " "4"" of type '" "uint32_t""'");
+  } 
+  arg4 = (uint32_t)(val4);
   result = (memcached_return)memcached_decrement(arg1,arg2,arg3,arg4,arg5);
   vresult = SWIG_From_int((int)(result));
   if (SWIG_IsTmpObj(res5)) {
