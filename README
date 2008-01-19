@@ -11,6 +11,10 @@ The public certificate for the gem is here[http://rubyforge.org/frs/download.php
 
 If you like this software, please {make a donation}[http://blog.evanweaver.com/donate/], or {recommend Evan}[http://www.workingwithrails.com/person/7739-evan-weaver] at Working with Rails.
 
+== Status
+
+Not yet production-ready.
+
 == Features
 
 * access to the complete memcached API
