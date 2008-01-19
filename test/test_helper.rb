@@ -5,3 +5,6 @@ require 'memcached'
 require 'rubygems'
 require 'test/unit'
 require 'ostruct'
+
+class GenericClass
+end

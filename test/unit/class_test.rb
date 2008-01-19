@@ -3,9 +3,6 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 
 require 'ruby-debug' if ENV['DEBUG']
 
-class GenericClass
-end
-
 class ClassTest < Test::Unit::TestCase
 
   def setup
