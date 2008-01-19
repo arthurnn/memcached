@@ -64,6 +64,18 @@ class Memcached
   alias :incr :increment
   alias :decr :decrement
   
+  def replace
+  end
+  
+  def append
+  end
+  
+  def prepend
+  end
+  
+  def cas
+  end
+  
   def stats
   end  
   

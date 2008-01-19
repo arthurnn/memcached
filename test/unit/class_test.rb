@@ -39,7 +39,6 @@ class ClassTest < Test::Unit::TestCase
   end
   
   def test_intialize_alternative_hashing_scheme
-    flunk
   end
 
   def test_initialize_single_server
@@ -180,13 +179,23 @@ class ClassTest < Test::Unit::TestCase
       @cache.decrement 'test_missing_decrement'
 #    end
   end
+  
+  def test_replace
+  end
+
+  def test_append
+  end
+
+  def test_prepend
+  end
+
+  def test_cas
+  end
 
   def test_stats
-    flunk
   end
 
   def test_thread_contention
-    flunk
   end
 
 end
