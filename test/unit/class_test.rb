@@ -4,144 +4,31 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class ClassTest < Test::Unit::TestCase
 
   def setup
-    @cache = Memcached.new 'localhost:11211', :namespace => 'my_namespace'
-  end
-
-  def test_cache_get
-    server = util_setup_fake_server
-
-    assert_equal "\004\b\"\0170123456789",
-                 @cache.cache_get(server, 'my_namespace:key')
-
-    assert_equal "get my_namespace:key\r\n",
-                 server.socket.written.string
-  end
-
-  def test_cache_get_EOF
-    server = util_setup_fake_server
-    server.socket.data.string = ''
-
-    e = assert_raise Memcached::MemcachedError do
-      @cache.cache_get server, 'my_namespace:key'
-    end
-
-    assert_equal "lost connection to example.com:11211", e.message
-  end
-
-  def test_cache_get_bad_state
-    server = FakeServer.new
-    server.socket.data.write "bogus response\r\n"
-    server.socket.data.rewind
-
-    @cache.servers = []
-    @cache.servers << server
-
-    e = assert_raise Memcached::MemcachedError do
-      @cache.cache_get(server, 'my_namespace:key')
-    end
-
-    assert_equal "unexpected response \"bogus response\\r\\n\"", e.message
-
-    deny server.alive?
-
-    assert_equal "get my_namespace:key\r\n",
-                 server.socket.written.string
-  end
-
-  def test_cache_get_miss
-    socket = FakeSocket.new
-    socket.data.write "END\r\n"
-    socket.data.rewind
-    server = FakeServer.new socket
-
-    assert_equal nil, @cache.cache_get(server, 'my_namespace:key')
-
-    assert_equal "get my_namespace:key\r\n",
-                 socket.written.string
-  end
-
-  def test_cache_get_multi
-    server = util_setup_fake_server
-    server.socket.data.write "VALUE foo 0 7\r\n"
-    server.socket.data.write "\004\b\"\bfoo\r\n"
-    server.socket.data.write "VALUE bar 0 7\r\n"
-    server.socket.data.write "\004\b\"\bbar\r\n"
-    server.socket.data.write "END\r\n"
-    server.socket.data.rewind
-
-    result = @cache.cache_get_multi server, 'foo bar baz'
-
-    assert_equal 2, result.length
-    assert_equal "\004\b\"\bfoo", result['foo']
-    assert_equal "\004\b\"\bbar", result['bar']
-  end
-
-  def test_cache_get_multi_EOF
-    server = util_setup_fake_server
-    server.socket.data.string = ''
-
-    e = assert_raise Memcached::MemcachedError do
-      @cache.cache_get_multi server, 'my_namespace:key'
-    end
-
-    assert_equal "lost connection to example.com:11211", e.message
-  end
-
-  def test_cache_get_multi_bad_state
-    server = FakeServer.new
-    server.socket.data.write "bogus response\r\n"
-    server.socket.data.rewind
-
-    @cache.servers = []
-    @cache.servers << server
-
-    e = assert_raise Memcached::MemcachedError do
-      @cache.cache_get_multi server, 'my_namespace:key'
-    end
-
-    assert_equal "unexpected response \"bogus response\\r\\n\"", e.message
-
-    deny server.alive?
-
-    assert_equal "get my_namespace:key\r\n",
-                 server.socket.written.string
-  end
-
-  def test_crc32_ITU_T
-    assert_equal 0, ''.crc32_ITU_T
-    assert_equal 1260851911, 'my_namespace:key'.crc32_ITU_T
-  end
-
-  def test_initialize
-    cache = Memcached.new :namespace => 'my_namespace', :readonly => true
-
-    assert_equal 'my_namespace', cache.namespace
-    assert_equal true, cache.readonly?
-    assert_equal true, cache.servers.empty?
+    @cache = Memcached.new(
+      ['localhost:43042', '127.0.0.1:43043'], 
+      :namespace => 'test'
+    )
   end
 
   def test_initialize_compatible
-    cache = Memcached.new ['localhost:11211', 'localhost:11212'],
-            :namespace => 'my_namespace', :readonly => true
+    cache = Memcached.new ['localhost:43042', '127.0.0.1:43043'],
+     :namespace => 'test'
 
-    assert_equal 'my_namespace', cache.namespace
-    assert_equal true, cache.readonly?
+    assert_equal 'test', cache.namespace
     assert_equal false, cache.servers.empty?
   end
 
   def test_initialize_compatible_no_hash
-    cache = Memcached.new ['localhost:11211', 'localhost:11212']
+    cache = Memcached.new ['localhost:43042', '127.0.0.1:43043']
 
     assert_equal nil, cache.namespace
-    assert_equal false, cache.readonly?
     assert_equal false, cache.servers.empty?
   end
 
   def test_initialize_compatible_one_server
-    cache = Memcached.new 'localhost:11211'
+    cache = Memcached.new 'localhost:43042'
 
     assert_equal nil, cache.namespace
-    assert_equal false, cache.readonly?
     assert_equal false, cache.servers.empty?
   end
 
@@ -151,16 +38,6 @@ class ClassTest < Test::Unit::TestCase
     end
 
     assert_equal 'first argument must be Array, Hash or String', e.message
-  end
-
-  def test_initialize_multiple_servers
-    cache = Memcached.new %w[localhost:11211 localhost:11212],
-                         :namespace => 'my_namespace', :readonly => true
-
-    assert_equal 'my_namespace', cache.namespace
-    assert_equal true, cache.readonly?
-    assert_equal false, cache.servers.empty?
-    deny_empty cache.instance_variable_get(:@buckets)
   end
 
   def test_initialize_too_many_args
@@ -179,7 +56,7 @@ class ClassTest < Test::Unit::TestCase
 
     value = @cache.decr 'key'
 
-    assert_equal "decr my_namespace:key 1\r\n",
+    assert_equal "decr test:key 1\r\n",
                  @cache.servers.first.socket.written.string
 
     assert_equal 5, value
@@ -195,7 +72,7 @@ class ClassTest < Test::Unit::TestCase
 
     value = @cache.decr 'key'
 
-    assert_equal "decr my_namespace:key 1\r\n",
+    assert_equal "decr test:key 1\r\n",
                  @cache.servers.first.socket.written.string
 
     assert_equal nil, value
@@ -211,7 +88,7 @@ class ClassTest < Test::Unit::TestCase
 
     value = @cache.decr 'key'
 
-    assert_equal "decr my_namespace:key 1\r\n",
+    assert_equal "decr test:key 1\r\n",
                  @cache.servers.first.socket.written.string
 
     assert_equal 5, value
@@ -222,7 +99,7 @@ class ClassTest < Test::Unit::TestCase
 
     value = @cache.get 'key'
 
-    assert_equal "get my_namespace:key\r\n",
+    assert_equal "get test:key\r\n",
                  @cache.servers.first.socket.written.string
 
     assert_equal '0123456789', value
@@ -245,7 +122,7 @@ class ClassTest < Test::Unit::TestCase
     @cache.servers << server
 
     e = assert_raise Memcached::MemcachedError do
-      @cache.get 'my_namespace:key'
+      @cache.get 'test:key'
     end
 
     assert_equal 'some io error', e.message
@@ -260,7 +137,7 @@ class ClassTest < Test::Unit::TestCase
     @cache.servers << server
 
     e = assert_raise Memcached::MemcachedError do
-      @cache.get 'my_namespace:key'
+      @cache.get 'test:key'
     end
 
     assert_equal 'unknown error - some syscall error', e.message
@@ -286,9 +163,9 @@ class ClassTest < Test::Unit::TestCase
 
   def test_get_multi
     server = FakeServer.new
-    server.socket.data.write "VALUE my_namespace:key 0 14\r\n"
+    server.socket.data.write "VALUE test:key 0 14\r\n"
     server.socket.data.write "\004\b\"\0170123456789\r\n"
-    server.socket.data.write "VALUE my_namespace:keyb 0 14\r\n"
+    server.socket.data.write "VALUE test:keyb 0 14\r\n"
     server.socket.data.write "\004\b\"\0179876543210\r\n"
     server.socket.data.write "END\r\n"
     server.socket.data.rewind
@@ -298,7 +175,7 @@ class ClassTest < Test::Unit::TestCase
 
     values = @cache.get_multi 'key', 'keyb'
 
-    assert_equal "get my_namespace:key my_namespace:keyb\r\n",
+    assert_equal "get test:key test:keyb\r\n",
                  server.socket.written.string
 
     expected = { 'key' => '0123456789', 'keyb' => '9876543210' }
@@ -308,7 +185,7 @@ class ClassTest < Test::Unit::TestCase
 
   def test_get_raw
     server = FakeServer.new
-    server.socket.data.write "VALUE my_namespace:key 0 10\r\n"
+    server.socket.data.write "VALUE test:key 0 10\r\n"
     server.socket.data.write "0123456789\r\n"
     server.socket.data.write "END\r\n"
     server.socket.data.rewind
@@ -319,7 +196,7 @@ class ClassTest < Test::Unit::TestCase
 
     value = @cache.get 'key', true
 
-    assert_equal "get my_namespace:key\r\n",
+    assert_equal "get test:key\r\n",
                  @cache.servers.first.socket.written.string
 
     assert_equal '0123456789', value
@@ -379,7 +256,7 @@ class ClassTest < Test::Unit::TestCase
 
     value = @cache.incr 'key'
 
-    assert_equal "incr my_namespace:key 1\r\n",
+    assert_equal "incr test:key 1\r\n",
                  @cache.servers.first.socket.written.string
 
     assert_equal 5, value
@@ -395,7 +272,7 @@ class ClassTest < Test::Unit::TestCase
 
     value = @cache.incr 'key'
 
-    assert_equal "incr my_namespace:key 1\r\n",
+    assert_equal "incr test:key 1\r\n",
                  @cache.servers.first.socket.written.string
 
     assert_equal nil, value
@@ -411,14 +288,14 @@ class ClassTest < Test::Unit::TestCase
 
     value = @cache.incr 'key'
 
-    assert_equal "incr my_namespace:key 1\r\n",
+    assert_equal "incr test:key 1\r\n",
                  @cache.servers.first.socket.written.string
 
     assert_equal 5, value
   end
 
   def test_make_cache_key
-    assert_equal 'my_namespace:key', @cache.make_cache_key('key')
+    assert_equal 'test:key', @cache.make_cache_key('key')
     @cache.namespace = nil
     assert_equal 'key', @cache.make_cache_key('key')
   end
@@ -447,7 +324,7 @@ class ClassTest < Test::Unit::TestCase
 
     @cache.set 'key', 'value'
 
-    expected = "set my_namespace:key 0 0 9\r\n\004\b\"\nvalue\r\n"
+    expected = "set test:key 0 0 9\r\n\004\b\"\nvalue\r\n"
     assert_equal expected, server.socket.written.string
   end
 
@@ -460,7 +337,7 @@ class ClassTest < Test::Unit::TestCase
 
     @cache.set 'key', 'value', 5
 
-    expected = "set my_namespace:key 0 5 9\r\n\004\b\"\nvalue\r\n"
+    expected = "set test:key 0 5 9\r\n\004\b\"\nvalue\r\n"
     assert_equal expected, server.socket.written.string
   end
 
@@ -473,18 +350,8 @@ class ClassTest < Test::Unit::TestCase
 
     @cache.set 'key', 'value', 0, true
 
-    expected = "set my_namespace:key 0 0 5\r\nvalue\r\n"
+    expected = "set test:key 0 0 5\r\nvalue\r\n"
     assert_equal expected, server.socket.written.string
-  end
-
-  def test_set_readonly
-    cache = Memcached.new :readonly => true
-
-    e = assert_raise Memcached::MemcachedError do
-      cache.set 'key', 'value'
-    end
-
-    assert_equal 'Update of readonly cache', e.message
   end
 
   def test_set_too_big
@@ -510,7 +377,7 @@ class ClassTest < Test::Unit::TestCase
 
     @cache.add 'key', 'value'
 
-    expected = "add my_namespace:key 0 0 9\r\n\004\b\"\nvalue\r\n"
+    expected = "add test:key 0 0 9\r\n\004\b\"\nvalue\r\n"
     assert_equal expected, server.socket.written.string
   end
 
@@ -523,7 +390,7 @@ class ClassTest < Test::Unit::TestCase
 
     @cache.add 'key', 'value'
 
-    expected = "add my_namespace:key 0 0 9\r\n\004\b\"\nvalue\r\n"
+    expected = "add test:key 0 0 9\r\n\004\b\"\nvalue\r\n"
     assert_equal expected, server.socket.written.string
   end
 
@@ -536,7 +403,7 @@ class ClassTest < Test::Unit::TestCase
 
     @cache.add 'key', 'value', 5
 
-    expected = "add my_namespace:key 0 5 9\r\n\004\b\"\nvalue\r\n"
+    expected = "add test:key 0 5 9\r\n\004\b\"\nvalue\r\n"
     assert_equal expected, server.socket.written.string
   end
 
@@ -549,18 +416,8 @@ class ClassTest < Test::Unit::TestCase
 
     @cache.add 'key', 'value', 0, true
 
-    expected = "add my_namespace:key 0 0 5\r\nvalue\r\n"
+    expected = "add test:key 0 0 5\r\nvalue\r\n"
     assert_equal expected, server.socket.written.string
-  end
-
-  def test_add_readonly
-    cache = Memcached.new :readonly => true
-
-    e = assert_raise Memcached::MemcachedError do
-      cache.add 'key', 'value'
-    end
-
-    assert_equal 'Update of readonly cache', e.message
   end
 
   def test_delete
@@ -570,7 +427,7 @@ class ClassTest < Test::Unit::TestCase
     
     @cache.delete 'key'
     
-    expected = "delete my_namespace:key 0\r\n"
+    expected = "delete test:key 0\r\n"
     assert_equal expected, server.socket.written.string
   end
 
@@ -581,7 +438,7 @@ class ClassTest < Test::Unit::TestCase
     
     @cache.delete 'key', 300
     
-    expected = "delete my_namespace:key 300\r\n"
+    expected = "delete test:key 300\r\n"
     assert_equal expected, server.socket.written.string
   end
 
@@ -639,8 +496,7 @@ class ClassTest < Test::Unit::TestCase
 
   def test_basic_threaded_operations_should_work
     cache = Memcached.new :multithread => true,
-                         :namespace => 'my_namespace',
-                         :readonly => false
+                         :namespace => 'test'
     server = util_setup_server cache, 'example.com', "OK\r\n"
     cache.instance_variable_set :@servers, [server]
 
@@ -651,37 +507,13 @@ class ClassTest < Test::Unit::TestCase
 
   def test_basic_unthreaded_operations_should_work
     cache = Memcached.new :multithread => false,
-                         :namespace => 'my_namespace',
-                         :readonly => false
+                         :namespace => 'test'
     server = util_setup_server cache, 'example.com', "OK\r\n"
     cache.instance_variable_set :@servers, [server]
 
     assert_nothing_raised do
       cache.set "test", "test value"
     end
-  end
-
-  def util_setup_fake_server
-    server = FakeServer.new
-    server.socket.data.write "VALUE my_namespace:key 0 14\r\n"
-    server.socket.data.write "\004\b\"\0170123456789\r\n"
-    server.socket.data.write "END\r\n"
-    server.socket.data.rewind
-
-    @cache.servers = []
-    @cache.servers << server
-
-    return server
-  end
-
-  def util_setup_server(memcache, host, responses)
-    server = Memcached::Server.new memcache, host
-    server.instance_variable_set :@sock, StringIO.new(responses)
-
-    @cache.servers = []
-    @cache.servers << server
-
-    return server
   end
 
 end
