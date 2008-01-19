@@ -3,7 +3,6 @@
 #include <libmemcached/memcached.h>
 %}
 
-
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_st;
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_server_st;
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_stat_st;
@@ -12,6 +11,7 @@
 
 %include "typemaps.i"
 
+// Input maps
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags };
@@ -26,6 +26,7 @@
   (char *value, size_t value_length)
 };
 
+// Output maps
 %apply unsigned short *OUTPUT {memcached_return *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}
@@ -33,6 +34,7 @@
 
 %include "libmemcached.h"
 
+// Manual wrappers
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
