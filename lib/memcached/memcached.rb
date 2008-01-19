@@ -1,13 +1,17 @@
 
 class Memcached
 
+  FLAGS = 0x0
+
   attr_reader :namespace
 
   def initialize(servers, opts = {})
     @struct = Libmemcached::MemcachedSt.new
 
     Array(servers).each do |server|
-      raise ArgumentError, "Servers must be Strings" unless server.is_a? String
+      unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
+        raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
+      end
       host, port = server.split(":")
       Libmemcached.memcached_server_add(@struct, host, port.to_i)
     end  
@@ -15,12 +19,49 @@ class Memcached
   end
   
   def servers
-    (0...@struct.hosts.count).inject([]) do |servers, i|
-      server = Libmemcached.memcached_select_server_at(@struct, i)
-      servers << "#{server.hostname}:#{server.port}"
+    servers = []
+    @struct.hosts.count.times do |i|
+      servers << Libmemcached.memcached_select_server_at(@struct, i)
     end
+    servers
   end
   
+  def set(key, value, timeout=0, raw=false)
+    value = Marshal.dump(value) unless raw
+    check_return_code(
+      Libmemcached.memcached_set(@struct, key, value, timeout, FLAGS)
+    )
+  end
+  
+  def get(key, raw=false)
+    value_size, flags, return_code = Libmemcached.memcached_get(@struct, key)
+    check_return_code(return_code)
+    value = Marshal.load(value) unless raw
+    value
+  end
+  
+  def add
+  end
+  
+  def incr
+  end
+  
+  def decr
+  end
+  
+  alias :increment :incr
+  alias :decrement :decr
+  
+  def stats
+  end  
+  
+  private
+  
+  def check_return_code(int)
+    return true if int == 0
+    raise @@exceptions[int]
+  end  
+    
 end
 
 #>> pp Libmemcached.constants.grep /cache/
