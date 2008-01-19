@@ -48,7 +48,11 @@ class Memcached
     )  
   end
   
-  def add
+  def add(key, value, timeout=0, marshal=true)
+    value = Marshal.dump(value) if marshal
+    check_return_code(
+      Libmemcached.memcached_add(@struct, key, value, timeout, FLAGS)
+    )
   end
   
   def increment
