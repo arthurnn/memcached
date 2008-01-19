@@ -10,7 +10,7 @@ class ClassTest < Test::Unit::TestCase
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
       :namespace => 'test'
     )
-    @value = "3" # OpenStruct.new(:a => 1, :b => 2, :c => Object.new)
+    @value = OpenStruct.new(:a => 1, :b => 2, :c => Object.new)
     @raw_value = Marshal.dump(@value)
   end
 
@@ -52,16 +52,16 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_get
-    @cache.set 'test_get', @value, 0, true
-    result = @cache.get 'test_get', true
+    @cache.set 'test_get', @value, 0
+    result = @cache.get 'test_get'
     assert_equal @value, result
   end
   
-#
-#  def test_get_bad
-#    assert_raise ArgumentError { @cache.get "I'm so bad" }
-#    assert_raise ArgumentError { @cache.get('key' * 100) }
-#  end
+
+  def test_get_invalid_key
+    assert_raise(Memcached::ClientError) { @cache.get('key' * 100) }
+    assert_raise(Memcached::ClientError) { @cache.get "I'm so bad" }
+  end
 #
 #  def test_get_no_connection
 #    @cache.servers = 'localhost:1'
@@ -97,6 +97,13 @@ class ClassTest < Test::Unit::TestCase
   def test_set
     assert_equal true, @cache.set('test_set', @value)
   end
+  
+  def test_set_invalid_key
+    assert_raise(Memcached::ClientError) do
+      @cache.set "I'm so bad", @value
+    end
+  end
+  
 #
 #  def test_set_expiry
 #  end

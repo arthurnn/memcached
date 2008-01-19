@@ -3,6 +3,7 @@
 #include <libmemcached/memcached.h>
 %}
 
+
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_st;
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_server_st;
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_stat_st;
@@ -33,14 +34,17 @@
   (char* value, size_t value_length)
 };
 
-//%apply size_t* INPUT {size_t* key_length}
-//%apply uint64_t* INOUT {uint64_t* value}
-//%apply void* OUTPUT {void* data}
-//%apply unsigned int* OUTPUT {memcached_return* error}
-//%apply unsigned int* OUTPUT {uint32_t* flags}
+%typemap(argout) (char *INOUT, size_t *INOUT) = char *OUTPUT {
+  $result = rb_str_new($1, *$2);
+};
+%apply (char *, size_t *) {
+    (char* value, size_t *value_length)
+};
+
+%apply unsigned int* OUTPUT {memcached_return* error}
+%apply unsigned int* OUTPUT {uint32_t* flags}
+//%apply char* OUTPUT {char* value}
 //%apply size_t* OUTPUT {size_t* value_length}
-//%apply memcached_st* INPUT {memcached_st* in_ptr}
-//%apply memcached_st* OUTPUT {memcached_st* out_ptr}
 
 %include "cpointer.i"
 %pointer_functions(memcached_return, memcached_returnp);
@@ -52,6 +56,13 @@
 //                    memcached_return *error
 
 %include "libmemcached.h"
+
+void memcached_get_string_by_length(memcached_st *ptr, char *key, size_t key_length, char *value, size_t *value_length, uint32_t *flags, memcached_return *error);
+%{
+void memcached_get_string_by_length(memcached_st *ptr, char *key, size_t key_length, char *value, size_t *value_length, uint32_t *flags, memcached_return *error) {
+  value = memcached_get(ptr, key, key_length, value_length, flags, error);
+};
+%}
 
 memcached_server_st* memcached_select_server_at(memcached_st* in_ptr, int index);
 %{

@@ -35,11 +35,10 @@ class Memcached
   end
   
   def get(key, raw=false, exception=false)
-#    debugger
-    value_size, flags, return_code = Libmemcached.new_size_tp, Libmemcached.new_uint_32_tp, Libmemcached.new_memcached_returnp
-    value = Libmemcached.memcached_get(@struct, key, value_size, flags, return_code)
-#    debugger
-    check_return_code(Libmemcached.memcached_returnp_value(return_code))
+    raise ClientError, "Invalid key" if key =~ /\s/ # XXX Server doesn't validate. Possibly a performance problem.
+    value, size, flags, return_code = Libmemcached.memcached_get_string_by_length(@struct, key)
+    # value, size, flags, return_code = response[-4], response[-3], response[-2], response[-1]
+    check_return_code(return_code)
     value = Marshal.load(value) unless raw
     value
   end
