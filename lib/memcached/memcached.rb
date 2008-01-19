@@ -55,7 +55,10 @@ class Memcached
     )
   end
   
-  def increment
+  def increment(key, offset=1)
+    return_code, value = Libmemcached.memcached_increment(@struct, key, offset)
+    check_return_code(return_code)
+    value
   end
   
   def decrement
