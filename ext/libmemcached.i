@@ -11,30 +11,23 @@
 
 %include "typemaps.i"
 
-//%apply unsigned int { 
-////  uint8_t, 
-////  uint16_t, 
-////  uint32_t
-////  uint64_t, 
-////  memcached_return
-//};
+%apply unsigned int { 
+  uint8_t, 
+  uint16_t, 
+  uint32_t
+  uint64_t, 
+  memcached_return
+};
 
-%typemap(in) (uint8_t flags) {
-  $1 = (uint8_t) NUM2UINT($input);
-};
-%typemap(in) (uint16_t flags) {
-  $1 = (uint16_t) NUM2UINT($input);
-};
 %typemap(in) (uint32_t flags) {
   $1 = (uint32_t) NUM2ULONG($input);
 };
-%typemap(in) (uint64_t flags) {
-  $1 = (uint64_t) NUM2OFFT($input);
-};
+
 %typemap(in) (char *str, size_t len) {
  $1 = STR2CSTR($input);
  $2 = (size_t) RSTRING($input)->len;
 };
+
 %apply (char* str, size_t len) {
   (char* key, size_t key_length), 
   (char* value, size_t value_length)

@@ -53,7 +53,6 @@ class ClassTest < Test::Unit::TestCase
 
   def test_get
     @cache.set 'test_get', @value, 0, true
-    debugger
     result = @cache.get 'test_get', true
     assert_equal @value, result
   end
