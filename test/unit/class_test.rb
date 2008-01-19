@@ -129,17 +129,17 @@ class ClassTest < Test::Unit::TestCase
   end  
 
   def test_successful_add
-    @cache.delete 'test_successful_add'
+    @cache.delete 'test_successful_add' rescue nil
     @cache.add 'test_successful_add', @value
   end
 
   def test_failing_add
-    @cache.delete 'test_failing_add'
+    @cache.delete 'test_failing_add' rescue nil
     @cache.add 'test_failing_add', @value
   end
 
   def test_add_expiry
-    @cache.delete 'test_add_expiry'
+    @cache.delete 'test_add_expiry' rescue nil
     @cache.set 'test_add_expiry', @value, 1
     assert_nothing_raised do
       @cache.get 'test_add_expiry'
@@ -151,31 +151,31 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_unmarshalled_add
-    @cache.delete 'test_unmarshalled_add'  
+    @cache.delete 'test_unmarshalled_add' rescue nil
     @cache.add 'test_unmarshalled_add', @value, 0, false
   end
 
   def test_increment
-    @cache.delete 'test_increment'
+    @cache.delete 'test_increment' rescue nil
     @cache.increment 'test_increment', 10
     assert_equal 11, @cache.increment('test_increment')
   end
 
   def test_missing_increment
-    @cache.delete 'test_missing_increment'
+    @cache.delete 'test_missing_increment' rescue nil
 #    assert_raise do
       @cache.increment 'test_missing_increment'
 #    end
   end
 
   def test_decrement
-    @cache.delete 'test_decrement'
+    @cache.delete 'test_decrement' rescue nil
     @cache.decrement 'test_decrement', 10
     assert_equal 9, @cache.decrement('test_decrement')
   end
 
   def test_missing_decrement
-    @cache.delete 'test_missing_decrement'
+    @cache.delete 'test_missing_decrement' rescue nil
 #    assert_raise do
       @cache.decrement 'test_missing_decrement'
 #    end

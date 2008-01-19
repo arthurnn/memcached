@@ -27,32 +27,38 @@ class Memcached
     servers
   end
   
-  def set(key, value, timeout=0, raw=false)
-    value = Marshal.dump(value) unless raw
+  def set(key, value, timeout=0, marshal=true)
+    value = Marshal.dump(value) if marshal
     check_return_code(
       Libmemcached.memcached_set(@struct, key, value, timeout, FLAGS)
     )
   end
   
-  def get(key, raw=false, exception=false)
+  def get(key, marshal=true)
     raise ClientError, "Invalid key" if key =~ /\s/ # XXX Server doesn't validate. Possibly a performance problem.
     value, flags, return_code = Libmemcached.memcached_get_ruby_string(@struct, key)
     check_return_code(return_code)
-    value = Marshal.load(value) unless raw
+    value = Marshal.load(value) if marshal
     value
+  end
+  
+  def delete(key, timeout=0)
+    check_return_code(
+      Libmemcached.memcached_delete(@struct, key, timeout)
+    )  
   end
   
   def add
   end
   
-  def incr
+  def increment
   end
   
-  def decr
+  def decrement
   end
   
-  alias :increment :incr
-  alias :decrement :decr
+  alias :incr :increment
+  alias :decr :decrement
   
   def stats
   end  
