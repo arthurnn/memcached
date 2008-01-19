@@ -11,17 +11,21 @@
 
 %include "typemaps.i"
 
-%apply char* INPUT {char* value, char* key, char* hostname, char* socket}
-%apply char** INPUT {char** keys}
-%apply size_t* INPUT {size_t* key_length}
-
-%apply uint64_t* INOUT {uint64_t* value}
-
-%apply void* OUTPUT {void* data}
-%apply size_t* OUTPUT {size_t* value_length}
-// %apply memcached_st* INPUT {memcached_st* in_ptr}
-// %apply memcached_st* OUTPUT {memcached_st* out_ptr}
+%apply int { uint8_t, uint16_t, uint32_t, uint64_t }
+//%apply size_t* INPUT {size_t* key_length}
+//%apply uint64_t* INOUT {uint64_t* value}
+//%apply void* OUTPUT {void* data}
+//%apply size_t* OUTPUT {size_t* value_length}
+//%apply memcached_st* INPUT {memcached_st* in_ptr}
+//%apply memcached_st* OUTPUT {memcached_st* out_ptr}
 
 // %include "cpointer.i"
 
 %include "libmemcached.h"
+
+memcached_server_st* memcached_select_server_at(memcached_st* in_ptr, int index);
+%{
+memcached_server_st* memcached_select_server_at(memcached_st* in_ptr, int index) {
+  return &(in_ptr->hosts[index]);
+};
+%}
