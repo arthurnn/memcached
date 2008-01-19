@@ -1540,10 +1540,10 @@ static swig_module_info swig_module = {swig_types, 24, 0, 0, 0, 0};
 
 /* -------- TYPES TABLE (END) -------- */
 
-#define SWIG_init    Init_memcached
-#define SWIG_name    "Memcached"
+#define SWIG_init    Init_libmemcached
+#define SWIG_name    "Libmemcached"
 
-static VALUE mMemcached;
+static VALUE mLibmemcached;
 
 #define SWIGVERSION 0x010329 
 
@@ -1896,10 +1896,10 @@ SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
   return ULL2NUM(value);
 }
 
-swig_class cMemcached_server_st;
+swig_class cMemcachedServerSt;
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_hostname_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_hostname_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *arg2 ;
   void *argp1 = 0 ;
@@ -1929,7 +1929,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_hostname_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_hostname_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -1959,7 +1959,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_port_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_port_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   unsigned int arg2 ;
   void *argp1 = 0 ;
@@ -1989,7 +1989,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_port_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_port_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   unsigned int result;
   void *argp1 = 0 ;
@@ -2013,7 +2013,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_fd_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_fd_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   int arg2 ;
   void *argp1 = 0 ;
@@ -2043,7 +2043,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_fd_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_fd_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   int result;
   void *argp1 = 0 ;
@@ -2067,7 +2067,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_cursor_active_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_cursor_active_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   unsigned int arg2 ;
   void *argp1 = 0 ;
@@ -2097,7 +2097,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_cursor_active_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_cursor_active_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   unsigned int result;
   void *argp1 = 0 ;
@@ -2121,7 +2121,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_write_buffer_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_write_buffer_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *arg2 ;
   void *argp1 = 0 ;
@@ -2151,7 +2151,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_write_buffer_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_write_buffer_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -2181,7 +2181,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_write_buffer_offset_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_write_buffer_offset_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   size_t arg2 ;
   void *argp1 = 0 ;
@@ -2211,7 +2211,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_write_buffer_offset_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_write_buffer_offset_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   size_t result;
   void *argp1 = 0 ;
@@ -2235,7 +2235,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_write_ptr_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_write_ptr_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *arg2 = (char *) 0 ;
   void *argp1 = 0 ;
@@ -2273,7 +2273,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_write_ptr_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_write_ptr_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -2297,7 +2297,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_read_buffer_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_read_buffer_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *arg2 ;
   void *argp1 = 0 ;
@@ -2327,7 +2327,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_read_buffer_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_read_buffer_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -2357,7 +2357,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_read_data_length_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_read_data_length_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   size_t arg2 ;
   void *argp1 = 0 ;
@@ -2387,7 +2387,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_read_data_length_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_read_data_length_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   size_t result;
   void *argp1 = 0 ;
@@ -2411,7 +2411,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_read_buffer_length_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_read_buffer_length_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   size_t arg2 ;
   void *argp1 = 0 ;
@@ -2441,7 +2441,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_read_buffer_length_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_read_buffer_length_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   size_t result;
   void *argp1 = 0 ;
@@ -2465,7 +2465,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_read_ptr_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_read_ptr_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *arg2 = (char *) 0 ;
   void *argp1 = 0 ;
@@ -2503,7 +2503,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_read_ptr_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_read_ptr_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -2527,7 +2527,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_sockaddr_inited_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_sockaddr_inited_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   memcached_allocated arg2 ;
   void *argp1 = 0 ;
@@ -2557,7 +2557,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_sockaddr_inited_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_sockaddr_inited_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   memcached_allocated result;
   void *argp1 = 0 ;
@@ -2581,7 +2581,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_address_info_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_address_info_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   struct addrinfo *arg2 = (struct addrinfo *) 0 ;
   void *argp1 = 0 ;
@@ -2611,7 +2611,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_address_info_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_address_info_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   struct addrinfo *result = 0 ;
   void *argp1 = 0 ;
@@ -2635,7 +2635,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_type_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_type_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   memcached_connection arg2 ;
   void *argp1 = 0 ;
@@ -2665,7 +2665,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_type_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_type_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   memcached_connection result;
   void *argp1 = 0 ;
@@ -2689,7 +2689,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_major_version_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_major_version_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   uint8_t arg2 ;
   void *argp1 = 0 ;
@@ -2725,7 +2725,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_major_version_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_major_version_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   uint8_t result;
   void *argp1 = 0 ;
@@ -2749,7 +2749,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_minor_version_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_minor_version_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   uint8_t arg2 ;
   void *argp1 = 0 ;
@@ -2785,7 +2785,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_minor_version_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_minor_version_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   uint8_t result;
   void *argp1 = 0 ;
@@ -2809,7 +2809,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_micro_version_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_micro_version_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   uint8_t arg2 ;
   void *argp1 = 0 ;
@@ -2845,7 +2845,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_micro_version_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_micro_version_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   uint8_t result;
   void *argp1 = 0 ;
@@ -2869,7 +2869,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_count_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_count_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   uint16_t arg2 ;
   void *argp1 = 0 ;
@@ -2905,7 +2905,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_st_count_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedServerSt_count_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *arg1 = (struct memcached_server_st *) 0 ;
   uint16_t result;
   void *argp1 = 0 ;
@@ -2930,10 +2930,10 @@ fail:
 
 #ifdef HAVE_RB_DEFINE_ALLOC_FUNC
 SWIGINTERN VALUE
-_wrap_memcached_server_st_allocate(VALUE self) {
+_wrap_MemcachedServerSt_allocate(VALUE self) {
 #else
   SWIGINTERN VALUE
-  _wrap_memcached_server_st_allocate(int argc, VALUE *argv, VALUE self) {
+  _wrap_MemcachedServerSt_allocate(int argc, VALUE *argv, VALUE self) {
 #endif
     
     
@@ -2946,7 +2946,7 @@ _wrap_memcached_server_st_allocate(VALUE self) {
   
 
 SWIGINTERN VALUE
-_wrap_new_memcached_server_st(int argc, VALUE *argv, VALUE self) {
+_wrap_new_MemcachedServerSt(int argc, VALUE *argv, VALUE self) {
   struct memcached_server_st *result = 0 ;
   
   if ((argc < 0) || (argc > 0)) {
@@ -2965,10 +2965,10 @@ free_memcached_server_st(struct memcached_server_st *arg1) {
     free((char *) arg1);
 }
 
-swig_class cMemcached_stat_st;
+swig_class cMemcachedStatSt;
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_pid_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_pid_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3004,7 +3004,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_pid_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_pid_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3028,7 +3028,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_uptime_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_uptime_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3064,7 +3064,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_uptime_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_uptime_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3088,7 +3088,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_threads_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_threads_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3124,7 +3124,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_threads_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_threads_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3148,7 +3148,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_time_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_time_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3184,7 +3184,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_time_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_time_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3208,7 +3208,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_pointer_size_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_pointer_size_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3244,7 +3244,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_pointer_size_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_pointer_size_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3268,7 +3268,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_rusage_user_seconds_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_rusage_user_seconds_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3304,7 +3304,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_rusage_user_seconds_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_rusage_user_seconds_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3328,7 +3328,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_rusage_user_microseconds_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_rusage_user_microseconds_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3364,7 +3364,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_rusage_user_microseconds_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_rusage_user_microseconds_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3388,7 +3388,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_rusage_system_seconds_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_rusage_system_seconds_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3424,7 +3424,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_rusage_system_seconds_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_rusage_system_seconds_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3448,7 +3448,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_rusage_system_microseconds_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_rusage_system_microseconds_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3484,7 +3484,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_rusage_system_microseconds_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_rusage_system_microseconds_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3508,7 +3508,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_curr_items_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_curr_items_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3544,7 +3544,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_curr_items_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_curr_items_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3568,7 +3568,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_total_items_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_total_items_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3604,7 +3604,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_total_items_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_total_items_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3628,7 +3628,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_limit_maxbytes_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_limit_maxbytes_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3664,7 +3664,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_limit_maxbytes_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_limit_maxbytes_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3688,7 +3688,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_curr_connections_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_curr_connections_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3724,7 +3724,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_curr_connections_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_curr_connections_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3748,7 +3748,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_total_connections_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_total_connections_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3784,7 +3784,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_total_connections_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_total_connections_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3808,7 +3808,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_connection_structures_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_connection_structures_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -3844,7 +3844,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_connection_structures_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_connection_structures_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -3868,7 +3868,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_bytes_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_bytes_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -3904,7 +3904,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_bytes_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_bytes_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -3928,7 +3928,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_cmd_get_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_cmd_get_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -3964,7 +3964,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_cmd_get_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_cmd_get_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -3988,7 +3988,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_cmd_set_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_cmd_set_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -4024,7 +4024,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_cmd_set_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_cmd_set_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -4048,7 +4048,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_get_hits_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_get_hits_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -4084,7 +4084,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_get_hits_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_get_hits_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -4108,7 +4108,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_get_misses_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_get_misses_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -4144,7 +4144,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_get_misses_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_get_misses_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -4168,7 +4168,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_evictions_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_evictions_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -4204,7 +4204,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_evictions_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_evictions_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -4228,7 +4228,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_bytes_read_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_bytes_read_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -4264,7 +4264,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_bytes_read_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_bytes_read_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -4288,7 +4288,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_bytes_written_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_bytes_written_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -4324,7 +4324,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_bytes_written_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_bytes_written_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -4348,7 +4348,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_version_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_version_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   char *arg2 ;
   void *argp1 = 0 ;
@@ -4378,7 +4378,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_version_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStatSt_version_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -4409,10 +4409,10 @@ fail:
 
 #ifdef HAVE_RB_DEFINE_ALLOC_FUNC
 SWIGINTERN VALUE
-_wrap_memcached_stat_st_allocate(VALUE self) {
+_wrap_MemcachedStatSt_allocate(VALUE self) {
 #else
   SWIGINTERN VALUE
-  _wrap_memcached_stat_st_allocate(int argc, VALUE *argv, VALUE self) {
+  _wrap_MemcachedStatSt_allocate(int argc, VALUE *argv, VALUE self) {
 #endif
     
     
@@ -4425,7 +4425,7 @@ _wrap_memcached_stat_st_allocate(VALUE self) {
   
 
 SWIGINTERN VALUE
-_wrap_new_memcached_stat_st(int argc, VALUE *argv, VALUE self) {
+_wrap_new_MemcachedStatSt(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *result = 0 ;
   
   if ((argc < 0) || (argc > 0)) {
@@ -4444,10 +4444,10 @@ free_memcached_stat_st(struct memcached_stat_st *arg1) {
     free((char *) arg1);
 }
 
-swig_class cMemcached_string_st;
+swig_class cMemcachedStringSt;
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_root_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_root_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   memcached_st *arg2 = (memcached_st *) 0 ;
   void *argp1 = 0 ;
@@ -4477,7 +4477,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_root_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_root_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   memcached_st *result = 0 ;
   void *argp1 = 0 ;
@@ -4501,7 +4501,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_is_allocated_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_is_allocated_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   memcached_allocated arg2 ;
   void *argp1 = 0 ;
@@ -4531,7 +4531,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_is_allocated_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_is_allocated_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   memcached_allocated result;
   void *argp1 = 0 ;
@@ -4555,7 +4555,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_string_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_string_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   char *arg2 = (char *) 0 ;
   void *argp1 = 0 ;
@@ -4593,7 +4593,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_string_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_string_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -4617,7 +4617,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_end_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_end_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   char *arg2 = (char *) 0 ;
   void *argp1 = 0 ;
@@ -4655,7 +4655,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_end_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_end_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -4679,7 +4679,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_current_size_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_current_size_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   size_t arg2 ;
   void *argp1 = 0 ;
@@ -4709,7 +4709,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_current_size_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_current_size_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   size_t result;
   void *argp1 = 0 ;
@@ -4733,7 +4733,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_block_size_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_block_size_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   size_t arg2 ;
   void *argp1 = 0 ;
@@ -4763,7 +4763,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_string_st_block_size_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedStringSt_block_size_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *arg1 = (struct memcached_string_st *) 0 ;
   size_t result;
   void *argp1 = 0 ;
@@ -4788,10 +4788,10 @@ fail:
 
 #ifdef HAVE_RB_DEFINE_ALLOC_FUNC
 SWIGINTERN VALUE
-_wrap_memcached_string_st_allocate(VALUE self) {
+_wrap_MemcachedStringSt_allocate(VALUE self) {
 #else
   SWIGINTERN VALUE
-  _wrap_memcached_string_st_allocate(int argc, VALUE *argv, VALUE self) {
+  _wrap_MemcachedStringSt_allocate(int argc, VALUE *argv, VALUE self) {
 #endif
     
     
@@ -4804,7 +4804,7 @@ _wrap_memcached_string_st_allocate(VALUE self) {
   
 
 SWIGINTERN VALUE
-_wrap_new_memcached_string_st(int argc, VALUE *argv, VALUE self) {
+_wrap_new_MemcachedStringSt(int argc, VALUE *argv, VALUE self) {
   struct memcached_string_st *result = 0 ;
   
   if ((argc < 0) || (argc > 0)) {
@@ -4823,10 +4823,10 @@ free_memcached_string_st(struct memcached_string_st *arg1) {
     free((char *) arg1);
 }
 
-swig_class cMemcached_result_st;
+swig_class cMemcachedResultSt;
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_is_allocated_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_is_allocated_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   memcached_allocated arg2 ;
   void *argp1 = 0 ;
@@ -4856,7 +4856,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_is_allocated_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_is_allocated_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   memcached_allocated result;
   void *argp1 = 0 ;
@@ -4880,7 +4880,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_root_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_root_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   memcached_st *arg2 = (memcached_st *) 0 ;
   void *argp1 = 0 ;
@@ -4910,7 +4910,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_root_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_root_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   memcached_st *result = 0 ;
   void *argp1 = 0 ;
@@ -4934,7 +4934,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_key_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_key_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   char *arg2 ;
   void *argp1 = 0 ;
@@ -4964,7 +4964,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_key_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_key_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   char *result = 0 ;
   void *argp1 = 0 ;
@@ -4994,7 +4994,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_key_length_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_key_length_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   size_t arg2 ;
   void *argp1 = 0 ;
@@ -5024,7 +5024,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_key_length_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_key_length_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   size_t result;
   void *argp1 = 0 ;
@@ -5048,7 +5048,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_value_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_value_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   memcached_string_st *arg2 = (memcached_string_st *) 0 ;
   void *argp1 = 0 ;
@@ -5078,7 +5078,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_value_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_value_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   memcached_string_st *result = 0 ;
   void *argp1 = 0 ;
@@ -5102,7 +5102,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_flags_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_flags_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   uint32_t arg2 ;
   void *argp1 = 0 ;
@@ -5138,7 +5138,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_flags_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_flags_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   uint32_t result;
   void *argp1 = 0 ;
@@ -5162,7 +5162,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_cas_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_cas_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   uint64_t arg2 ;
   void *argp1 = 0 ;
@@ -5198,7 +5198,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_result_st_cas_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedResultSt_cas_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *arg1 = (struct memcached_result_st *) 0 ;
   uint64_t result;
   void *argp1 = 0 ;
@@ -5223,10 +5223,10 @@ fail:
 
 #ifdef HAVE_RB_DEFINE_ALLOC_FUNC
 SWIGINTERN VALUE
-_wrap_memcached_result_st_allocate(VALUE self) {
+_wrap_MemcachedResultSt_allocate(VALUE self) {
 #else
   SWIGINTERN VALUE
-  _wrap_memcached_result_st_allocate(int argc, VALUE *argv, VALUE self) {
+  _wrap_MemcachedResultSt_allocate(int argc, VALUE *argv, VALUE self) {
 #endif
     
     
@@ -5239,7 +5239,7 @@ _wrap_memcached_result_st_allocate(VALUE self) {
   
 
 SWIGINTERN VALUE
-_wrap_new_memcached_result_st(int argc, VALUE *argv, VALUE self) {
+_wrap_new_MemcachedResultSt(int argc, VALUE *argv, VALUE self) {
   struct memcached_result_st *result = 0 ;
   
   if ((argc < 0) || (argc > 0)) {
@@ -5258,10 +5258,10 @@ free_memcached_result_st(struct memcached_result_st *arg1) {
     free((char *) arg1);
 }
 
-swig_class cMemcached_st;
+swig_class cMemcachedSt;
 
 SWIGINTERN VALUE
-_wrap_memcached_st_is_allocated_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_is_allocated_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_allocated arg2 ;
   void *argp1 = 0 ;
@@ -5291,7 +5291,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_is_allocated_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_is_allocated_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_allocated result;
   void *argp1 = 0 ;
@@ -5315,7 +5315,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_hosts_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_hosts_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_server_st *arg2 = (memcached_server_st *) 0 ;
   void *argp1 = 0 ;
@@ -5345,7 +5345,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_hosts_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_hosts_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_server_st *result = 0 ;
   void *argp1 = 0 ;
@@ -5369,7 +5369,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_number_of_hosts_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_number_of_hosts_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   unsigned int arg2 ;
   void *argp1 = 0 ;
@@ -5399,7 +5399,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_number_of_hosts_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_number_of_hosts_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   unsigned int result;
   void *argp1 = 0 ;
@@ -5423,7 +5423,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_cursor_server_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_cursor_server_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   unsigned int arg2 ;
   void *argp1 = 0 ;
@@ -5453,7 +5453,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_cursor_server_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_cursor_server_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   unsigned int result;
   void *argp1 = 0 ;
@@ -5477,7 +5477,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_connected_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_connected_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   char arg2 ;
   void *argp1 = 0 ;
@@ -5507,7 +5507,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_connected_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_connected_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   char result;
   void *argp1 = 0 ;
@@ -5531,7 +5531,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_cached_errno_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_cached_errno_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int arg2 ;
   void *argp1 = 0 ;
@@ -5561,7 +5561,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_cached_errno_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_cached_errno_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int result;
   void *argp1 = 0 ;
@@ -5585,7 +5585,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_flags_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_flags_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   unsigned long long arg2 ;
   void *argp1 = 0 ;
@@ -5615,7 +5615,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_flags_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_flags_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   unsigned long long result;
   void *argp1 = 0 ;
@@ -5639,7 +5639,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_send_size_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_send_size_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int arg2 ;
   void *argp1 = 0 ;
@@ -5669,7 +5669,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_send_size_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_send_size_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int result;
   void *argp1 = 0 ;
@@ -5693,7 +5693,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_recv_size_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_recv_size_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int arg2 ;
   void *argp1 = 0 ;
@@ -5723,7 +5723,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_recv_size_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_recv_size_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int result;
   void *argp1 = 0 ;
@@ -5747,7 +5747,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_poll_timeout_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_poll_timeout_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int32_t arg2 ;
   void *argp1 = 0 ;
@@ -5783,7 +5783,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_poll_timeout_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_poll_timeout_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int32_t result;
   void *argp1 = 0 ;
@@ -5807,7 +5807,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_result_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_result_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_result_st *arg2 = (memcached_result_st *) 0 ;
   void *argp1 = 0 ;
@@ -5837,7 +5837,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_result_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_result_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_result_st *result = 0 ;
   void *argp1 = 0 ;
@@ -5861,7 +5861,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_hash_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_hash_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_hash arg2 ;
   void *argp1 = 0 ;
@@ -5891,7 +5891,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_hash_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_hash_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_hash result;
   void *argp1 = 0 ;
@@ -5915,7 +5915,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_distribution_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_distribution_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_server_distribution arg2 ;
   void *argp1 = 0 ;
@@ -5945,7 +5945,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_distribution_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_distribution_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   memcached_server_distribution result;
   void *argp1 = 0 ;
@@ -5969,7 +5969,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_user_data_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_user_data_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   void *arg2 = (void *) 0 ;
   void *argp1 = 0 ;
@@ -5997,7 +5997,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_user_data_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_user_data_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   void *result = 0 ;
   void *argp1 = 0 ;
@@ -6021,7 +6021,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_wheel_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_wheel_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   unsigned int *arg2 ;
   void *argp1 = 0 ;
@@ -6057,7 +6057,7 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_st_wheel_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_wheel_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   unsigned int *result = 0 ;
   void *argp1 = 0 ;
@@ -6082,10 +6082,10 @@ fail:
 
 #ifdef HAVE_RB_DEFINE_ALLOC_FUNC
 SWIGINTERN VALUE
-_wrap_memcached_st_allocate(VALUE self) {
+_wrap_MemcachedSt_allocate(VALUE self) {
 #else
   SWIGINTERN VALUE
-  _wrap_memcached_st_allocate(int argc, VALUE *argv, VALUE self) {
+  _wrap_MemcachedSt_allocate(int argc, VALUE *argv, VALUE self) {
 #endif
     
     
@@ -6098,7 +6098,7 @@ _wrap_memcached_st_allocate(VALUE self) {
   
 
 SWIGINTERN VALUE
-_wrap_new_memcached_st(int argc, VALUE *argv, VALUE self) {
+_wrap_new_MemcachedSt(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *result = 0 ;
   
   if ((argc < 0) || (argc > 0)) {
@@ -9278,11 +9278,11 @@ SWIG_PropagateClientData(void) {
 #ifdef __cplusplus
 extern "C"
 #endif
-SWIGEXPORT void Init_memcached(void) {
+SWIGEXPORT void Init_libmemcached(void) {
   size_t i;
   
   SWIG_InitRuntime();
-  mMemcached = rb_define_module("Memcached");
+  mLibmemcached = rb_define_module("Libmemcached");
   
   SWIG_InitializeModule(0);
   for (i = 0; i < swig_module.size; i++) {
@@ -9290,307 +9290,307 @@ SWIGEXPORT void Init_memcached(void) {
   }
   
   SWIG_RubyInitializeTrackings();
-  rb_define_const(mMemcached, "MEMCACHED_VERSION_STRING", SWIG_From_int((int)(12)));
-  rb_define_const(mMemcached, "MEMCACHED_DEFAULT_PORT", SWIG_From_int((int)(11211)));
-  rb_define_const(mMemcached, "MEMCACHED_DEFAULT_COMMAND_SIZE", SWIG_From_int((int)(350)));
-  rb_define_const(mMemcached, "SMALL_STRING_LEN", SWIG_From_int((int)(1024)));
-  rb_define_const(mMemcached, "HUGE_STRING_LEN", SWIG_From_int((int)(8196)));
-  rb_define_const(mMemcached, "MEMCACHED_MAX_KEY", SWIG_From_int((int)(251)));
-  rb_define_const(mMemcached, "MEMCACHED_MAX_BUFFER", SWIG_From_int((int)(8196)));
-  rb_define_const(mMemcached, "MEMCACHED_MAX_HOST_LENGTH", SWIG_From_int((int)(64)));
-  rb_define_const(mMemcached, "MEMCACHED_WHEEL_SIZE", SWIG_From_int((int)(1024)));
-  rb_define_const(mMemcached, "MEMCACHED_STRIDE", SWIG_From_int((int)(4)));
-  rb_define_const(mMemcached, "MEMCACHED_SUCCESS", SWIG_From_int((int)(MEMCACHED_SUCCESS)));
-  rb_define_const(mMemcached, "MEMCACHED_FAILURE", SWIG_From_int((int)(MEMCACHED_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_HOST_LOOKUP_FAILURE", SWIG_From_int((int)(MEMCACHED_HOST_LOOKUP_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_CONNECTION_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_CONNECTION_BIND_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_BIND_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_WRITE_FAILURE", SWIG_From_int((int)(MEMCACHED_WRITE_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_READ_FAILURE", SWIG_From_int((int)(MEMCACHED_READ_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_UNKNOWN_READ_FAILURE", SWIG_From_int((int)(MEMCACHED_UNKNOWN_READ_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_PROTOCOL_ERROR", SWIG_From_int((int)(MEMCACHED_PROTOCOL_ERROR)));
-  rb_define_const(mMemcached, "MEMCACHED_CLIENT_ERROR", SWIG_From_int((int)(MEMCACHED_CLIENT_ERROR)));
-  rb_define_const(mMemcached, "MEMCACHED_SERVER_ERROR", SWIG_From_int((int)(MEMCACHED_SERVER_ERROR)));
-  rb_define_const(mMemcached, "MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_DATA_EXISTS", SWIG_From_int((int)(MEMCACHED_DATA_EXISTS)));
-  rb_define_const(mMemcached, "MEMCACHED_DATA_DOES_NOT_EXIST", SWIG_From_int((int)(MEMCACHED_DATA_DOES_NOT_EXIST)));
-  rb_define_const(mMemcached, "MEMCACHED_NOTSTORED", SWIG_From_int((int)(MEMCACHED_NOTSTORED)));
-  rb_define_const(mMemcached, "MEMCACHED_STORED", SWIG_From_int((int)(MEMCACHED_STORED)));
-  rb_define_const(mMemcached, "MEMCACHED_NOTFOUND", SWIG_From_int((int)(MEMCACHED_NOTFOUND)));
-  rb_define_const(mMemcached, "MEMCACHED_MEMORY_ALLOCATION_FAILURE", SWIG_From_int((int)(MEMCACHED_MEMORY_ALLOCATION_FAILURE)));
-  rb_define_const(mMemcached, "MEMCACHED_PARTIAL_READ", SWIG_From_int((int)(MEMCACHED_PARTIAL_READ)));
-  rb_define_const(mMemcached, "MEMCACHED_SOME_ERRORS", SWIG_From_int((int)(MEMCACHED_SOME_ERRORS)));
-  rb_define_const(mMemcached, "MEMCACHED_NO_SERVERS", SWIG_From_int((int)(MEMCACHED_NO_SERVERS)));
-  rb_define_const(mMemcached, "MEMCACHED_END", SWIG_From_int((int)(MEMCACHED_END)));
-  rb_define_const(mMemcached, "MEMCACHED_DELETED", SWIG_From_int((int)(MEMCACHED_DELETED)));
-  rb_define_const(mMemcached, "MEMCACHED_VALUE", SWIG_From_int((int)(MEMCACHED_VALUE)));
-  rb_define_const(mMemcached, "MEMCACHED_STAT", SWIG_From_int((int)(MEMCACHED_STAT)));
-  rb_define_const(mMemcached, "MEMCACHED_ERRNO", SWIG_From_int((int)(MEMCACHED_ERRNO)));
-  rb_define_const(mMemcached, "MEMCACHED_FAIL_UNIX_SOCKET", SWIG_From_int((int)(MEMCACHED_FAIL_UNIX_SOCKET)));
-  rb_define_const(mMemcached, "MEMCACHED_NOT_SUPPORTED", SWIG_From_int((int)(MEMCACHED_NOT_SUPPORTED)));
-  rb_define_const(mMemcached, "MEMCACHED_NO_KEY_PROVIDED", SWIG_From_int((int)(MEMCACHED_NO_KEY_PROVIDED)));
-  rb_define_const(mMemcached, "MEMCACHED_FETCH_NOTFINISHED", SWIG_From_int((int)(MEMCACHED_FETCH_NOTFINISHED)));
-  rb_define_const(mMemcached, "MEMCACHED_TIMEOUT", SWIG_From_int((int)(MEMCACHED_TIMEOUT)));
-  rb_define_const(mMemcached, "MEMCACHED_BUFFERED", SWIG_From_int((int)(MEMCACHED_BUFFERED)));
-  rb_define_const(mMemcached, "MEMCACHED_MAXIMUM_RETURN", SWIG_From_int((int)(MEMCACHED_MAXIMUM_RETURN)));
-  rb_define_const(mMemcached, "MEMCACHED_DISTRIBUTION_MODULA", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_MODULA)));
-  rb_define_const(mMemcached, "MEMCACHED_DISTRIBUTION_CONSISTENT", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_CONSISTENT)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_NO_BLOCK", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NO_BLOCK)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_TCP_NODELAY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_TCP_NODELAY)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_HASH", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_HASH)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_KETAMA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_KETAMA)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_CACHE_LOOKUPS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_CACHE_LOOKUPS)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_SUPPORT_CAS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SUPPORT_CAS)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_POLL_TIMEOUT", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_POLL_TIMEOUT)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_DISTRIBUTION", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_DISTRIBUTION)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_BUFFER_REQUESTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_BUFFER_REQUESTS)));
-  rb_define_const(mMemcached, "MEMCACHED_BEHAVIOR_USER_DATA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USER_DATA)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_DEFAULT", SWIG_From_int((int)(MEMCACHED_HASH_DEFAULT)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_MD5", SWIG_From_int((int)(MEMCACHED_HASH_MD5)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_CRC", SWIG_From_int((int)(MEMCACHED_HASH_CRC)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_FNV1_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_64)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_FNV1A_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_64)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_FNV1_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_32)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_FNV1A_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_32)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_KETAMA", SWIG_From_int((int)(MEMCACHED_HASH_KETAMA)));
-  rb_define_const(mMemcached, "MEMCACHED_HASH_HSIEH", SWIG_From_int((int)(MEMCACHED_HASH_HSIEH)));
-  rb_define_const(mMemcached, "MEMCACHED_CONNECTION_UNKNOWN", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNKNOWN)));
-  rb_define_const(mMemcached, "MEMCACHED_CONNECTION_TCP", SWIG_From_int((int)(MEMCACHED_CONNECTION_TCP)));
-  rb_define_const(mMemcached, "MEMCACHED_CONNECTION_UDP", SWIG_From_int((int)(MEMCACHED_CONNECTION_UDP)));
-  rb_define_const(mMemcached, "MEMCACHED_CONNECTION_UNIX_SOCKET", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNIX_SOCKET)));
-  rb_define_const(mMemcached, "MEMCACHED_NOT_ALLOCATED", SWIG_From_int((int)(MEMCACHED_NOT_ALLOCATED)));
-  rb_define_const(mMemcached, "MEMCACHED_ALLOCATED", SWIG_From_int((int)(MEMCACHED_ALLOCATED)));
-  rb_define_const(mMemcached, "MEMCACHED_USED", SWIG_From_int((int)(MEMCACHED_USED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_VERSION_STRING", SWIG_From_int((int)(12)));
+  rb_define_const(mLibmemcached, "MEMCACHED_DEFAULT_PORT", SWIG_From_int((int)(11211)));
+  rb_define_const(mLibmemcached, "MEMCACHED_DEFAULT_COMMAND_SIZE", SWIG_From_int((int)(350)));
+  rb_define_const(mLibmemcached, "SMALL_STRING_LEN", SWIG_From_int((int)(1024)));
+  rb_define_const(mLibmemcached, "HUGE_STRING_LEN", SWIG_From_int((int)(8196)));
+  rb_define_const(mLibmemcached, "MEMCACHED_MAX_KEY", SWIG_From_int((int)(251)));
+  rb_define_const(mLibmemcached, "MEMCACHED_MAX_BUFFER", SWIG_From_int((int)(8196)));
+  rb_define_const(mLibmemcached, "MEMCACHED_MAX_HOST_LENGTH", SWIG_From_int((int)(64)));
+  rb_define_const(mLibmemcached, "MEMCACHED_WHEEL_SIZE", SWIG_From_int((int)(1024)));
+  rb_define_const(mLibmemcached, "MEMCACHED_STRIDE", SWIG_From_int((int)(4)));
+  rb_define_const(mLibmemcached, "MEMCACHED_SUCCESS", SWIG_From_int((int)(MEMCACHED_SUCCESS)));
+  rb_define_const(mLibmemcached, "MEMCACHED_FAILURE", SWIG_From_int((int)(MEMCACHED_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HOST_LOOKUP_FAILURE", SWIG_From_int((int)(MEMCACHED_HOST_LOOKUP_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_BIND_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_BIND_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_WRITE_FAILURE", SWIG_From_int((int)(MEMCACHED_WRITE_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_READ_FAILURE", SWIG_From_int((int)(MEMCACHED_READ_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_UNKNOWN_READ_FAILURE", SWIG_From_int((int)(MEMCACHED_UNKNOWN_READ_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_PROTOCOL_ERROR", SWIG_From_int((int)(MEMCACHED_PROTOCOL_ERROR)));
+  rb_define_const(mLibmemcached, "MEMCACHED_CLIENT_ERROR", SWIG_From_int((int)(MEMCACHED_CLIENT_ERROR)));
+  rb_define_const(mLibmemcached, "MEMCACHED_SERVER_ERROR", SWIG_From_int((int)(MEMCACHED_SERVER_ERROR)));
+  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_DATA_EXISTS", SWIG_From_int((int)(MEMCACHED_DATA_EXISTS)));
+  rb_define_const(mLibmemcached, "MEMCACHED_DATA_DOES_NOT_EXIST", SWIG_From_int((int)(MEMCACHED_DATA_DOES_NOT_EXIST)));
+  rb_define_const(mLibmemcached, "MEMCACHED_NOTSTORED", SWIG_From_int((int)(MEMCACHED_NOTSTORED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_STORED", SWIG_From_int((int)(MEMCACHED_STORED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_NOTFOUND", SWIG_From_int((int)(MEMCACHED_NOTFOUND)));
+  rb_define_const(mLibmemcached, "MEMCACHED_MEMORY_ALLOCATION_FAILURE", SWIG_From_int((int)(MEMCACHED_MEMORY_ALLOCATION_FAILURE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_PARTIAL_READ", SWIG_From_int((int)(MEMCACHED_PARTIAL_READ)));
+  rb_define_const(mLibmemcached, "MEMCACHED_SOME_ERRORS", SWIG_From_int((int)(MEMCACHED_SOME_ERRORS)));
+  rb_define_const(mLibmemcached, "MEMCACHED_NO_SERVERS", SWIG_From_int((int)(MEMCACHED_NO_SERVERS)));
+  rb_define_const(mLibmemcached, "MEMCACHED_END", SWIG_From_int((int)(MEMCACHED_END)));
+  rb_define_const(mLibmemcached, "MEMCACHED_DELETED", SWIG_From_int((int)(MEMCACHED_DELETED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_VALUE", SWIG_From_int((int)(MEMCACHED_VALUE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_STAT", SWIG_From_int((int)(MEMCACHED_STAT)));
+  rb_define_const(mLibmemcached, "MEMCACHED_ERRNO", SWIG_From_int((int)(MEMCACHED_ERRNO)));
+  rb_define_const(mLibmemcached, "MEMCACHED_FAIL_UNIX_SOCKET", SWIG_From_int((int)(MEMCACHED_FAIL_UNIX_SOCKET)));
+  rb_define_const(mLibmemcached, "MEMCACHED_NOT_SUPPORTED", SWIG_From_int((int)(MEMCACHED_NOT_SUPPORTED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_NO_KEY_PROVIDED", SWIG_From_int((int)(MEMCACHED_NO_KEY_PROVIDED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_FETCH_NOTFINISHED", SWIG_From_int((int)(MEMCACHED_FETCH_NOTFINISHED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_TIMEOUT", SWIG_From_int((int)(MEMCACHED_TIMEOUT)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BUFFERED", SWIG_From_int((int)(MEMCACHED_BUFFERED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_MAXIMUM_RETURN", SWIG_From_int((int)(MEMCACHED_MAXIMUM_RETURN)));
+  rb_define_const(mLibmemcached, "MEMCACHED_DISTRIBUTION_MODULA", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_MODULA)));
+  rb_define_const(mLibmemcached, "MEMCACHED_DISTRIBUTION_CONSISTENT", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_CONSISTENT)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_NO_BLOCK", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NO_BLOCK)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_TCP_NODELAY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_TCP_NODELAY)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_HASH", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_HASH)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_KETAMA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_KETAMA)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_CACHE_LOOKUPS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_CACHE_LOOKUPS)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_SUPPORT_CAS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SUPPORT_CAS)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_POLL_TIMEOUT", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_POLL_TIMEOUT)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_DISTRIBUTION", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_DISTRIBUTION)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_BUFFER_REQUESTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_BUFFER_REQUESTS)));
+  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_USER_DATA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USER_DATA)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_DEFAULT", SWIG_From_int((int)(MEMCACHED_HASH_DEFAULT)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_MD5", SWIG_From_int((int)(MEMCACHED_HASH_MD5)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_CRC", SWIG_From_int((int)(MEMCACHED_HASH_CRC)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_FNV1_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_64)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_FNV1A_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_64)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_FNV1_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_32)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_FNV1A_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_32)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_KETAMA", SWIG_From_int((int)(MEMCACHED_HASH_KETAMA)));
+  rb_define_const(mLibmemcached, "MEMCACHED_HASH_HSIEH", SWIG_From_int((int)(MEMCACHED_HASH_HSIEH)));
+  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_UNKNOWN", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNKNOWN)));
+  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_TCP", SWIG_From_int((int)(MEMCACHED_CONNECTION_TCP)));
+  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_UDP", SWIG_From_int((int)(MEMCACHED_CONNECTION_UDP)));
+  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_UNIX_SOCKET", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNIX_SOCKET)));
+  rb_define_const(mLibmemcached, "MEMCACHED_NOT_ALLOCATED", SWIG_From_int((int)(MEMCACHED_NOT_ALLOCATED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_ALLOCATED", SWIG_From_int((int)(MEMCACHED_ALLOCATED)));
+  rb_define_const(mLibmemcached, "MEMCACHED_USED", SWIG_From_int((int)(MEMCACHED_USED)));
   
-  cMemcached_server_st.klass = rb_define_class_under(mMemcached, "Memcached_server_st", rb_cObject);
-  SWIG_TypeClientData(SWIGTYPE_p_memcached_server_st, (void *) &cMemcached_server_st);
-  rb_define_alloc_func(cMemcached_server_st.klass, _wrap_memcached_server_st_allocate);
-  rb_define_method(cMemcached_server_st.klass, "initialize", _wrap_new_memcached_server_st, -1);
-  rb_define_method(cMemcached_server_st.klass, "hostname=", _wrap_memcached_server_st_hostname_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "hostname", _wrap_memcached_server_st_hostname_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "port=", _wrap_memcached_server_st_port_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "port", _wrap_memcached_server_st_port_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "fd=", _wrap_memcached_server_st_fd_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "fd", _wrap_memcached_server_st_fd_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "cursor_active=", _wrap_memcached_server_st_cursor_active_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "cursor_active", _wrap_memcached_server_st_cursor_active_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "write_buffer=", _wrap_memcached_server_st_write_buffer_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "write_buffer", _wrap_memcached_server_st_write_buffer_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "write_buffer_offset=", _wrap_memcached_server_st_write_buffer_offset_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "write_buffer_offset", _wrap_memcached_server_st_write_buffer_offset_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "write_ptr=", _wrap_memcached_server_st_write_ptr_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "write_ptr", _wrap_memcached_server_st_write_ptr_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "read_buffer=", _wrap_memcached_server_st_read_buffer_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "read_buffer", _wrap_memcached_server_st_read_buffer_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "read_data_length=", _wrap_memcached_server_st_read_data_length_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "read_data_length", _wrap_memcached_server_st_read_data_length_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "read_buffer_length=", _wrap_memcached_server_st_read_buffer_length_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "read_buffer_length", _wrap_memcached_server_st_read_buffer_length_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "read_ptr=", _wrap_memcached_server_st_read_ptr_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "read_ptr", _wrap_memcached_server_st_read_ptr_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "sockaddr_inited=", _wrap_memcached_server_st_sockaddr_inited_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "sockaddr_inited", _wrap_memcached_server_st_sockaddr_inited_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "address_info=", _wrap_memcached_server_st_address_info_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "address_info", _wrap_memcached_server_st_address_info_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "type=", _wrap_memcached_server_st_type_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "type", _wrap_memcached_server_st_type_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "major_version=", _wrap_memcached_server_st_major_version_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "major_version", _wrap_memcached_server_st_major_version_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "minor_version=", _wrap_memcached_server_st_minor_version_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "minor_version", _wrap_memcached_server_st_minor_version_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "micro_version=", _wrap_memcached_server_st_micro_version_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "micro_version", _wrap_memcached_server_st_micro_version_get, -1);
-  rb_define_method(cMemcached_server_st.klass, "count=", _wrap_memcached_server_st_count_set, -1);
-  rb_define_method(cMemcached_server_st.klass, "count", _wrap_memcached_server_st_count_get, -1);
-  cMemcached_server_st.mark = 0;
-  cMemcached_server_st.destroy = (void (*)(void *)) free_memcached_server_st;
-  cMemcached_server_st.trackObjects = 0;
+  cMemcachedServerSt.klass = rb_define_class_under(mLibmemcached, "MemcachedServerSt", rb_cObject);
+  SWIG_TypeClientData(SWIGTYPE_p_memcached_server_st, (void *) &cMemcachedServerSt);
+  rb_define_alloc_func(cMemcachedServerSt.klass, _wrap_MemcachedServerSt_allocate);
+  rb_define_method(cMemcachedServerSt.klass, "initialize", _wrap_new_MemcachedServerSt, -1);
+  rb_define_method(cMemcachedServerSt.klass, "hostname=", _wrap_MemcachedServerSt_hostname_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "hostname", _wrap_MemcachedServerSt_hostname_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "port=", _wrap_MemcachedServerSt_port_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "port", _wrap_MemcachedServerSt_port_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "fd=", _wrap_MemcachedServerSt_fd_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "fd", _wrap_MemcachedServerSt_fd_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "cursor_active=", _wrap_MemcachedServerSt_cursor_active_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "cursor_active", _wrap_MemcachedServerSt_cursor_active_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "write_buffer=", _wrap_MemcachedServerSt_write_buffer_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "write_buffer", _wrap_MemcachedServerSt_write_buffer_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "write_buffer_offset=", _wrap_MemcachedServerSt_write_buffer_offset_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "write_buffer_offset", _wrap_MemcachedServerSt_write_buffer_offset_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "write_ptr=", _wrap_MemcachedServerSt_write_ptr_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "write_ptr", _wrap_MemcachedServerSt_write_ptr_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "read_buffer=", _wrap_MemcachedServerSt_read_buffer_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "read_buffer", _wrap_MemcachedServerSt_read_buffer_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "read_data_length=", _wrap_MemcachedServerSt_read_data_length_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "read_data_length", _wrap_MemcachedServerSt_read_data_length_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "read_buffer_length=", _wrap_MemcachedServerSt_read_buffer_length_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "read_buffer_length", _wrap_MemcachedServerSt_read_buffer_length_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "read_ptr=", _wrap_MemcachedServerSt_read_ptr_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "read_ptr", _wrap_MemcachedServerSt_read_ptr_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "sockaddr_inited=", _wrap_MemcachedServerSt_sockaddr_inited_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "sockaddr_inited", _wrap_MemcachedServerSt_sockaddr_inited_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "address_info=", _wrap_MemcachedServerSt_address_info_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "address_info", _wrap_MemcachedServerSt_address_info_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "type=", _wrap_MemcachedServerSt_type_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "type", _wrap_MemcachedServerSt_type_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "major_version=", _wrap_MemcachedServerSt_major_version_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "major_version", _wrap_MemcachedServerSt_major_version_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "minor_version=", _wrap_MemcachedServerSt_minor_version_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "minor_version", _wrap_MemcachedServerSt_minor_version_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "micro_version=", _wrap_MemcachedServerSt_micro_version_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "micro_version", _wrap_MemcachedServerSt_micro_version_get, -1);
+  rb_define_method(cMemcachedServerSt.klass, "count=", _wrap_MemcachedServerSt_count_set, -1);
+  rb_define_method(cMemcachedServerSt.klass, "count", _wrap_MemcachedServerSt_count_get, -1);
+  cMemcachedServerSt.mark = 0;
+  cMemcachedServerSt.destroy = (void (*)(void *)) free_memcached_server_st;
+  cMemcachedServerSt.trackObjects = 0;
   
-  cMemcached_stat_st.klass = rb_define_class_under(mMemcached, "Memcached_stat_st", rb_cObject);
-  SWIG_TypeClientData(SWIGTYPE_p_memcached_stat_st, (void *) &cMemcached_stat_st);
-  rb_define_alloc_func(cMemcached_stat_st.klass, _wrap_memcached_stat_st_allocate);
-  rb_define_method(cMemcached_stat_st.klass, "initialize", _wrap_new_memcached_stat_st, -1);
-  rb_define_method(cMemcached_stat_st.klass, "pid=", _wrap_memcached_stat_st_pid_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "pid", _wrap_memcached_stat_st_pid_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "uptime=", _wrap_memcached_stat_st_uptime_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "uptime", _wrap_memcached_stat_st_uptime_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "threads=", _wrap_memcached_stat_st_threads_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "threads", _wrap_memcached_stat_st_threads_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "time=", _wrap_memcached_stat_st_time_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "time", _wrap_memcached_stat_st_time_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "pointer_size=", _wrap_memcached_stat_st_pointer_size_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "pointer_size", _wrap_memcached_stat_st_pointer_size_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "rusage_user_seconds=", _wrap_memcached_stat_st_rusage_user_seconds_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "rusage_user_seconds", _wrap_memcached_stat_st_rusage_user_seconds_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "rusage_user_microseconds=", _wrap_memcached_stat_st_rusage_user_microseconds_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "rusage_user_microseconds", _wrap_memcached_stat_st_rusage_user_microseconds_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "rusage_system_seconds=", _wrap_memcached_stat_st_rusage_system_seconds_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "rusage_system_seconds", _wrap_memcached_stat_st_rusage_system_seconds_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "rusage_system_microseconds=", _wrap_memcached_stat_st_rusage_system_microseconds_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "rusage_system_microseconds", _wrap_memcached_stat_st_rusage_system_microseconds_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "curr_items=", _wrap_memcached_stat_st_curr_items_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "curr_items", _wrap_memcached_stat_st_curr_items_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "total_items=", _wrap_memcached_stat_st_total_items_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "total_items", _wrap_memcached_stat_st_total_items_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "limit_maxbytes=", _wrap_memcached_stat_st_limit_maxbytes_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "limit_maxbytes", _wrap_memcached_stat_st_limit_maxbytes_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "curr_connections=", _wrap_memcached_stat_st_curr_connections_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "curr_connections", _wrap_memcached_stat_st_curr_connections_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "total_connections=", _wrap_memcached_stat_st_total_connections_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "total_connections", _wrap_memcached_stat_st_total_connections_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "connection_structures=", _wrap_memcached_stat_st_connection_structures_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "connection_structures", _wrap_memcached_stat_st_connection_structures_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "bytes=", _wrap_memcached_stat_st_bytes_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "bytes", _wrap_memcached_stat_st_bytes_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "cmd=", _wrap_memcached_stat_st_cmd_get_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "cmd", _wrap_memcached_stat_st_cmd_get_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "cmd==", _wrap_memcached_stat_st_cmd_set_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "cmd=", _wrap_memcached_stat_st_cmd_set_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "get_hits=", _wrap_memcached_stat_st_get_hits_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "get_hits", _wrap_memcached_stat_st_get_hits_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "get_misses=", _wrap_memcached_stat_st_get_misses_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "get_misses", _wrap_memcached_stat_st_get_misses_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "evictions=", _wrap_memcached_stat_st_evictions_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "evictions", _wrap_memcached_stat_st_evictions_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "bytes_read=", _wrap_memcached_stat_st_bytes_read_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "bytes_read", _wrap_memcached_stat_st_bytes_read_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "bytes_written=", _wrap_memcached_stat_st_bytes_written_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "bytes_written", _wrap_memcached_stat_st_bytes_written_get, -1);
-  rb_define_method(cMemcached_stat_st.klass, "version=", _wrap_memcached_stat_st_version_set, -1);
-  rb_define_method(cMemcached_stat_st.klass, "version", _wrap_memcached_stat_st_version_get, -1);
-  cMemcached_stat_st.mark = 0;
-  cMemcached_stat_st.destroy = (void (*)(void *)) free_memcached_stat_st;
-  cMemcached_stat_st.trackObjects = 0;
+  cMemcachedStatSt.klass = rb_define_class_under(mLibmemcached, "MemcachedStatSt", rb_cObject);
+  SWIG_TypeClientData(SWIGTYPE_p_memcached_stat_st, (void *) &cMemcachedStatSt);
+  rb_define_alloc_func(cMemcachedStatSt.klass, _wrap_MemcachedStatSt_allocate);
+  rb_define_method(cMemcachedStatSt.klass, "initialize", _wrap_new_MemcachedStatSt, -1);
+  rb_define_method(cMemcachedStatSt.klass, "pid=", _wrap_MemcachedStatSt_pid_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "pid", _wrap_MemcachedStatSt_pid_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "uptime=", _wrap_MemcachedStatSt_uptime_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "uptime", _wrap_MemcachedStatSt_uptime_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "threads=", _wrap_MemcachedStatSt_threads_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "threads", _wrap_MemcachedStatSt_threads_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "time=", _wrap_MemcachedStatSt_time_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "time", _wrap_MemcachedStatSt_time_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "pointer_size=", _wrap_MemcachedStatSt_pointer_size_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "pointer_size", _wrap_MemcachedStatSt_pointer_size_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "rusage_user_seconds=", _wrap_MemcachedStatSt_rusage_user_seconds_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "rusage_user_seconds", _wrap_MemcachedStatSt_rusage_user_seconds_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "rusage_user_microseconds=", _wrap_MemcachedStatSt_rusage_user_microseconds_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "rusage_user_microseconds", _wrap_MemcachedStatSt_rusage_user_microseconds_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "rusage_system_seconds=", _wrap_MemcachedStatSt_rusage_system_seconds_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "rusage_system_seconds", _wrap_MemcachedStatSt_rusage_system_seconds_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "rusage_system_microseconds=", _wrap_MemcachedStatSt_rusage_system_microseconds_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "rusage_system_microseconds", _wrap_MemcachedStatSt_rusage_system_microseconds_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "curr_items=", _wrap_MemcachedStatSt_curr_items_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "curr_items", _wrap_MemcachedStatSt_curr_items_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "total_items=", _wrap_MemcachedStatSt_total_items_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "total_items", _wrap_MemcachedStatSt_total_items_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "limit_maxbytes=", _wrap_MemcachedStatSt_limit_maxbytes_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "limit_maxbytes", _wrap_MemcachedStatSt_limit_maxbytes_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "curr_connections=", _wrap_MemcachedStatSt_curr_connections_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "curr_connections", _wrap_MemcachedStatSt_curr_connections_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "total_connections=", _wrap_MemcachedStatSt_total_connections_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "total_connections", _wrap_MemcachedStatSt_total_connections_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "connection_structures=", _wrap_MemcachedStatSt_connection_structures_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "connection_structures", _wrap_MemcachedStatSt_connection_structures_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "bytes=", _wrap_MemcachedStatSt_bytes_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "bytes", _wrap_MemcachedStatSt_bytes_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "cmd=", _wrap_MemcachedStatSt_cmd_get_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "cmd", _wrap_MemcachedStatSt_cmd_get_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "cmd==", _wrap_MemcachedStatSt_cmd_set_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "cmd=", _wrap_MemcachedStatSt_cmd_set_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "get_hits=", _wrap_MemcachedStatSt_get_hits_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "get_hits", _wrap_MemcachedStatSt_get_hits_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "get_misses=", _wrap_MemcachedStatSt_get_misses_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "get_misses", _wrap_MemcachedStatSt_get_misses_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "evictions=", _wrap_MemcachedStatSt_evictions_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "evictions", _wrap_MemcachedStatSt_evictions_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "bytes_read=", _wrap_MemcachedStatSt_bytes_read_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "bytes_read", _wrap_MemcachedStatSt_bytes_read_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "bytes_written=", _wrap_MemcachedStatSt_bytes_written_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "bytes_written", _wrap_MemcachedStatSt_bytes_written_get, -1);
+  rb_define_method(cMemcachedStatSt.klass, "version=", _wrap_MemcachedStatSt_version_set, -1);
+  rb_define_method(cMemcachedStatSt.klass, "version", _wrap_MemcachedStatSt_version_get, -1);
+  cMemcachedStatSt.mark = 0;
+  cMemcachedStatSt.destroy = (void (*)(void *)) free_memcached_stat_st;
+  cMemcachedStatSt.trackObjects = 0;
   
-  cMemcached_string_st.klass = rb_define_class_under(mMemcached, "Memcached_string_st", rb_cObject);
-  SWIG_TypeClientData(SWIGTYPE_p_memcached_string_st, (void *) &cMemcached_string_st);
-  rb_define_alloc_func(cMemcached_string_st.klass, _wrap_memcached_string_st_allocate);
-  rb_define_method(cMemcached_string_st.klass, "initialize", _wrap_new_memcached_string_st, -1);
-  rb_define_method(cMemcached_string_st.klass, "root=", _wrap_memcached_string_st_root_set, -1);
-  rb_define_method(cMemcached_string_st.klass, "root", _wrap_memcached_string_st_root_get, -1);
-  rb_define_method(cMemcached_string_st.klass, "is_allocated=", _wrap_memcached_string_st_is_allocated_set, -1);
-  rb_define_method(cMemcached_string_st.klass, "is_allocated", _wrap_memcached_string_st_is_allocated_get, -1);
-  rb_define_method(cMemcached_string_st.klass, "string=", _wrap_memcached_string_st_string_set, -1);
-  rb_define_method(cMemcached_string_st.klass, "string", _wrap_memcached_string_st_string_get, -1);
-  rb_define_method(cMemcached_string_st.klass, "end=", _wrap_memcached_string_st_end_set, -1);
-  rb_define_method(cMemcached_string_st.klass, "end", _wrap_memcached_string_st_end_get, -1);
-  rb_define_method(cMemcached_string_st.klass, "current_size=", _wrap_memcached_string_st_current_size_set, -1);
-  rb_define_method(cMemcached_string_st.klass, "current_size", _wrap_memcached_string_st_current_size_get, -1);
-  rb_define_method(cMemcached_string_st.klass, "block_size=", _wrap_memcached_string_st_block_size_set, -1);
-  rb_define_method(cMemcached_string_st.klass, "block_size", _wrap_memcached_string_st_block_size_get, -1);
-  cMemcached_string_st.mark = 0;
-  cMemcached_string_st.destroy = (void (*)(void *)) free_memcached_string_st;
-  cMemcached_string_st.trackObjects = 0;
+  cMemcachedStringSt.klass = rb_define_class_under(mLibmemcached, "MemcachedStringSt", rb_cObject);
+  SWIG_TypeClientData(SWIGTYPE_p_memcached_string_st, (void *) &cMemcachedStringSt);
+  rb_define_alloc_func(cMemcachedStringSt.klass, _wrap_MemcachedStringSt_allocate);
+  rb_define_method(cMemcachedStringSt.klass, "initialize", _wrap_new_MemcachedStringSt, -1);
+  rb_define_method(cMemcachedStringSt.klass, "root=", _wrap_MemcachedStringSt_root_set, -1);
+  rb_define_method(cMemcachedStringSt.klass, "root", _wrap_MemcachedStringSt_root_get, -1);
+  rb_define_method(cMemcachedStringSt.klass, "is_allocated=", _wrap_MemcachedStringSt_is_allocated_set, -1);
+  rb_define_method(cMemcachedStringSt.klass, "is_allocated", _wrap_MemcachedStringSt_is_allocated_get, -1);
+  rb_define_method(cMemcachedStringSt.klass, "string=", _wrap_MemcachedStringSt_string_set, -1);
+  rb_define_method(cMemcachedStringSt.klass, "string", _wrap_MemcachedStringSt_string_get, -1);
+  rb_define_method(cMemcachedStringSt.klass, "end=", _wrap_MemcachedStringSt_end_set, -1);
+  rb_define_method(cMemcachedStringSt.klass, "end", _wrap_MemcachedStringSt_end_get, -1);
+  rb_define_method(cMemcachedStringSt.klass, "current_size=", _wrap_MemcachedStringSt_current_size_set, -1);
+  rb_define_method(cMemcachedStringSt.klass, "current_size", _wrap_MemcachedStringSt_current_size_get, -1);
+  rb_define_method(cMemcachedStringSt.klass, "block_size=", _wrap_MemcachedStringSt_block_size_set, -1);
+  rb_define_method(cMemcachedStringSt.klass, "block_size", _wrap_MemcachedStringSt_block_size_get, -1);
+  cMemcachedStringSt.mark = 0;
+  cMemcachedStringSt.destroy = (void (*)(void *)) free_memcached_string_st;
+  cMemcachedStringSt.trackObjects = 0;
   
-  cMemcached_result_st.klass = rb_define_class_under(mMemcached, "Memcached_result_st", rb_cObject);
-  SWIG_TypeClientData(SWIGTYPE_p_memcached_result_st, (void *) &cMemcached_result_st);
-  rb_define_alloc_func(cMemcached_result_st.klass, _wrap_memcached_result_st_allocate);
-  rb_define_method(cMemcached_result_st.klass, "initialize", _wrap_new_memcached_result_st, -1);
-  rb_define_method(cMemcached_result_st.klass, "is_allocated=", _wrap_memcached_result_st_is_allocated_set, -1);
-  rb_define_method(cMemcached_result_st.klass, "is_allocated", _wrap_memcached_result_st_is_allocated_get, -1);
-  rb_define_method(cMemcached_result_st.klass, "root=", _wrap_memcached_result_st_root_set, -1);
-  rb_define_method(cMemcached_result_st.klass, "root", _wrap_memcached_result_st_root_get, -1);
-  rb_define_method(cMemcached_result_st.klass, "key=", _wrap_memcached_result_st_key_set, -1);
-  rb_define_method(cMemcached_result_st.klass, "key", _wrap_memcached_result_st_key_get, -1);
-  rb_define_method(cMemcached_result_st.klass, "key_length=", _wrap_memcached_result_st_key_length_set, -1);
-  rb_define_method(cMemcached_result_st.klass, "key_length", _wrap_memcached_result_st_key_length_get, -1);
-  rb_define_method(cMemcached_result_st.klass, "value=", _wrap_memcached_result_st_value_set, -1);
-  rb_define_method(cMemcached_result_st.klass, "value", _wrap_memcached_result_st_value_get, -1);
-  rb_define_method(cMemcached_result_st.klass, "flags=", _wrap_memcached_result_st_flags_set, -1);
-  rb_define_method(cMemcached_result_st.klass, "flags", _wrap_memcached_result_st_flags_get, -1);
-  rb_define_method(cMemcached_result_st.klass, "cas=", _wrap_memcached_result_st_cas_set, -1);
-  rb_define_method(cMemcached_result_st.klass, "cas", _wrap_memcached_result_st_cas_get, -1);
-  cMemcached_result_st.mark = 0;
-  cMemcached_result_st.destroy = (void (*)(void *)) free_memcached_result_st;
-  cMemcached_result_st.trackObjects = 0;
+  cMemcachedResultSt.klass = rb_define_class_under(mLibmemcached, "MemcachedResultSt", rb_cObject);
+  SWIG_TypeClientData(SWIGTYPE_p_memcached_result_st, (void *) &cMemcachedResultSt);
+  rb_define_alloc_func(cMemcachedResultSt.klass, _wrap_MemcachedResultSt_allocate);
+  rb_define_method(cMemcachedResultSt.klass, "initialize", _wrap_new_MemcachedResultSt, -1);
+  rb_define_method(cMemcachedResultSt.klass, "is_allocated=", _wrap_MemcachedResultSt_is_allocated_set, -1);
+  rb_define_method(cMemcachedResultSt.klass, "is_allocated", _wrap_MemcachedResultSt_is_allocated_get, -1);
+  rb_define_method(cMemcachedResultSt.klass, "root=", _wrap_MemcachedResultSt_root_set, -1);
+  rb_define_method(cMemcachedResultSt.klass, "root", _wrap_MemcachedResultSt_root_get, -1);
+  rb_define_method(cMemcachedResultSt.klass, "key=", _wrap_MemcachedResultSt_key_set, -1);
+  rb_define_method(cMemcachedResultSt.klass, "key", _wrap_MemcachedResultSt_key_get, -1);
+  rb_define_method(cMemcachedResultSt.klass, "key_length=", _wrap_MemcachedResultSt_key_length_set, -1);
+  rb_define_method(cMemcachedResultSt.klass, "key_length", _wrap_MemcachedResultSt_key_length_get, -1);
+  rb_define_method(cMemcachedResultSt.klass, "value=", _wrap_MemcachedResultSt_value_set, -1);
+  rb_define_method(cMemcachedResultSt.klass, "value", _wrap_MemcachedResultSt_value_get, -1);
+  rb_define_method(cMemcachedResultSt.klass, "flags=", _wrap_MemcachedResultSt_flags_set, -1);
+  rb_define_method(cMemcachedResultSt.klass, "flags", _wrap_MemcachedResultSt_flags_get, -1);
+  rb_define_method(cMemcachedResultSt.klass, "cas=", _wrap_MemcachedResultSt_cas_set, -1);
+  rb_define_method(cMemcachedResultSt.klass, "cas", _wrap_MemcachedResultSt_cas_get, -1);
+  cMemcachedResultSt.mark = 0;
+  cMemcachedResultSt.destroy = (void (*)(void *)) free_memcached_result_st;
+  cMemcachedResultSt.trackObjects = 0;
   
-  cMemcached_st.klass = rb_define_class_under(mMemcached, "Memcached_st", rb_cObject);
-  SWIG_TypeClientData(SWIGTYPE_p_memcached_st, (void *) &cMemcached_st);
-  rb_define_alloc_func(cMemcached_st.klass, _wrap_memcached_st_allocate);
-  rb_define_method(cMemcached_st.klass, "initialize", _wrap_new_memcached_st, -1);
-  rb_define_method(cMemcached_st.klass, "is_allocated=", _wrap_memcached_st_is_allocated_set, -1);
-  rb_define_method(cMemcached_st.klass, "is_allocated", _wrap_memcached_st_is_allocated_get, -1);
-  rb_define_method(cMemcached_st.klass, "hosts=", _wrap_memcached_st_hosts_set, -1);
-  rb_define_method(cMemcached_st.klass, "hosts", _wrap_memcached_st_hosts_get, -1);
-  rb_define_method(cMemcached_st.klass, "number_of_hosts=", _wrap_memcached_st_number_of_hosts_set, -1);
-  rb_define_method(cMemcached_st.klass, "number_of_hosts", _wrap_memcached_st_number_of_hosts_get, -1);
-  rb_define_method(cMemcached_st.klass, "cursor_server=", _wrap_memcached_st_cursor_server_set, -1);
-  rb_define_method(cMemcached_st.klass, "cursor_server", _wrap_memcached_st_cursor_server_get, -1);
-  rb_define_method(cMemcached_st.klass, "connected=", _wrap_memcached_st_connected_set, -1);
-  rb_define_method(cMemcached_st.klass, "connected", _wrap_memcached_st_connected_get, -1);
-  rb_define_method(cMemcached_st.klass, "cached_errno=", _wrap_memcached_st_cached_errno_set, -1);
-  rb_define_method(cMemcached_st.klass, "cached_errno", _wrap_memcached_st_cached_errno_get, -1);
-  rb_define_method(cMemcached_st.klass, "flags=", _wrap_memcached_st_flags_set, -1);
-  rb_define_method(cMemcached_st.klass, "flags", _wrap_memcached_st_flags_get, -1);
-  rb_define_method(cMemcached_st.klass, "send_size=", _wrap_memcached_st_send_size_set, -1);
-  rb_define_method(cMemcached_st.klass, "send_size", _wrap_memcached_st_send_size_get, -1);
-  rb_define_method(cMemcached_st.klass, "recv_size=", _wrap_memcached_st_recv_size_set, -1);
-  rb_define_method(cMemcached_st.klass, "recv_size", _wrap_memcached_st_recv_size_get, -1);
-  rb_define_method(cMemcached_st.klass, "poll_timeout=", _wrap_memcached_st_poll_timeout_set, -1);
-  rb_define_method(cMemcached_st.klass, "poll_timeout", _wrap_memcached_st_poll_timeout_get, -1);
-  rb_define_method(cMemcached_st.klass, "result=", _wrap_memcached_st_result_set, -1);
-  rb_define_method(cMemcached_st.klass, "result", _wrap_memcached_st_result_get, -1);
-  rb_define_method(cMemcached_st.klass, "hash=", _wrap_memcached_st_hash_set, -1);
-  rb_define_method(cMemcached_st.klass, "hash", _wrap_memcached_st_hash_get, -1);
-  rb_define_method(cMemcached_st.klass, "distribution=", _wrap_memcached_st_distribution_set, -1);
-  rb_define_method(cMemcached_st.klass, "distribution", _wrap_memcached_st_distribution_get, -1);
-  rb_define_method(cMemcached_st.klass, "user_data=", _wrap_memcached_st_user_data_set, -1);
-  rb_define_method(cMemcached_st.klass, "user_data", _wrap_memcached_st_user_data_get, -1);
-  rb_define_method(cMemcached_st.klass, "wheel=", _wrap_memcached_st_wheel_set, -1);
-  rb_define_method(cMemcached_st.klass, "wheel", _wrap_memcached_st_wheel_get, -1);
-  cMemcached_st.mark = 0;
-  cMemcached_st.destroy = (void (*)(void *)) free_memcached_st;
-  cMemcached_st.trackObjects = 0;
-  rb_define_module_function(mMemcached, "memcached_create", _wrap_memcached_create, -1);
-  rb_define_module_function(mMemcached, "memcached_free", _wrap_memcached_free, -1);
-  rb_define_module_function(mMemcached, "memcached_clone", _wrap_memcached_clone, -1);
-  rb_define_module_function(mMemcached, "memcached_delete", _wrap_memcached_delete, -1);
-  rb_define_module_function(mMemcached, "memcached_increment", _wrap_memcached_increment, -1);
-  rb_define_module_function(mMemcached, "memcached_decrement", _wrap_memcached_decrement, -1);
-  rb_define_module_function(mMemcached, "memcached_stat_free", _wrap_memcached_stat_free, -1);
-  rb_define_module_function(mMemcached, "memcached_stat", _wrap_memcached_stat, -1);
-  rb_define_module_function(mMemcached, "memcached_stat_servername", _wrap_memcached_stat_servername, -1);
-  rb_define_module_function(mMemcached, "memcached_flush", _wrap_memcached_flush, -1);
-  rb_define_module_function(mMemcached, "memcached_verbosity", _wrap_memcached_verbosity, -1);
-  rb_define_module_function(mMemcached, "memcached_quit", _wrap_memcached_quit, -1);
-  rb_define_module_function(mMemcached, "memcached_strerror", _wrap_memcached_strerror, -1);
-  rb_define_module_function(mMemcached, "memcached_behavior_set", _wrap_memcached_behavior_set, -1);
-  rb_define_module_function(mMemcached, "memcached_behavior_get", _wrap_memcached_behavior_get, -1);
-  rb_define_module_function(mMemcached, "memcached_set", _wrap_memcached_set, -1);
-  rb_define_module_function(mMemcached, "memcached_add", _wrap_memcached_add, -1);
-  rb_define_module_function(mMemcached, "memcached_replace", _wrap_memcached_replace, -1);
-  rb_define_module_function(mMemcached, "memcached_append", _wrap_memcached_append, -1);
-  rb_define_module_function(mMemcached, "memcached_prepend", _wrap_memcached_prepend, -1);
-  rb_define_module_function(mMemcached, "memcached_cas", _wrap_memcached_cas, -1);
-  rb_define_module_function(mMemcached, "memcached_get", _wrap_memcached_get, -1);
-  rb_define_module_function(mMemcached, "memcached_mget", _wrap_memcached_mget, -1);
-  rb_define_module_function(mMemcached, "memcached_fetch", _wrap_memcached_fetch, -1);
-  rb_define_module_function(mMemcached, "memcached_fetch_result", _wrap_memcached_fetch_result, -1);
-  rb_define_module_function(mMemcached, "memcached_server_add_udp", _wrap_memcached_server_add_udp, -1);
-  rb_define_module_function(mMemcached, "memcached_server_add_unix_socket", _wrap_memcached_server_add_unix_socket, -1);
-  rb_define_module_function(mMemcached, "memcached_server_add", _wrap_memcached_server_add, -1);
-  rb_define_module_function(mMemcached, "memcached_server_list_free", _wrap_memcached_server_list_free, -1);
-  rb_define_module_function(mMemcached, "memcached_server_push", _wrap_memcached_server_push, -1);
-  rb_define_module_function(mMemcached, "memcached_server_list_append", _wrap_memcached_server_list_append, -1);
-  rb_define_module_function(mMemcached, "memcached_server_list_count", _wrap_memcached_server_list_count, -1);
-  rb_define_module_function(mMemcached, "memcached_servers_parse", _wrap_memcached_servers_parse, -1);
-  rb_define_module_function(mMemcached, "memcached_stat_get_value", _wrap_memcached_stat_get_value, -1);
-  rb_define_module_function(mMemcached, "memcached_stat_get_keys", _wrap_memcached_stat_get_keys, -1);
-  rb_define_module_function(mMemcached, "memcached_get_by_key", _wrap_memcached_get_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_mget_by_key", _wrap_memcached_mget_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_set_by_key", _wrap_memcached_set_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_add_by_key", _wrap_memcached_add_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_replace_by_key", _wrap_memcached_replace_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_prepend_by_key", _wrap_memcached_prepend_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_append_by_key", _wrap_memcached_append_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_cas_by_key", _wrap_memcached_cas_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_delete_by_key", _wrap_memcached_delete_by_key, -1);
-  rb_define_module_function(mMemcached, "memcached_fetch_execute", _wrap_memcached_fetch_execute, -1);
-  rb_define_module_function(mMemcached, "memcached_result_free", _wrap_memcached_result_free, -1);
-  rb_define_module_function(mMemcached, "memcached_result_create", _wrap_memcached_result_create, -1);
-  rb_define_module_function(mMemcached, "memcached_result_value", _wrap_memcached_result_value, -1);
-  rb_define_module_function(mMemcached, "memcached_result_length", _wrap_memcached_result_length, -1);
+  cMemcachedSt.klass = rb_define_class_under(mLibmemcached, "MemcachedSt", rb_cObject);
+  SWIG_TypeClientData(SWIGTYPE_p_memcached_st, (void *) &cMemcachedSt);
+  rb_define_alloc_func(cMemcachedSt.klass, _wrap_MemcachedSt_allocate);
+  rb_define_method(cMemcachedSt.klass, "initialize", _wrap_new_MemcachedSt, -1);
+  rb_define_method(cMemcachedSt.klass, "is_allocated=", _wrap_MemcachedSt_is_allocated_set, -1);
+  rb_define_method(cMemcachedSt.klass, "is_allocated", _wrap_MemcachedSt_is_allocated_get, -1);
+  rb_define_method(cMemcachedSt.klass, "hosts=", _wrap_MemcachedSt_hosts_set, -1);
+  rb_define_method(cMemcachedSt.klass, "hosts", _wrap_MemcachedSt_hosts_get, -1);
+  rb_define_method(cMemcachedSt.klass, "number_of_hosts=", _wrap_MemcachedSt_number_of_hosts_set, -1);
+  rb_define_method(cMemcachedSt.klass, "number_of_hosts", _wrap_MemcachedSt_number_of_hosts_get, -1);
+  rb_define_method(cMemcachedSt.klass, "cursor_server=", _wrap_MemcachedSt_cursor_server_set, -1);
+  rb_define_method(cMemcachedSt.klass, "cursor_server", _wrap_MemcachedSt_cursor_server_get, -1);
+  rb_define_method(cMemcachedSt.klass, "connected=", _wrap_MemcachedSt_connected_set, -1);
+  rb_define_method(cMemcachedSt.klass, "connected", _wrap_MemcachedSt_connected_get, -1);
+  rb_define_method(cMemcachedSt.klass, "cached_errno=", _wrap_MemcachedSt_cached_errno_set, -1);
+  rb_define_method(cMemcachedSt.klass, "cached_errno", _wrap_MemcachedSt_cached_errno_get, -1);
+  rb_define_method(cMemcachedSt.klass, "flags=", _wrap_MemcachedSt_flags_set, -1);
+  rb_define_method(cMemcachedSt.klass, "flags", _wrap_MemcachedSt_flags_get, -1);
+  rb_define_method(cMemcachedSt.klass, "send_size=", _wrap_MemcachedSt_send_size_set, -1);
+  rb_define_method(cMemcachedSt.klass, "send_size", _wrap_MemcachedSt_send_size_get, -1);
+  rb_define_method(cMemcachedSt.klass, "recv_size=", _wrap_MemcachedSt_recv_size_set, -1);
+  rb_define_method(cMemcachedSt.klass, "recv_size", _wrap_MemcachedSt_recv_size_get, -1);
+  rb_define_method(cMemcachedSt.klass, "poll_timeout=", _wrap_MemcachedSt_poll_timeout_set, -1);
+  rb_define_method(cMemcachedSt.klass, "poll_timeout", _wrap_MemcachedSt_poll_timeout_get, -1);
+  rb_define_method(cMemcachedSt.klass, "result=", _wrap_MemcachedSt_result_set, -1);
+  rb_define_method(cMemcachedSt.klass, "result", _wrap_MemcachedSt_result_get, -1);
+  rb_define_method(cMemcachedSt.klass, "hash=", _wrap_MemcachedSt_hash_set, -1);
+  rb_define_method(cMemcachedSt.klass, "hash", _wrap_MemcachedSt_hash_get, -1);
+  rb_define_method(cMemcachedSt.klass, "distribution=", _wrap_MemcachedSt_distribution_set, -1);
+  rb_define_method(cMemcachedSt.klass, "distribution", _wrap_MemcachedSt_distribution_get, -1);
+  rb_define_method(cMemcachedSt.klass, "user_data=", _wrap_MemcachedSt_user_data_set, -1);
+  rb_define_method(cMemcachedSt.klass, "user_data", _wrap_MemcachedSt_user_data_get, -1);
+  rb_define_method(cMemcachedSt.klass, "wheel=", _wrap_MemcachedSt_wheel_set, -1);
+  rb_define_method(cMemcachedSt.klass, "wheel", _wrap_MemcachedSt_wheel_get, -1);
+  cMemcachedSt.mark = 0;
+  cMemcachedSt.destroy = (void (*)(void *)) free_memcached_st;
+  cMemcachedSt.trackObjects = 0;
+  rb_define_module_function(mLibmemcached, "memcached_create", _wrap_memcached_create, -1);
+  rb_define_module_function(mLibmemcached, "memcached_free", _wrap_memcached_free, -1);
+  rb_define_module_function(mLibmemcached, "memcached_clone", _wrap_memcached_clone, -1);
+  rb_define_module_function(mLibmemcached, "memcached_delete", _wrap_memcached_delete, -1);
+  rb_define_module_function(mLibmemcached, "memcached_increment", _wrap_memcached_increment, -1);
+  rb_define_module_function(mLibmemcached, "memcached_decrement", _wrap_memcached_decrement, -1);
+  rb_define_module_function(mLibmemcached, "memcached_stat_free", _wrap_memcached_stat_free, -1);
+  rb_define_module_function(mLibmemcached, "memcached_stat", _wrap_memcached_stat, -1);
+  rb_define_module_function(mLibmemcached, "memcached_stat_servername", _wrap_memcached_stat_servername, -1);
+  rb_define_module_function(mLibmemcached, "memcached_flush", _wrap_memcached_flush, -1);
+  rb_define_module_function(mLibmemcached, "memcached_verbosity", _wrap_memcached_verbosity, -1);
+  rb_define_module_function(mLibmemcached, "memcached_quit", _wrap_memcached_quit, -1);
+  rb_define_module_function(mLibmemcached, "memcached_strerror", _wrap_memcached_strerror, -1);
+  rb_define_module_function(mLibmemcached, "memcached_behavior_set", _wrap_memcached_behavior_set, -1);
+  rb_define_module_function(mLibmemcached, "memcached_behavior_get", _wrap_memcached_behavior_get, -1);
+  rb_define_module_function(mLibmemcached, "memcached_set", _wrap_memcached_set, -1);
+  rb_define_module_function(mLibmemcached, "memcached_add", _wrap_memcached_add, -1);
+  rb_define_module_function(mLibmemcached, "memcached_replace", _wrap_memcached_replace, -1);
+  rb_define_module_function(mLibmemcached, "memcached_append", _wrap_memcached_append, -1);
+  rb_define_module_function(mLibmemcached, "memcached_prepend", _wrap_memcached_prepend, -1);
+  rb_define_module_function(mLibmemcached, "memcached_cas", _wrap_memcached_cas, -1);
+  rb_define_module_function(mLibmemcached, "memcached_get", _wrap_memcached_get, -1);
+  rb_define_module_function(mLibmemcached, "memcached_mget", _wrap_memcached_mget, -1);
+  rb_define_module_function(mLibmemcached, "memcached_fetch", _wrap_memcached_fetch, -1);
+  rb_define_module_function(mLibmemcached, "memcached_fetch_result", _wrap_memcached_fetch_result, -1);
+  rb_define_module_function(mLibmemcached, "memcached_server_add_udp", _wrap_memcached_server_add_udp, -1);
+  rb_define_module_function(mLibmemcached, "memcached_server_add_unix_socket", _wrap_memcached_server_add_unix_socket, -1);
+  rb_define_module_function(mLibmemcached, "memcached_server_add", _wrap_memcached_server_add, -1);
+  rb_define_module_function(mLibmemcached, "memcached_server_list_free", _wrap_memcached_server_list_free, -1);
+  rb_define_module_function(mLibmemcached, "memcached_server_push", _wrap_memcached_server_push, -1);
+  rb_define_module_function(mLibmemcached, "memcached_server_list_append", _wrap_memcached_server_list_append, -1);
+  rb_define_module_function(mLibmemcached, "memcached_server_list_count", _wrap_memcached_server_list_count, -1);
+  rb_define_module_function(mLibmemcached, "memcached_servers_parse", _wrap_memcached_servers_parse, -1);
+  rb_define_module_function(mLibmemcached, "memcached_stat_get_value", _wrap_memcached_stat_get_value, -1);
+  rb_define_module_function(mLibmemcached, "memcached_stat_get_keys", _wrap_memcached_stat_get_keys, -1);
+  rb_define_module_function(mLibmemcached, "memcached_get_by_key", _wrap_memcached_get_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_mget_by_key", _wrap_memcached_mget_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_set_by_key", _wrap_memcached_set_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_add_by_key", _wrap_memcached_add_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_replace_by_key", _wrap_memcached_replace_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_prepend_by_key", _wrap_memcached_prepend_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_append_by_key", _wrap_memcached_append_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_cas_by_key", _wrap_memcached_cas_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_delete_by_key", _wrap_memcached_delete_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_fetch_execute", _wrap_memcached_fetch_execute, -1);
+  rb_define_module_function(mLibmemcached, "memcached_result_free", _wrap_memcached_result_free, -1);
+  rb_define_module_function(mLibmemcached, "memcached_result_create", _wrap_memcached_result_create, -1);
+  rb_define_module_function(mLibmemcached, "memcached_result_value", _wrap_memcached_result_value, -1);
+  rb_define_module_function(mLibmemcached, "memcached_result_length", _wrap_memcached_result_length, -1);
 }
 
