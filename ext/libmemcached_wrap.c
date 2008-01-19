@@ -1898,14 +1898,14 @@ SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
   // SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because of the
   // retval/argout split, which means it truncates values with \0 in them.
-  char* svalue;
-  size_t* value_length;
+  char *svalue;
+  size_t *value_length;
   svalue = memcached_get(ptr, key, key_length, value_length, flags, error);
   return rb_str_new(svalue, *value_length);
 };
 
 
-memcached_server_st* memcached_select_server_at(memcached_st* in_ptr, int index) {
+memcached_server_st *memcached_select_server_at(memcached_st *in_ptr, int index) {
   return &(in_ptr->hosts[index]);
 };
 
@@ -6222,6 +6222,8 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   void *argp4 ;
   int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 4) || (argc > 4)) {
@@ -6247,10 +6249,11 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
       arg4 = *((uint32_t *)(argp4));
     }
   }
-  {
-    uint64_t * ptr;
-    arg5 = ptr;
+  res5 = SWIG_ConvertPtr(argv[3], &argp5,SWIGTYPE_p_uint64_t, 0 |  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_increment" "', argument " "5"" of type '" "uint64_t *""'"); 
   }
+  arg5 = (uint64_t *)(argp5);
   result = (memcached_return)memcached_increment(arg1,arg2,arg3,arg4,arg5);
   vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
   {
@@ -6274,6 +6277,8 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   void *argp4 ;
   int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 4) || (argc > 4)) {
@@ -6299,10 +6304,11 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
       arg4 = *((uint32_t *)(argp4));
     }
   }
-  {
-    uint64_t * ptr;
-    arg5 = ptr;
+  res5 = SWIG_ConvertPtr(argv[3], &argp5,SWIGTYPE_p_uint64_t, 0 |  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_decrement" "', argument " "5"" of type '" "uint64_t *""'"); 
   }
+  arg5 = (uint64_t *)(argp5);
   result = (memcached_return)memcached_decrement(arg1,arg2,arg3,arg4,arg5);
   vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
   {
