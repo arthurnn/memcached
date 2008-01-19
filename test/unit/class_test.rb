@@ -158,7 +158,7 @@ class ClassTest < Test::Unit::TestCase
 
   def test_missing_increment
     @cache.delete 'test_missing_increment' rescue nil
-    assert_raise(Memcached::StubError) do
+    assert_raise(Memcached::NotFound) do
       @cache.increment 'test_missing_increment'
     end
   end
@@ -170,7 +170,7 @@ class ClassTest < Test::Unit::TestCase
 
   def test_missing_decrement
     @cache.delete 'test_missing_decrement' rescue nil
-    assert_raise(Memcached::StubError) do
+    assert_raise(Memcached::NotFound) do
       @cache.decrement 'test_missing_decrement'
     end
   end
