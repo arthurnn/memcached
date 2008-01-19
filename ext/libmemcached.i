@@ -34,18 +34,10 @@
   (char* value, size_t value_length)
 };
 
-// Typemap for an incoming buffer
-%typemap(in) (char* svalue, size_t value_length) {
-}
-%typemap(argout) (char* svalue, size_t value_length) {
-  $result = SWIG_FromCharPtrAndSize($1, $2);  
-}
 
 %apply unsigned int* OUTPUT {memcached_return* error}
 %apply unsigned int* OUTPUT {uint32_t* flags}
-%apply (char* svalue, size_t* value_length) {
-  (char* svalue, size_t* value_length)
-}
+%apply size_t* OUTPUT {size_t* value_length}
 
 %include "libmemcached.h"
 

@@ -3,6 +3,9 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 
 require 'ruby-debug' if ENV['DEBUG']
 
+class GenericClass
+end
+
 class ClassTest < Test::Unit::TestCase
 
   def setup
@@ -10,7 +13,7 @@ class ClassTest < Test::Unit::TestCase
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
       :namespace => 'test'
     )
-    @value = OpenStruct.new(:a => 1, :b => 2, :c => Object.new)
+    @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @raw_value = Marshal.dump(@value)
   end
 
@@ -57,6 +60,16 @@ class ClassTest < Test::Unit::TestCase
     assert_equal @value, result
   end
   
+  def test_truncation_issue_is_covered
+    value = OpenStruct.new(:a => 1, :b => 2, :c => Object.new) # Marshals with a null \000
+    @cache.set 'test_get', value, 0
+    result = @cache.get 'test_get', true
+    non_wrapped_result = Libmemcached.memcached_get(
+      @cache.instance_variable_get("@struct"), 
+      'test_get'
+    ).first
+    assert_not_equal result.size, non_wrapped_result.size      
+  end  
 
   def test_get_invalid_key
     assert_raise(Memcached::ClientError) { @cache.get('key' * 100) }
