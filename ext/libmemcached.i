@@ -34,33 +34,28 @@
   (char* value, size_t value_length)
 };
 
-%typemap(argout) (char *INOUT, size_t *INOUT) = char *OUTPUT {
-  $result = rb_str_new($1, *$2);
-};
-%apply (char *, size_t *) {
-    (char* value, size_t *value_length)
-};
+// Typemap for an incoming buffer
+%typemap(in) (char* svalue, size_t value_length) {
+}
+%typemap(argout) (char* svalue, size_t value_length) {
+  $result = SWIG_FromCharPtrAndSize($1, $2);  
+}
 
 %apply unsigned int* OUTPUT {memcached_return* error}
 %apply unsigned int* OUTPUT {uint32_t* flags}
-//%apply char* OUTPUT {char* value}
-//%apply size_t* OUTPUT {size_t* value_length}
-
-%include "cpointer.i"
-%pointer_functions(memcached_return, memcached_returnp);
-%pointer_functions(uint32_t, uint32_tp);
-%pointer_functions(size_t, size_tp);
-
-//size_t *value_length, 
-//                    uint32_t *flags,
-//                    memcached_return *error
+%apply (char* svalue, size_t* value_length) {
+  (char* svalue, size_t* value_length)
+}
 
 %include "libmemcached.h"
 
-void memcached_get_string_by_length(memcached_st *ptr, char *key, size_t key_length, char *value, size_t *value_length, uint32_t *flags, memcached_return *error);
+VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
-void memcached_get_string_by_length(memcached_st *ptr, char *key, size_t key_length, char *value, size_t *value_length, uint32_t *flags, memcached_return *error) {
-  value = memcached_get(ptr, key, key_length, value_length, flags, error);
+VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
+  char* svalue;
+  size_t* value_length;
+  svalue = memcached_get(ptr, key, key_length, value_length, flags, error);
+  return rb_str_new(svalue, *value_length);
 };
 %}
 
