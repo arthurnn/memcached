@@ -19,8 +19,8 @@
 
 %apply void* OUTPUT {void* data}
 %apply size_t* OUTPUT {size_t* value_length}
-%apply memcached_st* INPUT {memcached_st* in_ptr}
-%apply memcached_st* OUTPUT {memcached_st* out_ptr}
+// %apply memcached_st* INPUT {memcached_st* in_ptr}
+// %apply memcached_st* OUTPUT {memcached_st* out_ptr}
 
 // %include "cpointer.i"
 
