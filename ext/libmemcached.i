@@ -26,8 +26,7 @@
   (char *value, size_t value_length)
 };
 
-
-%apply unsigned int *OUTPUT {memcached_return *error}
+%apply unsigned short *OUTPUT {memcached_return *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
