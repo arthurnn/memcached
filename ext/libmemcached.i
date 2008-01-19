@@ -23,8 +23,12 @@
 %typemap(in) (uint32_t flags) {
   $1 = (uint32_t) NUM2ULONG($input);
 };
-%typemap(in) (uint64_t value) {
-  $1 = (uint64_t) OFFT2NUM($input);
+%typemap(in) uint64_t* {
+  uint64_t * ptr;
+  $1 = ptr;
+};
+%typemap(argout) uint64_t* {
+  $result = (uint64_t) OFFT2NUM(*$1);
 };
 
 %typemap(in) (char *str, size_t len) {

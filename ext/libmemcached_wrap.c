@@ -6203,7 +6203,7 @@ _wrap_memcached_delete(int argc, VALUE *argv, VALUE self) {
     arg4 = NUM2LONG(rb_funcall(argv[2], rb_intern("tv_sec"), 0));
   }
   result = (memcached_return)memcached_delete(arg1,arg2,arg3,arg4);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6222,8 +6222,6 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   void *argp4 ;
   int res4 = 0 ;
-  void *argp5 = 0 ;
-  int res5 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 4) || (argc > 4)) {
@@ -6249,13 +6247,15 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
       arg4 = *((uint32_t *)(argp4));
     }
   }
-  res5 = SWIG_ConvertPtr(argv[3], &argp5,SWIGTYPE_p_uint64_t, 0 |  0 );
-  if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_increment" "', argument " "5"" of type '" "uint64_t *""'"); 
+  {
+    uint64_t * ptr;
+    arg5 = ptr;
   }
-  arg5 = (uint64_t *)(argp5);
   result = (memcached_return)memcached_increment(arg1,arg2,arg3,arg4,arg5);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
+  {
+    vresult = (uint64_t) OFFT2NUM(*arg5);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6274,8 +6274,6 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   void *argp4 ;
   int res4 = 0 ;
-  void *argp5 = 0 ;
-  int res5 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 4) || (argc > 4)) {
@@ -6301,13 +6299,15 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
       arg4 = *((uint32_t *)(argp4));
     }
   }
-  res5 = SWIG_ConvertPtr(argv[3], &argp5,SWIGTYPE_p_uint64_t, 0 |  0 );
-  if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_decrement" "', argument " "5"" of type '" "uint64_t *""'"); 
+  {
+    uint64_t * ptr;
+    arg5 = ptr;
   }
-  arg5 = (uint64_t *)(argp5);
   result = (memcached_return)memcached_decrement(arg1,arg2,arg3,arg4,arg5);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
+  {
+    vresult = (uint64_t) OFFT2NUM(*arg5);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6431,7 +6431,7 @@ _wrap_memcached_stat_servername(int argc, VALUE *argv, VALUE self) {
   } 
   arg4 = (unsigned int)(val4);
   result = (memcached_return)memcached_stat_servername(arg1,arg2,arg3,arg4);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
   return vresult;
@@ -6466,7 +6466,7 @@ _wrap_memcached_flush(int argc, VALUE *argv, VALUE self) {
     arg2 = NUM2LONG(rb_funcall(argv[1], rb_intern("tv_sec"), 0));
   }
   result = (memcached_return)memcached_flush(arg1,arg2);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6498,7 +6498,7 @@ _wrap_memcached_verbosity(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (unsigned int)(val2);
   result = (memcached_return)memcached_verbosity(arg1,arg2);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6533,7 +6533,7 @@ _wrap_memcached_strerror(int argc, VALUE *argv, VALUE self) {
   char *result = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  unsigned int val2 ;
+  int val2 ;
   int ecode2 = 0 ;
   VALUE vresult = Qnil;
   
@@ -6545,7 +6545,7 @@ _wrap_memcached_strerror(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_strerror" "', argument " "1"" of type '" "memcached_st *""'"); 
   }
   arg1 = (memcached_st *)(argp1);
-  ecode2 = SWIG_AsVal_unsigned_SS_int(argv[1], &val2);
+  ecode2 = SWIG_AsVal_int(argv[1], &val2);
   if (!SWIG_IsOK(ecode2)) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "memcached_strerror" "', argument " "2"" of type '" "memcached_return""'");
   } 
@@ -6589,7 +6589,7 @@ _wrap_memcached_behavior_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_behavior_set" "', argument " "3"" of type '" "void *""'"); 
   }
   result = (memcached_return)memcached_behavior_set(arg1,arg2,arg3);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6668,7 +6668,7 @@ _wrap_memcached_set(int argc, VALUE *argv, VALUE self) {
     arg7 = (uint32_t) NUM2ULONG(argv[4]);
   }
   result = (memcached_return)memcached_set(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6715,7 +6715,7 @@ _wrap_memcached_add(int argc, VALUE *argv, VALUE self) {
     arg7 = (uint32_t) NUM2ULONG(argv[4]);
   }
   result = (memcached_return)memcached_add(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6762,7 +6762,7 @@ _wrap_memcached_replace(int argc, VALUE *argv, VALUE self) {
     arg7 = (uint32_t) NUM2ULONG(argv[4]);
   }
   result = (memcached_return)memcached_replace(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6809,7 +6809,7 @@ _wrap_memcached_append(int argc, VALUE *argv, VALUE self) {
     arg7 = (uint32_t) NUM2ULONG(argv[4]);
   }
   result = (memcached_return)memcached_append(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6856,7 +6856,7 @@ _wrap_memcached_prepend(int argc, VALUE *argv, VALUE self) {
     arg7 = (uint32_t) NUM2ULONG(argv[4]);
   }
   result = (memcached_return)memcached_prepend(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -6917,7 +6917,7 @@ _wrap_memcached_cas(int argc, VALUE *argv, VALUE self) {
     }
   }
   result = (memcached_return)memcached_cas(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -7025,7 +7025,7 @@ _wrap_memcached_mget(int argc, VALUE *argv, VALUE self) {
   } 
   arg4 = (unsigned int)(val4);
   result = (memcached_return)memcached_mget(arg1,arg2,arg3,arg4);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -7181,7 +7181,7 @@ _wrap_memcached_server_add_udp(int argc, VALUE *argv, VALUE self) {
   } 
   arg3 = (unsigned int)(val3);
   result = (memcached_return)memcached_server_add_udp(arg1,arg2,arg3);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7216,7 +7216,7 @@ _wrap_memcached_server_add_unix_socket(int argc, VALUE *argv, VALUE self) {
   }
   arg2 = buf2;
   result = (memcached_return)memcached_server_add_unix_socket(arg1,arg2);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7259,7 +7259,7 @@ _wrap_memcached_server_add(int argc, VALUE *argv, VALUE self) {
   } 
   arg3 = (unsigned int)(val3);
   result = (memcached_return)memcached_server_add(arg1,arg2,arg3);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7314,7 +7314,7 @@ _wrap_memcached_server_push(int argc, VALUE *argv, VALUE self) {
   }
   arg2 = (memcached_server_st *)(argp2);
   result = (memcached_return)memcached_server_push(arg1,arg2);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
@@ -7657,7 +7657,7 @@ _wrap_memcached_mget_by_key(int argc, VALUE *argv, VALUE self) {
   } 
   arg6 = (unsigned int)(val6);
   result = (memcached_return)memcached_mget_by_key(arg1,arg2,arg3,arg4,arg5,arg6);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7723,7 +7723,7 @@ _wrap_memcached_set_by_key(int argc, VALUE *argv, VALUE self) {
     arg9 = (uint32_t) NUM2ULONG(argv[6]);
   }
   result = (memcached_return)memcached_set_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7789,7 +7789,7 @@ _wrap_memcached_add_by_key(int argc, VALUE *argv, VALUE self) {
     arg9 = (uint32_t) NUM2ULONG(argv[6]);
   }
   result = (memcached_return)memcached_add_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7855,7 +7855,7 @@ _wrap_memcached_replace_by_key(int argc, VALUE *argv, VALUE self) {
     arg9 = (uint32_t) NUM2ULONG(argv[6]);
   }
   result = (memcached_return)memcached_replace_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7921,7 +7921,7 @@ _wrap_memcached_prepend_by_key(int argc, VALUE *argv, VALUE self) {
     arg9 = (uint32_t) NUM2ULONG(argv[6]);
   }
   result = (memcached_return)memcached_prepend_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -7987,7 +7987,7 @@ _wrap_memcached_append_by_key(int argc, VALUE *argv, VALUE self) {
     arg9 = (uint32_t) NUM2ULONG(argv[6]);
   }
   result = (memcached_return)memcached_append_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -8067,7 +8067,7 @@ _wrap_memcached_cas_by_key(int argc, VALUE *argv, VALUE self) {
     }
   }
   result = (memcached_return)memcached_cas_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -8123,7 +8123,7 @@ _wrap_memcached_delete_by_key(int argc, VALUE *argv, VALUE self) {
     arg6 = NUM2LONG(rb_funcall(argv[4], rb_intern("tv_sec"), 0));
   }
   result = (memcached_return)memcached_delete_by_key(arg1,arg2,arg3,arg4,arg5,arg6);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
@@ -8171,7 +8171,7 @@ _wrap_memcached_fetch_execute(int argc, VALUE *argv, VALUE self) {
   } 
   arg4 = (unsigned int)(val4);
   result = (memcached_return)memcached_fetch_execute(arg1,arg2,arg3,arg4);
-  vresult = SWIG_From_unsigned_SS_int((unsigned int)(result));
+  vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
   return Qnil;
