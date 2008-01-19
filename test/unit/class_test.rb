@@ -152,8 +152,7 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_increment
-    @cache.delete 'test_increment' rescue nil
-    @cache.increment 'test_increment', 10
+    @cache.set 'test_increment', 10, 0, false
     assert_equal 11, @cache.increment('test_increment')
   end
 
@@ -165,8 +164,7 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_decrement
-    @cache.delete 'test_decrement' rescue nil
-    @cache.decrement 'test_decrement', 10
+    @cache.set 'test_decrement', 10, 0, false
     assert_equal 9, @cache.decrement('test_decrement')
   end
 

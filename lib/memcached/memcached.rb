@@ -28,7 +28,7 @@ class Memcached
   end
   
   def set(key, value, timeout=0, marshal=true)
-    value = Marshal.dump(value) if marshal
+    value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
       Libmemcached.memcached_set(@struct, key, value, timeout, FLAGS)
     )
@@ -49,7 +49,7 @@ class Memcached
   end
   
   def add(key, value, timeout=0, marshal=true)
-    value = Marshal.dump(value) if marshal
+    value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
       Libmemcached.memcached_add(@struct, key, value, timeout, FLAGS)
     )
@@ -61,7 +61,10 @@ class Memcached
     value
   end
   
-  def decrement
+  def decrement(key, offset=1)
+    return_code, value = Libmemcached.memcached_decrement(@struct, key, offset)
+    check_return_code(return_code)
+    value
   end
   
   alias :incr :increment
