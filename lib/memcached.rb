@@ -1,6 +1,3 @@
 
-module Memcached
-end
-
 require 'libmemcached'
-require 'memcached/configuration'
+require 'memcached/memcached'
