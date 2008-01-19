@@ -11,12 +11,12 @@
 // Struct creation
 extern m_obj memcached_create(m_obj OUTPUT);
 extern m_obj memcached_clone(m_obj OUTPUT, m_obj INPUT);
+extern void memcached_free(m_obj INPUT);
 
 // Server configuration
 extern uint32_t memcached_server_count(m_obj INPUT);
 extern m_ret memcached_server_add(m_obj INPUT, char* hostname, uint32_t port= 11211);
 extern m_ret memcached_server_add_unix_socket(m_obj INPUT, char* socket);
-extern void memcached_free(m_obj INPUT);
 
 // Client configuration
 extern unsigned long long memcached_behavior_get(m_obj INPUT, memcached_behavior flag);
