@@ -24,4 +24,4 @@
 
 // %include "cpointer.i"
 
-%include "/opt/local/include/libmemcached/memcached.h"
+%include "memcached.h"
