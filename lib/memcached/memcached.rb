@@ -7,6 +7,7 @@ class Memcached
 
   def initialize(servers, opts = {})
     @struct = Libmemcached::MemcachedSt.new
+    Libmemcached.memcached_create(@struct)
 
     Array(servers).each do |server|
       unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/

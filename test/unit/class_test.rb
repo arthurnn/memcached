@@ -10,7 +10,7 @@ class ClassTest < Test::Unit::TestCase
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
       :namespace => 'test'
     )
-    @value = OpenStruct.new(:a => 1, :b => 2, :c => Object.new)
+    @value = "3" # OpenStruct.new(:a => 1, :b => 2, :c => Object.new)
     @raw_value = Marshal.dump(@value)
   end
 
@@ -52,8 +52,9 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_get
-    @cache.set 'test_get', @value
-    result = @cache.get 'test_get'
+    @cache.set 'test_get', @value, 0, true
+    debugger
+    result = @cache.get 'test_get', true
     assert_equal @value, result
   end
   
