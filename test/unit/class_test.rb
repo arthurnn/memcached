@@ -49,7 +49,7 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_get_missing
-    assert_raise(Memcached::Notfound) do
+    assert_raise(Memcached::NotFound) do
       result = @cache.get 'test_get_missing'
     end
   end
@@ -105,7 +105,7 @@ class ClassTest < Test::Unit::TestCase
       @cache.get 'test_set_expiry'
     end
     sleep(1)
-    assert_raise(Memcached::Notfound) do
+    assert_raise(Memcached::NotFound) do
       @cache.get 'test_set_expiry'
     end
   end
@@ -119,9 +119,9 @@ class ClassTest < Test::Unit::TestCase
   def test_delete
     @cache.set 'test_delete', @value
     @cache.delete 'test_delete'
-#    assert_raise(Memcached::Notfound) do
+    assert_raise(Memcached::NotFound) do
       @cache.get 'test_delete'
-#    end
+    end
   end  
 
   def test_successful_add
@@ -141,7 +141,7 @@ class ClassTest < Test::Unit::TestCase
       @cache.get 'test_add_expiry'
     end
     sleep(1)
-    assert_raise(Memcached::Notfound) do
+    assert_raise(Memcached::NotFound) do
       @cache.get 'test_add_expiry'
     end  
   end
