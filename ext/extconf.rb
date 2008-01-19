@@ -1,6 +1,6 @@
 
 if `which swig` !~ /no swig/
-  puts "running swig"
+  puts "running SWIG"
   $stdout.write `swig -I/opt/local/include -ruby memcached.i`
 end
 
