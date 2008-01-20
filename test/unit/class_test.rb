@@ -10,6 +10,7 @@ class ClassTest < Test::Unit::TestCase
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
       :namespace => 'test'
     )
+    # @cache.set_behavior(Libmemcached::MEMCACHED_BEHAVIOR_BUFFER_REQUESTS, 1)
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end

@@ -5,6 +5,8 @@ class Memcached
 
   attr_reader :namespace
 
+  ### Configuration
+  
   def initialize(servers, opts = {})
     @struct = Libmemcached::MemcachedSt.new
     Libmemcached.memcached_create(@struct)
@@ -26,6 +28,13 @@ class Memcached
     end
     servers
   end
+  
+  def set_behavior(behavior, flag)
+    flag = flag ? 1 : 0
+    Libmemcached.memcached_behavior_set(@struct, behavior, flag)
+  end
+  
+  ### Operations
   
   def set(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
@@ -97,15 +106,5 @@ class Memcached
     return true if int == 0
     raise @@exceptions[int]
   end  
-
-  #  def free
-  #    Libmemcached.memcached_free(@struct)
-  #    class << self
-  #      (self.instance_methods - Object.instance_methods).each do |method|
-  #        remove_method :method
-  #      end
-  #    end
-  #    @struct = nil
-  #  end 
     
 end
