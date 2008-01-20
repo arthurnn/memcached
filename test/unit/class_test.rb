@@ -60,13 +60,6 @@ class ClassTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { Memcached.new 1 }
   end
 
-  def test_get_missing
-    @cache.delete key rescue nil
-    assert_raise(Memcached::NotFound) do
-      result = @cache.get key
-    end
-  end
-
   def test_get
     @cache.set key, @value, 0
     result = @cache.get key
@@ -82,7 +75,20 @@ class ClassTest < Test::Unit::TestCase
     ).first  
     assert_equal result, direct_result
   end
+
+  def test_get_nil
+    @cache.set key, nil, 0
+    result = @cache.get key
+    assert_equal nil, result
+  end
   
+  def test_get_missing
+    @cache.delete key rescue nil
+    assert_raise(Memcached::NotFound) do
+      result = @cache.get key
+    end
+  end
+
   def test_truncation_issue_is_covered
     value = OpenStruct.new(:a => 1, :b => 2, :c => Object.new) # Marshals with a null \000
     @cache.set key, value, 0
