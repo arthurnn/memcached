@@ -90,7 +90,7 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_truncation_issue_is_covered
-    value = OpenStruct.new(:a => 1, :b => 2, :c => Object.new) # Marshals with a null \000
+    value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
     @cache.set key, value, 0
     result = @cache.get key, false
     non_wrapped_result = Libmemcached.memcached_get(
