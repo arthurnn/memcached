@@ -15,4 +15,4 @@ test/setup.rb
 test/teardown.rb
 test/test_helper.rb
 test/unit/binding_test.rb
-test/unit/class_test.rb
+test/unit/memcached_test.rb

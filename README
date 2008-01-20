@@ -13,13 +13,14 @@ If you like this software, please {make a donation}[http://blog.evanweaver.com/d
 
 == Status
 
-Not yet production-ready.
+Very new. Risky in production.
 
 == Features
 
-* access to the complete memcached API
-* ludicrous speed
+* very clean API
+* robust access to all memcached features
 * multiple hashing modes, including consistent hashing
+* ludicrous speed
 
 == Requirements
 

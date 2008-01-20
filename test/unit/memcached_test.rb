@@ -1,7 +1,7 @@
 
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-class ClassTest < Test::Unit::TestCase
+class MemcachedTest < Test::Unit::TestCase
 
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043']
@@ -61,13 +61,13 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_get
-    @cache.set key, @value, 0
+    @cache.set key, @value
     result = @cache.get key
     assert_equal @value, result
   end
   
   def test_get_with_namespace
-    @cache.set key, @value, 0
+    @cache.set key, @value
     result = @cache.get key, false
     direct_result = Libmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
@@ -91,7 +91,7 @@ class ClassTest < Test::Unit::TestCase
 
   def test_truncation_issue_is_covered
     value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
-    @cache.set key, value, 0
+    @cache.set key, value
     result = @cache.get key, false
     non_wrapped_result = Libmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
