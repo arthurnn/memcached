@@ -22,19 +22,20 @@ Very new. Risky in production.
 * multiple hashing modes, including consistent hashing
 * ludicrous speed, including optional non-blocking IO
 
-== Requirements
+== Installation
 
-* {libmemcached 0.13}[http://tangent.org/552/libmemcached.html]
+First, you need {libmemcached 0.13}[http://tangent.org/552/libmemcached.html]. Other versions of libmemcached are not supported.
 
-Other versions of libmemcached are not supported.
-
-Extract the tarball, then for Linux, run:
+Extract the tarball{http://download.tangent.org/libmemcached-0.13.tar.gz}, then for Linux, run:
   ./configure
   make && sudo make install
   
 For OS X/MacPorts, run:
   ./configure --prefix=/opt/local
   make && sudo make install
+  
+Now install the gem:
+  sudo gem install memcached
   
 == Usage
 
