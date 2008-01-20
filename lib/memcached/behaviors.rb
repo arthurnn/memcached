@@ -1,6 +1,8 @@
 
 class Memcached
 
+#:stopdoc:
+
   def self.load_constants(prefix, hash = {}, offset = 0)
     Libmemcached.constants.grep(/^#{prefix}/).each do |const_name|
       hash[const_name[prefix.length..-1].downcase.to_sym] = Libmemcached.const_get(const_name) + offset
@@ -21,9 +23,14 @@ class Memcached
   DISTRIBUTION_VALUES = {}
   BEHAVIOR_VALUES.merge!(load_constants("MEMCACHED_DISTRIBUTION_", DISTRIBUTION_VALUES, 2))
 
+#:startdoc:
+
   private
   
-  def set_behavior(behavior, value)    
+=begin rdoc
+Set a behavior option on the instance. Accepts a Symbol <tt>behavior</tt> and a Symbol or <tt>true/false</tt> <tt>value</tt>. Arguments are validated and converted into integers for the struct setter method.
+=end
+  def set_behavior(behavior, value) #:doc:
     raise ArgumentError, "No setting #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]    
     raise ArgumentError, "No setting value #{value.inspect}" unless v_id = BEHAVIOR_VALUES[value]
     
