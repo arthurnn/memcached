@@ -71,11 +71,19 @@ VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length,
 };
 %}
 
-// Ruby isn't aware that the pointer is an array
+// Ruby isn't aware that the pointer is an array... there is probably a better way to do this
 memcached_server_st *memcached_select_server_at(memcached_st *in_ptr, int index);
 %{
 memcached_server_st *memcached_select_server_at(memcached_st *in_ptr, int index) {
   return &(in_ptr->hosts[index]);
+};
+%}
+
+// Same, but for stats
+memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat_st *stat_ptr, int index);
+%{
+memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat_st *stat_ptr, int index) {
+  return &(stat_ptr[index]);
 };
 %}
 

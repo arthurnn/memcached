@@ -210,6 +210,9 @@ class ClassTest < Test::Unit::TestCase
 
   def test_stats
     stats = @cache.stats
+    assert_equal 2, stats[:pid].size
+    assert_instance_of Fixnum, stats[:pid].first
+    assert_instance_of String, stats[:version].first
   end
   
   def test_clone

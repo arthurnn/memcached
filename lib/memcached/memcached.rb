@@ -153,12 +153,27 @@ class Memcached
   end
   
   def stats
-    stats = {}
+    stats = Hash.new([])
     stat_struct, ret = Libmemcached.memcached_stat(@struct, "")
     keys, ret = Libmemcached.memcached_stat_get_keys(@struct, stat_struct)
     check_return_code(ret)
     keys.each do |key|
-       stats[key.to_sym], ret = Libmemcached.memcached_stat_get_value(@struct, stat_struct, key)
+       server_structs.size.times do |index|
+
+         value, ret = Libmemcached.memcached_stat_get_value(
+           @struct, 
+           Libmemcached.memcached_select_stat_at(@struct, stat_struct, index),
+           key)
+         check_return_code(ret)
+
+         value = case value
+           when /^\d+\.\d+$/: value.to_f 
+           when /^\d+$/: value.to_i
+           else value
+         end           
+         
+         stats[key.to_sym] += [value]
+       end
     end
     Libmemcached.memcached_stat_free(@struct, stat_struct)
     stats
