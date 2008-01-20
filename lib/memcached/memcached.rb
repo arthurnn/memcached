@@ -154,9 +154,13 @@ class Memcached
   
   def stats
     stats = Hash.new([])
+    
     stat_struct, ret = Libmemcached.memcached_stat(@struct, "")
+    check_return_code(ret)
+    
     keys, ret = Libmemcached.memcached_stat_get_keys(@struct, stat_struct)
     check_return_code(ret)
+    
     keys.each do |key|
        server_structs.size.times do |index|
 
@@ -175,6 +179,7 @@ class Memcached
          stats[key.to_sym] += [value]
        end
     end
+    
     Libmemcached.memcached_stat_free(@struct, stat_struct)
     stats
   end  
