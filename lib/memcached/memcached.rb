@@ -1,5 +1,8 @@
 
 class Memcached
+=begin rdoc
+The Memcached client connection class. It wraps a <tt>memcached_st</tt> struct in <tt>libmemcached</tt>.
+=end
 
   FLAGS = 0x0
 
@@ -13,12 +16,29 @@ class Memcached
     :namespace => nil
   }
   
-  IGNORED = 0
+  IGNORED = 0 #:nodoc:
   
-  attr_reader :options
+  attr_reader :options # Return the options Hash used to configure this instance.
 
-  ### Configuration
-  
+###### Configuration
+
+=begin rdoc      
+Create a new Memcached instance. It accepts a single server string such as '127.0.0.1:11211', or an array of such strings, as well an an optional configuration hash.
+
+Hostname lookups are not currently supported; you need to use the IP address.
+
+Valid option parameters are:
+
+<tt>:namespace</tt>:: A namespace string to prepend to every key.
+<tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:ketama</tt>, and <tt>:md5</tt>. <tt>:default</tt> is the fastest.
+<tt>:distribution</tt>:: The type of distribution function to use. Possible values are <tt>:modula</tt> and <tt>:consistent</tt>. Note that this is decoupled from the choice of hash function.
+<tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Note that your server must also support CAS or you will trigger Memcached::ProtocolError exceptions.
+<tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
+<tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>. When <tt>true</tt>, requests other than <tt>get</tt> will raise <tt>Memcached::ActionQueued</tt>. This is correct behavior.
+<tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. When <tt>true</tt>, requests other than <tt>get</tt> will raise <tt>Memcached::ActionQueued</tt>. This is correct behavior. Calling <tt>get</tt> or closing the connection will force the buffer to flush.
+
+=end
+
   def initialize(servers, opts = {})
     @struct = Libmemcached::MemcachedSt.new
     Libmemcached.memcached_create(@struct)
@@ -48,23 +68,28 @@ class Memcached
     @namespace = options[:namespace]
   end
 
+  # Return the array of server strings used to configure this instance.
   def servers
     server_structs.map do |server|
       "#{server.hostname}:#{server.port}"
     end
   end
   
+  # Safely copy this instance. Useful for threading, since each thread must have its own unshared Memcached object.
   def clone
     # XXX Could be more efficient if we used Libmemcached.memcached_clone(@struct)
     self.class.new(servers, options)
   end
   
-  alias :dup :clone
+#:stopdoc:
+  alias :dup :clone #:nodoc:
+#:startdoc:
 
-  ### Configuration helpers
+### Configuration helpers
 
   private
     
+  # Return an array of raw <tt>memcached_host_st</tt> structs for this instance.
   def server_structs
     array = []
     @struct.hosts.count.times do |i|
@@ -73,12 +98,21 @@ class Memcached
     array
   end    
     
-  ### Operations
+###### Operations
   
   public
   
-  # Setters
-  
+### Setters
+    
+=begin rdoc
+Set a key/value pair. Accepts a String <tt>key</tt> and an arbitrary Ruby object. Overwrites any existing value on the server.
+
+Accepts an optional <tt>timeout</tt> value to specify the maximum lifetime of the key on the server. <tt>timeout</tt> can be either an integer number of seconds, or a Time elapsed time object. (There is no guarantee that the key will persist as long as the <tt>timeout</tt>, but it will not persist longer.)
+
+Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> 
+if you want the <tt>value</tt> to be set directly. 
+=end
+
   def set(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
@@ -86,35 +120,60 @@ class Memcached
     )
   end
 
+=begin rdoc
+Add a key/value pair. Raises <tt>Memcached::NotStored</tt> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
+=end
   def add(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
       Libmemcached.memcached_add(@struct, ns(key), value, timeout, FLAGS)
     )
   end
-  
+
+=begin rdoc
+Increment a key's value. Accepts a String <tt>key</tt>. Raises <tt>Memcached::NotFound</tt> if the key does not exist. 
+
+Also accepts an optional <tt>offset</tt> paramater, which defaults to 1. <tt>offset</tt> must be an integer.
+
+Note that the key must be initialized to an unmarshalled integer first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
+=end  
   def increment(key, offset=1)
     ret, value = Libmemcached.memcached_increment(@struct, ns(key), offset)
     check_return_code(ret)
     value
   end
-  
+
+=begin rdoc
+Decrement a key's value. The parameters and exception behavior are the same as <tt>increment</tt>.
+=end    
   def decrement(key, offset=1)
     ret, value = Libmemcached.memcached_decrement(@struct, ns(key), offset)
     check_return_code(ret)
     value
   end
   
+#:stopdoc:
+  
   alias :incr :increment
   alias :decr :decrement
-  
+
+#:startdoc:
+
+=begin rdoc
+Replace a key/value pair. Raises <tt>Memcached::NotFound</tt> if the key does not exist on the server. The parameters are the same as <tt>set</tt>.
+=end  
   def replace(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
       Libmemcached.memcached_replace(@struct, ns(key), value, timeout, FLAGS)
     )
   end
-  
+
+=begin rdoc
+Appends a string to a key's value. Accepts a String <tt>key</tt> and a String <tt>value</tt>. Raises <tt>Memcached::NotFound</tt> if the key does not exist on the server. 
+
+Note that the key must be initialized to an unmarshalled string first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
+=end  
   def append(key, value)
     # Requires memcached 1.2.4
     check_return_code(
@@ -122,6 +181,9 @@ class Memcached
     )
   end
   
+=begin rdoc
+Prepends a string to a key's value. The parameters and exception behavior are the same as <tt>append</tt>.
+=end  
   def prepend(key, value)
     # Requires memcached 1.2.4
     check_return_code(
@@ -129,22 +191,42 @@ class Memcached
     )
   end
   
-  def cas
+=begin rdoc
+Not yet implemented.
+
+Reads a key's value from the server and yields it to a block. Replaces the key's value with the result of the block as long as the key hasn't been updated in the meantime, otherwise raises Memcached::NotStored. Accepts a String <tt>key</tt> and a block.
+
+Also accepts an optional <tt>timeout</tt> value.
+
+CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a Memcached::ClientError will be raised.
+=end
+  def cas(*args)
     # Requires memcached HEAD
     raise NotImplemented
-    raise "CAS not enabled" unless options[:support_cas]
+    raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
   end
 
-  # Deleters
+### Deleters
 
-  def delete(key, timeout=0)
+=begin rdoc
+Deletes a key/value pair from the server. Accepts a String <tt>key</tt>. Raises Memcached::NotFound if the key does not exist.
+=end
+  def delete(key)
     check_return_code(
-      Libmemcached.memcached_delete(@struct, ns(key), timeout)
+      Libmemcached.memcached_delete(@struct, ns(key), IGNORED)
     )  
   end
   
-  # Getters
+### Getters  
   
+=begin rdoc
+Gets a key's value from the server. Accepts a String <tt>key</tt> or array of String <tt>keys</tt>.
+
+Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> 
+if you want the <tt>value</tt> to be returned directly as a String. Otherwise it will be assumed to be a marshalled Ruby object and unmarshalled.
+
+If you pass a single key, and the key does not exist on the server, Memcached::NotFound will be raised. If you pass an array of keys, memcached's <tt>multiget</tt> mode will be used, and an array of values will be returned. Missing values in the array will be represented as instances of Memcached::NotFound. This behavior may change in the future.
+=end
   def get(key, marshal=true)
     if key.is_a? Array
       # Multi get
@@ -152,13 +234,13 @@ class Memcached
       key.map do |this_key|
         begin
           get(this_key, marshal)
-        rescue NotFound
-          # XXX Not sure how this behavior should be defined
+        rescue NotFound => e
+          e
         end
       end
     else
       # Single get
-      # XXX Server doesn't validate. Possibly a performance problem.
+      # XXX Server doesn't validate keys. Regex is possibly a performance problem.
       raise ClientError, "Invalid key" if !key.is_a? String or key =~ /\s/ 
         
       value, flags, ret = Libmemcached.memcached_get_ruby_string(@struct, ns(key))
@@ -170,6 +252,9 @@ class Memcached
   
   # Information methods
   
+=begin rdoc
+Return a Hash of statistics responses from the set of servers. Each value is an array with one entry for each server, in the same order the servers were defined.
+=end  
   def stats
     stats = Hash.new([])
     
@@ -206,13 +291,19 @@ class Memcached
   
   private
 
-  def ns(key)
+=begin rdoc
+Return a namespaced key for this Memcached instance. Accepts a String <tt>key</tt> value.
+=end
+  def ns(key) #:doc:
     "#{@namespace}#{key}"
   end
     
-  def check_return_code(ret)
+=begin rdoc
+Checks the return code from Libmemcached against the exception list. Raises the corresponding exception if the return code is not zero. Accepts an integer return code.
+=end    
+  def check_return_code(ret) #:doc:
     return if ret == 0
-    raise @@exceptions[ret]
+    raise EXCEPTIONS[ret]
   end  
     
 end

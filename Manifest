@@ -1,4 +1,5 @@
 CHANGELOG
+EXCEPTIONS
 ext/extconf.rb
 ext/libmemcached.h
 ext/libmemcached.i
