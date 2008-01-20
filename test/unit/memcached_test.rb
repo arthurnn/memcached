@@ -205,6 +205,7 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_missing_increment
+    # XXX Fails due to libmemcached bug
     @cache.delete key rescue nil
     assert_raise(Memcached::NotFound) do
       @cache.increment key
@@ -222,6 +223,7 @@ class MemcachedTest < Test::Unit::TestCase
   end  
 
   def test_missing_decrement
+    # XXX Fails due to libmemcached bug
     @cache.delete key rescue nil
     assert_raise(Memcached::NotFound) do
       @cache.decrement key
