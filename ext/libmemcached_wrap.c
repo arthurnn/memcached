@@ -6606,12 +6606,12 @@ _wrap_memcached_behavior_set(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (memcached_behavior)(val2);
   {
-    int value;
-    if (argv[2] == 0 || argv[2] == 1) {
-      arg3 = (void *) FIX2INT(argv[2]);
+    int value = FIX2INT(argv[2]);
+    if (value == 0 || value == 1) {
+      arg3 = (void *) value;
     } else {
       // Only pass by reference for :distribution and :hash 
-      value = FIX2INT(argv[2]) - 2; 
+      value = value - 2; 
       arg3 = &value;
     }
   }

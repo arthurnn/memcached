@@ -33,10 +33,18 @@ class ClassTest < Test::Unit::TestCase
     assert_equal 2, cache.send(:server_structs).size
   end
   
-  def test_initialize_behavior
+  def test_initialize_positive_behavior
     cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043'],
       :buffer_requests => true
     assert_raise(Memcached::ActionQueued) do
+      cache.set 'test_initialize_behavior', @value
+    end
+  end
+
+  def test_initialize_negative_behavior
+    cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043'],
+      :buffer_requests => false
+    assert_nothing_raised do
       cache.set 'test_initialize_behavior', @value
     end
   end

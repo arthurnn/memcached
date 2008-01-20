@@ -17,12 +17,12 @@
 %apply unsigned long { uint32_t flags, uint32_t offset };
 
 %typemap(in) (void *data) {
-  int value;
-  if ($input == 0 || $input == 1) {
-    $1 = (void *) FIX2INT($input);
+  int value = FIX2INT($input);
+  if (value == 0 || value == 1) {
+    $1 = (void *) value;
   } else {
     // Only pass by reference for :distribution and :hash 
-    value = FIX2INT($input) - 2; 
+    value = value - 2; 
     $1 = &value;
   }
 };

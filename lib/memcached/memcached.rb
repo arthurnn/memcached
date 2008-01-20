@@ -4,12 +4,12 @@ class Memcached
   FLAGS = 0x0
 
   DEFAULTS = {
-#    :hash => :default,
-#    :distribution => :consistent,
-#    :buffer_requests => false,
-#    :support_cas => false,
-#    :tcp_nodelay => false,
-#    :no_block => false
+    :hash => :default,
+    :distribution => :consistent,
+    :buffer_requests => false,
+    :support_cas => false,
+    :tcp_nodelay => false,
+    :no_block => false
   }
   
   attr_reader :namespace
