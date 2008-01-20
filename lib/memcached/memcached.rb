@@ -4,15 +4,16 @@ class Memcached
   FLAGS = 0x0
 
   DEFAULTS = {
-    :hash => :default,
-    :distribution => :consistent,
-    :buffer_requests => false,
-    :support_cas => false,
-    :tcp_nodelay => false,
-    :no_block => false
+#    :hash => :default,
+#    :distribution => :consistent,
+#    :buffer_requests => false,
+#    :support_cas => false,
+#    :tcp_nodelay => false,
+#    :no_block => false
   }
   
   attr_reader :namespace
+  attr_reader :options
 
   ### Configuration
   
@@ -34,12 +35,14 @@ class Memcached
       )
     end  
     
-    # Behaviors
-    (DEFAULTS.merge(opts)).each do |option, value|
-    
-    end
-    
+    # Behaviors    
     @namespace = opts[:namespace]
+    opts.delete :namespace
+
+    @options = DEFAULTS.merge(opts)
+    options.each do |option, value|
+      set_behavior(option, value)
+    end
   end
   
   def servers

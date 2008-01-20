@@ -15,7 +15,17 @@
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags, uint32_t offset };
-%apply unsigned int { void *data };
+
+%typemap(in) (void *data) {
+  int value;
+  if ($input == 0 || $input == 1) {
+    $1 = (void *) FIX2INT($input);
+  } else {
+    // Only pass by reference for :distribution and :hash 
+    value = FIX2INT($input) - 2; 
+    $1 = &value;
+  }
+};
 
 %typemap(in) (char *str, size_t len) {
  $1 = STR2CSTR($input);

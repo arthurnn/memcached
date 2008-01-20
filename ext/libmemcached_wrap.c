@@ -6590,8 +6590,6 @@ _wrap_memcached_behavior_set(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   int val2 ;
   int ecode2 = 0 ;
-  unsigned int val3 ;
-  int ecode3 = 0 ;
   VALUE vresult = Qnil;
   
   if ((argc < 3) || (argc > 3)) {
@@ -6607,11 +6605,16 @@ _wrap_memcached_behavior_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "memcached_behavior_set" "', argument " "2"" of type '" "memcached_behavior""'");
   } 
   arg2 = (memcached_behavior)(val2);
-  ecode3 = SWIG_AsVal_unsigned_SS_int(argv[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "memcached_behavior_set" "', argument " "3"" of type '" "void *""'");
-  } 
-  arg3 = (void *)(val3);
+  {
+    int value;
+    if (argv[2] == 0 || argv[2] == 1) {
+      arg3 = (void *) FIX2INT(argv[2]);
+    } else {
+      // Only pass by reference for :distribution and :hash 
+      value = FIX2INT(argv[2]) - 2; 
+      arg3 = &value;
+    }
+  }
   result = (memcached_return)memcached_behavior_set(arg1,arg2,arg3);
   vresult = SWIG_From_int((int)(result));
   return vresult;
