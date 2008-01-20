@@ -98,8 +98,8 @@ class Memcached
       # XXX Server doesn't validate. Possibly a performance problem.
       raise ClientError, "Invalid key" if !key.is_a? String or key =~ /\s/ 
         
-      value, flags, return_code = Libmemcached.memcached_get_ruby_string(@struct, ns(key))
-      check_return_code(return_code)
+      value, flags, ret = Libmemcached.memcached_get_ruby_string(@struct, ns(key))
+      check_return_code(ret)
       value = Marshal.load(value) if marshal
       value
     end
@@ -121,14 +121,14 @@ class Memcached
   end
   
   def increment(key, offset=1)
-    return_code, value = Libmemcached.memcached_increment(@struct, ns(key), offset)
-    check_return_code(return_code)
+    ret, value = Libmemcached.memcached_increment(@struct, ns(key), offset)
+    check_return_code(ret)
     value
   end
   
   def decrement(key, offset=1)
-    return_code, value = Libmemcached.memcached_decrement(@struct, ns(key), offset)
-    check_return_code(return_code)
+    ret, value = Libmemcached.memcached_decrement(@struct, ns(key), offset)
+    check_return_code(ret)
     value
   end
   
@@ -153,7 +153,16 @@ class Memcached
   end
   
   def stats
-    raise NotImplemented
+    stats = {}
+    stat_struct, ret = Libmemcached.memcached_stat(@struct, "")
+    keys, ret = Libmemcached.memcached_stat_get_keys(@struct, stat_struct)
+    debugger
+    check_return_code(ret)
+    keys.each do |key|
+       stats[key], ret = Libmemcached.memcached_stat_get_value(@struct, stat_struct, key)
+    end
+    Libmemcached.memcached_stat_free(@struct, stat_struct)
+    stats
   end  
   
   ### Operations helpers
@@ -164,9 +173,9 @@ class Memcached
     "#{@namespace}#{key}"
   end
     
-  def check_return_code(int)
-    return true if int == 0
-    raise @@exceptions[int]
+  def check_return_code(ret)
+    return true if ret == 0
+    raise @@exceptions[ret]
   end  
     
 end

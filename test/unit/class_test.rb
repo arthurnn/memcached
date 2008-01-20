@@ -209,6 +209,7 @@ class ClassTest < Test::Unit::TestCase
   end
 
   def test_stats
+    stats = @cache.stats
   end
   
   def test_clone

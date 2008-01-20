@@ -43,10 +43,20 @@
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
 
+%typemap(out) (char **) {
+  int i;  
+  VALUE ary = rb_ary_new();
+  $result = rb_ary_new();
+  
+  for(i=0; $1[i] != NULL; i++) {
+    rb_ary_store(ary, i, rb_str_new2($1[i]));
+  }
+  rb_ary_push($result, ary);
+};
+
 %include "libmemcached.h"
 
 // Manual wrappers
-
 
 // SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because of the
 // retval/argout split, so it truncates return values with \0 in them

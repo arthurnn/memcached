@@ -7558,7 +7558,16 @@ _wrap_memcached_stat_get_keys(int argc, VALUE *argv, VALUE self) {
   }
   arg2 = (memcached_stat_st *)(argp2);
   result = (char **)memcached_stat_get_keys(arg1,arg2,arg3);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_p_char, 0 |  0 );
+  {
+    int i;  
+    VALUE ary = rb_ary_new();
+    vresult = rb_ary_new();
+    
+    for(i=0; result[i] != NULL; i++) {
+      rb_ary_store(ary, i, rb_str_new2(result[i]));
+    }
+    rb_ary_push(vresult, ary);
+  }
   if (SWIG_IsTmpObj(res3)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_short((*arg3)));
   } else {
