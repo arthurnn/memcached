@@ -68,14 +68,20 @@ Valid option parameters are:
     @namespace = options[:namespace]
   end
 
-  # Return the array of server strings used to configure this instance.
+=begin rdoc
+Return the array of server strings used to configure this instance.
+=end
   def servers
     server_structs.map do |server|
       "#{server.hostname}:#{server.port}"
     end
   end
-  
-  # Safely copy this instance. Useful for threading, since each thread must have its own unshared Memcached object.
+
+=begin rdoc
+Safely copy this instance. Returns a Memcached instance. 
+
+<tt>clone</tt> is useful for threading, since each thread must have its own unshared Memcached object. 
+=end
   def clone
     # XXX Could be more efficient if we used Libmemcached.memcached_clone(@struct)
     self.class.new(servers, options)

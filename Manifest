@@ -1,5 +1,4 @@
 CHANGELOG
-EXCEPTIONS
 ext/extconf.rb
 ext/libmemcached.h
 ext/libmemcached.i
@@ -18,3 +17,4 @@ test/teardown.rb
 test/test_helper.rb
 test/unit/binding_test.rb
 test/unit/memcached_test.rb
+TODO

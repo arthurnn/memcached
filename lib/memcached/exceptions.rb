@@ -72,4 +72,6 @@ Raised if a method depends on functionality not yet completed in libmemcached.
   
   # Verify library version
   # XXX Waiting on libmemcached 0.14
+  
+#:startdoc:
 end

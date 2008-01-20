@@ -1,0 +1,10 @@
+
+Can happen any time:
+
+* real multiget
+
+Waiting on libmemcached 0.14:
+
+* verify version
+* CAS support
+* passing missing increment/decrement tests
