@@ -207,11 +207,12 @@ class MemcachedTest < Test::Unit::TestCase
   def test_decrement
     @cache.set key, 10, 0, false
     assert_equal 5, @cache.decrement(key, 5)
+    assert_equal 9, @cache.decrement(key)
   end
   
   def test_decrement_offset
     @cache.set key, 10, 0, false
-    assert_equal 9, @cache.decrement(key)
+    assert_equal 5, @cache.decrement(key, 5)
   end  
 
   def test_missing_decrement
