@@ -52,6 +52,7 @@
     rb_ary_store(ary, i, rb_str_new2($1[i]));
   }
   rb_ary_push($result, ary);
+  free($1);
 };
 
 %include "libmemcached.h"

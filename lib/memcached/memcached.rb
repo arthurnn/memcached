@@ -156,10 +156,9 @@ class Memcached
     stats = {}
     stat_struct, ret = Libmemcached.memcached_stat(@struct, "")
     keys, ret = Libmemcached.memcached_stat_get_keys(@struct, stat_struct)
-    debugger
     check_return_code(ret)
     keys.each do |key|
-       stats[key], ret = Libmemcached.memcached_stat_get_value(@struct, stat_struct, key)
+       stats[key.to_sym], ret = Libmemcached.memcached_stat_get_value(@struct, stat_struct, key)
     end
     Libmemcached.memcached_stat_free(@struct, stat_struct)
     stats

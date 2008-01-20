@@ -7567,6 +7567,7 @@ _wrap_memcached_stat_get_keys(int argc, VALUE *argv, VALUE self) {
       rb_ary_store(ary, i, rb_str_new2(result[i]));
     }
     rb_ary_push(vresult, ary);
+    free(result);
   }
   if (SWIG_IsTmpObj(res3)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_short((*arg3)));
