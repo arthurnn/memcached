@@ -13,10 +13,6 @@ class ClassTest < Test::Unit::TestCase
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
-  
-  #  def teardown
-  #    @cache.send(:free)
-  #  end
 
   def test_initialize
     cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043'], :namespace => 'test'
@@ -193,13 +189,6 @@ class ClassTest < Test::Unit::TestCase
 
   def test_stats
   end
-  
-  #  def test_freed_struct_cannot_be_used
-  #    @cache.send(:free)
-  #    assert_raise(NoMethodError) do
-  #      @cache.get 'test_freed_struct_cannot_be_used'
-  #    end
-  #  end
 
   def test_thread_contention
   end
