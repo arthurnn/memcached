@@ -1919,8 +1919,6 @@ SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
 
 
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
-  // SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because of the
-  // retval/argout split, which means it truncates values with \0 in them.
   char *svalue;
   size_t *value_length;
   svalue = memcached_get(ptr, key, key_length, value_length, flags, error);
@@ -1930,6 +1928,11 @@ VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length,
 
 memcached_server_st *memcached_select_server_at(memcached_st *in_ptr, int index) {
   return &(in_ptr->hosts[index]);
+};
+
+
+void memcached_repair_server_st(memcached_st *in_ptr, memcached_server_st *host) {
+    host->write_ptr= 0;
 };
 
 swig_class cMemcachedServerSt;
@@ -8430,6 +8433,35 @@ fail:
 }
 
 
+SWIGINTERN VALUE
+_wrap_memcached_repair_server_st(int argc, VALUE *argv, VALUE self) {
+  memcached_st *arg1 = (memcached_st *) 0 ;
+  memcached_server_st *arg2 = (memcached_server_st *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_repair_server_st" "', argument " "1"" of type '" "memcached_st *""'"); 
+  }
+  arg1 = (memcached_st *)(argp1);
+  res2 = SWIG_ConvertPtr(argv[1], &argp2,SWIGTYPE_p_memcached_server_st, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_repair_server_st" "', argument " "2"" of type '" "memcached_server_st *""'"); 
+  }
+  arg2 = (memcached_server_st *)(argp2);
+  memcached_repair_server_st(arg1,arg2);
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
@@ -9063,5 +9095,6 @@ SWIGEXPORT void Init_libmemcached(void) {
   rb_define_module_function(mLibmemcached, "memcached_result_length", _wrap_memcached_result_length, -1);
   rb_define_module_function(mLibmemcached, "memcached_get_ruby_string", _wrap_memcached_get_ruby_string, -1);
   rb_define_module_function(mLibmemcached, "memcached_select_server_at", _wrap_memcached_select_server_at, -1);
+  rb_define_module_function(mLibmemcached, "memcached_repair_server_st", _wrap_memcached_repair_server_st, -1);
 }
 

@@ -17,6 +17,11 @@ class Memcached
       end
       host, port = server.split(":")
       Libmemcached.memcached_server_add(@struct, host, port.to_i)
+
+      # XXX To be removed once Krow fixes the write_ptr bug
+      Libmemcached.memcached_repair_server_st(@struct, 
+        Libmemcached.memcached_select_server_at(@struct, @struct.hosts.count - 1)
+      )
     end  
     @namespace = opts[:namespace]
   end
@@ -29,12 +34,16 @@ class Memcached
     servers
   end
   
+  private
+  
   def set_behavior(behavior, flag)
     flag = flag ? 1 : 0
     Libmemcached.memcached_behavior_set(@struct, behavior, flag)
   end
   
   ### Operations
+  
+  public
   
   def set(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
@@ -99,6 +108,8 @@ class Memcached
   def stats
     raise NotImplemented
   end  
+  
+  ### Operations helpers
   
   private
   
