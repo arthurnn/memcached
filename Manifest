@@ -8,6 +8,7 @@ lib/memcached/exceptions.rb
 lib/memcached/integer.rb
 lib/memcached/memcached.rb
 lib/memcached.rb
+LICENSE
 Manifest
 README
 test/benchmark/benchmark_test.rb
