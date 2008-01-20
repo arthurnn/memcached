@@ -37,13 +37,12 @@ class Memcached
     
     # Namespace
     @namespace = opts[:namespace]
-    opts.delete :namespace
     raise ArgumentError, "Invalid namespace" if namespace.to_s =~ / /
 
     # Behaviors
     @options = DEFAULTS.merge(opts)
     options.each do |option, value|
-      set_behavior(option, value)
+      set_behavior(option, value) unless option == :namespace
     end
   end
 
@@ -55,10 +54,12 @@ class Memcached
   
   def clone
     # XXX Could be more efficient if we used Libmemcached.memcached_clone(@struct)
-    self.class.new(servers, options.merge(:namespace => namespace))
+    self.class.new(servers, options)
   end
   
   alias :dup :clone
+
+  ### Configuration helpers
 
   private
     
