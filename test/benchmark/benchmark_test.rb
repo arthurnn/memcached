@@ -1,5 +1,7 @@
 
 require "#{File.dirname(__FILE__)}/../test_helper"
+
+require 'rubygems'
 require 'benchmark/unit'
 require 'memcache'
 
