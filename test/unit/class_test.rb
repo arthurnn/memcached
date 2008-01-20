@@ -6,7 +6,7 @@ class ClassTest < Test::Unit::TestCase
   def setup
     @cache = Memcached.new(
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
-      :namespace => 'test'
+      :namespace => 'class_test_namespace'
     )
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
@@ -61,6 +61,16 @@ class ClassTest < Test::Unit::TestCase
     @cache.set 'test_get', @value, 0
     result = @cache.get 'test_get'
     assert_equal @value, result
+  end
+  
+  def test_get_with_namespace
+    @cache.set 'test_get_with_namespace', @value, 0
+    result = @cache.get 'test_get_with_namespace', false
+    direct_result = Libmemcached.memcached_get(
+      @cache.instance_variable_get("@struct"), 
+      "#{@cache.namespace}test_get_with_namespace"
+    ).first  
+    assert_equal result, direct_result
   end
   
   def test_truncation_issue_is_covered

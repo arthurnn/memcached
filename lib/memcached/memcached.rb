@@ -22,7 +22,7 @@ class Memcached
     Libmemcached.memcached_create(@struct)
 
     # Servers
-    Array(servers).each do |server|
+    Array(servers).each_with_index do |server, index|
       unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
         raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
       end
@@ -31,14 +31,16 @@ class Memcached
 
       # XXX To be removed once Krow fixes the write_ptr bug
       Libmemcached.memcached_repair_server_st(@struct, 
-        Libmemcached.memcached_select_server_at(@struct, @struct.hosts.count - 1)
+        Libmemcached.memcached_select_server_at(@struct, index)
       )
     end  
     
-    # Behaviors    
+    # Namespace
     @namespace = opts[:namespace]
     opts.delete :namespace
+    raise ArgumentError, "Invalid namespace" if namespace.to_s =~ / /
 
+    # Behaviors
     @options = DEFAULTS.merge(opts)
     options.each do |option, value|
       set_behavior(option, value)
