@@ -5,10 +5,8 @@ class MemcachedTest < Test::Unit::TestCase
 
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043']
-    @cache = Memcached.new(
-      @servers, 
-      :namespace => 'class_test_namespace'
-    )
+    @namespace = 'class_test_namespace'
+    @cache = Memcached.new(@servers, :namespace => @namespace)
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
@@ -34,14 +32,6 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal 2, cache.send(:server_structs).size
   end
   
-  def test_initialize_positive_behavior
-    cache = Memcached.new @servers,
-      :buffer_requests => true
-    assert_raise(Memcached::ActionQueued) do
-      cache.set key, @value
-    end
-  end
-
   def test_initialize_negative_behavior
     cache = Memcached.new @servers,
       :buffer_requests => false
@@ -71,7 +61,7 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key, false
     direct_result = Libmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
-      "#{@cache.options[:namespace]}#{key}"
+      "#{@namespace}#{key}"
     ).first  
     assert_equal result, direct_result
   end
@@ -95,7 +85,7 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key, false
     non_wrapped_result = Libmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
-      "#{@cache.options[:namespace]}#{key}"
+      "#{@namespace}#{key}"
     ).first
     assert result.size > non_wrapped_result.size      
   end  
@@ -299,6 +289,38 @@ class MemcachedTest < Test::Unit::TestCase
     cache = @cache.clone
     assert_equal cache.servers, @cache.servers
     assert_not_equal cache, @cache
+  end
+  
+  def test_buffered_requests
+    cache = Memcached.new @servers,
+      :buffer_requests => true
+    assert_nothing_raised do
+      cache.set key, @value
+    end
+    ret = Libmemcached.memcached_set(
+      cache.instance_variable_get("@struct"), 
+      "#{@namespace}#{key}", 
+      @marshalled_value, 
+      0, 
+      Memcached::FLAGS
+    )
+    assert_equal 31, ret
+  end
+
+  def test_no_block_io
+    cache = Memcached.new @servers,
+      :no_block => true
+    assert_nothing_raised do
+      cache.set key, @value
+    end
+    ret = Libmemcached.memcached_set(
+      cache.instance_variable_get("@struct"), 
+      "#{@namespace}#{key}", 
+      @marshalled_value, 
+      0, 
+      Memcached::FLAGS
+    )
+    assert_equal 31, ret
   end
 
   def test_thread_contention

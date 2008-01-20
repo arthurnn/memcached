@@ -20,9 +20,9 @@ If you like this software, please {make a donation}[http://blog.evanweaver.com/d
 
 == Installation
 
-First, you need {libmemcached 0.13}[http://tangent.org/552/libmemcached.html]. Other versions of libmemcached are not supported.
+You need {libmemcached 0.13}[http://tangent.org/552/libmemcached.html]. Other versions of libmemcached are not supported. You also need {memcached itself}[http://www.danga.com/memcached/] if you want to test against a local server.
 
-Extract the tarball[http://download.tangent.org/libmemcached-0.13.tar.gz], then for Linux, run:
+Download and extract the {libmemcached tarball}[http://download.tangent.org/libmemcached-0.13.tar.gz]. Then for Linux, run:
   ./configure
   make && sudo make install
   
@@ -35,7 +35,8 @@ Now install the gem:
   
 == Usage
 
-Start a local memcached server.
+Start a local memcached server:
+  $ memcached -p 11211 &
 
 Now, in Ruby, require the library and instantiate a Memcached object at a global level:
 
@@ -71,14 +72,16 @@ You can set a counter and increment it:
 
 You can get some server stats:
 
-  $cache.stats #=> {... :bytes_written=>[62], :total_items=>[1], :version=>["1.2.4"] ... }
+  $cache.stats #=> {..., :bytes_written=>[62], :version=>["1.2.4"] ...}
   
-Note that the API is not the same as that of memcache-client. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <tt>Memcached::NotFound</tt>. This is consistent with the behavior of memcached itself. For example:
+Note that the API is not the same as that of <b>Ruby-MemCache</b> or <b>memcache-client</b>. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <b>Memcached::NotFound</b>. This is consistent with the behavior of memcached itself. For example:
 
   $cache.set 'test', nil
   $cache.get 'test' #=> nil
   $cache.delete 'test'
   $cache.get 'test' #=> raises Memcached::NotFound
+
+A compatibility wrapper for legacy applications is in progress.
   
 == Threading
 
@@ -107,6 +110,5 @@ Patches and contributions are very welcome. Please note that contributors are re
 
 == Further resources
 
-* {memcached wiki}[http://www.socialtext.net/memcached/index.cgi]
-* libmemcached[http://tangent.org/552/libmemcached.html]
-* {libmemcached list}[http://lists.tangent.org/pipermail/libmemcached/]
+* {Memcached wiki}[http://www.socialtext.net/memcached/index.cgi]
+* {Libmemcached homepage}[http://tangent.org/552/libmemcached.html]
