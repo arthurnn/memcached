@@ -11,10 +11,6 @@ The public certificate for this gem is here[http://rubyforge.org/frs/download.ph
 
 If you like this software, please {make a donation}[http://blog.evanweaver.com/donate/], or {recommend Evan}[http://www.workingwithrails.com/person/7739-evan-weaver] at Working with Rails.
 
-== Status
-
-Very new, but pretty stable. 
-
 == Features
 
 * clean API
@@ -47,6 +43,10 @@ The gem is threadsafe, but each thread requires its own Memcached instance. Crea
 
 Note that the API is not the same as that of memcache-client. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <tt>Memcached::NotFound</tt>. This is consistent with the behavior of memcached itself.
 
+== Benchmarks
+
+Blah.
+
 == Reporting problems
 
 The support forum is here[http://rubyforge.org/forum/forum.php?forum_id=20894].
@@ -55,4 +55,7 @@ Patches and contributions are very welcome. Please note that contributors are re
 
 == Further resources
 
-Blah.
+* {memcached wiki}[http://www.socialtext.net/memcached/index.cgi]
+* {memcached FAQ}[http://www.socialtext.net/memcached/index.cgi?faq]
+* {libmemcached list}[http://lists.tangent.org/mailman/listinfo/libmemcached]
+* libmemcached[http://tangent.org/552/libmemcached.html]
