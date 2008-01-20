@@ -45,7 +45,7 @@ Blah.
 
 The gem is threadsafe, but each thread requires its own Memcached instance. Create a global Memcached, and then call Memcached#clone each time you spawn a thread.
 
-Note that the API is not the same as the memcache-client. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <tt>Memcached::NotFound</tt>.
+Note that the API is not the same as that of memcache-client. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <tt>Memcached::NotFound</tt>. This is consistent with the behavior of memcached itself.
 
 == Reporting problems
 
