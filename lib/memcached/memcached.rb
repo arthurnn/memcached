@@ -97,5 +97,15 @@ class Memcached
     return true if int == 0
     raise @@exceptions[int]
   end  
+
+  #  def free
+  #    Libmemcached.memcached_free(@struct)
+  #    class << self
+  #      (self.instance_methods - Object.instance_methods).each do |method|
+  #        remove_method :method
+  #      end
+  #    end
+  #    @struct = nil
+  #  end 
     
 end

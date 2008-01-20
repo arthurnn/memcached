@@ -1,12 +1,16 @@
 
-if `which swig` !~ /no swig/
+require 'mkmf'
+
+if ENV['SWIG']
   puts "running SWIG"
   $stdout.write `swig -I/opt/local/include -ruby -autorename libmemcached.i`
 end
 
-require 'mkmf'
-# $CFLAGS << " -ggdb -DHAVE_DEBUG"
-# find_header 'libmemcached/memcached.h'
+if ENV['DEBUG']
+  puts "setting debug flags"
+  $CFLAGS << " -ggdb -DHAVE_DEBUG" 
+end
+
 dir_config 'libmemcached'
 find_library 'memcached', 'memcached_server_add'
 create_makefile 'libmemcached'
