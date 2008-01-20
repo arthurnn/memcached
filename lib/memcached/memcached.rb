@@ -75,44 +75,15 @@ class Memcached
   
   public
   
+  # Setters
+  
   def set(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
       Libmemcached.memcached_set(@struct, ns(key), value, timeout, FLAGS)
     )
   end
-  
-  def get(key, marshal=true)
-    if key.is_a? Array
-      # Multi get
-      # XXX Waiting on the real implementation
-      key.map do |this_key|
-        begin
-          get(this_key, marshal)
-        rescue NotFound
-          # XXX Not sure how this behavior should be defined
-        end
-      end
-    else
-      # Single get
-      # XXX Server doesn't validate. Possibly a performance problem.
-      raise ClientError, "Invalid key" if !key.is_a? String or key =~ /\s/ 
-        
-      value, flags, ret = Libmemcached.memcached_get_ruby_string(@struct, ns(key))
-      check_return_code(ret)
-      value = Marshal.load(value) if marshal
-      value
-    end
-  end  
-  
-  public
-  
-  def delete(key, timeout=0)
-    check_return_code(
-      Libmemcached.memcached_delete(@struct, ns(key), timeout)
-    )  
-  end
-  
+
   def add(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
@@ -135,22 +106,64 @@ class Memcached
   alias :incr :increment
   alias :decr :decrement
   
-  def replace
-    raise NotImplemented
+  def replace(key, value, timeout=0, marshal=true)
+    value = marshal ? Marshal.dump(value) : value.to_s
+    check_return_code(
+      Libmemcached.memcached_replace(@struct, ns(key), value, timeout, FLAGS)
+    )
   end
   
-  def append
-    raise NotImplemented
+  def append(key, value)
+    check_return_code(
+      Libmemcached.memcached_append(@struct, ns(key), value.to_s, timeout, FLAGS)
+    )
   end
   
-  def prepend
-    raise NotImplemented
+  def prepend(key, value)
+    check_return_code(
+      Libmemcached.memcached_prepend(@struct, ns(key), value.to_s, timeout, FLAGS)
+    )
   end
   
   def cas
-    raise "CAS not enabled" unless options[:support_cas]
     raise NotImplemented
+    raise "CAS not enabled" unless options[:support_cas]
   end
+
+  # Deleters
+
+  def delete(key, timeout=0)
+    check_return_code(
+      Libmemcached.memcached_delete(@struct, ns(key), timeout)
+    )  
+  end
+  
+  # Getters
+  
+  def get(key, marshal=true)
+    if key.is_a? Array
+      # Multi get
+      # XXX Waiting on the real implementation
+      key.map do |this_key|
+        begin
+          get(this_key, marshal)
+        rescue NotFound
+          # XXX Not sure how this behavior should be defined
+        end
+      end
+    else
+      # Single get
+      # XXX Server doesn't validate. Possibly a performance problem.
+      raise ClientError, "Invalid key" if !key.is_a? String or key =~ /\s/ 
+        
+      value, flags, ret = Libmemcached.memcached_get_ruby_string(@struct, ns(key))
+      check_return_code(ret)
+      value = Marshal.load(value) if marshal
+      value
+    end
+  end    
+  
+  # Information methods
   
   def stats
     stats = Hash.new([])
