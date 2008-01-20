@@ -65,11 +65,11 @@ class ClassTest < Test::Unit::TestCase
   
   def test_truncation_issue_is_covered
     value = OpenStruct.new(:a => 1, :b => 2, :c => Object.new) # Marshals with a null \000
-    @cache.set 'test_get', value, 0
-    result = @cache.get 'test_get', false
+    @cache.set 'test_truncation_issue_is_covered', value, 0
+    result = @cache.get 'test_truncation_issue_is_covered', false
     non_wrapped_result = Libmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
-      'test_get'
+      "#{@cache.namespace}test_truncation_issue_is_covered"
     ).first
     assert result.size > non_wrapped_result.size      
   end  
