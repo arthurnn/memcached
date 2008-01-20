@@ -9,12 +9,12 @@ class Memcached
     :buffer_requests => false,
     :support_cas => false,
     :tcp_nodelay => false,
-    :no_block => false
+    :no_block => false,
+    :namespace => nil
   }
   
   IGNORED = 0
   
-  attr_reader :namespace
   attr_reader :options
 
   ### Configuration
@@ -37,15 +37,15 @@ class Memcached
       )
     end  
     
-    # Namespace
-    @namespace = opts[:namespace]
-    raise ArgumentError, "Invalid namespace" if namespace.to_s =~ / /
-
     # Behaviors
     @options = DEFAULTS.merge(opts)
     options.each do |option, value|
       set_behavior(option, value) unless option == :namespace
     end
+
+    # Namespace
+    raise ArgumentError, "Invalid namespace" if options[:namespace].to_s =~ / /
+    @namespace = options[:namespace]
   end
 
   def servers

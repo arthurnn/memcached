@@ -15,7 +15,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_initialize
     cache = Memcached.new @servers, :namespace => 'test'
-    assert_equal 'test', cache.namespace
+    assert_equal 'test', cache.options[:namespace]
     assert_equal 2, cache.send(:server_structs).size
     assert_equal '127.0.0.1', cache.send(:server_structs).first.hostname
     assert_equal '127.0.0.1', cache.send(:server_structs).last.hostname
@@ -30,7 +30,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_initialize_without_namespace
     cache = Memcached.new @servers
-    assert_equal nil, cache.namespace
+    assert_equal nil, cache.options[:namespace]
     assert_equal 2, cache.send(:server_structs).size
   end
   
@@ -52,7 +52,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_initialize_single_server
     cache = Memcached.new '127.0.0.1:43042'
-    assert_equal nil, cache.namespace
+    assert_equal nil, cache.options[:namespace]
     assert_equal 1, cache.send(:server_structs).size
   end
 
@@ -71,7 +71,7 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key, false
     direct_result = Libmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
-      "#{@cache.namespace}#{key}"
+      "#{@cache.options[:namespace]}#{key}"
     ).first  
     assert_equal result, direct_result
   end
@@ -95,7 +95,7 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key, false
     non_wrapped_result = Libmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
-      "#{@cache.namespace}#{key}"
+      "#{@cache.options[:namespace]}#{key}"
     ).first
     assert result.size > non_wrapped_result.size      
   end  
