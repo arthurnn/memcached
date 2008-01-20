@@ -309,7 +309,7 @@ Checks the return code from Libmemcached against the exception list. Raises the 
 =end    
   def check_return_code(ret) #:doc:
     return if ret == 0
-    raise EXCEPTIONS[ret]
+    raise EXCEPTIONS[ret], ""
   end  
     
 end

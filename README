@@ -35,13 +35,65 @@ Now install the gem:
   
 == Usage
 
-Blah.
+Start a local memcached server.
 
-Blah.
+Now, in Ruby, require the library and instantiate a Memcached object at a global level:
+
+  require 'memcached'
+  $cache = Memcached.new("127.0.0.1:11211")
+  
+Now you can set things and get things:
+ 
+  value = 'hello'
+  $cache.set 'test', value
+  $cache.get 'test' #=> "hello"
+
+You can set with an expiration timeout:
+
+  value = 'hello'
+  $cache.set 'test', value, 1
+  sleep(2)
+  $cache.get 'test' #=> raises Memcached::NotFound
+
+You can get multiple values at once:
+
+  value = 'hello'
+  $cache.set 'test', value
+  $cache.get ['test', 'test2'] #=> ["hello", Memcached::NotFound]
+  
+You can set a counter and increment it:
+
+  start = 1
+  $cache.set 'counter', start, 0, false
+  $cache.increment 'counter' #=> 2
+  $cache.increment 'counter' #=> 3
+  $cache.get('counter', false).to_i #=> 3
+
+You can get some server stats:
+
+  $cache.stats #=> {... :bytes_written=>[62], :total_items=>[1], :version=>["1.2.4"] ... }
+  
+Note that the API is not the same as that of memcache-client. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <tt>Memcached::NotFound</tt>. This is consistent with the behavior of memcached itself. For example:
+
+  $cache.set 'test', nil
+  $cache.get 'test' #=> nil
+  $cache.delete 'test'
+  $cache.get 'test' #=> raises Memcached::NotFound
+  
+== Threading
 
 The gem is threadsafe, but each thread requires its own Memcached instance. Create a global Memcached, and then call Memcached#clone each time you spawn a thread.
 
-Note that the API is not the same as that of memcache-client. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <tt>Memcached::NotFound</tt>. This is consistent with the behavior of memcached itself.
+  thread = Thread.new do
+    cache = $cache.clone
+    # Perform operations on cache, not $cache
+    cache.set 'example', 1
+    cache.get 'example'
+    # ...
+  end  
+
+  # Join the thread so that exceptions bubble up to the original context
+  thread.join
 
 == Benchmarks
 
@@ -56,6 +108,5 @@ Patches and contributions are very welcome. Please note that contributors are re
 == Further resources
 
 * {memcached wiki}[http://www.socialtext.net/memcached/index.cgi]
-* {memcached FAQ}[http://www.socialtext.net/memcached/index.cgi?faq]
-* {libmemcached list}[http://lists.tangent.org/mailman/listinfo/libmemcached]
 * libmemcached[http://tangent.org/552/libmemcached.html]
+* {libmemcached list}[http://lists.tangent.org/pipermail/libmemcached/]
