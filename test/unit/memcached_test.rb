@@ -155,6 +155,13 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end  
 
+  def test_missing_delete
+    @cache.delete key rescue nil
+    assert_raise(Memcached::NotFound) do
+      @cache.delete key
+    end
+  end  
+
   def test_add
     @cache.delete key rescue nil
     @cache.add key, @value
@@ -206,7 +213,6 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_decrement
     @cache.set key, 10, 0, false
-    assert_equal 5, @cache.decrement(key, 5)
     assert_equal 9, @cache.decrement(key)
   end
   

@@ -17,14 +17,16 @@ Very new. Risky in production.
 
 == Features
 
-* very clean API
+* clean API
 * robust access to all memcached features
 * multiple hashing modes, including consistent hashing
-* ludicrous speed
+* ludicrous speed, including optional non-blocking IO
 
 == Requirements
 
 * {libmemcached 0.13}[http://tangent.org/552/libmemcached.html]
+
+Other versions of libmemcached are not supported.
 
 Extract the tarball, then for Linux, run:
   ./configure
