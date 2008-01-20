@@ -1,8 +1,6 @@
 
 require "#{File.dirname(__FILE__)}/../test_helper"
 
-require 'ruby-debug' if ENV['DEBUG']
-
 class ClassTest < Test::Unit::TestCase
 
   def setup
@@ -10,7 +8,6 @@ class ClassTest < Test::Unit::TestCase
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
       :namespace => 'test'
     )
-    # @cache.set_behavior(Libmemcached::MEMCACHED_BEHAVIOR_BUFFER_REQUESTS, 1)
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
@@ -36,7 +33,12 @@ class ClassTest < Test::Unit::TestCase
     assert_equal 2, cache.servers.size
   end
   
-  def test_intialize_alternative_hashing_scheme
+  def test_initialize_behavior
+    cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043'],
+      :buffer_requests => true
+    assert_raise(Memcached::ActionQueued) do
+      cache.set 'test_initialize_behavior', @value
+    end
   end
 
   def test_initialize_single_server
@@ -81,7 +83,7 @@ class ClassTest < Test::Unit::TestCase
     @cache.set 'test_get_multi_1', 1
     @cache.set 'test_get_multi_2', 2
     assert_equal [1, 2], 
-      @cache.get(['test_get_multi_1', 'test_get_multi_1'])
+      @cache.get(['test_get_multi_1', 'test_get_multi_2'])
   end
 
   def test_set_and_get_unmarshalled

@@ -1,8 +1,12 @@
 
 $LOAD_PATH << "#{File.dirname(__FILE__)}/../lib"
-require 'memcached'
 
-require 'rubygems'
+if ENV['DEBUG']
+  require 'rubygems'
+  require 'ruby-debug' 
+end
+  
+require 'memcached'
 require 'test/unit'
 require 'ostruct'
 
