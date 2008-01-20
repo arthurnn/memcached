@@ -12,6 +12,8 @@ class Memcached
     :no_block => false
   }
   
+  IGNORED = 0
+  
   attr_reader :namespace
   attr_reader :options
 
@@ -114,18 +116,21 @@ class Memcached
   end
   
   def append(key, value)
+    # Requires memcached 1.2.4
     check_return_code(
-      Libmemcached.memcached_append(@struct, ns(key), value.to_s, timeout, FLAGS)
+      Libmemcached.memcached_append(@struct, ns(key), value.to_s, IGNORED, FLAGS)
     )
   end
   
   def prepend(key, value)
+    # Requires memcached 1.2.4
     check_return_code(
-      Libmemcached.memcached_prepend(@struct, ns(key), value.to_s, timeout, FLAGS)
+      Libmemcached.memcached_prepend(@struct, ns(key), value.to_s, IGNORED, FLAGS)
     )
   end
   
   def cas
+    # Requires memcached HEAD
     raise NotImplemented
     raise "CAS not enabled" unless options[:support_cas]
   end
@@ -206,7 +211,7 @@ class Memcached
   end
     
   def check_return_code(ret)
-    return true if ret == 0
+    return if ret == 0
     raise @@exceptions[ret]
   end  
     
