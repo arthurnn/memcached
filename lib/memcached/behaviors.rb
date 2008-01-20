@@ -28,7 +28,7 @@ class Memcached
   private
   
 =begin rdoc
-Set a behavior option for this Memcached instance. Accepts a Symbol <tt>behavior</tt> and a Symbol or <tt>true/false</tt> <tt>value</tt>. Arguments are validated and converted into integers for the struct setter method.
+Set a behavior option for this Memcached instance. Accepts a Symbol <tt>behavior</tt> and either <tt>true</tt>, <tt>false</tt>, or a Symbol for <tt>value</tt>. Arguments are validated and converted into integers for the struct setter method.
 =end
   def set_behavior(behavior, value) #:doc:
     raise ArgumentError, "No setting #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]    
