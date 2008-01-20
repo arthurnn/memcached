@@ -1,7 +1,7 @@
 
 memcached
 
-An interface to Brian Aker's libmemcached.
+An interface to the libmemcached C client.
 
 == License
 
