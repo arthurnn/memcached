@@ -13,7 +13,7 @@ If you like this software, please {make a donation}[http://blog.evanweaver.com/d
 
 == Status
 
-Very new. Risky in production.
+Very new, but pretty stable. 
 
 == Features
 
@@ -26,7 +26,7 @@ Very new. Risky in production.
 
 First, you need {libmemcached 0.13}[http://tangent.org/552/libmemcached.html]. Other versions of libmemcached are not supported.
 
-Extract the tarball{http://download.tangent.org/libmemcached-0.13.tar.gz}, then for Linux, run:
+Extract the tarball[http://download.tangent.org/libmemcached-0.13.tar.gz], then for Linux, run:
   ./configure
   make && sudo make install
   
@@ -39,7 +39,13 @@ Now install the gem:
   
 == Usage
 
-Whatever!
+Blah.
+
+Blah.
+
+The gem is threadsafe, but each thread requires its own Memcached instance. Create a global Memcached, and then call Memcached#clone each time you spawn a thread.
+
+Note that the API is not the same as the memcache-client. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <tt>Memcached::NotFound</tt>.
 
 == Reporting problems
 
@@ -49,4 +55,4 @@ Patches and contributions are very welcome. Please note that contributors are re
 
 == Further resources
 
-Whatever!
+Blah.
