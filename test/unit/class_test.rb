@@ -15,10 +15,10 @@ class ClassTest < Test::Unit::TestCase
   def test_initialize
     cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043'], :namespace => 'test'
     assert_equal 'test', cache.namespace
-    assert_equal 2, cache.servers.size
-    assert_equal '127.0.0.1', cache.servers.first.hostname
-    assert_equal '127.0.0.1', cache.servers.last.hostname
-    assert_equal 43043, cache.servers.last.port
+    assert_equal 2, cache.send(:server_structs).size
+    assert_equal '127.0.0.1', cache.send(:server_structs).first.hostname
+    assert_equal '127.0.0.1', cache.send(:server_structs).last.hostname
+    assert_equal 43043, cache.send(:server_structs).last.port
   end
   
   def test_initialize_with_invalid_server_strings
@@ -30,7 +30,7 @@ class ClassTest < Test::Unit::TestCase
   def test_initialize_without_namespace
     cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043']
     assert_equal nil, cache.namespace
-    assert_equal 2, cache.servers.size
+    assert_equal 2, cache.send(:server_structs).size
   end
   
   def test_initialize_behavior
@@ -44,7 +44,7 @@ class ClassTest < Test::Unit::TestCase
   def test_initialize_single_server
     cache = Memcached.new '127.0.0.1:43042'
     assert_equal nil, cache.namespace
-    assert_equal 1, cache.servers.size
+    assert_equal 1, cache.send(:server_structs).size
   end
 
   def test_initialize_strange_argument
@@ -202,8 +202,25 @@ class ClassTest < Test::Unit::TestCase
 
   def test_stats
   end
+  
+  def test_clone
+    cache = @cache.clone
+    assert_equal cache.servers, @cache.servers
+    assert_not_equal cache, @cache
+  end
 
   def test_thread_contention
+    threads = []
+    4.times do |index|
+      threads << Thread.new do 
+        cache = @cache.clone
+        assert_nothing_raised do
+          cache.set("test_thread_contention_#{index}", index)
+        end
+        assert_equal index, cache.get("test_thread_contention_#{index}")
+      end
+    end
+    threads.each {|thread| thread.join}
   end
 
 end

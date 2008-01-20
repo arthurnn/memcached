@@ -46,14 +46,29 @@ class Memcached
       set_behavior(option, value)
     end
   end
-  
+
   def servers
-    servers = []
-    @struct.hosts.count.times do |i|
-      servers << Libmemcached.memcached_select_server_at(@struct, i)
+    server_structs.map do |server|
+      "#{server.hostname}:#{server.port}"
     end
-    servers
   end
+  
+  def clone
+    # XXX Could be more efficient if we used Libmemcached.memcached_clone(@struct)
+    self.class.new(servers, options.merge(:namespace => namespace))
+  end
+  
+  alias :dup :clone
+
+  private
+    
+  def server_structs
+    array = []
+    @struct.hosts.count.times do |i|
+      array << Libmemcached.memcached_select_server_at(@struct, i)
+    end
+    array
+  end    
     
   ### Operations
   
@@ -132,6 +147,7 @@ class Memcached
   end
   
   def cas
+    raise "CAS not enabled" unless options[:support_cas]
     raise NotImplemented
   end
   
