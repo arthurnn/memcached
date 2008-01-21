@@ -116,6 +116,13 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal [1, 2], 
       @cache.get(["#{key}_1", "#{key}_2"])
   end
+  
+  def test_get_multi_missing
+    @cache.set "#{key}_1", 1
+    @cache.delete "#{key}_2" rescue nil
+    ary = @cache.get(["#{key}_1", "#{key}_2"])
+    assert_instance_of Memcached::NotFound, ary.last      
+  end
 
   def test_set_and_get_unmarshalled
     @cache.set key, @value
@@ -302,7 +309,11 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_cas
-    # XXX Not implemented
+    assert_raise Memcached::NotImplemented do
+      @cache.cas(key) do
+        @value
+      end
+    end
   end
   
   # Stats
