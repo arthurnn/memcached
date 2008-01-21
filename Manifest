@@ -1,6 +1,5 @@
 CHANGELOG
 ext/extconf.rb
-ext/libmemcached.h
 ext/libmemcached.i
 ext/libmemcached_wrap.c
 lib/memcached/behaviors.rb

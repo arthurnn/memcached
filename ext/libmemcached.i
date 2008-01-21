@@ -55,7 +55,7 @@
   free($1);
 };
 
-%include "libmemcached.h"
+%include "/opt/local/include/libmemcached/memcached.h"
 
 // Manual wrappers
 
@@ -92,5 +92,16 @@ void memcached_repair_server_st(memcached_st *in_ptr, memcached_server_st *host)
 %{
 void memcached_repair_server_st(memcached_st *in_ptr, memcached_server_st *host) {
     host->write_ptr= 0;
+};
+%}
+
+// Stub some bogus methods left in the 0.13 memcached.h header
+%{
+memcached_return memcached_mdelete(memcached_st *ptr, char **key, size_t *key_length, unsigned int number_of_keys, time_t expiration) {
+  return;
+};
+memcached_return memcached_mdelete_by_key(memcached_st *ptr, char *master_key, size_t master_key_length,
+ char **key, size_t *key_length, unsigned int number_of_keys, time_t expiration) {
+  return;
 };
 %}

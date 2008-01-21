@@ -1940,6 +1940,15 @@ void memcached_repair_server_st(memcached_st *in_ptr, memcached_server_st *host)
     host->write_ptr= 0;
 };
 
+
+memcached_return memcached_mdelete(memcached_st *ptr, char **key, size_t *key_length, unsigned int number_of_keys, time_t expiration) {
+  return;
+};
+memcached_return memcached_mdelete_by_key(memcached_st *ptr, char *master_key, size_t master_key_length,
+ char **key, size_t *key_length, unsigned int number_of_keys, time_t expiration) {
+  return;
+};
+
 swig_class cMemcachedServerSt;
 
 SWIGINTERN VALUE
@@ -8223,6 +8232,135 @@ fail:
 
 
 SWIGINTERN VALUE
+_wrap_memcached_mdelete(int argc, VALUE *argv, VALUE self) {
+  memcached_st *arg1 = (memcached_st *) 0 ;
+  char **arg2 = (char **) 0 ;
+  size_t *arg3 = (size_t *) 0 ;
+  unsigned int arg4 ;
+  time_t arg5 ;
+  memcached_return result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  void *argp3 = 0 ;
+  int res3 = 0 ;
+  unsigned int val4 ;
+  int ecode4 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 5) || (argc > 5)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 5)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_mdelete" "', argument " "1"" of type '" "memcached_st *""'"); 
+  }
+  arg1 = (memcached_st *)(argp1);
+  res2 = SWIG_ConvertPtr(argv[1], &argp2,SWIGTYPE_p_p_char, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_mdelete" "', argument " "2"" of type '" "char **""'"); 
+  }
+  arg2 = (char **)(argp2);
+  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_size_t, 0 |  0 );
+  if (!SWIG_IsOK(res3)) {
+    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_mdelete" "', argument " "3"" of type '" "size_t *""'"); 
+  }
+  arg3 = (size_t *)(argp3);
+  ecode4 = SWIG_AsVal_unsigned_SS_int(argv[3], &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "memcached_mdelete" "', argument " "4"" of type '" "unsigned int""'");
+  } 
+  arg4 = (unsigned int)(val4);
+  {
+    if (NIL_P(argv[4]))
+    arg5 = (time_t)-1;
+    else
+    arg5 = NUM2LONG(rb_funcall(argv[4], rb_intern("tv_sec"), 0));
+  }
+  result = (memcached_return)memcached_mdelete(arg1,arg2,arg3,arg4,arg5);
+  vresult = SWIG_From_int((int)(result));
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_memcached_mdelete_by_key(int argc, VALUE *argv, VALUE self) {
+  memcached_st *arg1 = (memcached_st *) 0 ;
+  char *arg2 = (char *) 0 ;
+  size_t arg3 ;
+  char **arg4 = (char **) 0 ;
+  size_t *arg5 = (size_t *) 0 ;
+  unsigned int arg6 ;
+  time_t arg7 ;
+  memcached_return result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  int res2 ;
+  char *buf2 = 0 ;
+  int alloc2 = 0 ;
+  size_t val3 ;
+  int ecode3 = 0 ;
+  void *argp4 = 0 ;
+  int res4 = 0 ;
+  void *argp5 = 0 ;
+  int res5 = 0 ;
+  unsigned int val6 ;
+  int ecode6 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 7) || (argc > 7)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 7)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_mdelete_by_key" "', argument " "1"" of type '" "memcached_st *""'"); 
+  }
+  arg1 = (memcached_st *)(argp1);
+  res2 = SWIG_AsCharPtrAndSize(argv[1], &buf2, NULL, &alloc2);
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_mdelete_by_key" "', argument " "2"" of type '" "char *""'");
+  }
+  arg2 = buf2;
+  ecode3 = SWIG_AsVal_size_t(argv[2], &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "memcached_mdelete_by_key" "', argument " "3"" of type '" "size_t""'");
+  } 
+  arg3 = (size_t)(val3);
+  res4 = SWIG_ConvertPtr(argv[3], &argp4,SWIGTYPE_p_p_char, 0 |  0 );
+  if (!SWIG_IsOK(res4)) {
+    SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "memcached_mdelete_by_key" "', argument " "4"" of type '" "char **""'"); 
+  }
+  arg4 = (char **)(argp4);
+  res5 = SWIG_ConvertPtr(argv[4], &argp5,SWIGTYPE_p_size_t, 0 |  0 );
+  if (!SWIG_IsOK(res5)) {
+    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_mdelete_by_key" "', argument " "5"" of type '" "size_t *""'"); 
+  }
+  arg5 = (size_t *)(argp5);
+  ecode6 = SWIG_AsVal_unsigned_SS_int(argv[5], &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "memcached_mdelete_by_key" "', argument " "6"" of type '" "unsigned int""'");
+  } 
+  arg6 = (unsigned int)(val6);
+  {
+    if (NIL_P(argv[6]))
+    arg7 = (time_t)-1;
+    else
+    arg7 = NUM2LONG(rb_funcall(argv[6], rb_intern("tv_sec"), 0));
+  }
+  result = (memcached_return)memcached_mdelete_by_key(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+  vresult = SWIG_From_int((int)(result));
+  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
+  return vresult;
+fail:
+  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
 _wrap_memcached_fetch_execute(int argc, VALUE *argv, VALUE self) {
   memcached_st *arg1 = (memcached_st *) 0 ;
   unsigned int (**arg2)(memcached_st *,memcached_result_st *,void *) ;
@@ -9146,6 +9284,8 @@ SWIGEXPORT void Init_libmemcached(void) {
   rb_define_module_function(mLibmemcached, "memcached_append_by_key", _wrap_memcached_append_by_key, -1);
   rb_define_module_function(mLibmemcached, "memcached_cas_by_key", _wrap_memcached_cas_by_key, -1);
   rb_define_module_function(mLibmemcached, "memcached_delete_by_key", _wrap_memcached_delete_by_key, -1);
+  rb_define_module_function(mLibmemcached, "memcached_mdelete", _wrap_memcached_mdelete, -1);
+  rb_define_module_function(mLibmemcached, "memcached_mdelete_by_key", _wrap_memcached_mdelete_by_key, -1);
   rb_define_module_function(mLibmemcached, "memcached_fetch_execute", _wrap_memcached_fetch_execute, -1);
   rb_define_module_function(mLibmemcached, "memcached_result_free", _wrap_memcached_result_free, -1);
   rb_define_module_function(mLibmemcached, "memcached_result_create", _wrap_memcached_result_create, -1);
