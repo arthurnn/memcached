@@ -1,4 +1,4 @@
 
-v0.6. Better documentation; improve buffered IO API.
+v0.6. Better documentation; benchmark suite; improve buffered IO API; remove namespace accessor in favor of generic options hash.
 
 v0.5. First release.
