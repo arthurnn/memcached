@@ -12,7 +12,8 @@ LICENSE
 Manifest
 README
 test/benchmark/benchmark.rb
-test/benchmark/benchmark_test.rb
+test/benchmark/benchmark_set_get.rb
+test/benchmark/profile.rb
 test/setup.rb
 test/teardown.rb
 test/test_helper.rb
