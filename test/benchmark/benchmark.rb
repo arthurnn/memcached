@@ -8,8 +8,11 @@ require 'benchmark'
 require 'rubygems'
 require 'memcache'
 
-@value = OpenStruct.new(:a => 1, :b => 2, :c => Class)
+# We'll use a simple @value to try to avoid spending time in Marshal, 
+# which is a constant penalty that both clients have to pay
+@value = []
 @marshalled = Marshal.dump(@value)
+
 @opts = [
   ['127.0.0.1:43042', '127.0.0.1:43043'], 
   {
