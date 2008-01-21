@@ -9,10 +9,10 @@ The Memcached client connection class. It wraps a <tt>memcached_st</tt> struct i
   DEFAULTS = {
     :hash => :default,
     :distribution => :consistent,
-    :buffer_requests => false,
+    :buffer_requests => true,
     :support_cas => false,
     :tcp_nodelay => false,
-    :no_block => false,
+    :no_block => true,
     :namespace => nil
   }
   
