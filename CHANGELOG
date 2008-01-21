@@ -1,4 +1,4 @@
 
-v0.6. Better documentation; benchmark suite; improve buffered IO API; remove namespace accessor in favor of generic options hash.
+v0.6. Better documentation; benchmark suite; improve buffered IO API; remove namespace accessor in favor of generic options hash; patch up extconf.rb to handle unusual library situations; increase test coverage.
 
 v0.5. First release.
