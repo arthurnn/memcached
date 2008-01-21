@@ -23,8 +23,9 @@ require 'memcache'
 @key4 = "Medium"*8
 
 
-n = 2000
 Benchmark.bm(31) do |x|
+  n = 2000
+  
   @m = Memcached.new(
     @opts[0], 
     @opts[1].merge(:no_block => false, :buffer_requests => false)
@@ -114,7 +115,44 @@ Benchmark.bm(31) do |x|
       @m.get @key3
     end
   end
+
+  n = 1000
+  @m = Memcached.new(*@opts)
+  x.report("mixed:ruby:memcached") do
+    n.times do
+      @m.set @key1, @value
+      @m.set @key2, @value
+      @m.set @key3, @value
+      @m.get @key1
+      @m.get @key2
+      @m.get @key3
+      @m.set @key1, @value
+      @m.get @key1
+      @m.set @key2, @value
+      @m.get @key2
+      @m.set @key3, @value
+      @m.get @key3
+    end
+  end
+  @m = MemCache.new(*@opts)
+  x.report("mixed:ruby:memcache-client") do
+    n.times do
+      @m.set @key1, @value
+      @m.set @key2, @value
+      @m.set @key3, @value
+      @m.get @key1
+      @m.get @key2
+      @m.get @key3
+      @m.set @key1, @value
+      @m.get @key1
+      @m.set @key2, @value
+      @m.get @key2
+      @m.set @key3, @value
+      @m.get @key3
+    end
+  end
     
+  n = 10000
   Memcached::HASH_VALUES.each do |mode,|
     @m = Memcached.new(@opts[0], @opts[1].merge(:hash => mode))
     x.report("hash:#{mode}:memcached") do
