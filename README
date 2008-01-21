@@ -83,7 +83,7 @@ Note that the API is not the same as that of <b>Ruby-MemCache</b> or <b>memcache
   $cache.delete 'test'
   $cache.get 'test' #=> raises Memcached::NotFound
 
-A compatibility wrapper for legacy applications is in progress.
+I'll write a compatibility wrapper for legacy applications at some point. Or you could do it, and send me a nice patch.
   
 == Threading
 
