@@ -10,5 +10,7 @@ end
 log = "#{HERE}/log/memcached.log"
 system "touch #{log}"
 
-system "memcached -vv -p 43042 >> #{log} 2>&1 &"
-system "memcached -vv -p 43043 >> #{log} 2>&1 &"  
+verbosity = (ENV['DEBUG'] ? "-vv" : "")
+
+system "memcached #{verbosity} -p 43042 >> #{log} 2>&1 &"
+system "memcached #{verbosity} -p 43043 >> #{log} 2>&1 &"  
