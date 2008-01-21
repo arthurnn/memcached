@@ -3,7 +3,6 @@ HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
 
 require 'memcached'
-require 'ostruct'
 require 'benchmark'
 require 'rubygems'
 require 'memcache'
@@ -16,8 +15,8 @@ require 'memcache'
 @opts = [
   ['127.0.0.1:43042', '127.0.0.1:43043'], 
   {
-    :buffer_requests => true,
-    :no_block => true,
+    :buffer_requests => false,
+    :no_block => false,
     :namespace => "benchmark_namespace"
   }
 ]
@@ -37,8 +36,11 @@ Benchmark.bm(31) do |x|
 
   n = 1000  
   
-  @m = Memcached.new(*@opts)
-  x.report("set:plain:memcached") do
+  @m = Memcached.new(
+    @opts[0], 
+    @opts[1].merge(:no_block => true, :buffer_requests => true)
+  )
+  x.report("set:plain:noblock:memcached") do
     n.times do
       @m.set @key1, @marshalled, 0, false
       @m.set @key2, @marshalled, 0, false
@@ -48,11 +50,8 @@ Benchmark.bm(31) do |x|
       @m.set @key3, @marshalled, 0, false
     end
   end
-  @m = Memcached.new(
-    @opts[0], 
-    @opts[1].merge(:no_block => false, :buffer_requests => false)
-  )
-  x.report("set:plain:unbuffered:memcached") do
+  @m = Memcached.new(*@opts)
+  x.report("set:plain:memcached") do
     n.times do
       @m.set @key1, @marshalled, 0, false
       @m.set @key2, @marshalled, 0, false
@@ -76,8 +75,11 @@ Benchmark.bm(31) do |x|
   
   restart_servers 
 
-  @m = Memcached.new(*@opts)
-  x.report("set:ruby:memcached") do
+  @m = Memcached.new(
+    @opts[0], 
+    @opts[1].merge(:no_block => true, :buffer_requests => true)
+  )
+  x.report("set:ruby:noblock:memcached") do
     n.times do
       @m.set @key1, @value
       @m.set @key2, @value
@@ -87,11 +89,8 @@ Benchmark.bm(31) do |x|
       @m.set @key3, @value
     end
   end
-  @m = Memcached.new(
-    @opts[0], 
-    @opts[1].merge(:no_block => false, :buffer_requests => false)
-  )
-  x.report("set:ruby:unbuffered:memcached") do
+  @m = Memcached.new(*@opts)
+  x.report("set:ruby:memcached") do
     n.times do
       @m.set @key1, @value
       @m.set @key2, @value
@@ -185,7 +184,27 @@ Benchmark.bm(31) do |x|
   end
 
   restart_servers
-
+  
+  @m = Memcached.new(
+    @opts[0], 
+    @opts[1].merge(:no_block => true, :buffer_requests => true)
+  )
+  x.report("mixed:ruby:noblock:memcached") do
+    n.times do
+      @m.set @key1, @value
+      @m.set @key2, @value
+      @m.set @key3, @value
+      @m.get @key1
+      @m.get @key2
+      @m.get @key3
+      @m.set @key1, @value
+      @m.get @key1
+      @m.set @key2, @value
+      @m.get @key2
+      @m.set @key3, @value
+      @m.get @key3
+    end
+  end  
   @m = Memcached.new(*@opts)
   x.report("mixed:ruby:memcached") do
     n.times do
@@ -228,12 +247,12 @@ Benchmark.bm(31) do |x|
     @m = Memcached.new(@opts[0], @opts[1].merge(:hash => mode))
     x.report("hash:#{mode}:memcached") do
       n.times do
-        @m.set @key1, @marshalled, 0, true
-        @m.get @key1, true
-        @m.set @key2, @marshalled, 0, true
-        @m.get @key2, true
-        @m.set @key3, @marshalled, 0, true
-        @m.get @key3, true
+        @m.set @key1, @marshalled, 0, false
+        @m.get @key1, false
+        @m.set @key2, @marshalled, 0, false
+        @m.get @key2, false
+        @m.set @key3, @marshalled, 0, false
+        @m.get @key3, false
       end
     end
   end
