@@ -87,7 +87,7 @@ A compatibility wrapper for legacy applications is in progress.
   
 == Threading
 
-The <b>memcached</b> library is threadsafe, but each thread requires its own Memcached instance. Create a global Memcached, and then call Memcached#clone each time you spawn a thread.
+<b>memcached</b> is threadsafe, but each thread requires its own Memcached instance. Create a global Memcached, and then call Memcached#clone each time you spawn a thread.
 
   thread = Thread.new do
     cache = $cache.clone
@@ -105,23 +105,23 @@ The <b>memcached</b> library is threadsafe, but each thread requires its own Mem
 <b>memcached</b> is much, much faster than <b>memcache-client</b>:
 
                                        user     system      total        real
-  set:ruby:noblock:memcached       0.100000   0.010000   0.110000 (  0.179094)
-  set:ruby:memcached               0.150000   0.140000   0.290000 (  0.611128)
-  set:ruby:memcache-client        18.060000   0.300000  18.360000 ( 19.427255)
+  set:ruby:noblock:memcached       0.050000   0.000000   0.050000 (  0.054205)
+  set:ruby:memcached               0.130000   0.160000   0.290000 (  0.338529)
+  set:ruby:memcache-client         3.690000   0.130000   3.820000 (  4.030806)
   ...
-  get:ruby:memcached               0.190000   0.110000   0.300000 (  0.829521)
-  get:ruby:memcache-client        18.730000   0.470000  19.200000 ( 23.561230)
+  get:ruby:memcached               0.110000   0.020000   0.130000 (  0.316446)
+  get:ruby:memcache-client         3.730000   0.120000   3.850000 (  4.040446)
   ...
-  missing:ruby:memcached           0.340000   0.150000   0.490000 (  1.039560)
-  missing:ruby:memcache-client    18.670000   0.490000  19.160000 ( 23.479841)
+  missing:ruby:memcached           0.160000   0.090000   0.250000 (  0.401891)
+  missing:ruby:memcache-client     3.650000   0.090000   3.740000 (  3.880192)
   ...
-  mixed:ruby:noblock:memcached     0.350000   0.290000   0.640000 (  1.486719)
-  mixed:ruby:memcached             0.410000   0.260000   0.670000 (  1.586495)
-  mixed:ruby:memcache-client      38.370000   1.010000  39.380000 ( 47.925057)
-  ...
+  mixed:ruby:noblock:memcached     0.190000   0.230000   0.420000 (  0.667130)
+  mixed:ruby:memcached             0.250000   0.250000   0.500000 (  0.663093)
+  mixed:ruby:memcache-client       7.410000   0.210000   7.620000 (  7.942145)
 
-You can easily run the benchmarks for yourself. Change to the gem's directory (usually something like <tt>/opt/local/lib/ruby/gems/1.8/gems/memcached-0.6/</tt>) and run:
-  ruby test/benchmark/benchmark.rb
+These benchmarks were run on x86-64 Linux. You can easily run the benchmarks for yourself:
+  $ ruby -e 'system("ruby #{File.dirname(`gem which memcached`.split("\n").
+    last)}/../test/benchmark/benchmark.rb")'
 
 == Reporting problems
 
