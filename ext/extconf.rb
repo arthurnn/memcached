@@ -13,4 +13,5 @@ end
 
 dir_config 'libmemcached'
 find_library 'memcached', 'memcached_server_add'
+find_header 'libmemcached/memcached.h', *ENV['INCLUDE_PATH'].split(":")
 create_makefile 'libmemcached'
