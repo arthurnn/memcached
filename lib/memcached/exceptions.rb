@@ -44,9 +44,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
   class Error < RuntimeError
   end
   
-=begin rdoc
-Raised if a method depends on functionality not yet completed in libmemcached. 
-=end
+  # Raised if a method depends on functionality not yet completed in libmemcached. 
   class NotImplemented < NoMethodError
   end
 
