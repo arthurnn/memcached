@@ -8,7 +8,7 @@ HERE = File.dirname(__FILE__)
 end
 
 log = "#{HERE}/log/memcached.log"
-system "touch #{log}"
+system ">#{log}"
 
 verbosity = (ENV['DEBUG'] ? "-vv" : "")
 
