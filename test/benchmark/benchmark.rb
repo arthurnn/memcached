@@ -116,6 +116,29 @@ Benchmark.bm(31) do |x|
     end
   end
 
+  @m = Memcached.new(*@opts)
+  x.report("missing:ruby:memcached") do
+    n.times do
+      begin @m.delete @key1; rescue; end
+      begin @m.get @key1; rescue; end
+      begin @m.delete @key2; rescue; end
+      begin @m.get @key2; rescue; end
+      begin @m.delete @key3; rescue; end
+      begin @m.get @key3; rescue; end
+    end
+  end
+  @m = MemCache.new(*@opts)
+  x.report("missing:ruby:memcache-client") do
+    n.times do
+      begin @m.delete @key1; rescue; end
+      begin @m.get @key1; rescue; end
+      begin @m.delete @key2; rescue; end
+      begin @m.get @key2; rescue; end
+      begin @m.delete @key3; rescue; end
+      begin @m.get @key3; rescue; end
+    end
+  end
+
   n = 1000
   @m = Memcached.new(*@opts)
   x.report("mixed:ruby:memcached") do
