@@ -29,7 +29,7 @@ sleep(1)
 @m = Memcached.new(*@opts)
 
 result = RubyProf.profile do  
-  500.times do
+  1000.times do
     @m.set @key1, @value
     @m.set @key2, @value
     @m.set @key3, @value
