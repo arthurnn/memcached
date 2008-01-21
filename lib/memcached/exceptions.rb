@@ -5,7 +5,7 @@ class Memcached
 
 Superclass for all Memcached runtime exceptions. 
 
-Subclasses correspond one-to-one with server response strings or libmemcached errors. For example, raising Memcached::NotFound means that the server returned <tt>"NOT_FOUND\r\n"</tt>.
+Subclasses correspond one-to-one with server response strings or libmemcached errors. For example, raising <b>Memcached::NotFound</b> means that the server returned <tt>"NOT_FOUND\r\n"</tt>.
 
 == Subclasses
 

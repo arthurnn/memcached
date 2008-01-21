@@ -9,8 +9,8 @@ class Memcached
   DEFAULTS = {
     :hash => :default,
     :distribution => :consistent,
-    :buffer_requests => true,
-    :no_block => true,
+    :no_block => false,
+    :buffer_requests => false,
     :support_cas => false,
     :tcp_nodelay => false,
     :namespace => nil
@@ -34,8 +34,10 @@ Valid option parameters are:
 <tt>:distribution</tt>:: The type of distribution function to use. Possible values are <tt>:modula</tt> and <tt>:consistent</tt>. Note that this is decoupled from the choice of hash function.
 <tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
-<tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>. 
-<tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush.
+<tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
+<tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Make enable <tt>:no_block</tt> if you enable <tt>:buffer_requests</tt>.
+
+Please note that when non-blocking IO is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
 =end
 

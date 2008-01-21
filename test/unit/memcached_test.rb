@@ -9,13 +9,20 @@ class MemcachedTest < Test::Unit::TestCase
     @cache = Memcached.new(
       @servers, 
       :namespace => @namespace, 
-      :no_block => false, 
-      :buffer_requests => false, 
+      :distribution => :modula
+    )
+    @nb_cache = Memcached.new(
+      @servers, 
+      :namespace => @namespace, 
+      :no_block => true, 
+      :buffer_requests => true, 
       :distribution => :modula
     )
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
+  
+  # Initialize
 
   def test_initialize
     cache = Memcached.new @servers, :namespace => 'test'
@@ -55,7 +62,9 @@ class MemcachedTest < Test::Unit::TestCase
   def test_initialize_strange_argument
     assert_raise(ArgumentError) { Memcached.new 1 }
   end
-
+  
+  # Get
+  
   def test_get
     @cache.set key, @value
     result = @cache.get key
@@ -114,6 +123,8 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal @marshalled_value, result
   end
 
+  # Set
+
   def test_set
     assert_nothing_raised do
       @cache.set(key, @value)
@@ -143,6 +154,8 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
   
+  # Delete
+  
   def test_delete
     @cache.set key, @value
     @cache.delete key
@@ -157,6 +170,8 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.delete key
     end
   end  
+  
+  # Add
 
   def test_add
     @cache.delete key rescue nil
@@ -189,6 +204,8 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal @marshalled_value, @cache.get(key, false)
     assert_equal @value, @cache.get(key)
   end
+  
+  # Increment and decrement
 
   def test_increment
     @cache.set key, 10, 0, false
@@ -226,6 +243,8 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
   
+  # Replace
+  
   def test_replace
     @cache.set key, nil
     assert_nothing_raised do
@@ -243,6 +262,8 @@ class MemcachedTest < Test::Unit::TestCase
       assert_equal @value, @cache.get(key)    
     end
   end
+  
+  # Append and prepend
 
   def test_append
     @cache.set key, "start", 0, false
@@ -283,6 +304,8 @@ class MemcachedTest < Test::Unit::TestCase
   def test_cas
     # XXX Not implemented
   end
+  
+  # Stats
 
   def test_stats
     stats = @cache.stats
@@ -291,13 +314,17 @@ class MemcachedTest < Test::Unit::TestCase
     assert_instance_of String, stats[:version].first
   end
   
+  # Clone
+  
   def test_clone
     cache = @cache.clone
     assert_equal cache.servers, @cache.servers
     assert_not_equal cache, @cache
   end
   
-  def test_buffered_requests
+  # Non-blocking IO
+  
+  def test_buffered_requests_return_value
     cache = Memcached.new @servers,
       :buffer_requests => true
     assert_nothing_raised do
@@ -313,14 +340,12 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal 31, ret
   end
 
-  def test_no_block_io
-    cache = Memcached.new @servers,
-      :no_block => true
+  def test_no_block_return_value
     assert_nothing_raised do
-      cache.set key, @value
+      @nb_cache.set key, @value
     end
     ret = Libmemcached.memcached_set(
-      cache.instance_variable_get("@struct"), 
+      @nb_cache.instance_variable_get("@struct"), 
       "#{@namespace}#{key}", 
       @marshalled_value, 
       0, 
@@ -328,6 +353,33 @@ class MemcachedTest < Test::Unit::TestCase
     )
     assert_equal 31, ret
   end
+  
+  def test_no_block_missing_delete
+    @nb_cache.delete key rescue nil
+    assert_nothing_raised do
+      @nb_cache.delete key
+    end
+  end  
+
+  def test_no_block_set_invalid_key
+    assert_nothing_raised do
+      @nb_cache.set "I'm so bad", @value
+    end
+  end   
+
+  def test_no_block_set_object_too_large
+    assert_nothing_raised do
+      @nb_cache.set key, "I'm big" * 1000000
+    end
+  end
+  
+  def test_no_block_existing_add
+    # Should still raise
+    @nb_cache.set key, @value
+    assert_raise(Memcached::NotStored) do
+      @nb_cache.add key, @value
+    end
+  end  
 
   def test_thread_contention
     threads = []
