@@ -11,6 +11,7 @@ lib/memcached.rb
 LICENSE
 Manifest
 README
+test/benchmark/benchmark.rb
 test/benchmark/benchmark_test.rb
 test/setup.rb
 test/teardown.rb
