@@ -119,7 +119,7 @@ A compatibility wrapper for legacy applications is in progress.
   mixed:ruby:memcached             0.250000   0.250000   0.500000 (  0.663093)
   mixed:ruby:memcache-client       7.410000   0.210000   7.620000 (  7.942145)
 
-These benchmarks were run on x86-64 Linux. You can easily run the benchmarks for yourself, as long as you have memcached itself on your system:
+These benchmarks were run on x86-64 Linux. You can easily run your own benchmarks, as long as you have memcached itself on your system:
   $ ruby -e 'system("ruby #{File.dirname(`gem which memcached`.split("\n").
     last)}/../test/benchmark/benchmark.rb")'
 
