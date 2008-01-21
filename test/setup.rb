@@ -3,11 +3,11 @@
 
 HERE = File.dirname(__FILE__)
 
-`ps awx`.split("\n").grep(/4304[1-3]/).map do |process| 
+`ps awx`.split("\n").grep(/4304[2-3]/).map do |process| 
   system("kill -9 #{process.to_i}")
 end
 
-log = "#{HERE}/log/memcached.log"
+log = "/tmp/memcached.log"
 system ">#{log}"
 
 verbosity = (ENV['DEBUG'] ? "-vv" : "")

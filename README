@@ -33,7 +33,7 @@ For OS X/MacPorts, run:
   make && sudo make install
   
 Now install the gem:
-  sudo gem install memcached
+  sudo gem install memcached --no-rdoc --no-ri
   
 == Usage
 
@@ -118,7 +118,7 @@ The <b>memcached</b> library is threadsafe, but each thread requires its own Mem
 
 You can easily run the benchmarks for yourself:
 
-  ruby $LIBRARY_PATH/ruby/gems/1.8/gems/memcached-0.6/test/benchmark/benchmark.rb
+  ruby  /opt/local/lib/ruby/gems/1.8/gems/memcached-0.6/test/benchmark/benchmark.rb
 
 == Reporting problems
 
