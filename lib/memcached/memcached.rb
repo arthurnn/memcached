@@ -52,11 +52,6 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       end
       host, port = server.split(":")
       Libmemcached.memcached_server_add(@struct, host, port.to_i)
-
-      # XXX To be removed once Krow fixes the write_ptr bug
-      Libmemcached.memcached_repair_server_st(@struct, 
-        Libmemcached.memcached_select_server_at(@struct, index)
-      )
     end  
     
     # Behaviors

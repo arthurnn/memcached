@@ -22,9 +22,9 @@ The <b>memcached</b> library wraps the pure-C libmemcached client via SWIG. Both
 
 == Installation
 
-You need {libmemcached 0.13}[http://tangent.org/552/libmemcached.html]. Other versions of libmemcached are not supported. You also need {memcached itself}[http://www.danga.com/memcached/] if you want to test against a local server.
+You need {libmemcached 0.15}[http://tangent.org/552/libmemcached.html]. Other versions of libmemcached are not supported. You also need {memcached itself}[http://www.danga.com/memcached/] if you want to test against a local server.
 
-Download and extract the {libmemcached tarball}[http://download.tangent.org/libmemcached-0.13.tar.gz]. Then for Linux, run:
+Download and extract the {libmemcached tarball}[http://download.tangent.org/libmemcached-0.15.tar.gz]. Then for Linux, run:
   ./configure
   make && sudo make install
   
