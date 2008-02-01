@@ -5,7 +5,11 @@ $LOAD_PATH << "#{HERE}/../../lib/"
 require 'memcached'
 require 'benchmark'
 require 'rubygems'
-require 'memcache'
+
+begin 
+  require 'memcache'
+rescue LoadError
+end
 
 begin
   require 'caffeine'
@@ -67,26 +71,17 @@ Benchmark.bm(31) do |x|
     end
   end
   #  Not supported by Caffeine
-  #  @m = Caffeine::MemCache.new(@opts[1]); @m.servers = @opts[0]
-  #  x.report("set:plain:caffeine") do
-  #    n.times do
-  #      @m.set @key1, @marshalled, 0, true
-  #      @m.set @key2, @marshalled, 0, true
-  #      @m.set @key3, @marshalled, 0, true
-  #      @m.set @key1, @marshalled, 0, true
-  #      @m.set @key2, @marshalled, 0, true
-  #      @m.set @key3, @marshalled, 0, true
-  #    end
-  #  end  
-  @m = MemCache.new(*@opts)
-  x.report("set:plain:memcache-client") do
-    n.times do
-      @m.set @key1, @marshalled, 0, true
-      @m.set @key2, @marshalled, 0, true
-      @m.set @key3, @marshalled, 0, true
-      @m.set @key1, @marshalled, 0, true
-      @m.set @key2, @marshalled, 0, true
-      @m.set @key3, @marshalled, 0, true
+  if defined? MemCache
+    @m = MemCache.new(*@opts)
+    x.report("set:plain:memcache-client") do
+      n.times do
+        @m.set @key1, @marshalled, 0, true
+        @m.set @key2, @marshalled, 0, true
+        @m.set @key3, @marshalled, 0, true
+        @m.set @key1, @marshalled, 0, true
+        @m.set @key2, @marshalled, 0, true
+        @m.set @key3, @marshalled, 0, true
+      end
     end
   end
   
@@ -130,15 +125,17 @@ Benchmark.bm(31) do |x|
       end
     end    
   end
-  @m = MemCache.new(*@opts)
-  x.report("set:ruby:memcache-client") do
-    n.times do
-      @m.set @key1, @value
-      @m.set @key2, @value
-      @m.set @key3, @value
-      @m.set @key1, @value
-      @m.set @key2, @value
-      @m.set @key3, @value
+  if defined? MemCache
+    @m = MemCache.new(*@opts)
+    x.report("set:ruby:memcache-client") do
+      n.times do
+        @m.set @key1, @value
+        @m.set @key2, @value
+        @m.set @key3, @value
+        @m.set @key1, @value
+        @m.set @key2, @value
+        @m.set @key3, @value
+      end
     end
   end
 
@@ -154,26 +151,17 @@ Benchmark.bm(31) do |x|
     end
   end
   #  Not supported by Caffeine
-  #  @m = Caffeine::MemCache.new(@opts[1]); @m.servers = @opts[0]
-  #  x.report("get:plain:caffeine") do
-  #    n.times do
-  #      @m.get @key1, true
-  #      @m.get @key2, true
-  #      @m.get @key3, true
-  #      @m.get @key1, true
-  #      @m.get @key2, true
-  #      @m.get @key3, true
-  #    end
-  #  end  
-  @m = MemCache.new(*@opts)
-  x.report("get:plain:memcache-client") do
-    n.times do
-      @m.get @key1, true
-      @m.get @key2, true
-      @m.get @key3, true
-      @m.get @key1, true
-      @m.get @key2, true
-      @m.get @key3, true
+  if defined? MemCache
+    @m = MemCache.new(*@opts)
+    x.report("get:plain:memcache-client") do
+      n.times do
+        @m.get @key1, true
+        @m.get @key2, true
+        @m.get @key3, true
+        @m.get @key1, true
+        @m.get @key2, true
+        @m.get @key3, true
+      end
     end
   end
 
@@ -201,18 +189,20 @@ Benchmark.bm(31) do |x|
       end
     end  
   end
-  @m = MemCache.new(*@opts)
-  x.report("get:ruby:memcache-client") do
-    n.times do
-      @m.get @key1
-      @m.get @key2
-      @m.get @key3
-      @m.get @key1
-      @m.get @key2
-      @m.get @key3
+  if defined? MemCache
+    @m = MemCache.new(*@opts)
+    x.report("get:ruby:memcache-client") do
+      n.times do
+        @m.get @key1
+        @m.get @key2
+        @m.get @key3
+        @m.get @key1
+        @m.get @key2
+        @m.get @key3
+      end
     end
   end
-
+  
   restart_servers
 
   @m = Memcached.new(*@opts)
@@ -239,15 +229,17 @@ Benchmark.bm(31) do |x|
       end
     end  
   end
-  @m = MemCache.new(*@opts)
-  x.report("missing:ruby:memcache-client") do
-    n.times do
-      begin @m.delete @key1; rescue; end
-      begin @m.get @key1; rescue; end
-      begin @m.delete @key2; rescue; end
-      begin @m.get @key2; rescue; end
-      begin @m.delete @key3; rescue; end
-      begin @m.get @key3; rescue; end
+  if defined? MemCache
+    @m = MemCache.new(*@opts)
+    x.report("missing:ruby:memcache-client") do
+      n.times do
+        begin @m.delete @key1; rescue; end
+        begin @m.get @key1; rescue; end
+        begin @m.delete @key2; rescue; end
+        begin @m.get @key2; rescue; end
+        begin @m.delete @key3; rescue; end
+        begin @m.get @key3; rescue; end
+      end
     end
   end
 
@@ -309,24 +301,25 @@ Benchmark.bm(31) do |x|
       end  
     end
   end
-  @m = MemCache.new(*@opts)
-  x.report("mixed:ruby:memcache-client") do
-    n.times do
-      @m.set @key1, @value
-      @m.set @key2, @value
-      @m.set @key3, @value
-      @m.get @key1
-      @m.get @key2
-      @m.get @key3
-      @m.set @key1, @value
-      @m.get @key1
-      @m.set @key2, @value
-      @m.get @key2
-      @m.set @key3, @value
-      @m.get @key3
+  if defined? MemCache
+    @m = MemCache.new(*@opts)
+    x.report("mixed:ruby:memcache-client") do
+      n.times do
+        @m.set @key1, @value
+        @m.set @key2, @value
+        @m.set @key3, @value
+        @m.get @key1
+        @m.get @key2
+        @m.get @key3
+        @m.set @key1, @value
+        @m.get @key1
+        @m.set @key2, @value
+        @m.get @key2
+        @m.set @key3, @value
+        @m.get @key3
+      end
     end
   end
-
   restart_servers
     
   n = 10000
