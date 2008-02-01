@@ -281,7 +281,7 @@ Return the array of server strings used to configure this instance.
     
   # Checks the return code from Libmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
   def check_return_code(ret) #:doc:
-    # XXX 0.14 already returns 0 for an ActionQueued result
+    # 0.14 returns 0 for an ActionQueued result but 0.15 does not.
     return if ret == 0 or ret == 31
     raise EXCEPTIONS[ret], ""
   end  
