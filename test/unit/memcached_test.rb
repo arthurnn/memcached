@@ -5,7 +5,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043']
-    @namespace = 'class_test_namespace'
+    @namespace = 'memcached_test_namespace'
     @cache = Memcached.new(
       @servers, 
       :namespace => @namespace, 
