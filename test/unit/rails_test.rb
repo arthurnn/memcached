@@ -10,5 +10,29 @@ class RailsTest < Test::Unit::TestCase
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
+
+  def test_get
+    @cache.set key, @value
+    result = @cache.get key
+    assert_equal @value, result
+  end
+  
+  def test_get_missing
+    @cache.delete key rescue nil
+    result = @cache.get key
+    assert_equal nil, result
+  end    
+  
+  def test_get_nil
+    @cache.set key, nil, 0
+    result = @cache.get key
+    assert_equal nil, result
+  end  
+
+  private
+  
+  def key
+    caller.first[/`(.*)'/, 1]
+  end
   
 end

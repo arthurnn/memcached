@@ -4,10 +4,7 @@ require 'memcached/integer'
 require 'memcached/exceptions'
 require 'memcached/behaviors'
 require 'memcached/memcached'
-
-if defined? ::Rails
-  require 'memcached/rails'
-end
+require 'memcached/rails'
 
 =begin rdoc
 The generated SWIG module for accessing libmemcached's C API.
