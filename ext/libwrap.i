@@ -1,4 +1,4 @@
-%module libmemcached
+%module libwrap
 %{
 #include <libmemcached/memcached.h>
 %}

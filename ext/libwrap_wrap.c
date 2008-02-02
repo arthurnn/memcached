@@ -1748,10 +1748,10 @@ static swig_module_info swig_module = {swig_types, 28, 0, 0, 0, 0};
 
 /* -------- TYPES TABLE (END) -------- */
 
-#define SWIG_init    Init_libmemcached
-#define SWIG_name    "Libmemcached"
+#define SWIG_init    Init_libwrap
+#define SWIG_name    "Libwrap"
 
-static VALUE mLibmemcached;
+static VALUE mLibwrap;
 
 #define SWIG_RUBY_THREAD_BEGIN_BLOCK
 #define SWIG_RUBY_THREAD_END_BLOCK
@@ -6024,7 +6024,7 @@ fail:
 
 
 /*
-  Document-method: Libmemcached::MemcachedSt.hash
+  Document-method: Libwrap::MemcachedSt.hash
 
   call-seq:
     hash -> int
@@ -6033,7 +6033,7 @@ Hashing function for class.
 */
 
 /*
-  Document-method: Libmemcached::MemcachedSt.hash=
+  Document-method: Libwrap::MemcachedSt.hash=
 
   call-seq:
     hash=(x) -> int
@@ -9383,11 +9383,11 @@ SWIG_PropagateClientData(void) {
 #ifdef __cplusplus
 extern "C"
 #endif
-SWIGEXPORT void Init_libmemcached(void) {
+SWIGEXPORT void Init_libwrap(void) {
   size_t i;
   
   SWIG_InitRuntime();
-  mLibmemcached = rb_define_module("Libmemcached");
+  mLibwrap = rb_define_module("Libwrap");
   
   SWIG_InitializeModule(0);
   for (i = 0; i < swig_module.size; i++) {
@@ -9395,85 +9395,85 @@ SWIGEXPORT void Init_libmemcached(void) {
   }
   
   SWIG_RubyInitializeTrackings();
-  rb_define_const(mLibmemcached, "MEMCACHED_VERSION_STRING_LENGTH", SWIG_From_int((int)(12)));
-  rb_define_const(mLibmemcached, "MEMCACHED_DEFAULT_PORT", SWIG_From_int((int)(11211)));
-  rb_define_const(mLibmemcached, "MEMCACHED_MAX_KEY", SWIG_From_int((int)(251)));
-  rb_define_const(mLibmemcached, "MEMCACHED_MAX_BUFFER", SWIG_From_int((int)(8196)));
-  rb_define_const(mLibmemcached, "MEMCACHED_MAX_HOST_LENGTH", SWIG_From_int((int)(64)));
-  rb_define_const(mLibmemcached, "MEMCACHED_WHEEL_SIZE", SWIG_From_int((int)(1024)));
-  rb_define_const(mLibmemcached, "MEMCACHED_STRIDE", SWIG_From_int((int)(4)));
-  rb_define_const(mLibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.14"));
-  rb_define_const(mLibmemcached, "MEMCACHED_SUCCESS", SWIG_From_int((int)(MEMCACHED_SUCCESS)));
-  rb_define_const(mLibmemcached, "MEMCACHED_FAILURE", SWIG_From_int((int)(MEMCACHED_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HOST_LOOKUP_FAILURE", SWIG_From_int((int)(MEMCACHED_HOST_LOOKUP_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_BIND_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_BIND_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_WRITE_FAILURE", SWIG_From_int((int)(MEMCACHED_WRITE_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_READ_FAILURE", SWIG_From_int((int)(MEMCACHED_READ_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_UNKNOWN_READ_FAILURE", SWIG_From_int((int)(MEMCACHED_UNKNOWN_READ_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_PROTOCOL_ERROR", SWIG_From_int((int)(MEMCACHED_PROTOCOL_ERROR)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CLIENT_ERROR", SWIG_From_int((int)(MEMCACHED_CLIENT_ERROR)));
-  rb_define_const(mLibmemcached, "MEMCACHED_SERVER_ERROR", SWIG_From_int((int)(MEMCACHED_SERVER_ERROR)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_DATA_EXISTS", SWIG_From_int((int)(MEMCACHED_DATA_EXISTS)));
-  rb_define_const(mLibmemcached, "MEMCACHED_DATA_DOES_NOT_EXIST", SWIG_From_int((int)(MEMCACHED_DATA_DOES_NOT_EXIST)));
-  rb_define_const(mLibmemcached, "MEMCACHED_NOTSTORED", SWIG_From_int((int)(MEMCACHED_NOTSTORED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_STORED", SWIG_From_int((int)(MEMCACHED_STORED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_NOTFOUND", SWIG_From_int((int)(MEMCACHED_NOTFOUND)));
-  rb_define_const(mLibmemcached, "MEMCACHED_MEMORY_ALLOCATION_FAILURE", SWIG_From_int((int)(MEMCACHED_MEMORY_ALLOCATION_FAILURE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_PARTIAL_READ", SWIG_From_int((int)(MEMCACHED_PARTIAL_READ)));
-  rb_define_const(mLibmemcached, "MEMCACHED_SOME_ERRORS", SWIG_From_int((int)(MEMCACHED_SOME_ERRORS)));
-  rb_define_const(mLibmemcached, "MEMCACHED_NO_SERVERS", SWIG_From_int((int)(MEMCACHED_NO_SERVERS)));
-  rb_define_const(mLibmemcached, "MEMCACHED_END", SWIG_From_int((int)(MEMCACHED_END)));
-  rb_define_const(mLibmemcached, "MEMCACHED_DELETED", SWIG_From_int((int)(MEMCACHED_DELETED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_VALUE", SWIG_From_int((int)(MEMCACHED_VALUE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_STAT", SWIG_From_int((int)(MEMCACHED_STAT)));
-  rb_define_const(mLibmemcached, "MEMCACHED_ERRNO", SWIG_From_int((int)(MEMCACHED_ERRNO)));
-  rb_define_const(mLibmemcached, "MEMCACHED_FAIL_UNIX_SOCKET", SWIG_From_int((int)(MEMCACHED_FAIL_UNIX_SOCKET)));
-  rb_define_const(mLibmemcached, "MEMCACHED_NOT_SUPPORTED", SWIG_From_int((int)(MEMCACHED_NOT_SUPPORTED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_NO_KEY_PROVIDED", SWIG_From_int((int)(MEMCACHED_NO_KEY_PROVIDED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_FETCH_NOTFINISHED", SWIG_From_int((int)(MEMCACHED_FETCH_NOTFINISHED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_TIMEOUT", SWIG_From_int((int)(MEMCACHED_TIMEOUT)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BUFFERED", SWIG_From_int((int)(MEMCACHED_BUFFERED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_MAXIMUM_RETURN", SWIG_From_int((int)(MEMCACHED_MAXIMUM_RETURN)));
-  rb_define_const(mLibmemcached, "MEMCACHED_DISTRIBUTION_MODULA", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_MODULA)));
-  rb_define_const(mLibmemcached, "MEMCACHED_DISTRIBUTION_CONSISTENT", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_CONSISTENT)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_NO_BLOCK", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NO_BLOCK)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_TCP_NODELAY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_TCP_NODELAY)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_HASH", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_HASH)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_KETAMA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_KETAMA)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_CACHE_LOOKUPS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_CACHE_LOOKUPS)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_SUPPORT_CAS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SUPPORT_CAS)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_POLL_TIMEOUT", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_POLL_TIMEOUT)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_DISTRIBUTION", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_DISTRIBUTION)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_BUFFER_REQUESTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_BUFFER_REQUESTS)));
-  rb_define_const(mLibmemcached, "MEMCACHED_BEHAVIOR_USER_DATA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USER_DATA)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CALLBACK_USER_DATA", SWIG_From_int((int)(MEMCACHED_CALLBACK_USER_DATA)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CALLBACK_CLEANUP_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLEANUP_FUNCTION)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CALLBACK_CLONE_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLONE_FUNCTION)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CALLBACK_MALLOC_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_MALLOC_FUNCTION)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CALLBACK_REALLOC_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_REALLOC_FUNCTION)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CALLBACK_FREE_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_FREE_FUNCTION)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_DEFAULT", SWIG_From_int((int)(MEMCACHED_HASH_DEFAULT)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_MD5", SWIG_From_int((int)(MEMCACHED_HASH_MD5)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_CRC", SWIG_From_int((int)(MEMCACHED_HASH_CRC)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_FNV1_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_64)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_FNV1A_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_64)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_FNV1_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_32)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_FNV1A_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_32)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_KETAMA", SWIG_From_int((int)(MEMCACHED_HASH_KETAMA)));
-  rb_define_const(mLibmemcached, "MEMCACHED_HASH_HSIEH", SWIG_From_int((int)(MEMCACHED_HASH_HSIEH)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_UNKNOWN", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNKNOWN)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_TCP", SWIG_From_int((int)(MEMCACHED_CONNECTION_TCP)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_UDP", SWIG_From_int((int)(MEMCACHED_CONNECTION_UDP)));
-  rb_define_const(mLibmemcached, "MEMCACHED_CONNECTION_UNIX_SOCKET", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNIX_SOCKET)));
-  rb_define_const(mLibmemcached, "MEMCACHED_NOT_ALLOCATED", SWIG_From_int((int)(MEMCACHED_NOT_ALLOCATED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_ALLOCATED", SWIG_From_int((int)(MEMCACHED_ALLOCATED)));
-  rb_define_const(mLibmemcached, "MEMCACHED_USED", SWIG_From_int((int)(MEMCACHED_USED)));
+  rb_define_const(mLibwrap, "MEMCACHED_VERSION_STRING_LENGTH", SWIG_From_int((int)(12)));
+  rb_define_const(mLibwrap, "MEMCACHED_DEFAULT_PORT", SWIG_From_int((int)(11211)));
+  rb_define_const(mLibwrap, "MEMCACHED_MAX_KEY", SWIG_From_int((int)(251)));
+  rb_define_const(mLibwrap, "MEMCACHED_MAX_BUFFER", SWIG_From_int((int)(8196)));
+  rb_define_const(mLibwrap, "MEMCACHED_MAX_HOST_LENGTH", SWIG_From_int((int)(64)));
+  rb_define_const(mLibwrap, "MEMCACHED_WHEEL_SIZE", SWIG_From_int((int)(1024)));
+  rb_define_const(mLibwrap, "MEMCACHED_STRIDE", SWIG_From_int((int)(4)));
+  rb_define_const(mLibwrap, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.14"));
+  rb_define_const(mLibwrap, "MEMCACHED_SUCCESS", SWIG_From_int((int)(MEMCACHED_SUCCESS)));
+  rb_define_const(mLibwrap, "MEMCACHED_FAILURE", SWIG_From_int((int)(MEMCACHED_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_HOST_LOOKUP_FAILURE", SWIG_From_int((int)(MEMCACHED_HOST_LOOKUP_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_CONNECTION_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_CONNECTION_BIND_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_BIND_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_WRITE_FAILURE", SWIG_From_int((int)(MEMCACHED_WRITE_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_READ_FAILURE", SWIG_From_int((int)(MEMCACHED_READ_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_UNKNOWN_READ_FAILURE", SWIG_From_int((int)(MEMCACHED_UNKNOWN_READ_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_PROTOCOL_ERROR", SWIG_From_int((int)(MEMCACHED_PROTOCOL_ERROR)));
+  rb_define_const(mLibwrap, "MEMCACHED_CLIENT_ERROR", SWIG_From_int((int)(MEMCACHED_CLIENT_ERROR)));
+  rb_define_const(mLibwrap, "MEMCACHED_SERVER_ERROR", SWIG_From_int((int)(MEMCACHED_SERVER_ERROR)));
+  rb_define_const(mLibwrap, "MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE", SWIG_From_int((int)(MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_DATA_EXISTS", SWIG_From_int((int)(MEMCACHED_DATA_EXISTS)));
+  rb_define_const(mLibwrap, "MEMCACHED_DATA_DOES_NOT_EXIST", SWIG_From_int((int)(MEMCACHED_DATA_DOES_NOT_EXIST)));
+  rb_define_const(mLibwrap, "MEMCACHED_NOTSTORED", SWIG_From_int((int)(MEMCACHED_NOTSTORED)));
+  rb_define_const(mLibwrap, "MEMCACHED_STORED", SWIG_From_int((int)(MEMCACHED_STORED)));
+  rb_define_const(mLibwrap, "MEMCACHED_NOTFOUND", SWIG_From_int((int)(MEMCACHED_NOTFOUND)));
+  rb_define_const(mLibwrap, "MEMCACHED_MEMORY_ALLOCATION_FAILURE", SWIG_From_int((int)(MEMCACHED_MEMORY_ALLOCATION_FAILURE)));
+  rb_define_const(mLibwrap, "MEMCACHED_PARTIAL_READ", SWIG_From_int((int)(MEMCACHED_PARTIAL_READ)));
+  rb_define_const(mLibwrap, "MEMCACHED_SOME_ERRORS", SWIG_From_int((int)(MEMCACHED_SOME_ERRORS)));
+  rb_define_const(mLibwrap, "MEMCACHED_NO_SERVERS", SWIG_From_int((int)(MEMCACHED_NO_SERVERS)));
+  rb_define_const(mLibwrap, "MEMCACHED_END", SWIG_From_int((int)(MEMCACHED_END)));
+  rb_define_const(mLibwrap, "MEMCACHED_DELETED", SWIG_From_int((int)(MEMCACHED_DELETED)));
+  rb_define_const(mLibwrap, "MEMCACHED_VALUE", SWIG_From_int((int)(MEMCACHED_VALUE)));
+  rb_define_const(mLibwrap, "MEMCACHED_STAT", SWIG_From_int((int)(MEMCACHED_STAT)));
+  rb_define_const(mLibwrap, "MEMCACHED_ERRNO", SWIG_From_int((int)(MEMCACHED_ERRNO)));
+  rb_define_const(mLibwrap, "MEMCACHED_FAIL_UNIX_SOCKET", SWIG_From_int((int)(MEMCACHED_FAIL_UNIX_SOCKET)));
+  rb_define_const(mLibwrap, "MEMCACHED_NOT_SUPPORTED", SWIG_From_int((int)(MEMCACHED_NOT_SUPPORTED)));
+  rb_define_const(mLibwrap, "MEMCACHED_NO_KEY_PROVIDED", SWIG_From_int((int)(MEMCACHED_NO_KEY_PROVIDED)));
+  rb_define_const(mLibwrap, "MEMCACHED_FETCH_NOTFINISHED", SWIG_From_int((int)(MEMCACHED_FETCH_NOTFINISHED)));
+  rb_define_const(mLibwrap, "MEMCACHED_TIMEOUT", SWIG_From_int((int)(MEMCACHED_TIMEOUT)));
+  rb_define_const(mLibwrap, "MEMCACHED_BUFFERED", SWIG_From_int((int)(MEMCACHED_BUFFERED)));
+  rb_define_const(mLibwrap, "MEMCACHED_MAXIMUM_RETURN", SWIG_From_int((int)(MEMCACHED_MAXIMUM_RETURN)));
+  rb_define_const(mLibwrap, "MEMCACHED_DISTRIBUTION_MODULA", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_MODULA)));
+  rb_define_const(mLibwrap, "MEMCACHED_DISTRIBUTION_CONSISTENT", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_CONSISTENT)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_NO_BLOCK", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NO_BLOCK)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_TCP_NODELAY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_TCP_NODELAY)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_HASH", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_HASH)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_KETAMA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_KETAMA)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_CACHE_LOOKUPS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_CACHE_LOOKUPS)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_SUPPORT_CAS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SUPPORT_CAS)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_POLL_TIMEOUT", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_POLL_TIMEOUT)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_DISTRIBUTION", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_DISTRIBUTION)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_BUFFER_REQUESTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_BUFFER_REQUESTS)));
+  rb_define_const(mLibwrap, "MEMCACHED_BEHAVIOR_USER_DATA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USER_DATA)));
+  rb_define_const(mLibwrap, "MEMCACHED_CALLBACK_USER_DATA", SWIG_From_int((int)(MEMCACHED_CALLBACK_USER_DATA)));
+  rb_define_const(mLibwrap, "MEMCACHED_CALLBACK_CLEANUP_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLEANUP_FUNCTION)));
+  rb_define_const(mLibwrap, "MEMCACHED_CALLBACK_CLONE_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLONE_FUNCTION)));
+  rb_define_const(mLibwrap, "MEMCACHED_CALLBACK_MALLOC_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_MALLOC_FUNCTION)));
+  rb_define_const(mLibwrap, "MEMCACHED_CALLBACK_REALLOC_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_REALLOC_FUNCTION)));
+  rb_define_const(mLibwrap, "MEMCACHED_CALLBACK_FREE_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_FREE_FUNCTION)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_DEFAULT", SWIG_From_int((int)(MEMCACHED_HASH_DEFAULT)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_MD5", SWIG_From_int((int)(MEMCACHED_HASH_MD5)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_CRC", SWIG_From_int((int)(MEMCACHED_HASH_CRC)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_FNV1_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_64)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_FNV1A_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_64)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_FNV1_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_32)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_FNV1A_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_32)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_KETAMA", SWIG_From_int((int)(MEMCACHED_HASH_KETAMA)));
+  rb_define_const(mLibwrap, "MEMCACHED_HASH_HSIEH", SWIG_From_int((int)(MEMCACHED_HASH_HSIEH)));
+  rb_define_const(mLibwrap, "MEMCACHED_CONNECTION_UNKNOWN", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNKNOWN)));
+  rb_define_const(mLibwrap, "MEMCACHED_CONNECTION_TCP", SWIG_From_int((int)(MEMCACHED_CONNECTION_TCP)));
+  rb_define_const(mLibwrap, "MEMCACHED_CONNECTION_UDP", SWIG_From_int((int)(MEMCACHED_CONNECTION_UDP)));
+  rb_define_const(mLibwrap, "MEMCACHED_CONNECTION_UNIX_SOCKET", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNIX_SOCKET)));
+  rb_define_const(mLibwrap, "MEMCACHED_NOT_ALLOCATED", SWIG_From_int((int)(MEMCACHED_NOT_ALLOCATED)));
+  rb_define_const(mLibwrap, "MEMCACHED_ALLOCATED", SWIG_From_int((int)(MEMCACHED_ALLOCATED)));
+  rb_define_const(mLibwrap, "MEMCACHED_USED", SWIG_From_int((int)(MEMCACHED_USED)));
   
-  cMemcachedServerSt.klass = rb_define_class_under(mLibmemcached, "MemcachedServerSt", rb_cObject);
+  cMemcachedServerSt.klass = rb_define_class_under(mLibwrap, "MemcachedServerSt", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_memcached_server_st, (void *) &cMemcachedServerSt);
   rb_define_alloc_func(cMemcachedServerSt.klass, _wrap_MemcachedServerSt_allocate);
   rb_define_method(cMemcachedServerSt.klass, "initialize", _wrap_new_MemcachedServerSt, -1);
@@ -9519,7 +9519,7 @@ SWIGEXPORT void Init_libmemcached(void) {
   cMemcachedServerSt.destroy = (void (*)(void *)) free_memcached_server_st;
   cMemcachedServerSt.trackObjects = 0;
   
-  cMemcachedStatSt.klass = rb_define_class_under(mLibmemcached, "MemcachedStatSt", rb_cObject);
+  cMemcachedStatSt.klass = rb_define_class_under(mLibwrap, "MemcachedStatSt", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_memcached_stat_st, (void *) &cMemcachedStatSt);
   rb_define_alloc_func(cMemcachedStatSt.klass, _wrap_MemcachedStatSt_allocate);
   rb_define_method(cMemcachedStatSt.klass, "initialize", _wrap_new_MemcachedStatSt, -1);
@@ -9575,7 +9575,7 @@ SWIGEXPORT void Init_libmemcached(void) {
   cMemcachedStatSt.destroy = (void (*)(void *)) free_memcached_stat_st;
   cMemcachedStatSt.trackObjects = 0;
   
-  cMemcachedStringSt.klass = rb_define_class_under(mLibmemcached, "MemcachedStringSt", rb_cObject);
+  cMemcachedStringSt.klass = rb_define_class_under(mLibwrap, "MemcachedStringSt", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_memcached_string_st, (void *) &cMemcachedStringSt);
   rb_define_alloc_func(cMemcachedStringSt.klass, _wrap_MemcachedStringSt_allocate);
   rb_define_method(cMemcachedStringSt.klass, "initialize", _wrap_new_MemcachedStringSt, -1);
@@ -9595,7 +9595,7 @@ SWIGEXPORT void Init_libmemcached(void) {
   cMemcachedStringSt.destroy = (void (*)(void *)) free_memcached_string_st;
   cMemcachedStringSt.trackObjects = 0;
   
-  cMemcachedResultSt.klass = rb_define_class_under(mLibmemcached, "MemcachedResultSt", rb_cObject);
+  cMemcachedResultSt.klass = rb_define_class_under(mLibwrap, "MemcachedResultSt", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_memcached_result_st, (void *) &cMemcachedResultSt);
   rb_define_alloc_func(cMemcachedResultSt.klass, _wrap_MemcachedResultSt_allocate);
   rb_define_method(cMemcachedResultSt.klass, "initialize", _wrap_new_MemcachedResultSt, -1);
@@ -9617,7 +9617,7 @@ SWIGEXPORT void Init_libmemcached(void) {
   cMemcachedResultSt.destroy = (void (*)(void *)) free_memcached_result_st;
   cMemcachedResultSt.trackObjects = 0;
   
-  cMemcachedSt.klass = rb_define_class_under(mLibmemcached, "MemcachedSt", rb_cObject);
+  cMemcachedSt.klass = rb_define_class_under(mLibwrap, "MemcachedSt", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_memcached_st, (void *) &cMemcachedSt);
   rb_define_alloc_func(cMemcachedSt.klass, _wrap_MemcachedSt_allocate);
   rb_define_method(cMemcachedSt.klass, "initialize", _wrap_new_MemcachedSt, -1);
@@ -9662,60 +9662,60 @@ SWIGEXPORT void Init_libmemcached(void) {
   cMemcachedSt.mark = 0;
   cMemcachedSt.destroy = (void (*)(void *)) free_memcached_st;
   cMemcachedSt.trackObjects = 0;
-  rb_define_module_function(mLibmemcached, "memcached_lib_version", _wrap_memcached_lib_version, -1);
-  rb_define_module_function(mLibmemcached, "memcached_create", _wrap_memcached_create, -1);
-  rb_define_module_function(mLibmemcached, "memcached_free", _wrap_memcached_free, -1);
-  rb_define_module_function(mLibmemcached, "memcached_clone", _wrap_memcached_clone, -1);
-  rb_define_module_function(mLibmemcached, "memcached_delete", _wrap_memcached_delete, -1);
-  rb_define_module_function(mLibmemcached, "memcached_increment", _wrap_memcached_increment, -1);
-  rb_define_module_function(mLibmemcached, "memcached_decrement", _wrap_memcached_decrement, -1);
-  rb_define_module_function(mLibmemcached, "memcached_stat_free", _wrap_memcached_stat_free, -1);
-  rb_define_module_function(mLibmemcached, "memcached_stat", _wrap_memcached_stat, -1);
-  rb_define_module_function(mLibmemcached, "memcached_stat_servername", _wrap_memcached_stat_servername, -1);
-  rb_define_module_function(mLibmemcached, "memcached_flush", _wrap_memcached_flush, -1);
-  rb_define_module_function(mLibmemcached, "memcached_verbosity", _wrap_memcached_verbosity, -1);
-  rb_define_module_function(mLibmemcached, "memcached_quit", _wrap_memcached_quit, -1);
-  rb_define_module_function(mLibmemcached, "memcached_strerror", _wrap_memcached_strerror, -1);
-  rb_define_module_function(mLibmemcached, "memcached_behavior_set", _wrap_memcached_behavior_set, -1);
-  rb_define_module_function(mLibmemcached, "memcached_behavior_get", _wrap_memcached_behavior_get, -1);
-  rb_define_module_function(mLibmemcached, "memcached_set", _wrap_memcached_set, -1);
-  rb_define_module_function(mLibmemcached, "memcached_add", _wrap_memcached_add, -1);
-  rb_define_module_function(mLibmemcached, "memcached_replace", _wrap_memcached_replace, -1);
-  rb_define_module_function(mLibmemcached, "memcached_append", _wrap_memcached_append, -1);
-  rb_define_module_function(mLibmemcached, "memcached_prepend", _wrap_memcached_prepend, -1);
-  rb_define_module_function(mLibmemcached, "memcached_cas", _wrap_memcached_cas, -1);
-  rb_define_module_function(mLibmemcached, "memcached_get", _wrap_memcached_get, -1);
-  rb_define_module_function(mLibmemcached, "memcached_mget", _wrap_memcached_mget, -1);
-  rb_define_module_function(mLibmemcached, "memcached_fetch", _wrap_memcached_fetch, -1);
-  rb_define_module_function(mLibmemcached, "memcached_fetch_result", _wrap_memcached_fetch_result, -1);
-  rb_define_module_function(mLibmemcached, "memcached_server_add_udp", _wrap_memcached_server_add_udp, -1);
-  rb_define_module_function(mLibmemcached, "memcached_server_add_unix_socket", _wrap_memcached_server_add_unix_socket, -1);
-  rb_define_module_function(mLibmemcached, "memcached_server_add", _wrap_memcached_server_add, -1);
-  rb_define_module_function(mLibmemcached, "memcached_server_list_free", _wrap_memcached_server_list_free, -1);
-  rb_define_module_function(mLibmemcached, "memcached_server_push", _wrap_memcached_server_push, -1);
-  rb_define_module_function(mLibmemcached, "memcached_server_list_append", _wrap_memcached_server_list_append, -1);
-  rb_define_module_function(mLibmemcached, "memcached_server_list_count", _wrap_memcached_server_list_count, -1);
-  rb_define_module_function(mLibmemcached, "memcached_servers_parse", _wrap_memcached_servers_parse, -1);
-  rb_define_module_function(mLibmemcached, "memcached_stat_get_value", _wrap_memcached_stat_get_value, -1);
-  rb_define_module_function(mLibmemcached, "memcached_stat_get_keys", _wrap_memcached_stat_get_keys, -1);
-  rb_define_module_function(mLibmemcached, "memcached_get_by_key", _wrap_memcached_get_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_mget_by_key", _wrap_memcached_mget_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_set_by_key", _wrap_memcached_set_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_add_by_key", _wrap_memcached_add_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_replace_by_key", _wrap_memcached_replace_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_prepend_by_key", _wrap_memcached_prepend_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_append_by_key", _wrap_memcached_append_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_cas_by_key", _wrap_memcached_cas_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_delete_by_key", _wrap_memcached_delete_by_key, -1);
-  rb_define_module_function(mLibmemcached, "memcached_fetch_execute", _wrap_memcached_fetch_execute, -1);
-  rb_define_module_function(mLibmemcached, "memcached_callback_set", _wrap_memcached_callback_set, -1);
-  rb_define_module_function(mLibmemcached, "memcached_callback_get", _wrap_memcached_callback_get, -1);
-  rb_define_module_function(mLibmemcached, "memcached_result_free", _wrap_memcached_result_free, -1);
-  rb_define_module_function(mLibmemcached, "memcached_result_create", _wrap_memcached_result_create, -1);
-  rb_define_module_function(mLibmemcached, "memcached_result_value", _wrap_memcached_result_value, -1);
-  rb_define_module_function(mLibmemcached, "memcached_result_length", _wrap_memcached_result_length, -1);
-  rb_define_module_function(mLibmemcached, "memcached_get_ruby_string", _wrap_memcached_get_ruby_string, -1);
-  rb_define_module_function(mLibmemcached, "memcached_select_server_at", _wrap_memcached_select_server_at, -1);
-  rb_define_module_function(mLibmemcached, "memcached_select_stat_at", _wrap_memcached_select_stat_at, -1);
+  rb_define_module_function(mLibwrap, "memcached_lib_version", _wrap_memcached_lib_version, -1);
+  rb_define_module_function(mLibwrap, "memcached_create", _wrap_memcached_create, -1);
+  rb_define_module_function(mLibwrap, "memcached_free", _wrap_memcached_free, -1);
+  rb_define_module_function(mLibwrap, "memcached_clone", _wrap_memcached_clone, -1);
+  rb_define_module_function(mLibwrap, "memcached_delete", _wrap_memcached_delete, -1);
+  rb_define_module_function(mLibwrap, "memcached_increment", _wrap_memcached_increment, -1);
+  rb_define_module_function(mLibwrap, "memcached_decrement", _wrap_memcached_decrement, -1);
+  rb_define_module_function(mLibwrap, "memcached_stat_free", _wrap_memcached_stat_free, -1);
+  rb_define_module_function(mLibwrap, "memcached_stat", _wrap_memcached_stat, -1);
+  rb_define_module_function(mLibwrap, "memcached_stat_servername", _wrap_memcached_stat_servername, -1);
+  rb_define_module_function(mLibwrap, "memcached_flush", _wrap_memcached_flush, -1);
+  rb_define_module_function(mLibwrap, "memcached_verbosity", _wrap_memcached_verbosity, -1);
+  rb_define_module_function(mLibwrap, "memcached_quit", _wrap_memcached_quit, -1);
+  rb_define_module_function(mLibwrap, "memcached_strerror", _wrap_memcached_strerror, -1);
+  rb_define_module_function(mLibwrap, "memcached_behavior_set", _wrap_memcached_behavior_set, -1);
+  rb_define_module_function(mLibwrap, "memcached_behavior_get", _wrap_memcached_behavior_get, -1);
+  rb_define_module_function(mLibwrap, "memcached_set", _wrap_memcached_set, -1);
+  rb_define_module_function(mLibwrap, "memcached_add", _wrap_memcached_add, -1);
+  rb_define_module_function(mLibwrap, "memcached_replace", _wrap_memcached_replace, -1);
+  rb_define_module_function(mLibwrap, "memcached_append", _wrap_memcached_append, -1);
+  rb_define_module_function(mLibwrap, "memcached_prepend", _wrap_memcached_prepend, -1);
+  rb_define_module_function(mLibwrap, "memcached_cas", _wrap_memcached_cas, -1);
+  rb_define_module_function(mLibwrap, "memcached_get", _wrap_memcached_get, -1);
+  rb_define_module_function(mLibwrap, "memcached_mget", _wrap_memcached_mget, -1);
+  rb_define_module_function(mLibwrap, "memcached_fetch", _wrap_memcached_fetch, -1);
+  rb_define_module_function(mLibwrap, "memcached_fetch_result", _wrap_memcached_fetch_result, -1);
+  rb_define_module_function(mLibwrap, "memcached_server_add_udp", _wrap_memcached_server_add_udp, -1);
+  rb_define_module_function(mLibwrap, "memcached_server_add_unix_socket", _wrap_memcached_server_add_unix_socket, -1);
+  rb_define_module_function(mLibwrap, "memcached_server_add", _wrap_memcached_server_add, -1);
+  rb_define_module_function(mLibwrap, "memcached_server_list_free", _wrap_memcached_server_list_free, -1);
+  rb_define_module_function(mLibwrap, "memcached_server_push", _wrap_memcached_server_push, -1);
+  rb_define_module_function(mLibwrap, "memcached_server_list_append", _wrap_memcached_server_list_append, -1);
+  rb_define_module_function(mLibwrap, "memcached_server_list_count", _wrap_memcached_server_list_count, -1);
+  rb_define_module_function(mLibwrap, "memcached_servers_parse", _wrap_memcached_servers_parse, -1);
+  rb_define_module_function(mLibwrap, "memcached_stat_get_value", _wrap_memcached_stat_get_value, -1);
+  rb_define_module_function(mLibwrap, "memcached_stat_get_keys", _wrap_memcached_stat_get_keys, -1);
+  rb_define_module_function(mLibwrap, "memcached_get_by_key", _wrap_memcached_get_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_mget_by_key", _wrap_memcached_mget_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_set_by_key", _wrap_memcached_set_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_add_by_key", _wrap_memcached_add_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_replace_by_key", _wrap_memcached_replace_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_prepend_by_key", _wrap_memcached_prepend_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_append_by_key", _wrap_memcached_append_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_cas_by_key", _wrap_memcached_cas_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_delete_by_key", _wrap_memcached_delete_by_key, -1);
+  rb_define_module_function(mLibwrap, "memcached_fetch_execute", _wrap_memcached_fetch_execute, -1);
+  rb_define_module_function(mLibwrap, "memcached_callback_set", _wrap_memcached_callback_set, -1);
+  rb_define_module_function(mLibwrap, "memcached_callback_get", _wrap_memcached_callback_get, -1);
+  rb_define_module_function(mLibwrap, "memcached_result_free", _wrap_memcached_result_free, -1);
+  rb_define_module_function(mLibwrap, "memcached_result_create", _wrap_memcached_result_create, -1);
+  rb_define_module_function(mLibwrap, "memcached_result_value", _wrap_memcached_result_value, -1);
+  rb_define_module_function(mLibwrap, "memcached_result_length", _wrap_memcached_result_length, -1);
+  rb_define_module_function(mLibwrap, "memcached_get_ruby_string", _wrap_memcached_get_ruby_string, -1);
+  rb_define_module_function(mLibwrap, "memcached_select_server_at", _wrap_memcached_select_server_at, -1);
+  rb_define_module_function(mLibwrap, "memcached_select_stat_at", _wrap_memcached_select_stat_at, -1);
 }
 
