@@ -2,7 +2,6 @@
 Can happen any time:
 
 * real multiget
-* look for memory leaks
 
 Waiting on libmemcached 0.16:
 
