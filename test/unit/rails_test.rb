@@ -16,6 +16,12 @@ class RailsTest < Test::Unit::TestCase
     result = @cache.get key
     assert_equal @value, result
   end
+
+  def test_bracket_accessors
+    @cache[key] = @value
+    result = @cache[key]
+    assert_equal @value, result
+  end
   
   def test_get_missing
     @cache.delete key rescue nil
