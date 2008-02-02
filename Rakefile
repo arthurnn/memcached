@@ -20,3 +20,7 @@ task :exceptions do
     end
   end
 end
+
+task :valgrind do
+  exec("valgrind  --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 --track-fds=yes ruby #{File.dirname(__FILE__)}/test/benchmark/valgrind.rb")
+end

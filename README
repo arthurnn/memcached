@@ -83,7 +83,11 @@ Note that the API is not the same as that of <b>Ruby-MemCache</b> or <b>memcache
   $cache.delete 'test'
   $cache.get 'test' #=> raises Memcached::NotFound
 
-I'll write a compatibility wrapper for legacy applications at some point. Or you could do it, and send me a nice patch.
+== Legacy applications
+
+There is a compatibility wrapper for legacy applications called Memcached::Rails. 
+
+The easiest way to use it in your app is by installing Interlock[http://blog.evanweaver.com/files/doc/fauna/interlock] and setting <tt>client: memcached</tt> in <tt>config/memcached.yml</tt>. This gives you memcached fragments by default. You do not have to use the other Interlock features unless you want to.
   
 == Threading
 
