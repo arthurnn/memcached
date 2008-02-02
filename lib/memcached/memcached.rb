@@ -250,7 +250,7 @@ Return the array of server strings used to configure this instance.
     keys.each do |key|
        server_structs.size.times do |index|
 
-         value, ret = Rlibmemcached.memcached_stat_get_value(
+         value, ret = Rlibmemcached.memcached_stat_get_ruby_value(
            @struct, 
            Rlibmemcached.memcached_select_stat_at(@struct, stat_struct, index),
            key)

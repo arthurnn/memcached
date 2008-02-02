@@ -60,7 +60,7 @@
 // Manual wrappers
 
 // SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because of the
-// retval/argout split, so it truncates return values with \0 in them
+// retval/argout split, so it truncates return values with \0 in them. Also, don't leak memory.
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
@@ -69,6 +69,19 @@ VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length,
   size_t *value_length;
   str = memcached_get(ptr, key, key_length, value_length, flags, error);
   ret = rb_str_new(str, *value_length);
+  free(str);
+  return ret;
+};
+%}
+
+// We need to wrap this so it doesn't leak memory. SWIG doesn't want to automatically free.
+VALUE memcached_stat_get_ruby_value(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error);
+%{
+VALUE memcached_stat_get_ruby_value(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error) {
+  char *str;
+  VALUE ret;
+  str = memcached_stat_get_value(ptr, stat, key, error);
+  ret = rb_str_new2(str);
   free(str);
   return ret;
 };

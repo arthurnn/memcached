@@ -65,7 +65,7 @@ end
 
 worker = Worker.new
 
-2000.times do
+1000.times do
   worker.work
   GC.start
 end
