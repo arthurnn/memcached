@@ -1,11 +1,5 @@
 CHANGELOG
 COMPATIBILITY
-coverage/index.html
-coverage/lib-memcached-behaviors_rb.html
-coverage/lib-memcached-exceptions_rb.html
-coverage/lib-memcached-integer_rb.html
-coverage/lib-memcached-memcached_rb.html
-coverage/lib-memcached_rb.html
 ext/extconf.rb
 ext/libmemcached.i
 ext/libmemcached_wrap.c

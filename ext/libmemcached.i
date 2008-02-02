@@ -64,10 +64,13 @@
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
-  char *svalue;
+  char *str;
+  VALUE ret;
   size_t *value_length;
-  svalue = memcached_get(ptr, key, key_length, value_length, flags, error);
-  return rb_str_new(svalue, *value_length);
+  str = memcached_get(ptr, key, key_length, value_length, flags, error);
+  ret = rb_str_new(str, *value_length);
+  free(str);
+  return ret;
 };
 %}
 
