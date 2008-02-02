@@ -1,7 +1,7 @@
 
-class Memcached #:nodoc:
+class Memcached
 
-  # A Rails compatibility wrapper for the Memcached class.
+  # A legacy compatibility wrapper for the Memcached class.
   class Rails < ::Memcached
     
     DEFAULTS = {:no_block => true}
@@ -11,8 +11,8 @@ class Memcached #:nodoc:
       super(servers, DEFAULTS.merge(opts))      
     end
     
-    # Wraps Memcached#get so that it doesn't raise. This prevents you from 
-    # setting <tt>nil</tt> values.
+    # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from 
+    # storing <tt>nil</tt> values.
     def get(*args)
       super
     rescue NotFound 
@@ -24,7 +24,7 @@ class Memcached #:nodoc:
       get key
     end
 
-    # Alias for set.
+    # Alias for Memcached#set.
     def []=(key, value)
       set key, value
     end
