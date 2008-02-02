@@ -1,8 +1,8 @@
 CHANGELOG
 COMPATIBILITY
 ext/extconf.rb
-ext/libmemcached.i
-ext/libmemcached_wrap.c
+ext/rlibmemcached.i
+ext/rlibmemcached_wrap.c
 lib/memcached/behaviors.rb
 lib/memcached/exceptions.rb
 lib/memcached/integer.rb

@@ -82,7 +82,7 @@ class MemcachedTest < Test::Unit::TestCase
   def test_get_with_namespace
     @cache.set key, @value
     result = @cache.get key, false
-    direct_result = Libmemcached.memcached_get(
+    direct_result = Rlibmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
       "#{@namespace}#{key}"
     ).first  
@@ -106,7 +106,7 @@ class MemcachedTest < Test::Unit::TestCase
     value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
     @cache.set key, value
     result = @cache.get key, false
-    non_wrapped_result = Libmemcached.memcached_get(
+    non_wrapped_result = Rlibmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
       "#{@namespace}#{key}"
     ).first
@@ -347,7 +347,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       cache.set key, @value
     end
-    ret = Libmemcached.memcached_set(
+    ret = Rlibmemcached.memcached_set(
       cache.instance_variable_get("@struct"), 
       "#{@namespace}#{key}", 
       @marshalled_value, 
@@ -361,7 +361,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       @nb_cache.set key, @value
     end
-    ret = Libmemcached.memcached_set(
+    ret = Rlibmemcached.memcached_set(
       @nb_cache.instance_variable_get("@struct"), 
       "#{@namespace}#{key}", 
       @marshalled_value, 

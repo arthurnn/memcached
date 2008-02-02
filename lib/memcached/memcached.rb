@@ -42,8 +42,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 =end
 
   def initialize(servers, opts = {})
-    @struct = Libmemcached::MemcachedSt.new
-    Libmemcached.memcached_create(@struct)
+    @struct = Rlibmemcached::MemcachedSt.new
+    Rlibmemcached.memcached_create(@struct)
 
     # Servers
     Array(servers).each_with_index do |server, index|
@@ -51,7 +51,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
         raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
       end
       host, port = server.split(":")
-      Libmemcached.memcached_server_add(@struct, host, port.to_i)
+      Rlibmemcached.memcached_server_add(@struct, host, port.to_i)
     end  
     
     # Behaviors
@@ -84,7 +84,7 @@ Return the array of server strings used to configure this instance.
   #
   # <tt>clone</tt> is useful for threading, since each thread must have its own unshared Memcached object. 
   def clone
-    # XXX Could be more efficient if we used Libmemcached.memcached_clone(@struct)
+    # XXX Could be more efficient if we used Rlibmemcached.memcached_clone(@struct)
     self.class.new(servers, options)
   end
   
@@ -100,7 +100,7 @@ Return the array of server strings used to configure this instance.
   def server_structs
     array = []
     @struct.hosts.count.times do |i|
-      array << Libmemcached.memcached_select_server_at(@struct, i)
+      array << Rlibmemcached.memcached_select_server_at(@struct, i)
     end
     array
   end    
@@ -120,7 +120,7 @@ Return the array of server strings used to configure this instance.
   def set(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Libmemcached.memcached_set(@struct, ns(key), value, timeout, FLAGS)
+      Rlibmemcached.memcached_set(@struct, ns(key), value, timeout, FLAGS)
     )
   end
 
@@ -128,7 +128,7 @@ Return the array of server strings used to configure this instance.
   def add(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Libmemcached.memcached_add(@struct, ns(key), value, timeout, FLAGS)
+      Rlibmemcached.memcached_add(@struct, ns(key), value, timeout, FLAGS)
     )
   end
 
@@ -138,14 +138,14 @@ Return the array of server strings used to configure this instance.
   #
   # Note that the key must be initialized to an unmarshalled integer first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
   def increment(key, offset=1)
-    ret, value = Libmemcached.memcached_increment(@struct, ns(key), offset)
+    ret, value = Rlibmemcached.memcached_increment(@struct, ns(key), offset)
     check_return_code(ret)
     value
   end
 
   # Decrement a key's value. The parameters and exception behavior are the same as <tt>increment</tt>.
   def decrement(key, offset=1)
-    ret, value = Libmemcached.memcached_decrement(@struct, ns(key), offset)
+    ret, value = Rlibmemcached.memcached_decrement(@struct, ns(key), offset)
     check_return_code(ret)
     value
   end
@@ -159,7 +159,7 @@ Return the array of server strings used to configure this instance.
   def replace(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Libmemcached.memcached_replace(@struct, ns(key), value, timeout, FLAGS)
+      Rlibmemcached.memcached_replace(@struct, ns(key), value, timeout, FLAGS)
     )
   end
 
@@ -169,7 +169,7 @@ Return the array of server strings used to configure this instance.
   def append(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Libmemcached.memcached_append(@struct, ns(key), value.to_s, IGNORED, FLAGS)
+      Rlibmemcached.memcached_append(@struct, ns(key), value.to_s, IGNORED, FLAGS)
     )
   end
   
@@ -177,7 +177,7 @@ Return the array of server strings used to configure this instance.
   def prepend(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Libmemcached.memcached_prepend(@struct, ns(key), value.to_s, IGNORED, FLAGS)
+      Rlibmemcached.memcached_prepend(@struct, ns(key), value.to_s, IGNORED, FLAGS)
     )
   end
   
@@ -199,7 +199,7 @@ Return the array of server strings used to configure this instance.
   # Deletes a key/value pair from the server. Accepts a String <tt>key</tt>. Raises <b>Memcached::NotFound</b> if the key does not exist.
   def delete(key)
     check_return_code(
-      Libmemcached.memcached_delete(@struct, ns(key), IGNORED)
+      Rlibmemcached.memcached_delete(@struct, ns(key), IGNORED)
     )  
   end
   
@@ -228,7 +228,7 @@ Return the array of server strings used to configure this instance.
       # XXX Server doesn't validate keys. Regex is possibly a performance problem.
       raise ClientError, "Invalid key" if key =~ /\s/ 
         
-      value, flags, ret = Libmemcached.memcached_get_ruby_string(@struct, ns(key))
+      value, flags, ret = Rlibmemcached.memcached_get_ruby_string(@struct, ns(key))
       check_return_code(ret)
       value = Marshal.load(value) if marshal
       value
@@ -241,18 +241,18 @@ Return the array of server strings used to configure this instance.
   def stats
     stats = Hash.new([])
     
-    stat_struct, ret = Libmemcached.memcached_stat(@struct, "")
+    stat_struct, ret = Rlibmemcached.memcached_stat(@struct, "")
     check_return_code(ret)
     
-    keys, ret = Libmemcached.memcached_stat_get_keys(@struct, stat_struct)
+    keys, ret = Rlibmemcached.memcached_stat_get_keys(@struct, stat_struct)
     check_return_code(ret)
     
     keys.each do |key|
        server_structs.size.times do |index|
 
-         value, ret = Libmemcached.memcached_stat_get_value(
+         value, ret = Rlibmemcached.memcached_stat_get_value(
            @struct, 
-           Libmemcached.memcached_select_stat_at(@struct, stat_struct, index),
+           Rlibmemcached.memcached_select_stat_at(@struct, stat_struct, index),
            key)
          check_return_code(ret)
 
@@ -266,7 +266,7 @@ Return the array of server strings used to configure this instance.
        end
     end
     
-    Libmemcached.memcached_stat_free(@struct, stat_struct)
+    Rlibmemcached.memcached_stat_free(@struct, stat_struct)
     stats
   end  
   
@@ -279,7 +279,7 @@ Return the array of server strings used to configure this instance.
     "#{@namespace}#{key}"
   end
     
-  # Checks the return code from Libmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
+  # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
   def check_return_code(ret) #:doc:
     # 0.14 returns 0 for an ActionQueued result but 0.15 does not.
     return if ret == 0 or ret == 31

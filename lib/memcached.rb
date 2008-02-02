@@ -1,5 +1,5 @@
 
-require 'libmemcached'
+require 'rlibmemcached'
 require 'memcached/integer'
 require 'memcached/exceptions'
 require 'memcached/behaviors'
@@ -11,14 +11,14 @@ The generated SWIG module for accessing libmemcached's C API.
 
 Includes the full set of libmemcached static methods (as defined in <tt>$INCLUDE_PATH/libmemcached/memcached.h</tt>), and classes for the available structs:
 
-* <b>Libmemcached::MemcachedResultSt</b>
-* <b>Libmemcached::MemcachedServerSt</b>
-* <b>Libmemcached::MemcachedSt</b>
-* <b>Libmemcached::MemcachedStatSt</b>
-* <b>Libmemcached::MemcachedStringSt</b>
+* <b>Rlibmemcached::MemcachedResultSt</b>
+* <b>Rlibmemcached::MemcachedServerSt</b>
+* <b>Rlibmemcached::MemcachedSt</b>
+* <b>Rlibmemcached::MemcachedStatSt</b>
+* <b>Rlibmemcached::MemcachedStringSt</b>
 
 A number of SWIG typemaps and C helper methods are also defined in <tt>ext/libmemcached.i</tt>.
 
 =end
-module Libmemcached
+module Rlibmemcached
 end

@@ -58,12 +58,12 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
   end
   
   EXCEPTIONS = []
-  EMPTY_STRUCT = Libmemcached::MemcachedSt.new
-  Libmemcached.memcached_create(EMPTY_STRUCT)
+  EMPTY_STRUCT = Rlibmemcached::MemcachedSt.new
+  Rlibmemcached.memcached_create(EMPTY_STRUCT)
   
   # Generate exception classes
-  Libmemcached::MEMCACHED_MAXIMUM_RETURN.times do |index|
-    description = Libmemcached.memcached_strerror(EMPTY_STRUCT, index)
+  Rlibmemcached::MEMCACHED_MAXIMUM_RETURN.times do |index|
+    description = Rlibmemcached.memcached_strerror(EMPTY_STRUCT, index)
     exception_class = eval("class #{camelize(description)} < Error; self; end")
     EXCEPTIONS << exception_class
   end
