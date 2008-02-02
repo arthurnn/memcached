@@ -4,8 +4,7 @@ Can happen any time:
 * real multiget
 * look for memory leaks
 
-Waiting on libmemcached 0.14:
+Waiting on libmemcached 0.16:
 
 * verify version
 * CAS support
-* passing missing increment/decrement tests

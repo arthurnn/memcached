@@ -13,6 +13,7 @@ lib/memcached/behaviors.rb
 lib/memcached/exceptions.rb
 lib/memcached/integer.rb
 lib/memcached/memcached.rb
+lib/memcached/rails.rb
 lib/memcached.rb
 LICENSE
 Manifest
@@ -25,4 +26,5 @@ test/teardown.rb
 test/test_helper.rb
 test/unit/binding_test.rb
 test/unit/memcached_test.rb
+test/unit/rails_test.rb
 TODO

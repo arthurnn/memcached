@@ -6,14 +6,17 @@ require 'memcached'
 require 'benchmark'
 require 'rubygems'
 
-begin 
-  require 'memcache'
-rescue LoadError
-end
 
-begin
-  require 'caffeine'
-rescue LoadError
+unless ARGV[0] == "--only"
+  begin 
+    require 'memcache'
+  rescue LoadError
+  end
+  
+  begin
+    require 'caffeine'
+  rescue LoadError
+  end
 end
 
 # We'll use a simple @value to try to avoid spending time in Marshal, 
