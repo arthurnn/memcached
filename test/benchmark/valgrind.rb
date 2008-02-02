@@ -60,6 +60,7 @@ class Worker
     @m.get @key
     @m.set @key, @value
     @m.get @key
+    @m.stats
   end  
 end
 
