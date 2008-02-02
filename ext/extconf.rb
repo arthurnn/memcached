@@ -8,7 +8,9 @@ end
 
 if ENV['DEBUG']
   puts "setting debug flags"
-  $CFLAGS << " -ggdb -DHAVE_DEBUG" 
+  $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG" 
+else
+  $CLAGS << ' -O2'
 end
 
 dir_config 'libmemcached'
