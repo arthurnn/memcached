@@ -36,6 +36,9 @@ class MemcachedTest < Test::Unit::TestCase
   def test_destroy
     cache = Memcached.new @servers, :namespace => 'test'
     cache.destroy
+    assert_raise(Memcached::ClientError) do
+      cache.get key
+    end
   end
   
   def test_initialize_with_invalid_server_strings

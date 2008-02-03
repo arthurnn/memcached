@@ -74,9 +74,18 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     @namespace_size = @namespace.size
   end
 
-  def destroy
+  def destroy(disable_methods = true)
     Rlibmemcached.memcached_free(@struct)
     @struct = nil
+    if disable_methods
+      class << self
+        Memcached.instance_methods.each do |method_name|
+          define_method method_name do |*args|
+            raise Memcached::ClientError, "Instance has been explicitly destroyed"
+          end
+        end
+      end
+    end
   end
 
   # Return the array of server strings used to configure this instance.
