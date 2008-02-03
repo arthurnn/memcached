@@ -123,15 +123,15 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.set "#{key}_2", 2
     assert_equal [1, 2], 
       @cache.get(["#{key}_1", "#{key}_2"])
-    assert_equal [1, 2], 
-      @cache.get(["#{key}_1", "#{key}_2"])
   end
   
   def test_get_multi_missing
     @cache.set "#{key}_1", 1
     @cache.delete "#{key}_2" rescue nil
-    ary = @cache.get(["#{key}_1", "#{key}_2"])
-    assert_instance_of Memcached::NotFound, ary.last      
+    @cache.set "#{key}_3", 3
+    @cache.delete "#{key}_4" rescue nil
+    ary = @cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"])
+    assert_equal [1, Memcached::NOTFOUND_INSTANCE, 3, Memcached::NOTFOUND_INSTANCE], ary
   end
 
   def test_set_and_get_unmarshalled

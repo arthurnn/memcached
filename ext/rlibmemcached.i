@@ -111,7 +111,7 @@ VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, u
   char *str = memcached_fetch(ptr, key, key_length, length, flags, error);
   
   if (str == NULL) {
-    return Qnil; // XXX
+    return NULL;
   } else {
     VALUE ret = rb_str_new(str, *length);
     free(str);

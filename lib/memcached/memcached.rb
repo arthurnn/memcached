@@ -18,6 +18,8 @@ class Memcached
   
   IGNORED = 0 #:nodoc:
   
+  NOTFOUND_INSTANCE = NotFound.new #:nodoc:
+  
   attr_reader :options # Return the options Hash used to configure this instance.
 
 ###### Configuration
@@ -220,11 +222,16 @@ Return the array of server strings used to configure this instance.
       Rlibmemcached.memcached_mget(@struct, keys);
       
       keys.each do |key|
-        value, flags, ret = Rlibmemcached.memcached_fetch_rvalue(@struct, key)
-        # return values if ret == Rlibmemcached::MEMCACHED_END # Faster than rescuing check_return_code()
-        check_return_code(ret)
-        value = Marshal.load(value) if value.is_a? String and marshal
-        values << value
+        result = Rlibmemcached.memcached_fetch_rvalue(@struct, key)
+        p result
+        value, flags, ret = result
+        unless value
+          values << NOTFOUND_INSTANCE
+        else
+          check_return_code(ret)
+          value = Marshal.load(value) if value.is_a? String and marshal
+          values << value
+        end
       end
       values
     else
