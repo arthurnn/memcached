@@ -50,7 +50,7 @@ restart_servers
 
 Benchmark.bm(31) do |x|
 
-  n = 1000
+  n = 2500
 
   if defined? Memcached
     @m = Memcached.new(
