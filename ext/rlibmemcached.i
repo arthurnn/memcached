@@ -11,7 +11,7 @@
 
 %include "typemaps.i"
 
-// Input maps
+//// Input maps
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags, uint32_t offset };
@@ -56,18 +56,24 @@
   (char *value, size_t value_length)
 };
 
-// Key strings that take length pointers
-%typemap(in) (char *key, size_t *key_length) {
- size_t len = RSTRING_LEN($input);  
- $1 = StringValueCStr($input);
- $2 = &len;
-};
-
-// Output maps
+//// Output maps
 %apply unsigned short *OUTPUT {memcached_return *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
+
+// String
+%typemap(in, numinputs=0) (char *key, size_t *key_length) {
+  $1 = malloc(512*sizeof(char));
+  $2 = malloc(sizeof(size_t));
+}; 
+%typemap(argout) (char *key, size_t *key_length) {
+  if ($1 != NULL) {
+    rb_ary_push($result, rb_str_new($1, *$2));
+    free($1);
+    free($2);
+  }
+}
 
 // Array of strings
 %typemap(out) (char **) {
@@ -93,12 +99,12 @@
 VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
-  char *str;
-  VALUE ret;
-  size_t *value_length;
-  str = memcached_get(ptr, key, key_length, value_length, flags, error);
-  ret = rb_str_new(str, *value_length);
-  free(str);
+  VALUE ret;  
+  size_t *value_length = malloc(sizeof(size_t));
+  char *value = memcached_get(ptr, key, key_length, value_length, flags, error);
+  ret = rb_str_new(value, *value_length);
+  free(value);
+  free(value_length);
   return ret;
 };
 %}
@@ -107,16 +113,19 @@ VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
-  size_t *length;    
-  char *str = memcached_fetch(ptr, key, key_length, length, flags, error);
+  size_t *value_length = malloc(sizeof(size_t));
+  VALUE result = rb_ary_new();
   
-  if (str == NULL) {
-    return NULL;
+  char *value = memcached_fetch(ptr, key, key_length, value_length, flags, error);
+  if (value == NULL) {
+    rb_ary_push(result, Qnil);
   } else {
-    VALUE ret = rb_str_new(str, *length);
-    free(str);
-    return ret;
+    VALUE ret = rb_str_new(value, *value_length);
+    rb_ary_push(result, ret);
+    free(value);
+    free(value_length);
   }
+  return result;
 };
 %}
 

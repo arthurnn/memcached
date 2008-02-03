@@ -70,7 +70,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 
     # Namespace
     raise ArgumentError, "Invalid namespace" if options[:namespace].to_s =~ / /
-    @namespace = options[:namespace]
+    @namespace = options[:namespace].to_s
+    @namespace_size = @namespace.size
   end
 
 =begin rdoc
@@ -211,29 +212,27 @@ Return the array of server strings used to configure this instance.
   #
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be returned directly as a String. Otherwise it will be assumed to be a marshalled Ruby object and unmarshalled.
   #
-  # If you pass a S key, and the key does not exist on the server, <b>Memcached::NotFound</b> will be raised. If you pass an array of keys, memcached's <tt>multiget</tt> mode will be used, and an array of values will be returned. Missing values in the array will be represented as instances of <b>Memcached::NotFound</b>. This behavior may change in the future.
+  # If you pass a String key, and the key does not exist on the server, <b>Memcached::NotFound</b> will be raised. If you pass an array of keys, memcached's <tt>multiget</tt> mode will be used, and a hash of key/value pairs will be returned. The hash will contain only the keys that were found.
+  #
+  # The multiget behavior is subject to change in the future; however, for multiple lookups, it is much faster than normal mode.
   #
   def get(keys, marshal=true)
     if keys.is_a? Array
       # Multi get
       keys.map! { |key| ns(key) }
-      values = []
+      hash = {}
       
       Rlibmemcached.memcached_mget(@struct, keys);
       
-      keys.each do |key|
-        result = Rlibmemcached.memcached_fetch_rvalue(@struct, key)
-        p result
-        value, flags, ret = result
-        unless value
-          values << NOTFOUND_INSTANCE
-        else
-          check_return_code(ret)
-          value = Marshal.load(value) if value.is_a? String and marshal
-          values << value
-        end
+      keys.size.times do 
+        value, key, flags, ret = Rlibmemcached.memcached_fetch_rvalue(@struct)
+        break if ret == Rlibmemcached::MEMCACHED_END
+        check_return_code(ret)
+        value = Marshal.load(value) if value.is_a? String and marshal
+        # Assign the value, removing the namespace, if present
+        hash[key[@namespace_size..-1]] = value
       end
-      values
+      hash
     else
       # Single get
       value, flags, ret = Rlibmemcached.memcached_get_rvalue(@struct, ns(keys))
