@@ -209,30 +209,30 @@ Return the array of server strings used to configure this instance.
   #
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be returned directly as a String. Otherwise it will be assumed to be a marshalled Ruby object and unmarshalled.
   #
-  # If you pass a single key, and the key does not exist on the server, <b>Memcached::NotFound</b> will be raised. If you pass an array of keys, memcached's <tt>multiget</tt> mode will be used, and an array of values will be returned. Missing values in the array will be represented as instances of <b>Memcached::NotFound</b>. This behavior may change in the future.
+  # If you pass a S key, and the key does not exist on the server, <b>Memcached::NotFound</b> will be raised. If you pass an array of keys, memcached's <tt>multiget</tt> mode will be used, and an array of values will be returned. Missing values in the array will be represented as instances of <b>Memcached::NotFound</b>. This behavior may change in the future.
   #
-  def get(key, marshal=true)
-    # XXX Could be faster if it didn't have to branch on the key type
-    if key.is_a? Array
+  def get(keys, marshal=true)
+    if keys.is_a? Array
       # Multi get
-      # XXX Waiting on the real implementation
-      key.map do |this_key|
-        begin
-          get(this_key, marshal)
-        rescue NotFound => e
-          e
-        end
+      keys.map! { |key| ns(key) }
+      values = []
+      
+      Rlibmemcached.memcached_mget(@struct, keys);
+      
+      keys.each do |key|
+        value, flags, ret = Rlibmemcached.memcached_fetch_rvalue(@struct, key)
+        return values if ret == Rlibmemcached::MEMCACHED_END # Faster than rescuing check_return_code()
+        check_return_code(ret)
+        value = Marshal.load(value) if value.is_a? String and marshal
+        values << value
       end
     else
       # Single get
-      # XXX Server doesn't validate keys. Regex is possibly a performance problem.
-      raise ClientError, "Invalid key" if key =~ /\s/ 
-        
-      value, flags, ret = Rlibmemcached.memcached_get_ruby_string(@struct, ns(key))
+      value, flags, ret = Rlibmemcached.memcached_get_rvalue(@struct, ns(keys))
       check_return_code(ret)
       value = Marshal.load(value) if marshal
-      value
-    end
+      return value
+    end    
   end    
   
   ### Information methods
@@ -276,6 +276,7 @@ Return the array of server strings used to configure this instance.
 
   # Return a namespaced key for this Memcached instance. Accepts a String <tt>key</tt> value.
   def ns(key) #:doc:
+    raise ClientError, "Invalid key" if key =~ /\s/ # XXX Slow
     "#{@namespace}#{key}"
   end
     

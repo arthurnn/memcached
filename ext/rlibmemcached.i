@@ -16,6 +16,7 @@
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags, uint32_t offset };
 
+// For behavior's weird set interface
 %typemap(in) (void *data) {
   int value = FIX2INT($input);
   if (value == 0 || value == 1) {
@@ -27,6 +28,24 @@
   }
 };
 
+// Array of strings map for multiget
+%typemap(in) (char **keys, size_t *key_length, unsigned int number_of_keys) {
+  int i;
+  Check_Type($input, T_ARRAY);
+  $3 = (unsigned int) RARRAY_LEN($input);
+  $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
+  $1 = (char **) malloc(($3+1)*sizeof(char *)); 
+  for(i = 0; i < $3; i ++) {
+    $2[i] = strlen(StringValuePtr(RARRAY_PTR($input)[i]));
+    $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
+  }
+}
+%typemap(freearg) (char **keys, size_t *key_length, unsigned int number_of_keys) {
+   free($1);
+   free($2);
+}
+
+// Generic strings
 %typemap(in) (char *str, size_t len) {
  $1 = STR2CSTR($input);
  $2 = (size_t) RSTRING($input)->len;
@@ -43,6 +62,7 @@
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
 
+// Array of strings
 %typemap(out) (char **) {
   int i;  
   VALUE ary = rb_ary_new();
@@ -59,11 +79,11 @@
 
 // Manual wrappers
 
-// SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because of the
-// retval/argout split, so it truncates return values with \0 in them. Also, don't leak memory.
-VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
+// Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because 
+// of the retval/argout split, so it truncates return values with \0 in them. Also, don't leak memory.
+VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
-VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
+VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
   char *str;
   VALUE ret;
   size_t *value_length;
@@ -74,10 +94,29 @@ VALUE memcached_get_ruby_string(memcached_st *ptr, char *key, size_t key_length,
 };
 %}
 
-// We need to wrap this so it doesn't leak memory. SWIG doesn't want to automatically free.
-VALUE memcached_stat_get_ruby_value(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error);
+// Multiget
+VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
 %{
-VALUE memcached_stat_get_ruby_value(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error) {
+VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
+  char *str;
+  VALUE ret;
+  size_t *value_length;
+  str = memcached_fetch(ptr, key, key_length, value_length, flags, error);
+  if (str == NULL) {
+    return Qnil; // XXX
+  } else {
+    ret = rb_str_new(str, *value_length);
+    free(str);
+    return ret;
+  }
+};
+%}
+
+// We need to wrap this so it doesn't leak memory. SWIG doesn't want to automatically free. We could
+// maybe use a 'ret' %typemap, but this is ok.
+VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error);
+%{
+VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error) {
   char *str;
   VALUE ret;
   str = memcached_stat_get_value(ptr, stat, key, error);
