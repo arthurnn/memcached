@@ -228,7 +228,7 @@ Return the array of server strings used to configure this instance.
         value, key, flags, ret = Rlibmemcached.memcached_fetch_rvalue(@struct)
         break if ret == Rlibmemcached::MEMCACHED_END
         check_return_code(ret)
-        value = Marshal.load(value) if value.is_a? String and marshal
+        value = Marshal.load(value) if marshal
         # Assign the value, removing the namespace, if present
         hash[key[@namespace_size..-1]] = value
       end

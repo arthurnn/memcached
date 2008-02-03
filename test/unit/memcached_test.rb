@@ -117,7 +117,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(Memcached::ClientError) { @cache.get(key * 100) }
     # XXX Trying to get Krow to change this to ProtocolError
     assert_raise(Memcached::NotFound) { @cache.get "I'm so bad" } 
-  end
+  end 
 
   def test_get_multi_invalid_key
     assert_raise(Memcached::ClientError) { @cache.get([key * 100]) }
@@ -138,8 +138,10 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.delete "#{key}_2" rescue nil
     @cache.set "#{key}_3", 3
     @cache.delete "#{key}_4" rescue nil    
-    assert_equal({"test_get_multi_missing_3"=>3, "test_get_multi_missing_1"=>1}, 
-      @cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"]))
+    assert_equal(
+      {"test_get_multi_missing_3"=>3, "test_get_multi_missing_1"=>1}, 
+      @cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"])
+     )
   end
 
   def test_set_and_get_unmarshalled
@@ -147,6 +149,26 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key, false
     assert_equal @marshalled_value, result
   end
+  
+  def test_get_multi_unmarshalled
+    @cache.set "#{key}_1", 1, 0, false
+    @cache.set "#{key}_2", 2, 0, false
+    assert_equal(
+      {"#{key}_1" => "1", "#{key}_2" => "2"},
+      @cache.get(["#{key}_1", "#{key}_2"], false)
+    )
+  end
+  
+  def test_get_multi_mixed_marshalling
+    @cache.set "#{key}_1", 1
+    @cache.set "#{key}_2", 2, 0, false
+    assert_nothing_raised do
+      @cache.get(["#{key}_1", "#{key}_2"], false)
+    end
+    assert_raise(ArgumentError) do
+      @cache.get(["#{key}_1", "#{key}_2"])
+    end
+  end  
 
   # Set
 
