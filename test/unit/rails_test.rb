@@ -34,6 +34,10 @@ class RailsTest < Test::Unit::TestCase
     result = @cache.get key
     assert_equal nil, result
   end  
+  
+  def test_namespace
+    assert_equal @namespace, @cache.namespace
+  end
 
   private
   

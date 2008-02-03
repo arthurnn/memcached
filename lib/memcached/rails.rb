@@ -18,6 +18,11 @@ class Memcached
     rescue NotFound 
       nil      
     end
+    
+    # Namespace accessor.
+    def namespace
+      @namespace
+    end
 
     # Alias for get.
     def [](key)
