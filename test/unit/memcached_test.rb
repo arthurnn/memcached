@@ -115,7 +115,13 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_invalid_key
     assert_raise(Memcached::ClientError) { @cache.get(key * 100) }
-    assert_raise(Memcached::ClientError) { @cache.get "I'm so bad" }
+    assert_raise(Memcached::NotFound) { @cache.get "I'm so bad" }
+  end
+
+  def test_get_multi_invalid_key
+    assert_raise(Memcached::ClientError) { @cache.get([key * 100]) }
+    assert_equal({}, 
+     @cache.get(["I'm so bad"]))
   end
 
   def test_get_multi

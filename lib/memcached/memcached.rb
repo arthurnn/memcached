@@ -257,7 +257,7 @@ Return the array of server strings used to configure this instance.
     keys.each do |key|
        server_structs.size.times do |index|
 
-         value, ret = Rlibmemcached.memcached_stat_get_ruby_value(
+         value, ret = Rlibmemcached.memcached_stat_get_rvalue(
            @struct, 
            Rlibmemcached.memcached_select_stat_at(@struct, stat_struct, index),
            key)
@@ -283,7 +283,7 @@ Return the array of server strings used to configure this instance.
 
   # Return a namespaced key for this Memcached instance. Accepts a String <tt>key</tt> value.
   def ns(key) #:doc:
-    raise ClientError, "Invalid key" if key =~ /\s/ # XXX Slow
+    # raise ClientError, "Invalid key" if key =~ /\s/ # XXX Slow
     "#{@namespace}#{key}"
   end
     
