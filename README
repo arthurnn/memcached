@@ -18,7 +18,7 @@ If you like this software, please {make a donation}[http://blog.evanweaver.com/d
 * multiple hashing modes, including consistent hashing
 * ludicrous speed, including optional non-blocking IO
 
-The <b>memcached</b> library wraps the pure-C libmemcached client via SWIG. Both libraries are very new; use caution.
+The <b>memcached</b> library wraps the pure-C libmemcached client via SWIG.
 
 == Installation
 
@@ -106,26 +106,7 @@ The easiest way to use it in your app is by installing Interlock[http://blog.eva
 
 == Benchmarks
 
-<b>memcached</b> is much, much faster than <b>memcache-client</b>:
-
-                                       user     system      total        real
-  set:ruby:noblock:memcached       0.050000   0.000000   0.050000 (  0.054205)
-  set:ruby:memcached               0.130000   0.160000   0.290000 (  0.338529)
-  set:ruby:memcache-client         3.690000   0.130000   3.820000 (  4.030806)
-  ...
-  get:ruby:memcached               0.110000   0.020000   0.130000 (  0.316446)
-  get:ruby:memcache-client         3.730000   0.120000   3.850000 (  4.040446)
-  ...
-  missing:ruby:memcached           0.160000   0.090000   0.250000 (  0.401891)
-  missing:ruby:memcache-client     3.650000   0.090000   3.740000 (  3.880192)
-  ...
-  mixed:ruby:noblock:memcached     0.190000   0.230000   0.420000 (  0.667130)
-  mixed:ruby:memcached             0.250000   0.250000   0.500000 (  0.663093)
-  mixed:ruby:memcache-client       7.410000   0.210000   7.620000 (  7.942145)
-
-These benchmarks were run on x86-64 Linux. You can easily run your own benchmarks, as long as you have memcached itself on your system:
-  $ ruby -e 'system("ruby #{File.dirname(`gem which memcached`.split("\n").
-    last)}/../test/benchmark/benchmark.rb")'
+<b>memcached</b> is up to 150x faster than <b>memcache-client</b>. It is up to 15x faster than <b>caffeine</b>. See BENCHMARKS[line:file/BENCHMARKS.html] for details.
 
 == Reporting problems
 
