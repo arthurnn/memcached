@@ -1,3 +1,4 @@
+BENCHMARKS
 CHANGELOG
 COMPATIBILITY
 ext/extconf.rb
@@ -12,10 +13,9 @@ lib/memcached.rb
 LICENSE
 Manifest
 README
-test/benchmark/benchmark.rb
-test/benchmark/benchmark_set_get.rb
-test/benchmark/profile.rb
-test/benchmark/valgrind.rb
+test/profile/benchmark.rb
+test/profile/profile.rb
+test/profile/valgrind.rb
 test/setup.rb
 test/teardown.rb
 test/test_helper.rb

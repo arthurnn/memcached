@@ -77,7 +77,7 @@ Benchmark.bm(31) do |x|
         @m.set @key2, @marshalled, 0, false
         @m.set @key3, @marshalled, 0, false
       end
-    end
+    end # if false
   end
   #  Not supported by Caffeine
   if defined? MemCache
@@ -122,7 +122,7 @@ Benchmark.bm(31) do |x|
         @m.set @key2, @value
         @m.set @key3, @value
       end
-    end
+    end # if false
   end
   if defined? Caffeine
     @m = Caffeine::MemCache.new(@opts[1]); @m.servers = @opts[0]
@@ -300,7 +300,7 @@ Benchmark.bm(31) do |x|
         @m.set @key3, @value
         @m.get @key3
       end
-    end
+    end # if false
   end
   if defined? Caffeine
     @m = Caffeine::MemCache.new(@opts[1]); @m.servers = @opts[0]
