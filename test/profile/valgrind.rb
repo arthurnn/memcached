@@ -72,6 +72,12 @@ class Worker
         @i.times do
           @cache.clone        
         end
+      when "servers"
+        @i.times do
+          @cache.servers
+        end
+      else
+        raise "No such method"
     end
   end  
 end
