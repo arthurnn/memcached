@@ -121,8 +121,8 @@ VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, u
     VALUE ret = rb_str_new(value, *value_length);
     rb_ary_push(result, ret);
     free(value);
-    free(value_length);
   }
+  free(value_length);
   return result;
 };
 %}
