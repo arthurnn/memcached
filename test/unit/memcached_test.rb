@@ -33,6 +33,11 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal 43043, cache.send(:server_structs).last.port
   end
   
+  def test_destroy
+    cache = Memcached.new @servers, :namespace => 'test'
+    cache.destroy
+  end
+  
   def test_initialize_with_invalid_server_strings
     assert_raise(ArgumentError) { Memcached.new "localhost:43042" }
     assert_raise(ArgumentError) { Memcached.new "127.0.0.1:memcached" }

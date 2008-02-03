@@ -74,9 +74,12 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     @namespace_size = @namespace.size
   end
 
-=begin rdoc
-Return the array of server strings used to configure this instance.
-=end
+  def destroy
+    Rlibmemcached.memcached_free(@struct)
+    @struct = nil
+  end
+
+  # Return the array of server strings used to configure this instance.
   def servers
     server_structs.map do |server|
       "#{server.hostname}:#{server.port}"

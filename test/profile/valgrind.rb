@@ -66,6 +66,11 @@ class Worker
       when "clone"
         @i.times do
           @cache.clone
+          @cache.destroy
+        end
+      when "clone-nodestroy"
+        @i.times do
+          @cache.clone        
         end
     end
   end  
