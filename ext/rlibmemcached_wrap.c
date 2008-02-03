@@ -2088,14 +2088,13 @@ VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint
 
 
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
-  char *str;
-  VALUE ret;
-  size_t *value_length;
-  str = memcached_fetch(ptr, key, key_length, value_length, flags, error);
+  size_t *length;    
+  char *str = memcached_fetch(ptr, key, key_length, length, flags, error);
+  
   if (str == NULL) {
     return Qnil; // XXX
   } else {
-    ret = rb_str_new(str, *value_length);
+    VALUE ret = rb_str_new(str, *length);
     free(str);
     return ret;
   }
@@ -7569,11 +7568,6 @@ _wrap_memcached_fetch(int argc, VALUE *argv, VALUE self) {
   char *result = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
   size_t temp4 ;
   int res4 = SWIG_TMPOBJ ;
   uint32_t temp5 ;
@@ -7585,24 +7579,19 @@ _wrap_memcached_fetch(int argc, VALUE *argv, VALUE self) {
   arg4 = &temp4;
   arg5 = &temp5;
   arg6 = &temp6;
-  if ((argc < 3) || (argc > 3)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "memcached_st *","memcached_fetch", 1, argv[0] )); 
   }
   arg1 = (memcached_st *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(argv[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), Ruby_Format_TypeError( "", "char *","memcached_fetch", 2, argv[1] ));
+  {
+    size_t len = RSTRING_LEN(argv[1]);  
+    arg2 = StringValueCStr(argv[1]);
+    arg3 = &len;
   }
-  arg2 = (char *)(buf2);
-  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_size_t, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), Ruby_Format_TypeError( "", "size_t *","memcached_fetch", 3, argv[2] )); 
-  }
-  arg3 = (size_t *)(argp3);
   result = (char *)memcached_fetch(arg1,arg2,arg3,arg4,arg5,arg6);
   vresult = SWIG_FromCharPtr((const char *)result);
   if (SWIG_IsTmpObj(res4)) {
@@ -7623,10 +7612,8 @@ _wrap_memcached_fetch(int argc, VALUE *argv, VALUE self) {
     int new_flags = SWIG_IsNewObj(res6) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg6), SWIGTYPE_p_memcached_return, new_flags));
   }
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return Qnil;
 }
 
@@ -8982,11 +8969,6 @@ _wrap_memcached_fetch_rvalue(int argc, VALUE *argv, VALUE self) {
   VALUE result;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
   uint32_t temp4 ;
   int res4 = SWIG_TMPOBJ ;
   memcached_return temp5 ;
@@ -8995,24 +8977,19 @@ _wrap_memcached_fetch_rvalue(int argc, VALUE *argv, VALUE self) {
   
   arg4 = &temp4;
   arg5 = &temp5;
-  if ((argc < 3) || (argc > 3)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
   }
   res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "memcached_st *","memcached_fetch_rvalue", 1, argv[0] )); 
   }
   arg1 = (memcached_st *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(argv[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), Ruby_Format_TypeError( "", "char *","memcached_fetch_rvalue", 2, argv[1] ));
+  {
+    size_t len = RSTRING_LEN(argv[1]);  
+    arg2 = StringValueCStr(argv[1]);
+    arg3 = &len;
   }
-  arg2 = (char *)(buf2);
-  res3 = SWIG_ConvertPtr(argv[2], &argp3,SWIGTYPE_p_size_t, 0 |  0 );
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), Ruby_Format_TypeError( "", "size_t *","memcached_fetch_rvalue", 3, argv[2] )); 
-  }
-  arg3 = (size_t *)(argp3);
   result = (VALUE)memcached_fetch_rvalue(arg1,arg2,arg3,arg4,arg5);
   vresult = result;
   if (SWIG_IsTmpObj(res4)) {
@@ -9027,10 +9004,8 @@ _wrap_memcached_fetch_rvalue(int argc, VALUE *argv, VALUE self) {
     int new_flags = SWIG_IsNewObj(res5) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg5), SWIGTYPE_p_memcached_return, new_flags));
   }
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
 fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return Qnil;
 }
 

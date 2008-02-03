@@ -123,6 +123,8 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.set "#{key}_2", 2
     assert_equal [1, 2], 
       @cache.get(["#{key}_1", "#{key}_2"])
+    assert_equal [1, 2], 
+      @cache.get(["#{key}_1", "#{key}_2"])
   end
   
   def test_get_multi_missing

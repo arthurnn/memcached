@@ -56,6 +56,13 @@
   (char *value, size_t value_length)
 };
 
+// Key strings that take length pointers
+%typemap(in) (char *key, size_t *key_length) {
+ size_t len = RSTRING_LEN($input);  
+ $1 = StringValueCStr($input);
+ $2 = &len;
+};
+
 // Output maps
 %apply unsigned short *OUTPUT {memcached_return *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
@@ -81,6 +88,8 @@
 
 // Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because 
 // of the retval/argout split, so it truncates return values with \0 in them. Also, don't leak memory.
+// 
+// XXX Fails in debug mode
 VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
@@ -94,18 +103,17 @@ VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint
 };
 %}
 
-// Multiget
+// Multi get
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
-  char *str;
-  VALUE ret;
-  size_t *value_length;
-  str = memcached_fetch(ptr, key, key_length, value_length, flags, error);
+  size_t *length;    
+  char *str = memcached_fetch(ptr, key, key_length, length, flags, error);
+  
   if (str == NULL) {
     return Qnil; // XXX
   } else {
-    ret = rb_str_new(str, *value_length);
+    VALUE ret = rb_str_new(str, *length);
     free(str);
     return ret;
   }

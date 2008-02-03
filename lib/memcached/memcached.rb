@@ -221,17 +221,18 @@ Return the array of server strings used to configure this instance.
       
       keys.each do |key|
         value, flags, ret = Rlibmemcached.memcached_fetch_rvalue(@struct, key)
-        return values if ret == Rlibmemcached::MEMCACHED_END # Faster than rescuing check_return_code()
+        # return values if ret == Rlibmemcached::MEMCACHED_END # Faster than rescuing check_return_code()
         check_return_code(ret)
         value = Marshal.load(value) if value.is_a? String and marshal
         values << value
       end
+      values
     else
       # Single get
       value, flags, ret = Rlibmemcached.memcached_get_rvalue(@struct, ns(keys))
       check_return_code(ret)
       value = Marshal.load(value) if marshal
-      return value
+      value
     end    
   end    
   
