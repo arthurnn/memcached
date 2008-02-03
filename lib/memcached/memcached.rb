@@ -236,6 +236,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #
   # The multiget behavior is subject to change in the future; however, for multiple lookups, it is much faster than normal mode.
   #
+  # Note that when you rescue Memcached::NotFound exceptions, you should use a the block rescue syntax instead of the inline syntax. Block rescues are very fast, but inline rescues are very slow.
+  #
   def get(keys, marshal=true)
     if keys.is_a? Array
       # Multi get
