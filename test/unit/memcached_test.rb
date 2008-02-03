@@ -102,7 +102,7 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  def test_truncation_issue_is_covered
+  def test_values_with_null_characters_are_not_truncated
     value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
     @cache.set key, value
     result = @cache.get key, false
@@ -115,11 +115,13 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_invalid_key
     assert_raise(Memcached::ClientError) { @cache.get(key * 100) }
-    assert_raise(Memcached::NotFound) { @cache.get "I'm so bad" }
+    # XXX Trying to get Krow to change this to ProtocolError
+    assert_raise(Memcached::NotFound) { @cache.get "I'm so bad" } 
   end
 
   def test_get_multi_invalid_key
     assert_raise(Memcached::ClientError) { @cache.get([key * 100]) }
+    # XXX Trying to get Krow to change this to ProtocolError
     assert_equal({}, 
      @cache.get(["I'm so bad"]))
   end
