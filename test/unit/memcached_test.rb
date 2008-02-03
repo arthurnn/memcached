@@ -377,6 +377,12 @@ class MemcachedTest < Test::Unit::TestCase
     cache = @cache.clone
     assert_equal cache.servers, @cache.servers
     assert_not_equal cache, @cache
+    
+    # Definitely check that the structs are unlinked
+    cache.destroy
+    assert_nothing_raised do
+      @cache.set key, @value
+    end
   end
   
   # Non-blocking IO

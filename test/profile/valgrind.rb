@@ -66,11 +66,11 @@ class Worker
       when "clone"
         @i.times do
           cache = @cache.clone
-          cache.destroy
+          cache.destroy(false)
         end
       when "clone-nodestroy"
         @i.times do
-          @cache.clone        
+          @cache.clone      
         end
       when "servers"
         @i.times do

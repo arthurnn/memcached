@@ -74,6 +74,29 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     @namespace_size = @namespace.size
   end
 
+  # Return the array of server strings used to configure this instance.
+  def servers
+    server_structs.map do |server|
+      "#{server.hostname}:#{server.port}"
+    end
+  end
+
+  # Safely copy this instance. Returns a Memcached instance. 
+  #
+  # <tt>clone</tt> is useful for threading, since each thread must have its own unshared Memcached 
+  # object. However, you must call destroy before each thread returns or you will leak significant memory.
+  #
+  def clone
+    memcached = super
+    memcached.instance_variable_set('@struct', Rlibmemcached.memcached_clone(nil, @struct))
+    memcached
+  end
+  
+  # Destroy this instance. Frees memory associated with the C implementation.
+  #
+  # Accepts an optional parameter <tt>disable_methods</tt>. When <tt>false</tt>, destroy
+  # runs much faster, but your instance will segfault if you try to call any other methods on it
+  # after destroy. Defaults to <tt>true</tt>, which safely overwrites all instance methods.
   def destroy(disable_methods = true)
     Rlibmemcached.memcached_free(@struct)
     @struct = nil
@@ -86,22 +109,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
         end
       end
     end
-  end
-
-  # Return the array of server strings used to configure this instance.
-  def servers
-    server_structs.map do |server|
-      "#{server.hostname}:#{server.port}"
-    end
-  end
-
-  # Safely copy this instance. Returns a Memcached instance. 
-  #
-  # <tt>clone</tt> is useful for threading, since each thread must have its own unshared Memcached object. 
-  def clone
-    # XXX Could be more efficient if we used Rlibmemcached.memcached_clone(@struct)
-    self.class.new(servers, options)
-  end
+  end  
   
   #:stopdoc:
   alias :dup :clone #:nodoc:
