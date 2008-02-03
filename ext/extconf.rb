@@ -6,11 +6,13 @@ if ENV['SWIG']
   $stdout.write `swig -I/opt/local/include -ruby -autorename rlibmemcached.i`
 end
 
+$CFLAGS.gsub! /-O\d/, ''
+
 if ENV['DEBUG']
   puts "setting debug flags"
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG" 
 else
-  $CFLAGS << " -O2"
+  $CFLAGS << " -O3"
 end
 
 dir_config 'rlibmemcached'
