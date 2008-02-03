@@ -24,3 +24,7 @@ end
 task :valgrind do
   exec("valgrind  --tool=memcheck --leak-check=yes --show-reachable=no --num-callers=15 --track-fds=yes ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
 end
+
+task :profile do
+ exec("ruby #{File.dirname(__FILE__)}/test/profile/profile.rb")
+end
