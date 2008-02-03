@@ -22,5 +22,5 @@ task :exceptions do
 end
 
 task :valgrind do
-  exec("valgrind  --tool=memcheck --leak-check=yes --show-reachable=no --num-callers=20 --track-fds=yes ruby #{File.dirname(__FILE__)}/test/benchmark/valgrind.rb")
+  exec("valgrind  --tool=memcheck --leak-check=yes --show-reachable=no --num-callers=15 --track-fds=yes ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
 end
