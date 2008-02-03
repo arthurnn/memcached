@@ -63,10 +63,12 @@ class Worker
         @i.times do
           @cache.get([@key1, @key2])        
         end
+      when "clone"
+        @i.times do
+          @cache.clone
+        end
     end
   end  
 end
 
 Worker.new(ENV['METHOD'], ENV['LOOPS']).work
-
-
