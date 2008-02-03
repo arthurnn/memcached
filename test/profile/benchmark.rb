@@ -42,9 +42,9 @@ def restart_servers
   sleep(1)
 end
 
+restart_servers
 
 Benchmark.bm(31) do |x|
-  restart_servers
 
   n = 1000  
   
@@ -88,7 +88,7 @@ Benchmark.bm(31) do |x|
     end
   end
   
-  restart_servers 
+  # restart_servers 
 
   @m = Memcached.new(
     @opts[0], 
@@ -206,7 +206,7 @@ Benchmark.bm(31) do |x|
     end
   end
   
-  restart_servers
+  # restart_servers
 
   @m = Memcached.new(*@opts)
   x.report("missing:ruby:memcached") do
@@ -246,7 +246,7 @@ Benchmark.bm(31) do |x|
     end
   end
 
-  restart_servers
+  # restart_servers
   
   @m = Memcached.new(
     @opts[0], 
@@ -323,7 +323,8 @@ Benchmark.bm(31) do |x|
       end
     end
   end
-  restart_servers
+
+  # restart_servers
     
   n = 10000
   Memcached::HASH_VALUES.each do |mode,|
