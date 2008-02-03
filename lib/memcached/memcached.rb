@@ -138,7 +138,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     
   # Set a key/value pair. Accepts a String <tt>key</tt> and an arbitrary Ruby object. Overwrites any existing value on the server.
   #
-  # Accepts an optional <tt>timeout</tt> value to specify the maximum lifetime of the key on the server. <tt>timeout</tt> can be either an integer number of seconds, or a Time elapsed time object. (There is no guarantee that the key will persist as long as the <tt>timeout</tt>, but it will not persist longer.) <tt>0</tt> means no timeout.
+  # Accepts an optional <tt>timeout</tt> value to specify the maximum lifetime of the key on the server. <tt>timeout</tt> can be either an integer number of seconds, or a Time elapsed time object. <tt>0</tt> means no timeout. Note that there is no guarantee that the key will persist as long as the <tt>timeout</tt>, but it will not persist longer.
   #
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be set directly. 
   # 
