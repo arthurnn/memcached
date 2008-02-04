@@ -17,7 +17,7 @@ class Memcached
     # storing <tt>nil</tt> values.
     def get(key, raw = false)
       super(key, !raw)
-    rescue NotFound 
+    rescue NotFound, UnknownReadFailure
       nil      
     end
     
