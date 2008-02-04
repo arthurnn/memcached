@@ -23,8 +23,8 @@ class Worker
         :namespace => "benchmark_namespace"
       }
     ]    
-    system("ruby #{HERE}/../setup.rb")
-    sleep(1)  
+    # system("ruby #{HERE}/../setup.rb")
+    # sleep(3)  
     @cache = Memcached.new(*@opts)
 
     @cache.set @key1, @value
