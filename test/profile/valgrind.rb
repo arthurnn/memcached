@@ -58,13 +58,13 @@ class Worker
         end
       when "get-increasing"
         @i.times do |i|
-          key = "#{@key1}_#{'x'*i}"[0..250]
+          key = "#{@key1}_#{'x'*i}"[0..220]
           @cache.set key, 'Val'*(i+1), 0, false
           @cache.get key, false
         end
       when "get-miss-increasing"
         @i.times do |i|
-          key = "#{@key1}_#{'x'*i}"[0..250]
+          key = "#{@key1}_#{'x'*i}"[0..220]
           @cache.delete key rescue nil
           begin
             @cache.get key
