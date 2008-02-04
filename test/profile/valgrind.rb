@@ -19,7 +19,7 @@ class Worker
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
       {
         :buffer_requests => true,
-        :no_block => true,
+        :no_block => false,
         :namespace => "benchmark_namespace"
       }
     ]    
