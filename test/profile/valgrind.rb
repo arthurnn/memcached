@@ -3,6 +3,7 @@ HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
 
 require 'memcached'
+require 'rubygems'
 
 class Worker  
   def initialize(method_name, iterations)
@@ -61,8 +62,6 @@ class Worker
         @i.times do |i|
           @cache.set @key1, one_k*(i+1), 0, false
           @cache.get @key1, false
-          GC.start
-          sleep(1)
         end
       when "get-miss-increasing"
         @i.times do |i|
@@ -124,3 +123,11 @@ class Worker
 end
 
 Worker.new(ENV['METHOD'], ENV['LOOPS']).work
+
+begin
+  require 'memory'
+  Process.memory.each do |key, value|
+    puts "#{key}: #{value/1024.0}M"
+  end
+rescue LoadError
+end
