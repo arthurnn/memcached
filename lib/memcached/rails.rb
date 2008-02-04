@@ -13,10 +13,15 @@ class Memcached
     
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from 
     # storing <tt>nil</tt> values.
-    def get(*args)
-      super
+    def get(key, raw = false)
+      super(key, !raw)
     rescue NotFound 
       nil      
+    end
+    
+    # Wraps Memcached#set.
+    def set(key, value, ttl = 0, raw = false)
+      super(key, value, ttl, !raw)
     end
     
     # Namespace accessor.
