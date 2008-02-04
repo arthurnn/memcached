@@ -31,6 +31,14 @@ class Memcached
       super(key, value, ttl, !raw)
     end
     
+    # Wraps Memcached#delete so that it doesn't raise. 
+    def delete(key)
+      begin
+        super(key)
+      rescue NotFound
+      end
+    end
+    
     # Namespace accessor.
     def namespace
       @namespace

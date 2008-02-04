@@ -25,6 +25,21 @@ class RailsTest < Test::Unit::TestCase
       result
     )
   end
+  
+  def test_delete
+    @cache.set key, @value
+    assert_nothing_raised do
+      @cache.delete key
+    end
+    assert_nil(@cache.get(key))
+  end
+  
+  def test_delete_missing
+    assert_nothing_raised do
+      @cache.delete key
+      assert_nil(@cache.delete(key))
+    end
+  end
 
   def test_bracket_accessors
     @cache[key] = @value
