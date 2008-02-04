@@ -57,9 +57,10 @@ class Worker
           end
         end
       when "get-increasing"
+        one_k = "x"*1024
         @i.times do |i|
           key = "#{@key1}_#{'x'*i}"[0..220]
-          @cache.set key, '8-Bytes-'*(i+1), 0, false
+          @cache.set key, one_k*(i+1), 0, false
           @cache.get key, false
         end
       when "get-miss-increasing"
