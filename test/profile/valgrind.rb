@@ -59,12 +59,13 @@ class Worker
       when "get-increasing"
         @i.times do |i|
           key = "#{@key1}_#{'x'*i}"[0..256]
-          @cache.set key, 'x'*i, 0, false
+          @cache.set key, 'x'*(i+1), 0, false
           @cache.get key, false
         end
       when "get-miss-increasing"
         @i.times do |i|
           key = "#{@key1}_#{'x'*i}"[0..256]
+          @cache.delete key rescue nil
           begin
             @cache.get key
           rescue Memcached::NotFound
