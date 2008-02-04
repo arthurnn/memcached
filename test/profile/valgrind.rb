@@ -56,13 +56,13 @@ class Worker
           rescue Memcached::NotFound
           end
         end
-      when "get-random"
+      when "get-increasing"
         @i.times do |i|
           key = "#{@key1}_#{'x'*i}"[0..256]
-          @cache.set key, @value
+          @cache.set key, 'Val'*i
           @cache.get key
         end
-      when "get-miss-random"
+      when "get-miss-increasing"
         @i.times do |i|
           key = "#{@key1}_#{'x'*i}"[0..256]
           begin
