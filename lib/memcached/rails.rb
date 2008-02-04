@@ -6,7 +6,7 @@ class Memcached
   # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
   class Rails < ::Memcached
     
-    DEFAULTS = {:no_block => true}
+    DEFAULTS = {:no_block => false}
     
     # See Memcached#new for details.
     def initialize(servers, opts = {})
