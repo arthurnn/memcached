@@ -16,6 +16,15 @@ class RailsTest < Test::Unit::TestCase
     result = @cache.get key
     assert_equal @value, result
   end
+  
+  def test_get_multi
+    @cache.set key, @value
+    result = @cache.get_multi key
+    assert_equal(
+      {key => @value}, 
+      result
+    )
+  end
 
   def test_bracket_accessors
     @cache[key] = @value

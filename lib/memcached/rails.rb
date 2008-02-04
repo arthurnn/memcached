@@ -1,6 +1,8 @@
 
 class Memcached
 
+  alias :get_multi :get #:nodoc:
+
   # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
   class Rails < ::Memcached
     
@@ -19,6 +21,11 @@ class Memcached
       nil      
     end
     
+    # Wraps Memcached#get with multiple arguments.
+    def get_multi(*keys)
+      super(keys)
+    end
+    
     # Wraps Memcached#set.
     def set(key, value, ttl = 0, raw = false)
       super(key, value, ttl, !raw)
@@ -32,7 +39,7 @@ class Memcached
     # Alias for get.
     def [](key)
       get key
-    end
+    end        
 
     # Alias for Memcached#set.
     def []=(key, value)
