@@ -18,13 +18,13 @@ class Worker
     @opts = [
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
       {
-        :buffer_requests => true,
+        :buffer_requests => false,
         :no_block => false,
         :namespace => "benchmark_namespace"
       }
     ]    
-    # system("ruby #{HERE}/../setup.rb")
-    # sleep(3)  
+    system("ruby #{HERE}/../setup.rb")
+    sleep(1)  
     @cache = Memcached.new(*@opts)
 
     @cache.set @key1, @value
