@@ -65,7 +65,7 @@ class Worker
         @i.times do |i|
           begin
             @cache.get "#{@key1}_#{i}"
-          rescue Memcached::NotStored
+          rescue Memcached::NotFound
           end
         end
       when "add"
