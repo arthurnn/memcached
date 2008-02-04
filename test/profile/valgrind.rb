@@ -59,16 +59,16 @@ class Worker
       when "get-increasing"
         one_k = "x"*1024
         @i.times do |i|
-          key = "#{@key1}_#{'x'*i}"[0..220]
-          @cache.set key, one_k*(i+1), 0, false
-          @cache.get key, false
+          @cache.set @key1, one_k*(i+1), 0, false
+          @cache.get @key1, false
+          GC.start
+          sleep(1)
         end
       when "get-miss-increasing"
         @i.times do |i|
-          key = "#{@key1}_#{'x'*i}"[0..220]
-          @cache.delete key rescue nil
+          @cache.delete @key2 rescue nil
           begin
-            @cache.get key
+            @cache.get @key2
           rescue Memcached::NotFound
           end
         end
