@@ -57,14 +57,16 @@ class Worker
           end
         end
       when "get-random"
+        key = "#{@key1}_#{'x'*i}"
         @i.times do |i|
-          @cache.set "#{@key1}_#{i}", @value
-          @cache.get "#{@key1}_#{i}"
+          @cache.set key, @value
+          @cache.get key
         end
       when "get-miss-random"
+        key = "#{@key1}_#{'x'*i}"
         @i.times do |i|
           begin
-            @cache.get "#{@key1}_#{i}"
+            @cache.get key
           rescue Memcached::NotFound
           end
         end
