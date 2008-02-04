@@ -56,6 +56,18 @@ class Worker
           rescue Memcached::NotFound
           end
         end
+      when "get-random"
+        @i.times do |i|
+          @cache.set "#{@key1}_#{i}", @value
+          @cache.get "#{@key1}_#{i}"
+        end
+      when "get-miss-random"
+        @i.times do |i|
+          begin
+            @cache.get "#{@key1}_#{i}"
+          rescue Memcached::NotStored
+          end
+        end
       when "add"
         @i.times do
           begin
@@ -68,7 +80,7 @@ class Worker
         @cache.set @key1, @value
         @i.times do
           begin
-          @cache.add @key1, @value
+            @cache.add @key1, @value
           rescue Memcached::NotStored
           end
         end
