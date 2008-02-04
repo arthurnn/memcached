@@ -1,7 +1,4 @@
 
-# We don't care about the Ruby heap 
-GC.disable 
-
 HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
 
