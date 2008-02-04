@@ -43,11 +43,36 @@ class Worker
         @i.times do
           @cache.get @key1
         end
-      when "miss"
+      when "delete"
+        @i.times do
+          @cache.set @key1, @value
+          @cache.delete @key1
+        end
+      when "delete-miss"
+        @i.times do
+          @cache.delete @key1
+        end
+      when "get-miss"
         @i.times do
           begin
             @cache.get @key2
           rescue Memcached::NotFound
+          end
+        end
+      when "add"
+        @i.times do
+          begin
+            @cache.delete @key1
+          rescue
+          end
+          @cache.add @key1, @value
+        end
+      when "add-present"
+        @cache.set @key1, @value
+        @i.times do
+          begin
+          @cache.add @key1, @value
+          rescue Memcached::NotStored
           end
         end
       when "mixed"
