@@ -65,7 +65,7 @@
 // String
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
   $1 = malloc(512*sizeof(char));
-  $2 = malloc(sizeof(size_t));
+  $2 = malloc(sizeof(size_t)); // XXX Could possibly be the address of a local
 }; 
 %typemap(argout) (char *key, size_t *key_length) {
   if ($1 != NULL) {
@@ -98,11 +98,10 @@ VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint
 %{
 VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
   VALUE ret;  
-  size_t *value_length = malloc(sizeof(size_t));
-  char *value = memcached_get(ptr, key, key_length, value_length, flags, error);
-  ret = rb_str_new(value, *value_length);
+  size_t value_length;
+  char *value = memcached_get(ptr, key, key_length, &value_length, flags, error);
+  ret = rb_str_new(value, value_length);
   free(value);
-  free(value_length);
   return ret;
 };
 %}
@@ -111,18 +110,17 @@ VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
-  size_t *value_length = malloc(sizeof(size_t));
+  size_t value_length;
   VALUE result = rb_ary_new();
   
-  char *value = memcached_fetch(ptr, key, key_length, value_length, flags, error);
+  char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
   if (value == NULL) {
     rb_ary_push(result, Qnil);
   } else {
-    VALUE ret = rb_str_new(value, *value_length);
+    VALUE ret = rb_str_new(value, value_length);
     rb_ary_push(result, ret);
     free(value);
   }
-  free(value_length);
   return result;
 };
 %}

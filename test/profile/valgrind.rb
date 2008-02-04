@@ -117,7 +117,10 @@ class Worker
       else
         raise "No such method"
     end
+    
+    @cache.destroy    
   end  
+  
 end
 
 Worker.new(ENV['METHOD'], ENV['LOOPS']).work
