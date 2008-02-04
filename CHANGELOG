@@ -1,4 +1,6 @@
 
+v0.7.1. Rescue UnknownReadFailure in Interlock::Rails#get.
+
 v0.7. Rails compatibility wrapper; real multiget.
 
 v0.6. Better documentation; benchmark suite; improve buffered IO API; remove namespace accessor in favor of generic options hash; patch up extconf.rb to handle unusual library situations; increase test coverage.
