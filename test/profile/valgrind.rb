@@ -59,8 +59,8 @@ class Worker
       when "get-increasing"
         @i.times do |i|
           key = "#{@key1}_#{'x'*i}"[0..256]
-          @cache.set key, 'Val'*i
-          @cache.get key
+          @cache.set key, 'x'*i, 0, false
+          @cache.get key, false
         end
       when "get-miss-increasing"
         @i.times do |i|
