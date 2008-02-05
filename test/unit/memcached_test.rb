@@ -458,6 +458,15 @@ class MemcachedTest < Test::Unit::TestCase
     threads.each {|thread| thread.join}
   end
   
+  def test_reset
+    original_struct = @cache.instance_variable_get("@struct")
+    assert_nothing_raised do
+      @cache.reset
+    end 
+    assert_not_equal original_struct, 
+      @cache.instance_variable_get("@struct") 
+  end
+  
   private
   
   def key

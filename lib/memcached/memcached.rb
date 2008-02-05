@@ -113,6 +113,13 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     end
   end  
   
+  # Reset the state of the libmemcached struct. Fixes out-of-sync errors with the Memcached pool.
+  def reset
+    new_struct = Rlibmemcached.memcached_clone(nil, @struct)
+    Rlibmemcached.memcached_free(@struct)
+    @struct = new_struct
+  end  
+  
   #:stopdoc:
   alias :dup :clone #:nodoc:
   #:startdoc:
@@ -317,10 +324,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     return if ret == 0 or ret == 31
     raise EXCEPTIONS[ret], ""
   rescue UnknownReadFailure
-    # libmemcached got out of sync; rebuild the struct
-    new_struct = Rlibmemcached.memcached_clone(nil, @struct)
-    Rlibmemcached.memcached_free(@struct)
-    @struct = new_struct
+    reset
     raise SynchronizationError, "Rebuilding @struct"
   end  
     
