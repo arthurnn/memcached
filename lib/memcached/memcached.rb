@@ -316,6 +316,12 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # 0.14 returns 0 for an ActionQueued result but 0.15 does not.
     return if ret == 0 or ret == 31
     raise EXCEPTIONS[ret], ""
+  rescue UnknownReadFailure
+    # libmemcached got out of sync; rebuild the struct
+    new_struct = Rlibmemcached.memcached_clone(nil, @struct)
+    Rlibmemcached.memcached_free(@struct)
+    @struct = new_struct
+    raise SynchronizationError, "Rebuilding @struct"
   end  
     
 end

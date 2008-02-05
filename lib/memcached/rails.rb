@@ -6,8 +6,8 @@ class Memcached
   # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
   class Rails < ::Memcached
     
-    DEFAULTS = {:no_block => true}
-    
+    DEFAULTS = {}
+         
     # See Memcached#new for details.
     def initialize(servers, opts = {})
       super(servers, DEFAULTS.merge(opts))      
@@ -17,8 +17,7 @@ class Memcached
     # storing <tt>nil</tt> values.
     def get(key, raw = false)
       super(key, !raw)
-    rescue NotFound, UnknownReadFailure
-      nil      
+    rescue NotFound
     end
     
     # Wraps Memcached#get with multiple arguments.
@@ -33,10 +32,8 @@ class Memcached
     
     # Wraps Memcached#delete so that it doesn't raise. 
     def delete(key)
-      begin
-        super(key)
-      rescue NotFound
-      end
+      super(key)
+    rescue NotFound
     end
     
     # Namespace accessor.
