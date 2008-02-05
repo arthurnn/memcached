@@ -323,9 +323,6 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # 0.14 returns 0 for an ActionQueued result but 0.15 does not.
     return if ret == 0 or ret == 31
     raise EXCEPTIONS[ret], ""
-  rescue UnknownReadFailure
-    reset
-    raise SynchronizationError, "Rebuilding @struct"
   end  
     
 end
