@@ -23,7 +23,9 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def teardown
-    @cache.destroy
+    ObjectSpace.each_object(Memcached) do |cache|
+      cache.destroy rescue Memcached::ClientError
+    end
   end
   
   # Initialize
@@ -53,9 +55,9 @@ class MemcachedTest < Test::Unit::TestCase
   
   def test_initialize_with_missing_server
     # XXX Triggers abort trap with libmemcached --enable-debug.
-    @cache = Memcached.new "127.0.0.1:43044"
+    cache = Memcached.new "127.0.0.1:43044"
     assert_raises Memcached::SystemError do
-      @cache.get key
+      cache.get key
     end
   end
 
@@ -135,7 +137,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(Memcached::ClientError) { @cache.get([key * 100]) }
     # XXX Trying to get Krow to change this to ProtocolError
     assert_equal({}, 
-     @cache.get(["I'm so bad"]))
+      @cache.get(["I'm so bad"]))
   end
 
   def test_get_multi
