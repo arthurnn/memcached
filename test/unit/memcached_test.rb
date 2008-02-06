@@ -22,6 +22,10 @@ class MemcachedTest < Test::Unit::TestCase
     @marshalled_value = Marshal.dump(@value)
   end
   
+  def teardown
+    @cache.destroy
+  end
+  
   # Initialize
 
   def test_initialize
