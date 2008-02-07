@@ -65,7 +65,7 @@ You can get multiple values at once:
 
   value = 'hello'
   $cache.set 'test', value
-  $cache.get ['test', 'test2'] #=> ["hello", Memcached::NotFound]
+  $cache.get ['test', 'test2'] #=> {"test" => "hello"}
   
 You can set a counter and increment it:
 
