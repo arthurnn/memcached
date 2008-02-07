@@ -36,7 +36,7 @@ Now install the gem:
   sudo gem install memcached --no-rdoc --no-ri
   
 Note that on OS X 10.5 you may need to set the architecture explicitly: 
-   sudo env ARCHFLAGS="-arch i386" gem install memcached --no-rdoc --no-ri
+  sudo env ARCHFLAGS="-arch i386" gem install memcached --no-rdoc --no-ri
   
 == Usage
 
