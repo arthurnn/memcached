@@ -65,7 +65,9 @@ You can get multiple values at once:
 
   value = 'hello'
   $cache.set 'test', value
-  $cache.get ['test', 'test2'] #=> {"test" => "hello"}
+  $cache.set 'test2', value
+  $cache.get ['test', 'test2', 'missing'] 
+    #=> {"test" => "hello", "test2" => "hello"}
   
 You can set a counter and increment it:
 
