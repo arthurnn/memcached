@@ -4,7 +4,6 @@ COMPATIBILITY
 ext/extconf.rb
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
-ext/rlibmemcached_wrap.s
 lib/memcached/behaviors.rb
 lib/memcached/exceptions.rb
 lib/memcached/integer.rb
