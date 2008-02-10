@@ -1881,7 +1881,7 @@ VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length)
   
   int i;
   for (i = 0; i < namespaced_key_length; i++)
-    if (' ' == namespaced_key[i] || '\000' == namespaced_key[i])
+    if (' ' == namespaced_key[i] || '\0' == namespaced_key[i])
       namespaced_key[i] = '_';
    
   return rb_str_new(namespaced_key, namespaced_key_length);  
