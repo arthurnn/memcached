@@ -4,10 +4,6 @@ class Memcached
   alias :get_multi :get #:nodoc:
 
   # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
-  #
-  # There is currently a libmemcached stability issue with long-lived instances, so you will want to call Memcached#reset before each
-  # request (for example, in an ActionController filter).
-  #
   class Rails < ::Memcached
     
     DEFAULTS = {}
