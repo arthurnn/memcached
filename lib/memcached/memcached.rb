@@ -19,6 +19,8 @@ class Memcached
 #:stopdoc:
   IGNORED = 0
   
+  Lib = Rlibmemcached
+  
   NOTFOUND_INSTANCE = NotFound.new
 #:startdoc:
   
@@ -46,8 +48,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 =end
 
   def initialize(servers, opts = {})
-    @struct = Rlibmemcached::MemcachedSt.new
-    Rlibmemcached.memcached_create(@struct)
+    @struct = Lib::MemcachedSt.new
+    Lib.memcached_create(@struct)
 
     # Servers
     Array(servers).each_with_index do |server, index|
@@ -55,7 +57,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
         raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
       end
       host, port = server.split(":")
-      Rlibmemcached.memcached_server_add(@struct, host, port.to_i)
+      Lib.memcached_server_add(@struct, host, port.to_i)
     end  
     
     # Behaviors
@@ -90,7 +92,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #
   def clone
     memcached = super
-    memcached.instance_variable_set('@struct', Rlibmemcached.memcached_clone(nil, @struct))
+    memcached.instance_variable_set('@struct', Lib.memcached_clone(nil, @struct))
     memcached
   end
   
@@ -100,7 +102,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # runs much faster, but your instance will segfault if you try to call any other methods on it
   # after destroy. Defaults to <tt>true</tt>, which safely overwrites all instance methods.
   def destroy(disable_methods = true)
-    Rlibmemcached.memcached_free(@struct)
+    Lib.memcached_free(@struct)
     @struct = nil
     if disable_methods
       class << self
@@ -115,8 +117,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   
   # Reset the state of the libmemcached struct. Fixes out-of-sync errors with the Memcached pool.
   def reset
-    new_struct = Rlibmemcached.memcached_clone(nil, @struct)
-    Rlibmemcached.memcached_free(@struct)
+    new_struct = Lib.memcached_clone(nil, @struct)
+    Lib.memcached_free(@struct)
     @struct = new_struct
   end  
   
@@ -132,7 +134,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def server_structs
     array = []
     @struct.hosts.count.times do |i|
-      array << Rlibmemcached.memcached_select_server_at(@struct, i)
+      array << Lib.memcached_select_server_at(@struct, i)
     end
     array
   end    
@@ -152,7 +154,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def set(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Rlibmemcached.memcached_set(@struct, ns(key), value, timeout, FLAGS)
+      Lib.memcached_set(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
     )
   end
 
@@ -160,7 +162,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def add(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Rlibmemcached.memcached_add(@struct, ns(key), value, timeout, FLAGS)
+      Lib.memcached_add(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
     )
   end
 
@@ -170,14 +172,14 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #
   # Note that the key must be initialized to an unmarshalled integer first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
   def increment(key, offset=1)
-    ret, value = Rlibmemcached.memcached_increment(@struct, ns(key), offset)
+    ret, value = Lib.memcached_increment(@struct, Lib.ns(@namespace, key), offset)
     check_return_code(ret)
     value
   end
 
   # Decrement a key's value. The parameters and exception behavior are the same as <tt>increment</tt>.
   def decrement(key, offset=1)
-    ret, value = Rlibmemcached.memcached_decrement(@struct, ns(key), offset)
+    ret, value = Lib.memcached_decrement(@struct, Lib.ns(@namespace, key), offset)
     check_return_code(ret)
     value
   end
@@ -191,7 +193,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def replace(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Rlibmemcached.memcached_replace(@struct, ns(key), value, timeout, FLAGS)
+      Lib.memcached_replace(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
     )
   end
 
@@ -201,7 +203,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def append(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Rlibmemcached.memcached_append(@struct, ns(key), value.to_s, IGNORED, FLAGS)
+      Lib.memcached_append(@struct, Lib.ns(@namespace, key), value.to_s, IGNORED, FLAGS)
     )
   end
   
@@ -209,7 +211,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def prepend(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Rlibmemcached.memcached_prepend(@struct, ns(key), value.to_s, IGNORED, FLAGS)
+      Lib.memcached_prepend(@struct, Lib.ns(@namespace, key), value.to_s, IGNORED, FLAGS)
     )
   end
   
@@ -231,7 +233,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Deletes a key/value pair from the server. Accepts a String <tt>key</tt>. Raises <b>Memcached::NotFound</b> if the key does not exist.
   def delete(key)
     check_return_code(
-      Rlibmemcached.memcached_delete(@struct, ns(key), IGNORED)
+      Lib.memcached_delete(@struct, Lib.ns(@namespace, key), IGNORED)
     )  
   end
   
@@ -250,14 +252,14 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def get(keys, marshal=true)
     if keys.is_a? Array
       # Multi get
-      keys.map! { |key| ns(key) }
+      keys.map! { |key| Lib.ns(@namespace, key) }
       hash = {}
       
-      Rlibmemcached.memcached_mget(@struct, keys);
+      Lib.memcached_mget(@struct, keys);
       
       keys.size.times do 
-        value, key, flags, ret = Rlibmemcached.memcached_fetch_rvalue(@struct)
-        break if ret == Rlibmemcached::MEMCACHED_END
+        value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
+        break if ret == Lib::MEMCACHED_END
         check_return_code(ret)
         value = Marshal.load(value) if marshal
         # Assign the value, removing the namespace, if present
@@ -266,7 +268,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       hash
     else
       # Single get
-      value, flags, ret = Rlibmemcached.memcached_get_rvalue(@struct, ns(keys))
+      value, flags, ret = Lib.memcached_get_rvalue(@struct, Lib.ns(@namespace, keys))
       check_return_code(ret)
       value = Marshal.load(value) if marshal
       value
@@ -279,18 +281,18 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def stats
     stats = Hash.new([])
     
-    stat_struct, ret = Rlibmemcached.memcached_stat(@struct, "")
+    stat_struct, ret = Lib.memcached_stat(@struct, "")
     check_return_code(ret)
     
-    keys, ret = Rlibmemcached.memcached_stat_get_keys(@struct, stat_struct)
+    keys, ret = Lib.memcached_stat_get_keys(@struct, stat_struct)
     check_return_code(ret)
     
     keys.each do |key|
        server_structs.size.times do |index|
 
-         value, ret = Rlibmemcached.memcached_stat_get_rvalue(
+         value, ret = Lib.memcached_stat_get_rvalue(
            @struct, 
-           Rlibmemcached.memcached_select_stat_at(@struct, stat_struct, index),
+           Lib.memcached_select_stat_at(@struct, stat_struct, index),
            key)
          check_return_code(ret)
 
@@ -304,19 +306,13 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
        end
     end
     
-    Rlibmemcached.memcached_stat_free(@struct, stat_struct)
+    Lib.memcached_stat_free(@struct, stat_struct)
     stats
   end  
   
   ### Operations helpers
   
   private
-
-  # Return a namespaced key for this Memcached instance. Accepts a String <tt>key</tt> value.
-  def ns(key) #:doc:
-    # raise ClientError, "Invalid key" if key =~ /\s/ # XXX Slow
-    "#{@namespace}#{key}"
-  end
     
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
   def check_return_code(ret) #:doc:

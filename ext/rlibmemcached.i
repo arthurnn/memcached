@@ -12,11 +12,13 @@
 %include "typemaps.i"
 
 //// Input maps
+
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags, uint32_t offset };
 
 // For behavior's weird set interface
+
 %typemap(in) (void *data) {
   int value = FIX2INT($input);
   if (value == 0 || value == 1) {
@@ -29,6 +31,7 @@
 };
 
 // Array of strings map for multiget
+
 %typemap(in) (char **keys, size_t *key_length, unsigned int number_of_keys) {
   int i;
   Check_Type($input, T_ARRAY);
@@ -46,23 +49,27 @@
 }
 
 // Generic strings
+
 %typemap(in) (char *str, size_t len) {
  $1 = STR2CSTR($input);
  $2 = (size_t) RSTRING($input)->len;
 };
 
 %apply (char *str, size_t len) {
+  (char *namespace, size_t namespace_length), 
   (char *key, size_t key_length), 
   (char *value, size_t value_length)
 };
 
 //// Output maps
+
 %apply unsigned short *OUTPUT {memcached_return *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
 
 // String
+
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
   $1 = malloc(512*sizeof(char));
   $2 = malloc(sizeof(size_t)); // XXX Could possibly be the address of a local
@@ -76,6 +83,7 @@
 }
 
 // Array of strings
+
 %typemap(out) (char **) {
   int i;  
   VALUE ary = rb_ary_new();
@@ -90,7 +98,32 @@
 
 %include "/opt/local/include/libmemcached/memcached.h"
 
-// Manual wrappers
+//// Custom C functions
+
+// Namespace and validate key. We could avoid several more dispatches and allocations if we called this from the libmemcached wrappers directly.
+
+VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length);
+%{
+VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length) {
+  char namespaced_key[250];
+  size_t namespaced_key_length = namespace_length + key_length;
+  
+  if (namespaced_key_length > 249)
+    namespaced_key_length = 249;
+  
+  strncpy(namespaced_key, namespace, namespace_length);
+  strncpy(namespaced_key + namespace_length, key, namespaced_key_length - namespace_length);
+  
+  int i;
+  for (i = 0; i < namespaced_key_length; i++)
+    if (' ' == namespaced_key[i] || '\000' == namespaced_key[i])
+      namespaced_key[i] = '_';
+   
+  return rb_str_new(namespaced_key, namespaced_key_length);  
+};
+%}
+
+//// Manual wrappers
 
 // Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because 
 // of the retval/argout split, so it truncates return values with \0 in them. 

@@ -1,4 +1,6 @@
 
+v0.7.2. Auto-repair spaces, control characters, and too-long keys; improve performance of namespacing operation.
+
 v0.7.1. Allow for explicit resetting of the struct on each request, at least until Brian fixes the synchronization problem.
 
 v0.7. Rails compatibility wrapper; real multiget; rescue UnknownReadFailures in order to reset the struct..

@@ -127,19 +127,6 @@ class MemcachedTest < Test::Unit::TestCase
     assert result.size > non_wrapped_result.size      
   end  
 
-  def test_get_invalid_key
-    assert_raise(Memcached::ClientError) { @cache.get(key * 100) }
-    # XXX Trying to get Krow to change this to ProtocolError
-    assert_raise(Memcached::NotFound) { @cache.get "I'm so bad" } 
-  end 
-
-  def test_get_multi_invalid_key
-    assert_raise(Memcached::ClientError) { @cache.get([key * 100]) }
-    # XXX Trying to get Krow to change this to ProtocolError
-    assert_equal({}, 
-      @cache.get(["I'm so bad"]))
-  end
-
   def test_get_multi
     @cache.set "#{key}_1", 1
     @cache.set "#{key}_2", 2
@@ -191,13 +178,7 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.set(key, @value)
     end
   end
-  
-  def test_set_invalid_key
-    assert_raise(Memcached::ProtocolError) do
-      @cache.set "I'm so bad", @value
-    end
-  end
-  
+    
   def test_set_expiry
     @cache.set key, @value, 1
     assert_nothing_raised do
@@ -206,12 +187,6 @@ class MemcachedTest < Test::Unit::TestCase
     sleep(1)
     assert_raise(Memcached::NotFound) do
       @cache.get key
-    end
-  end
-
-  def test_set_object_too_large
-    assert_raise(Memcached::ServerError) do
-      @cache.set key, "I'm big" * 1000000
     end
   end
   
@@ -365,6 +340,63 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.cas(key) do
         @value
       end
+    end
+  end
+  
+  # Error states
+  
+  def test_key_with_spaces
+    key = "i have a space"
+    assert_nothing_raised do
+      @cache.set key, @value
+    end
+    assert_nothing_raised do
+      assert_equal(@value, @cache.get(key))
+    end
+    # Spaces were stripped
+    assert_not_equal(key,
+      @cache.get([key]).keys.first)
+  end
+  
+  def test_key_with_invalid_control_characters
+    key = "null\000"
+    assert_nothing_raised do
+      @cache.set key, @value
+    end
+    assert_nothing_raised do
+      assert_equal(@value, @cache.get(key))
+    end
+    # Spaces were stripped
+    assert_not_equal(key,
+      @cache.get([key]).keys.first)
+  end  
+  
+  def test_key_with_valid_control_characters
+    key = "ch\303\242teau"
+    @cache.set key, @value
+    assert_equal(@value, 
+      @cache.get(key))
+    assert_equal(key,
+      @cache.get([key]).keys.first)
+  end
+  
+  def test_key_too_long
+    key = "x"*251
+    assert_nothing_raised do    
+      @cache.set key, @value
+    end
+    assert_nothing_raised do
+      assert_equal(@value, 
+        @cache.get(key))  
+    end
+    # Key was truncated
+    assert_not_equal(key,
+      @cache.get([key]).keys.first)
+  end  
+
+  def test_set_object_too_large
+    assert_raise(Memcached::ServerError) do
+      @cache.set key, "I'm big" * 1000000
     end
   end
   

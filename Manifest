@@ -4,6 +4,7 @@ COMPATIBILITY
 ext/extconf.rb
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
+ext/rlibmemcached_wrap.s
 lib/memcached/behaviors.rb
 lib/memcached/exceptions.rb
 lib/memcached/integer.rb
@@ -14,6 +15,7 @@ LICENSE
 Manifest
 README
 test/profile/benchmark.rb
+test/profile/key.rb
 test/profile/profile.rb
 test/profile/valgrind.rb
 test/setup.rb

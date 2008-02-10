@@ -1869,6 +1869,25 @@ SWIG_From_unsigned_SS_long_SS_long  (unsigned long long value)
 }
 
 
+VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length) {
+  char namespaced_key[250];
+  size_t namespaced_key_length = namespace_length + key_length;
+  
+  if (namespaced_key_length > 249)
+    namespaced_key_length = 249;
+  
+  strncpy(namespaced_key, namespace, namespace_length);
+  strncpy(namespaced_key + namespace_length, key, namespaced_key_length - namespace_length);
+  
+  int i;
+  for (i = 0; i < namespaced_key_length; i++)
+    if (' ' == namespaced_key[i] || '\000' == namespaced_key[i])
+      namespaced_key[i] = '_';
+   
+  return rb_str_new(namespaced_key, namespaced_key_length);  
+};
+
+
 VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
   VALUE ret;  
   size_t value_length;
@@ -8692,6 +8711,34 @@ fail:
 
 
 SWIGINTERN VALUE
+_wrap_ns(int argc, VALUE *argv, VALUE self) {
+  char *arg1 = (char *) 0 ;
+  size_t arg2 ;
+  char *arg3 = (char *) 0 ;
+  size_t arg4 ;
+  VALUE result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  }
+  {
+    arg1 = STR2CSTR(argv[0]);
+    arg2 = (size_t) RSTRING(argv[0])->len;
+  }
+  {
+    arg3 = STR2CSTR(argv[1]);
+    arg4 = (size_t) RSTRING(argv[1])->len;
+  }
+  result = (VALUE)ns(arg1,arg2,arg3,arg4);
+  vresult = result;
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
 _wrap_memcached_get_rvalue(int argc, VALUE *argv, VALUE self) {
   memcached_st *arg1 = (memcached_st *) 0 ;
   char *arg2 = (char *) 0 ;
@@ -9595,6 +9642,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_module_function(mRlibmemcached, "memcached_result_create", _wrap_memcached_result_create, -1);
   rb_define_module_function(mRlibmemcached, "memcached_result_value", _wrap_memcached_result_value, -1);
   rb_define_module_function(mRlibmemcached, "memcached_result_length", _wrap_memcached_result_length, -1);
+  rb_define_module_function(mRlibmemcached, "ns", _wrap_ns, -1);
   rb_define_module_function(mRlibmemcached, "memcached_get_rvalue", _wrap_memcached_get_rvalue, -1);
   rb_define_module_function(mRlibmemcached, "memcached_fetch_rvalue", _wrap_memcached_fetch_rvalue, -1);
   rb_define_module_function(mRlibmemcached, "memcached_stat_get_rvalue", _wrap_memcached_stat_get_rvalue, -1);
