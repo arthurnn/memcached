@@ -15,24 +15,26 @@ KEYS = ["ch\303\242teau"*10, "long"*100, "spaces space spaces", "null \000"]
    :namespace => @namespace
  )
 
+def dispatch(n, k)
+  Rlibmemcached.ns(@namespace, key)
+end
+
 #result = RubyProf.profile do  
-Benchmark.bm do |x|
-  x.report("rlibmemcached") do
+Benchmark.bm(15) do |x|
+  x.report("direct") do
     KEYS.each do |key|
       10000.times do
         Rlibmemcached.ns(@namespace, key)
       end
     end
   end
-  #  x.report("instance_eval") do
-  #    @cache.instance_eval do 
-  #      KEYS.each do |key|
-  #        10000.times do
-  #          ns(key)
-  #        end
-  #      end  
-  #    end
-  #  end
+  x.report("dispatch") do
+    KEYS.each do |key|
+      10000.times do
+        Rlibmemcached.ns(@namespace, key)
+      end
+    end
+  end
 end
 
 #printer = RubyProf::GraphPrinter.new(result)

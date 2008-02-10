@@ -343,40 +343,62 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
   
+  # Namespace and key validation
+  
+  def test_ns
+    assert_equal "#{@namespace}i_have_a_space", 
+      Rlibmemcached.ns(@namespace, "i have a space")     
+
+    # STR2CSTR doesn't handle strings with nulls very well, so this is what happens 
+    assert_equal "#{@namespace}with_____", 
+      Rlibmemcached.ns(@namespace, "with\000null")
+
+    assert_equal "#{@namespace}ch__teau", 
+      Rlibmemcached.ns(@namespace, "ch\303\242teau")
+
+    assert_equal "#{@namespace}#{'x'*251}"[0..249], 
+      Rlibmemcached.ns(@namespace, 'x'*251)
+  end  
+  
   # Error states
   
   def test_key_with_spaces
+    value = "value"
     key = "i have a space"
     assert_nothing_raised do
-      @cache.set key, @value
+      @cache.set key, value
     end
     assert_nothing_raised do
-      assert_equal(@value, @cache.get(key))
+      assert_equal(value, @cache.get(key))
     end
     # Spaces were stripped
     assert_not_equal(key,
       @cache.get([key]).keys.first)
   end
   
-  def test_key_with_invalid_control_characters
-    key = "null\000"
+  def test_key_with_null
+    value = "value"
+    key = "with\000null"
     assert_nothing_raised do
-      @cache.set key, @value
+      @cache.set key, value
     end
     assert_nothing_raised do
-      assert_equal(@value, @cache.get(key))
+      assert_equal(value, @cache.get(key))
     end
-    # Spaces were stripped
-    assert_not_equal(key,
-      @cache.get([key]).keys.first)
+    # Multiget returns
+    response = @cache.get([key])
+    assert_equal 1, response.size
+    # Nulls were stripped    
+    assert_not_equal(key, response.keys.first)
   end  
   
   def test_key_with_valid_control_characters
+    value = "value"
     key = "ch\303\242teau"
-    @cache.set key, @value
-    assert_equal(@value, 
+    @cache.set key, value
+    assert_equal(value, 
       @cache.get(key))
-    assert_equal(key,
+    assert_not_equal(key,
       @cache.get([key]).keys.first)
   end
   
