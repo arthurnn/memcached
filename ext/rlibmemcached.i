@@ -73,15 +73,14 @@
 // String
 
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
-  $1 = malloc(512*sizeof(char));
-  $2 = malloc(sizeof(size_t)); // XXX Could possibly be the address of a local
+  char string[256];
+  size_t length = 0;
+  $1 = &string;
+  $2 = &length;
 }; 
 %typemap(argout) (char *key, size_t *key_length) {
-  if ($1 != NULL) {
-    rb_ary_push($result, rb_str_new($1, *$2));
-    free($1);
-    free($2);
-  }
+  // Pushes an empty string when *key_length == 0
+  rb_ary_push($result, rb_str_new($1, *$2)); 
 }
 
 // Array of strings
