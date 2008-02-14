@@ -71,7 +71,6 @@
 %apply unsigned long long *OUTPUT {uint64_t *value}
 
 // String
-
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
   char string[256];
   size_t length = 0;
