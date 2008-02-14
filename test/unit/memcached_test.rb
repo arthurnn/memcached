@@ -336,29 +336,38 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_cas
+    cache = Memcached.new(
+      @servers, 
+      :namespace => @namespace, 
+      :support_cas => true
+    )        
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
 
-    @cache.set key, @value
-    @cache.cas(key) do |current|
+    # Existing set
+    cache.set key, @value
+    cache.cas(key) do |current|
       assert_equal @value, current
       value2
     end
-    assert_equal value2, @cache.get(key)
+    assert_equal value2, cache.get(key)
     
-    @cache.delete key
-    @cache.cas(key) do |current|
-      value2
-    end
-    assert_equal value2, @cache.get(key)
-    
-    @cache.set key, @value
+    # Missing set
+    cache.delete key
     assert_raises(Memcached::NotFound) do
-      @cache.cas(key) do |current|
-        @cache.set key, value2
+      cache.cas(key) {}
+    end
+    
+    # Conflicting set
+    cache.set key, @value
+    # XXX Should raise Memcached::Exists
+    assert_raises(Memcached::UnknownReadFailure) do
+      cache.cas(key) do |current|
+        cache.set key, value2
         current
       end
     end
     
+    cache.destroy    
   end
   
   # Namespace and key validation

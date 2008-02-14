@@ -16,6 +16,7 @@
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags, uint32_t offset };
+/* %apply unsigned long long { uint64_t cas }; */
 
 // For behavior's weird set interface
 
@@ -63,6 +64,7 @@
 
 //// Output maps
 
+/* %apply unsigned long long { uint64_t cas }; */
 %apply unsigned short *OUTPUT {memcached_return *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}

@@ -48,7 +48,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 =end
 
   def initialize(servers, opts = {})
-    @struct = Lib::MemcachedSt.new
+    @struct = Lib::MemcachedSt.new    
     Lib.memcached_create(@struct)
 
     # Servers
@@ -104,6 +104,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def destroy(disable_methods = true)
     Lib.memcached_free(@struct)
     @struct = nil
+    
     if disable_methods
       class << self
         Memcached.instance_methods.each do |method_name|
@@ -215,17 +216,22 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     )
   end
   
-  # Not yet implemented.
-  #
   # Reads a key's value from the server and yields it to a block. Replaces the key's value with the result of the block as long as the key hasn't been updated in the meantime, otherwise raises <b>Memcached::NotStored</b>. Accepts a String <tt>key</tt> and a block.
   #
   # Also accepts an optional <tt>timeout</tt> value.
   #
-  # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised.
-  def cas(*args)
-    # Requires memcached HEAD
-    raise NotImplemented
+  # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
+  #
+  def cas(key, timeout = 0, marshal = true)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
+      
+    value = get(key)
+    value = yield value
+    value = marshal ? Marshal.dump(value) : value.to_s
+    
+    check_return_code(
+      Lib.memcached_cas(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS, @struct.result.cas)
+    )
   end
 
 ### Deleters
