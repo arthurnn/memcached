@@ -7375,7 +7375,7 @@ _wrap_memcached_fetch(int argc, VALUE *argv, VALUE self) {
   {
     char string[256];
     size_t length = 0;
-    arg2 = &string;
+    arg2 = string;
     arg3 = &length;
   }
   arg4 = &temp4;
@@ -7392,7 +7392,8 @@ _wrap_memcached_fetch(int argc, VALUE *argv, VALUE self) {
   result = (char *)memcached_fetch(arg1,arg2,arg3,arg4,arg5,arg6);
   vresult = SWIG_FromCharPtr(result);
   {
-    rb_ary_push(vresult, rb_str_new(arg2, *arg3));
+    // Pushes an empty string when *key_length == 0
+    rb_ary_push(vresult, rb_str_new(arg2, *arg3)); 
   }
   if (SWIG_IsTmpObj(res4)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_size_t((*arg4)));
@@ -8806,7 +8807,7 @@ _wrap_memcached_fetch_rvalue(int argc, VALUE *argv, VALUE self) {
   {
     char string[256];
     size_t length = 0;
-    arg2 = &string;
+    arg2 = string;
     arg3 = &length;
   }
   arg4 = &temp4;
@@ -8822,7 +8823,8 @@ _wrap_memcached_fetch_rvalue(int argc, VALUE *argv, VALUE self) {
   result = (VALUE)memcached_fetch_rvalue(arg1,arg2,arg3,arg4,arg5);
   vresult = result;
   {
-    rb_ary_push(vresult, rb_str_new(arg2, *arg3));
+    // Pushes an empty string when *key_length == 0
+    rb_ary_push(vresult, rb_str_new(arg2, *arg3)); 
   }
   if (SWIG_IsTmpObj(res4)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg4)));

@@ -144,6 +144,15 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"])
      )
   end
+  
+  def test_get_multi_completely_missing
+    @cache.delete "#{key}_1" rescue nil
+    @cache.delete "#{key}_2" rescue nil    
+    assert_equal(
+      {},
+      @cache.get(["#{key}_1", "#{key}_2"])
+     )
+  end  
 
   def test_set_and_get_unmarshalled
     @cache.set key, @value

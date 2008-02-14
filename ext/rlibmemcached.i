@@ -75,7 +75,7 @@
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
   char string[256];
   size_t length = 0;
-  $1 = &string;
+  $1 = string;
   $2 = &length;
 }; 
 %typemap(argout) (char *key, size_t *key_length) {
