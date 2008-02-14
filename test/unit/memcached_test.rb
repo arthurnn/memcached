@@ -336,11 +336,29 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_cas
-    assert_raise Memcached::NotImplemented do
-      @cache.cas(key) do
-        @value
+    value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
+
+    @cache.set key, @value
+    @cache.cas(key) do |current|
+      assert_equal @value, current
+      value2
+    end
+    assert_equal value2, @cache.get(key)
+    
+    @cache.delete key
+    @cache.cas(key) do |current|
+      value2
+    end
+    assert_equal value2, @cache.get(key)
+    
+    @cache.set key, @value
+    assert_raises(Memcached::NotFound) do
+      @cache.cas(key) do |current|
+        @cache.set key, value2
+        current
       end
     end
+    
   end
   
   # Namespace and key validation
