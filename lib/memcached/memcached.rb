@@ -14,9 +14,10 @@ class Memcached
     :support_cas => false,
     :tcp_nodelay => false,
     :sort_hosts => false,
-    :namespace => nil,
-    :verify_key => false
-  }
+    :namespace => nil    
+  } 
+    
+  # :verify_key => false # XXX We do this ourselves already in Rlibmemcached.ns()
   
 #:stopdoc:
   IGNORED = 0

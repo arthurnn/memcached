@@ -74,6 +74,23 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set key, @value
     end
   end
+  
+  def test_initialize_sort_hosts
+    cache = Memcached.new(@servers.sort.reverse)
+    assert_equal @servers.sort.reverse, 
+      cache.servers
+    cache.destroy
+      
+    cache = Memcached.new(@servers.sort.reverse,
+      :sort_hosts => true)
+    assert_equal @servers.sort, 
+      cache.servers
+    cache.destroy
+  end
+  
+  # def test_initialize_verify_key
+  #  # XXX Not necessary
+  # end
 
   def test_initialize_single_server
     cache = Memcached.new '127.0.0.1:43042'
