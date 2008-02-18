@@ -1,11 +1,4 @@
 
-require 'rlibmemcached'
-require 'memcached/integer'
-require 'memcached/exceptions'
-require 'memcached/behaviors'
-require 'memcached/memcached'
-require 'memcached/rails'
-
 =begin rdoc
 The generated SWIG module for accessing libmemcached's C API.
 
@@ -22,3 +15,15 @@ A number of SWIG typemaps and C helper methods are also defined in <tt>ext/libme
 =end
 module Rlibmemcached
 end
+
+require 'rlibmemcached'
+
+class Memcached
+  Lib = Rlibmemcached
+end  
+
+require 'memcached/integer'
+require 'memcached/exceptions'
+require 'memcached/behaviors'
+require 'memcached/memcached'
+require 'memcached/rails'

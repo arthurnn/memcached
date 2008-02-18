@@ -4,8 +4,8 @@ class Memcached
 #:stopdoc:
 
   def self.load_constants(prefix, hash = {}, offset = 0)
-    Rlibmemcached.constants.grep(/^#{prefix}/).each do |const_name|
-      hash[const_name[prefix.length..-1].downcase.to_sym] = Rlibmemcached.const_get(const_name) + offset
+    Lib.constants.grep(/^#{prefix}/).each do |const_name|
+      hash[const_name[prefix.length..-1].downcase.to_sym] = Lib.const_get(const_name) + offset
     end
     hash
   end
@@ -42,8 +42,8 @@ class Memcached
     # STDERR.puts "Setting #{behavior}:#{b_id} => #{value}:#{v_id}"
     
     unless value == false
-      # XXX Setting false still turns on the behavior; maybe a Rlibmemcached bug
-      Rlibmemcached.memcached_behavior_set(@struct, b_id, v_id)
+      # XXX Setting false still turns on the behavior; maybe a Lib bug
+      Lib.memcached_behavior_set(@struct, b_id, v_id)
     end
     
   end  

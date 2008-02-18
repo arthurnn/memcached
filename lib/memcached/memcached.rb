@@ -13,16 +13,14 @@ class Memcached
     :buffer_requests => false,
     :support_cas => false,
     :tcp_nodelay => false,
-    :sort_hosts => false,
     :namespace => nil    
   } 
     
+  # :sort_hosts => false # XXX No effect due to libmemcached 0.16 bug
   # :verify_key => false # XXX We do this ourselves already in Rlibmemcached.ns()
   
 #:stopdoc:
   IGNORED = 0
-  
-  Lib = Rlibmemcached
   
   NOTFOUND_INSTANCE = NotFound.new
 #:startdoc:
@@ -55,7 +53,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     Lib.memcached_create(@struct)
 
     # Servers
-    Array(servers).each_with_index do |server, index|
+    # XXX We have to sort them ahead of time due to a libmemcached 0.16 bug
+    Array(servers).sort.each_with_index do |server, index|
       unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
         raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
       end
@@ -325,7 +324,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
   def check_return_code(ret) #:doc:
-    # 0.14 returns 0 for an ActionQueued result but 0.15 does not.
+    # 0.16 --enable-debug returns 0 for an ActionQueued result but --disable-debug does not
     return if ret == 0 or ret == 31
     raise EXCEPTIONS[ret], ""
   end  
