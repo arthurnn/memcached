@@ -3690,7 +3690,7 @@ fail:
 SWIGINTERN VALUE
 _wrap_MemcachedStatSt_limit_maxbytes_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
-  uint32_t arg2 ;
+  uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 ;
@@ -3705,14 +3705,14 @@ _wrap_MemcachedStatSt_limit_maxbytes_set(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   {
-    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
     if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "limit_maxbytes" "', argument " "2"" of type '" "uint32_t""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "limit_maxbytes" "', argument " "2"" of type '" "uint64_t""'"); 
     }  
     if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "limit_maxbytes" "', argument " "2"" of type '" "uint32_t""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "limit_maxbytes" "', argument " "2"" of type '" "uint64_t""'");
     } else {
-      arg2 = *((uint32_t *)(argp2));
+      arg2 = *((uint64_t *)(argp2));
     }
   }
   if (arg1) (arg1)->limit_maxbytes = arg2;
@@ -3726,7 +3726,7 @@ fail:
 SWIGINTERN VALUE
 _wrap_MemcachedStatSt_limit_maxbytes_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_stat_st *arg1 = (struct memcached_stat_st *) 0 ;
-  uint32_t result;
+  uint64_t result;
   void *argp1 = 0 ;
   int res1 = 0 ;
   VALUE vresult = Qnil;
@@ -3740,7 +3740,7 @@ _wrap_MemcachedStatSt_limit_maxbytes_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->limit_maxbytes);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -6879,13 +6879,8 @@ _wrap_memcached_behavior_set(int argc, VALUE *argv, VALUE self) {
   arg2 = (memcached_behavior)(val2);
   {
     int value = FIX2INT(argv[2]);
-    if (value == 0 || value == 1) {
-      arg3 = (void *) value;
-    } else {
-      // Only pass by reference for :distribution and :hash 
-      value = value - 2; 
-      arg3 = &value;
-    }
+    // printf("%d\n", value);
+    arg3 = &value;
   }
   result = (memcached_return)memcached_behavior_set(arg1,arg2,arg3);
   vresult = SWIG_From_int((int)(result));
@@ -8551,13 +8546,8 @@ _wrap_memcached_callback_set(int argc, VALUE *argv, VALUE self) {
   arg2 = (memcached_callback)(val2);
   {
     int value = FIX2INT(argv[2]);
-    if (value == 0 || value == 1) {
-      arg3 = (void *) value;
-    } else {
-      // Only pass by reference for :distribution and :hash 
-      value = value - 2; 
-      arg3 = &value;
-    }
+    // printf("%d\n", value);
+    arg3 = &value;
   }
   result = (memcached_return)memcached_callback_set(arg1,arg2,arg3);
   vresult = SWIG_From_int((int)(result));
@@ -9329,7 +9319,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_MAX_HOST_LENGTH", SWIG_From_int((int)(64)));
   rb_define_const(mRlibmemcached, "MEMCACHED_WHEEL_SIZE", SWIG_From_int((int)(1024)));
   rb_define_const(mRlibmemcached, "MEMCACHED_STRIDE", SWIG_From_int((int)(4)));
-  rb_define_const(mRlibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.14"));
+  rb_define_const(mRlibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.16"));
   rb_define_const(mRlibmemcached, "MEMCACHED_SUCCESS", SWIG_From_int((int)(MEMCACHED_SUCCESS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_FAILURE", SWIG_From_int((int)(MEMCACHED_FAILURE)));
   rb_define_const(mRlibmemcached, "MEMCACHED_HOST_LOOKUP_FAILURE", SWIG_From_int((int)(MEMCACHED_HOST_LOOKUP_FAILURE)));
@@ -9362,6 +9352,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_FETCH_NOTFINISHED", SWIG_From_int((int)(MEMCACHED_FETCH_NOTFINISHED)));
   rb_define_const(mRlibmemcached, "MEMCACHED_TIMEOUT", SWIG_From_int((int)(MEMCACHED_TIMEOUT)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BUFFERED", SWIG_From_int((int)(MEMCACHED_BUFFERED)));
+  rb_define_const(mRlibmemcached, "MEMCACHED_BAD_KEY_PROVIDED", SWIG_From_int((int)(MEMCACHED_BAD_KEY_PROVIDED)));
   rb_define_const(mRlibmemcached, "MEMCACHED_MAXIMUM_RETURN", SWIG_From_int((int)(MEMCACHED_MAXIMUM_RETURN)));
   rb_define_const(mRlibmemcached, "MEMCACHED_DISTRIBUTION_MODULA", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_MODULA)));
   rb_define_const(mRlibmemcached, "MEMCACHED_DISTRIBUTION_CONSISTENT", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_CONSISTENT)));
@@ -9377,6 +9368,8 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_DISTRIBUTION", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_DISTRIBUTION)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_BUFFER_REQUESTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_BUFFER_REQUESTS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_USER_DATA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USER_DATA)));
+  rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_SORT_HOSTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SORT_HOSTS)));
+  rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_VERIFY_KEY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_VERIFY_KEY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_USER_DATA", SWIG_From_int((int)(MEMCACHED_CALLBACK_USER_DATA)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_CLEANUP_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLEANUP_FUNCTION)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_CLONE_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLONE_FUNCTION)));

@@ -13,7 +13,9 @@ class Memcached
     :buffer_requests => false,
     :support_cas => false,
     :tcp_nodelay => false,
-    :namespace => nil
+    :sort_hosts => false,
+    :namespace => nil,
+    :verify_key => false
   }
   
 #:stopdoc:

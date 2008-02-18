@@ -18,21 +18,14 @@
 %apply unsigned long { uint32_t flags, uint32_t offset };
 /* %apply unsigned long long { uint64_t cas }; */
 
-// For behavior's weird set interface
-
+// For behavior's set interface
 %typemap(in) (void *data) {
   int value = FIX2INT($input);
-  if (value == 0 || value == 1) {
-    $1 = (void *) value;
-  } else {
-    // Only pass by reference for :distribution and :hash 
-    value = value - 2; 
-    $1 = &value;
-  }
+  // printf("%d\n", value);
+  $1 = &value;
 };
 
 // Array of strings map for multiget
-
 %typemap(in) (char **keys, size_t *key_length, unsigned int number_of_keys) {
   int i;
   Check_Type($input, T_ARRAY);
@@ -50,7 +43,6 @@
 }
 
 // Generic strings
-
 %typemap(in) (char *str, size_t len) {
  $1 = STR2CSTR($input);
  $2 = (size_t) RSTRING($input)->len;

@@ -368,8 +368,7 @@ class MemcachedTest < Test::Unit::TestCase
     
     # Conflicting set
     cache.set key, @value
-    # XXX Should raise Memcached::Exists
-    assert_raises(Memcached::UnknownReadFailure) do
+    assert_raises(Memcached::ConnectionDataExists) do
       cache.cas(key) do |current|
         cache.set key, value2
         current
