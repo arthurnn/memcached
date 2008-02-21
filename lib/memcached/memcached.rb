@@ -13,7 +13,8 @@ class Memcached
     :buffer_requests => false,
     :support_cas => false,
     :tcp_nodelay => false,
-    :namespace => nil    
+    :show_not_found_backtraces => false,
+    :namespace => nil
   } 
     
   # :sort_hosts => false # XXX No effect due to libmemcached 0.16 bug
@@ -43,6 +44,7 @@ Valid option parameters are:
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
+<tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 
 Please note that when non-blocking IO is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
@@ -65,7 +67,9 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # Behaviors
     @options = DEFAULTS.merge(opts)
     options.each do |option, value|
-      set_behavior(option, value) unless option == :namespace
+      unless [:namespace, :show_not_found_backtraces].include? option
+        set_behavior(option, value) 
+      end
     end
     
     # Make sure :buffer_requests uses :no_block
@@ -78,6 +82,16 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     raise ArgumentError, "Invalid namespace" if options[:namespace].to_s =~ / /
     @namespace = options[:namespace].to_s
     @namespace_size = @namespace.size
+    
+    # Not found exceptions
+    # Note that these have global effects since the NotFound class itself is modified. You should only 
+    # be enabling the backtrace for debugging purposes, so it's not really a big deal.
+    if options[:show_not_found_backtraces]
+      NotFound.restore_backtraces
+    else
+      NotFound.remove_backtraces
+    end
+    
   end
 
   # Return the array of server strings used to configure this instance.

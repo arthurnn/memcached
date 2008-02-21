@@ -43,14 +43,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
 
 =end
   class Error < RuntimeError
-  end
-  
-  class SynchronizationError < RuntimeError
-  end
-  
-  # Raised if a method depends on functionality not yet completed in libmemcached. 
-  class NotImplemented < NoMethodError
-  end
+  end 
 
 #:stopdoc:
 
@@ -58,7 +51,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
     private
     def camelize(string)
       string.downcase.gsub('/', ' or ').split(' ').map {|s| s.capitalize}.join
-    end   
+    end           
   end
   
   EXCEPTIONS = []
@@ -70,6 +63,25 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
     description = Rlibmemcached.memcached_strerror(EMPTY_STRUCT, index)
     exception_class = eval("class #{camelize(description)} < Error; self; end")
     EXCEPTIONS << exception_class
+  end
+  
+  class NotFound
+    def self.remove_backtraces
+      class_eval do
+        def set_backtrace(*args); []; end
+        alias :backtrace :set_backtrace
+      end
+    end
+    
+    def self.restore_backtraces
+      class_eval do
+        begin
+          remove_method :set_backtrace
+          remove_method :backtrace
+        rescue NameError
+        end
+      end
+    end
   end
   
   # Verify library version

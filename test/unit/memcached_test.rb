@@ -75,6 +75,28 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
   
+  def test_initialize_without_not_found_backtraces
+    cache = Memcached.new @servers,
+      :show_not_found_backtraces => false
+    cache.delete key rescue
+    begin
+      cache.get key
+    rescue Memcached::NotFound => e
+      assert e.backtrace.empty?
+    end
+  end
+
+  def test_initialize_with_not_found_backtraces
+    cache = Memcached.new @servers,
+      :show_not_found_backtraces => true
+    cache.delete key rescue
+    begin
+      cache.get key
+    rescue Memcached::NotFound => e
+      assert !e.backtrace.empty?
+    end  
+  end  
+  
   def test_initialize_sort_hosts
     # Original
     cache = Memcached.new(@servers.sort)

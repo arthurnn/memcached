@@ -2,6 +2,8 @@
 HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
 
+require 'memcached'
+
 require 'benchmark'
 require 'rubygems'
 
@@ -55,10 +57,14 @@ class Bench
 
   def run(level = @recursion)
     if level > 0
-      run(level - 1)
+      run_inner(level - 1)
     else
       benchmark
     end  
+  end
+  
+  def run_inner(level)
+    run(level)
   end
   
   private
@@ -69,7 +75,7 @@ class Bench
   end
 
   def benchmark    
-    Benchmark.bm(39) do |x|
+    Benchmark.bm(31) do |x|
     
       n = 2500
     
@@ -255,6 +261,19 @@ class Bench
           end
         end
       end
+      if defined? Memcached
+        @m = Memcached.new(*@opts)
+        x.report("missing:ruby:memcached:inline") do
+          n.times do
+            @m.delete @key1 rescue nil
+            @m.get @key1 rescue nil
+            @m.delete @key2 rescue nil
+            @m.get @key2 rescue nil
+            @m.delete @key3 rescue nil
+            @m.get @key3 rescue nil
+          end
+        end
+      end
       if defined? Caffeine
         @m = Caffeine::MemCache.new(@opts[1]); @m.servers = @opts[0]
         x.report("missing:ruby:caffeine") do
@@ -278,19 +297,6 @@ class Bench
             begin @m.get @key2; rescue; end
             begin @m.delete @key3; rescue; end
             begin @m.get @key3; rescue; end
-          end
-        end
-      end
-      if defined? Memcached
-        @m = Memcached.new(*@opts)
-        x.report("missing:ruby:memcached:inline") do
-          n.times do
-            @m.delete @key1 rescue nil
-            @m.get @key1 rescue nil
-            @m.delete @key2 rescue nil
-            @m.get @key2 rescue nil
-            @m.delete @key3 rescue nil
-            @m.get @key3 rescue nil
           end
         end
       end
