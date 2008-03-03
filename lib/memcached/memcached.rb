@@ -241,7 +241,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def cas(key, timeout = 0, marshal = true)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
       
-    value = get(key)
+    value = get(key, marshal)
     value = yield value
     value = marshal ? Marshal.dump(value) : value.to_s
     

@@ -408,6 +408,13 @@ class MemcachedTest < Test::Unit::TestCase
     end
     assert_equal value2, cache.get(key)
     
+    # Existing test without marshalling
+    cache.set(key, "foo", 0, false)
+    cache.cas(key, 0, false) do |current|
+      "#{current}bar"
+    end
+    assert_equal "foobar", cache.get(key, false)
+    
     # Missing set
     cache.delete key
     assert_raises(Memcached::NotFound) do

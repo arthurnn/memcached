@@ -1,4 +1,6 @@
 
+v0.9. Move to libmemcached 0.17. Tests for consistent hashing behavior when a server is added/removed/pulled. Fix CAS bug (ktheory).
+
 v0.8.1. Disable NotFound backtraces for speed (Blaine Cook).
 
 v0.8. CAS support. Update to libmemcached 0.16.
