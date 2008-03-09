@@ -85,7 +85,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
   end
   
   # Verify library version
-  # XXX Waiting on libmemcached 0.14
+  # XXX Waiting on libmemcached 0.18
   
 #:startdoc:
 end

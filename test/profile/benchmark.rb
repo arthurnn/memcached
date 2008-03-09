@@ -51,8 +51,9 @@ class Bench
     @key2 = "Sym1-2-3::45"*8
     @key3 = "Long"*40
     @key4 = "Medium"*8
-    @key5 = "Medium2"*8
-    @key6 = "Long3"*40
+    # 5 and 6 are only used for multiget miss test
+    @key5 = "Medium2"*8 
+    @key6 = "Long3"*40 
     
     restart_servers
   end
