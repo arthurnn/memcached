@@ -50,7 +50,9 @@ class Bench
     @key1 = "Short"
     @key2 = "Sym1-2-3::45"*8
     @key3 = "Long"*40
-    @key4 = "Medium"*8        
+    @key4 = "Medium"*8
+    @key5 = "Medium2"*8
+    @key6 = "Long3"*40
     
     restart_servers
   end
@@ -242,6 +244,37 @@ class Bench
             @m.get @key1
             @m.get @key2
             @m.get @key3
+          end
+        end
+      end
+
+      if defined? Memcached
+        @m = Memcached.new(*@opts)
+
+        # Avoid rebuilding the array every request
+        keys = [@key1, @key2, @key3, @key4, @key5, @key6]
+
+        x.report("multiget:ruby:memcached") do
+          n.times do
+            @m.get keys
+          end
+        end
+      end
+      if defined? Caffeine
+        @m = Caffeine::MemCache.new(@opts[1]); @m.servers = @opts[0]
+        x.report("multiget:ruby:caffeine") do
+          n.times do
+            # We don't use the keys array because splat is slow
+            @m.get @key1, @key2, @key3, @key4, @key5, @key6
+          end
+        end
+      end
+      if defined? MemCache
+        @m = MemCache.new(*@opts)
+        x.report("multiget:ruby:memcache-client") do
+          n.times do
+            # We don't use the keys array because splat is slow
+            @m.get_multi @key1, @key2, @key3, @key4, @key5, @key6
           end
         end
       end
