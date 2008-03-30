@@ -551,7 +551,7 @@ class MemcachedTest < Test::Unit::TestCase
       Memcached::UINT64,
       Rlibmemcached::SET_OP
     )
-    assert_equal 0, ret
+    assert_equal 31, ret
   end
 
   def test_no_block_return_value

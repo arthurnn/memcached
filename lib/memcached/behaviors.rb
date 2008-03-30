@@ -39,8 +39,8 @@ class Memcached
     elsif behavior == :distribution
       raise ArgumentError, msg unless DISTRIBUTION_VALUES[value]
     end
-    # STDERR.puts "Setting #{behavior}:#{b_id} => #{value}:#{v_id}"
     
+    # STDERR.puts "Setting #{behavior}:#{b_id} => #{value}:#{v_id}"    
     Lib.memcached_behavior_set(@struct, b_id, v_id)
   end  
       

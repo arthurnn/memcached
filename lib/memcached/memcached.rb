@@ -65,21 +65,20 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       host, port = server.split(":")
       Lib.memcached_server_add(@struct, host, port.to_i)
     end  
+
+    # Merge option defaults
+    @options = DEFAULTS.merge(opts)
+    
+    # Make sure :buffer_requests uses :no_block
+    options[:no_block] = true if options[:buffer_requests] 
     
     # Behaviors
-    @options = DEFAULTS.merge(opts)
     options.each do |option, value|
       unless [:namespace, :show_not_found_backtraces].include? option
         set_behavior(option, value) 
       end
     end
     
-    # Make sure :buffer_requests uses :no_block
-    # XXX Not enforcing this for now.
-    # if options[:buffer_requests] and not options[:no_block]
-    #   raise ArgumentError, "Invalid options; :buffer_requests does not work well without :no_block."
-    # end
-
     # Namespace
     raise ArgumentError, "Invalid namespace" if options[:namespace].to_s =~ / /
     @namespace = options[:namespace].to_s
