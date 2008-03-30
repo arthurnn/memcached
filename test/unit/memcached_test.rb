@@ -609,10 +609,11 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new(
       [@servers.last, '127.0.0.1:43044'], # Use a server that isn't running
       :namespace => @namespace
-    )    
-    # Verify that the second server is the hash target in a running situation
+    )
+    
+    # Verify that the second server is the hash target
     key = 'test_missing_server3'
-    assert_equal 1, @cache.send(:hash, key)
+    assert_equal 1, cache.send(:hash, key)
     
     assert_nothing_raised do
       cache.set(key, @value)
