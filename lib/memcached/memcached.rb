@@ -74,6 +74,11 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # consistently
     options[:no_block] = true if options[:buffer_requests] 
     
+    # Disallow :sort_hosts with consistent hashing
+    if options[:sort_hosts] and options[:distribution] == :consistent
+      raise ArgumentError, ":sort_hosts defeats :consistent hashing"
+    end
+    
     # Set the behaviors
     options.each do |option, value|
       unless [:namespace, :show_not_found_backtraces].include? option

@@ -69,6 +69,12 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { Memcached.new "127.0.0.1:43043:1" }
   end
   
+  def test_initialize_with_invalid_options
+    assert_raise(ArgumentError) do 
+      Memcached.new @servers, :sort_hosts => true, :distribution => :consistent
+    end
+  end
+  
   def test_initialize_with_missing_server
     # XXX Triggers abort trap with libmemcached --enable-debug.
     cache = Memcached.new "127.0.0.1:43044"
