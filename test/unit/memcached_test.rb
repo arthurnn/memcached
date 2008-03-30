@@ -602,7 +602,26 @@ class MemcachedTest < Test::Unit::TestCase
       @nb_cache.add key, @value
     end
   end  
+  
+  # Server removal and consistent hashing
+  
+  def test_missing_server
+    cache = Memcached.new(
+      [@servers.last, '127.0.0.1:43044'], # Use a server that isn't running
+      :namespace => @namespace
+    )    
+    # Verify that the second server is the hash target in a running situation
+    key = 'test_missing_server3'
+    assert_equal 1, @cache.send(:hash, key)
+    
+    assert_nothing_raised do
+      cache.set(key, @value)
+      cache.get(key)
+    end    
+  end
 
+  # Concurrency
+  
   def test_thread_contention
     threads = []
     4.times do |index|
@@ -617,6 +636,8 @@ class MemcachedTest < Test::Unit::TestCase
     threads.each {|thread| thread.join}
   end
   
+  # Memory cleanup
+  
   def test_reset
     original_struct = @cache.instance_variable_get("@struct")
     assert_nothing_raised do
@@ -625,6 +646,8 @@ class MemcachedTest < Test::Unit::TestCase
     assert_not_equal original_struct, 
       @cache.instance_variable_get("@struct") 
   end
+  
+  # Private hash generation method
   
   def test_hash_generation
     assert [0, 1].include?(@cache.send(:hash, key))
