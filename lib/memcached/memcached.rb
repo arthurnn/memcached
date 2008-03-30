@@ -69,7 +69,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # Merge option defaults
     @options = DEFAULTS.merge(opts)
     
-    # Make sure :buffer_requests uses :no_block
+    # Force :buffer_requests to use :no_block
     options[:no_block] = true if options[:buffer_requests] 
     
     # Set the behaviors

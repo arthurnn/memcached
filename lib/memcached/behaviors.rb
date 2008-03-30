@@ -46,9 +46,21 @@ class Memcached
   
   # Get a behavior value for this Memcached instance. Accepts a Symbol.
   def get_behavior(behavior)
-    raise ArgumentError, "No behavior #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]    
-    v_id = Lib.memcached_behavior_get(@struct, b_id)    
-    BEHAVIOR_VALUES.invert[v_id] or v_id
+    raise ArgumentError, "No behavior #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]
+    v_id = Lib.memcached_behavior_get(@struct, b_id)        
+
+    if BEHAVIOR_VALUES.invert.has_key?(v_id) 
+      # False, nil are valid values so we can not rely on direct lookups
+      case behavior
+        # Scoped values; still annoying
+        when :hash then HASH_VALUES.invert[v_id]
+        when :distribution then DISTRIBUTION_VALUES.invert[v_id]
+        else
+          BEHAVIOR_VALUES.invert[v_id]
+      end
+    else
+      v_id
+    end
   end
   
 end

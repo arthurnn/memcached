@@ -6,18 +6,21 @@ class MemcachedTest < Test::Unit::TestCase
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043']
     @namespace = 'memcached_test_namespace'
-    @cache = Memcached.new(
-      @servers, 
+    
+    @options = {      
       :namespace => @namespace, 
       :distribution => :modula
-    )
-    @nb_cache = Memcached.new(
-      @servers, 
+    }
+    @cache = Memcached.new(@servers, @options)
+    
+    @nb_options = {
       :namespace => @namespace, 
       :no_block => true, 
       :buffer_requests => true, 
       :distribution => :modula
-    )
+    }
+    @nb_cache = Memcached.new(@servers, @nb_options)
+
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
@@ -37,6 +40,13 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal '127.0.0.1', cache.send(:server_structs).first.hostname
     assert_equal '127.0.0.1', cache.send(:server_structs).last.hostname
     assert_equal 43043, cache.send(:server_structs).last.port
+  end
+  
+  def test_options
+    Memcached::DEFAULTS.merge(@nb_options).each do |key, expected|
+      value = @nb_cache.options[key]
+      assert(expected == value, "#{key} should be #{expected} but was #{value}")
+    end
   end
   
   def test_destroy
@@ -118,10 +128,6 @@ class MemcachedTest < Test::Unit::TestCase
     cache.destroy
   end
   
-  # def test_initialize_verify_key
-  #  # XXX Not necessary
-  # end
-
   def test_initialize_single_server
     cache = Memcached.new '127.0.0.1:43042'
     assert_equal nil, cache.options[:namespace]
