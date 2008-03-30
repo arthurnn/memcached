@@ -16,7 +16,7 @@
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags, uint32_t offset };
-%apply unsigned long long {uint64_t data }; /* uint64_t cas, */
+%apply unsigned long long {uint64_t data, uint64_t cas };
 
 // Array of strings map for multiget
 %typemap(in) (char **keys, size_t *key_length, unsigned int number_of_keys) {
@@ -57,11 +57,15 @@
 
 //// Output maps
 
-/* %apply unsigned long long { uint64_t cas }; */
 %apply unsigned short *OUTPUT {memcached_return *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
+
+// Uint64
+%typemap(out) (uint64_t) {
+  $result = INT2FIX($1);
+};
 
 // String
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
@@ -123,15 +127,6 @@ VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length)
 %}
 
 //// Manual wrappers
-
-// Opaque uint64; needed as a placeholder for the send functions
-uint64_t zero();
-%{
-uint64_t zero() {
-  uint64_t zero = 0;
-  return zero;
-};
-%}
 
 // Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because 
 // of the retval/argout split, so it truncates return values with \0 in them. 

@@ -29,11 +29,11 @@ class Memcached
   
   # Set a behavior option for this Memcached instance. Accepts a Symbol <tt>behavior</tt> and either <tt>true</tt>, <tt>false</tt>, or a Symbol for <tt>value</tt>. Arguments are validated and converted into integers for the struct setter method.
   def set_behavior(behavior, value) #:doc:
-    raise ArgumentError, "No setting #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]    
-    raise ArgumentError, "No setting value #{value.inspect}" unless v_id = BEHAVIOR_VALUES[value]
+    raise ArgumentError, "No behavior #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]    
+    raise ArgumentError, "No behavior value #{value.inspect}" unless v_id = BEHAVIOR_VALUES[value]
     
-    # Scoped validations
-    msg =  "Invalid setting value #{value.inspect} for #{behavior.inspect}" 
+    # Scoped validations; annoying
+    msg =  "Invalid behavior value #{value.inspect} for #{behavior.inspect}" 
     if behavior == :hash
       raise ArgumentError, msg unless HASH_VALUES[value]
     elsif behavior == :distribution
@@ -43,5 +43,12 @@ class Memcached
     # STDERR.puts "Setting #{behavior}:#{b_id} => #{value}:#{v_id}"    
     Lib.memcached_behavior_set(@struct, b_id, v_id)
   end  
-      
+  
+  # Get a behavior value for this Memcached instance. Accepts a Symbol.
+  def get_behavior(behavior)
+    raise ArgumentError, "No behavior #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]    
+    v_id = Lib.memcached_behavior_get(@struct, b_id)    
+    BEHAVIOR_VALUES.invert[v_id] or v_id
+  end
+  
 end

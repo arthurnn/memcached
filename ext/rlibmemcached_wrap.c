@@ -2895,7 +2895,9 @@ _wrap_MemcachedStatSt_limit_maxbytes_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->limit_maxbytes);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3135,7 +3137,9 @@ _wrap_MemcachedStatSt_bytes_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->bytes);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3195,7 +3199,9 @@ _wrap_MemcachedStatSt_cmd_get_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->cmd_get);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3255,7 +3261,9 @@ _wrap_MemcachedStatSt_cmd_set_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->cmd_set);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3315,7 +3323,9 @@ _wrap_MemcachedStatSt_get_hits_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->get_hits);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3375,7 +3385,9 @@ _wrap_MemcachedStatSt_get_misses_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->get_misses);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3435,7 +3447,9 @@ _wrap_MemcachedStatSt_evictions_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->evictions);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3495,7 +3509,9 @@ _wrap_MemcachedStatSt_bytes_read_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->bytes_read);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3555,7 +3571,9 @@ _wrap_MemcachedStatSt_bytes_written_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->bytes_written);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -5563,7 +5581,9 @@ _wrap_memcached_behavior_get(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (memcached_behavior)(val2);
   result = memcached_behavior_get(arg1,arg2);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6523,8 +6543,8 @@ _wrap_memcached_send(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   unsigned long val9 ;
   int ecode9 = 0 ;
-  void *argp10 ;
-  int res10 = 0 ;
+  unsigned long long val10 ;
+  int ecode10 = 0 ;
   int val11 ;
   int ecode11 = 0 ;
   VALUE vresult = Qnil;
@@ -6556,17 +6576,11 @@ _wrap_memcached_send(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode9), Ruby_Format_TypeError( "", "uint32_t","memcached_send", 9, argv[4] ));
   } 
   arg9 = (uint32_t)(val9);
-  {
-    res10 = SWIG_ConvertPtr(argv[5], &argp10, SWIGTYPE_p_uint64_t,  0 );
-    if (!SWIG_IsOK(res10)) {
-      SWIG_exception_fail(SWIG_ArgError(res10), Ruby_Format_TypeError( "", "uint64_t","memcached_send", 10, argv[5] )); 
-    }  
-    if (!argp10) {
-      SWIG_exception_fail(SWIG_ValueError, Ruby_Format_TypeError("invalid null reference ", "uint64_t","memcached_send", 10, argv[5]));
-    } else {
-      arg10 = *((uint64_t *)(argp10));
-    }
-  }
+  ecode10 = SWIG_AsVal_unsigned_SS_long_SS_long(argv[5], &val10);
+  if (!SWIG_IsOK(ecode10)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode10), Ruby_Format_TypeError( "", "uint64_t","memcached_send", 10, argv[5] ));
+  } 
+  arg10 = (uint64_t)(val10);
   ecode11 = SWIG_AsVal_int(argv[6], &val11);
   if (!SWIG_IsOK(ecode11)) {
     SWIG_exception_fail(SWIG_ArgError(ecode11), Ruby_Format_TypeError( "", "memcached_storage_action","memcached_send", 11, argv[6] ));
@@ -6924,8 +6938,8 @@ _wrap_MemcachedResultSt_cas_set(int argc, VALUE *argv, VALUE self) {
   uint64_t arg2 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
+  unsigned long long val2 ;
+  int ecode2 = 0 ;
   
   if ((argc < 1) || (argc > 1)) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
@@ -6935,17 +6949,11 @@ _wrap_MemcachedResultSt_cas_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "struct memcached_result_st *","cas", 1, self )); 
   }
   arg1 = (struct memcached_result_st *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint64_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), Ruby_Format_TypeError( "", "uint64_t","cas", 2, argv[0] )); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, Ruby_Format_TypeError("invalid null reference ", "uint64_t","cas", 2, argv[0]));
-    } else {
-      arg2 = *((uint64_t *)(argp2));
-    }
-  }
+  ecode2 = SWIG_AsVal_unsigned_SS_long_SS_long(argv[0], &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), Ruby_Format_TypeError( "", "uint64_t","cas", 2, argv[0] ));
+  } 
+  arg2 = (uint64_t)(val2);
   if (arg1) (arg1)->cas = arg2;
   
   return Qnil;
@@ -6971,7 +6979,7 @@ _wrap_MemcachedResultSt_cas_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_result_st *)(argp1);
   result =  ((arg1)->cas);
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  vresult = SWIG_From_unsigned_SS_long_SS_long((unsigned long long)(result));
   return vresult;
 fail:
   return Qnil;
@@ -8418,7 +8426,9 @@ _wrap_zero(int argc, VALUE *argv, VALUE self) {
     rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
   }
   result = zero();
-  vresult = SWIG_NewPointerObj((uint64_t *)memcpy((uint64_t *)malloc(sizeof(uint64_t)),&result,sizeof(uint64_t)), SWIGTYPE_p_uint64_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = INT2FIX(result);
+  }
   return vresult;
 fail:
   return Qnil;

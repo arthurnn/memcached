@@ -6,7 +6,7 @@ class Memcached
 
   FLAGS = 0x0
   
-  UINT64 = Lib::zero() # SWIG::TYPE_p_uint64_t.allocate
+  UINT64 = 0
 
   DEFAULTS = {
     :hash => :default,
@@ -72,11 +72,16 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # Make sure :buffer_requests uses :no_block
     options[:no_block] = true if options[:buffer_requests] 
     
-    # Behaviors
+    # Set the behaviors
     options.each do |option, value|
       unless [:namespace, :show_not_found_backtraces].include? option
         set_behavior(option, value) 
       end
+    end
+    
+    # Merge the actual behaviors back in
+    BEHAVIORS.keys.each do |behavior|
+      options[behavior] = get_behavior(behavior)
     end
     
     # Namespace
