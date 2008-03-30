@@ -1,7 +1,6 @@
 %module rlibmemcached
 %{
 #include <libmemcached/memcached.h>
-#include <libmemcached/memcached_constants.h>
 %}
 
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_st;
@@ -17,14 +16,7 @@
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags, uint32_t offset };
-/* %apply unsigned long long { uint64_t cas }; */
-
-// For behavior's set interface
-%typemap(in) (void *data) {
-  int value = FIX2INT($input);
-  // printf("%d\n", value);
-  $1 = &value;
-};
+%apply unsigned long long {uint64_t data }; /* uint64_t cas, */
 
 // Array of strings map for multiget
 %typemap(in) (char **keys, size_t *key_length, unsigned int number_of_keys) {
@@ -54,6 +46,14 @@
   (char *key, size_t key_length), 
   (char *value, size_t value_length)
 };
+
+// Key strings with same master key
+// XXX This will have to go once people start doing client-side replication and actually need to set the master key
+%typemap(in) (char *master_key, size_t master_key_length, char *key, size_t key_length) {
+ $3 = $1 = STR2CSTR($input);
+ $4 = $2 = (size_t) RSTRING($input)->len;
+};
+
 
 //// Output maps
 
@@ -89,13 +89,17 @@
   free($1);
 };
 
+//// SWIG includes, for functions, constants, and structs
+
 %include "/opt/local/include/libmemcached/memcached.h"
 %include "/opt/local/include/libmemcached/memcached_constants.h"
+%include "/opt/local/include/libmemcached/memcached_storage.h"
+%include "/opt/local/include/libmemcached/memcached_result.h"
+%include "/opt/local/include/libmemcached/memcached_server.h"
 
 //// Custom C functions
 
 // Namespace and validate key. We could avoid several more dispatches and allocations if we called this from the libmemcached wrappers directly.
-
 VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length);
 %{
 VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length) {
@@ -119,6 +123,15 @@ VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length)
 %}
 
 //// Manual wrappers
+
+// Opaque uint64; needed as a placeholder for the send functions
+uint64_t zero();
+%{
+uint64_t zero() {
+  uint64_t zero = 0;
+  return zero;
+};
+%}
 
 // Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because 
 // of the retval/argout split, so it truncates return values with \0 in them. 

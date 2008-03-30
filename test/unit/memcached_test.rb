@@ -104,12 +104,11 @@ class MemcachedTest < Test::Unit::TestCase
       cache.servers
     cache.destroy
     
-     Reversed 
-     XXX Fails due to libmemcached 0.16 bug
-     cache = Memcached.new(@servers.sort.reverse)
-     assert_equal @servers.sort.reverse, 
-      cache.servers
-     cache.destroy
+    # Reversed 
+    cache = Memcached.new(@servers.sort.reverse)
+      assert_equal @servers.sort.reverse, 
+    cache.servers
+    cache.destroy
       
     # Reversed with sort_hosts
     cache = Memcached.new(@servers.sort.reverse,
@@ -543,12 +542,14 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       cache.set key, @value
     end
-    ret = Rlibmemcached.memcached_set(
+    ret = Rlibmemcached.memcached_send(
       cache.instance_variable_get("@struct"), 
       "#{@namespace}#{key}", 
       @marshalled_value, 
       0, 
-      Memcached::FLAGS
+      Memcached::FLAGS,
+      Memcached::UINT64,
+      Rlibmemcached::SET_OP
     )
     assert_equal 31, ret
   end
@@ -557,12 +558,14 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       @nb_cache.set key, @value
     end
-    ret = Rlibmemcached.memcached_set(
+    ret = Rlibmemcached.memcached_send(
       @nb_cache.instance_variable_get("@struct"), 
       "#{@namespace}#{key}", 
       @marshalled_value, 
       0, 
-      Memcached::FLAGS
+      Memcached::FLAGS,
+      Memcached::UINT64,
+      Rlibmemcached::SET_OP
     )
     assert_equal 31, ret
   end

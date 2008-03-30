@@ -41,11 +41,7 @@ class Memcached
     end
     # STDERR.puts "Setting #{behavior}:#{b_id} => #{value}:#{v_id}"
     
-    unless value == false
-      # XXX Setting false still turns on the behavior; maybe a Lib bug
-      Lib.memcached_behavior_set(@struct, b_id, v_id)
-    end
-    
+    Lib.memcached_behavior_set(@struct, b_id, v_id)
   end  
       
 end
