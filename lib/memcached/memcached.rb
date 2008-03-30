@@ -14,10 +14,10 @@ class Memcached
     :support_cas => false,
     :tcp_nodelay => false,
     :show_not_found_backtraces => false,
-    :namespace => nil
+    :namespace => nil,
+    :sort_hosts => false 
   } 
-    
-  # :sort_hosts => false # XXX No effect due to libmemcached 0.16 bug
+      
   # :verify_key => false # XXX We do this ourselves already in Rlibmemcached.ns()
   
 #:stopdoc:
@@ -45,6 +45,7 @@ Valid option parameters are:
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
+<tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This is useful for consistent hashing. ( XXX really? )
 
 Please note that when non-blocking IO is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
@@ -55,8 +56,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     Lib.memcached_create(@struct)
 
     # Servers
-    # XXX We have to sort them ahead of time due to a libmemcached 0.16 bug
-    Array(servers).sort.each_with_index do |server, index|
+    Array(servers).each_with_index do |server, index|
       unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
         raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
       end
