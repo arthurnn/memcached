@@ -75,14 +75,6 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
   
-  def test_initialize_with_missing_server
-    # XXX Triggers abort trap with libmemcached --enable-debug.
-    cache = Memcached.new "127.0.0.1:43044"
-    assert_raises Memcached::SystemError do
-      cache.get key
-    end
-  end
-
   def test_initialize_without_namespace
     cache = Memcached.new @servers
     assert_equal nil, cache.options[:namespace]
