@@ -70,6 +70,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     @options = DEFAULTS.merge(opts)
     
     # Force :buffer_requests to use :no_block
+    # XXX Deleting the :no_block option should also work, but libmemcached doesn't seem to set it
+    # consistently
     options[:no_block] = true if options[:buffer_requests] 
     
     # Set the behaviors
