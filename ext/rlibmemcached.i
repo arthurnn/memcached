@@ -190,3 +190,6 @@ memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat
   return &(stat_ptr[index]);
 };
 %}
+
+// Expose the hash generation function, which is not included in any header
+unsigned int memcached_generate_hash(memcached_st *ptr, char *key, size_t key_length);

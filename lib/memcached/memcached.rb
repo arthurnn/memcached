@@ -343,6 +343,11 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   ### Operations helpers
   
   private
+  
+  # Returns the hash value for a master key
+  def hash(key)
+    Lib.memcached_generate_hash(@struct, key)
+  end
     
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
   def check_return_code(ret) #:doc:

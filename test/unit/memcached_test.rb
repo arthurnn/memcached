@@ -626,6 +626,10 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.instance_variable_get("@struct") 
   end
   
+  def test_hash_generation
+    assert [0, 1].include?(@cache.send(:hash, key))
+  end
+  
   private
   
   def key
