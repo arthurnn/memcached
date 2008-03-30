@@ -619,6 +619,11 @@ class MemcachedTest < Test::Unit::TestCase
     key = 'test_missing_server3'
     assert_equal 1, cache.send(:hash, key)
 
+    assert_raise(Memcached::SystemError) do
+      cache.set(key, @value)
+      cache.get(key)
+    end    
+    
     assert_nothing_raised do
       cache.set(key, @value)
       cache.get(key)

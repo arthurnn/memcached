@@ -30,36 +30,41 @@ class Memcached
   # Set a behavior option for this Memcached instance. Accepts a Symbol <tt>behavior</tt> and either <tt>true</tt>, <tt>false</tt>, or a Symbol for <tt>value</tt>. Arguments are validated and converted into integers for the struct setter method.
   def set_behavior(behavior, value) #:doc:
     raise ArgumentError, "No behavior #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]    
-    raise ArgumentError, "No behavior value #{value.inspect}" unless v_id = BEHAVIOR_VALUES[value]
     
     # Scoped validations; annoying
     msg =  "Invalid behavior value #{value.inspect} for #{behavior.inspect}" 
-    if behavior == :hash
-      raise ArgumentError, msg unless HASH_VALUES[value]
-    elsif behavior == :distribution
-      raise ArgumentError, msg unless DISTRIBUTION_VALUES[value]
+    case behavior 
+      when :hash
+        raise ArgumentError, msg unless HASH_VALUES[value]
+      when :distribution
+        raise ArgumentError, msg unless DISTRIBUTION_VALUES[value]
+      when :retry_timeout, :connect_timeout
+        raise ArgumentError, msg unless value.is_a? Fixnum and value > 0
+      else
+        raise ArgumentError, msg unless BEHAVIOR_VALUES[value]
     end
     
-    # STDERR.puts "Setting #{behavior}:#{b_id} => #{value}:#{v_id}"    
-    Lib.memcached_behavior_set(@struct, b_id, v_id)
+    value = BEHAVIOR_VALUES[value] || value    
+    # STDERR.puts "Setting #{behavior}:#{b_id} => #{value}:#{value}"    
+    Lib.memcached_behavior_set(@struct, b_id, value)
   end  
   
   # Get a behavior value for this Memcached instance. Accepts a Symbol.
   def get_behavior(behavior)
     raise ArgumentError, "No behavior #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]
-    v_id = Lib.memcached_behavior_get(@struct, b_id)        
+    value = Lib.memcached_behavior_get(@struct, b_id)        
 
-    if BEHAVIOR_VALUES.invert.has_key?(v_id) 
+    if BEHAVIOR_VALUES.invert.has_key?(value) 
       # False, nil are valid values so we can not rely on direct lookups
       case behavior
         # Scoped values; still annoying
-        when :hash then HASH_VALUES.invert[v_id]
-        when :distribution then DISTRIBUTION_VALUES.invert[v_id]
+        when :hash then HASH_VALUES.invert[value]
+        when :distribution then DISTRIBUTION_VALUES.invert[value]
         else
-          BEHAVIOR_VALUES.invert[v_id]
+          BEHAVIOR_VALUES.invert[value]
       end
     else
-      v_id
+      value
     end
   end
   

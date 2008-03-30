@@ -16,8 +16,10 @@ class Memcached
     :support_cas => false,
     :tcp_nodelay => false,
     :show_not_found_backtraces => false,
+    :retry_timeout => 60,
+    :connect_timeout => 60,
     :namespace => nil,
-    :sort_hosts => false 
+    :sort_hosts => false
   } 
       
   # :verify_key => false # XXX We do this ourselves already in Rlibmemcached.ns()
