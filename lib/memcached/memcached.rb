@@ -85,7 +85,10 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     BEHAVIORS.keys.each do |behavior|
       options[behavior] = get_behavior(behavior)
     end
-    
+
+    # Freeze the hash
+    options.freeze
+        
     # Namespace
     raise ArgumentError, "Invalid namespace" if options[:namespace].to_s =~ / /
     @namespace = options[:namespace].to_s

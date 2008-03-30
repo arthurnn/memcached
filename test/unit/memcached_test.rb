@@ -42,10 +42,16 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal 43043, cache.send(:server_structs).last.port
   end
   
-  def test_options
+  def test_options_are_set
     Memcached::DEFAULTS.merge(@nb_options).each do |key, expected|
       value = @nb_cache.options[key]
       assert(expected == value, "#{key} should be #{expected} but was #{value}")
+    end
+  end
+  
+  def test_options_are_frozen
+    assert_raise(TypeError) do
+      @cache.options[:no_block] = true
     end
   end
   
@@ -614,7 +620,7 @@ class MemcachedTest < Test::Unit::TestCase
     # Verify that the second server is the hash target
     key = 'test_missing_server3'
     assert_equal 1, cache.send(:hash, key)
-    
+
     assert_nothing_raised do
       cache.set(key, @value)
       cache.get(key)
