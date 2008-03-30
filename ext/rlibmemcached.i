@@ -1,6 +1,7 @@
 %module rlibmemcached
 %{
 #include <libmemcached/memcached.h>
+#include <libmemcached/memcached_constants.h>
 %}
 
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_st;
@@ -89,6 +90,7 @@
 };
 
 %include "/opt/local/include/libmemcached/memcached.h"
+%include "/opt/local/include/libmemcached/memcached_constants.h"
 
 //// Custom C functions
 

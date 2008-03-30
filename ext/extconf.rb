@@ -21,8 +21,9 @@ dir_config 'rlibmemcached'
 unless find_library 'memcached', 'memcached_server_add', *ENV['LD_LIBRARY_PATH'].to_s.split(":")
   raise "shared library 'libmemcached' not found"
 end
-unless find_header 'libmemcached/memcached.h', *ENV['INCLUDE_PATH'].to_s.split(":")
-  raise "header file 'libmemcached/memcached.h' not  found"
+
+['libmemcached/memcached.h', 'libmemcached/memcached_constants.h'].each do |include|
+  raise "header file '#{include}' not  found" unless find_header include, *ENV['INCLUDE_PATH'].to_s.split(":")
 end
 
 create_makefile 'rlibmemcached'
