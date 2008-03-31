@@ -17,7 +17,7 @@ class Memcached
     :tcp_nodelay => false,
     :show_not_found_backtraces => false,
     :retry_timeout => 60,
-    :connect_timeout => 60,
+    :connect_timeout => 5,
     :namespace => nil,
     :sort_hosts => false
   } 
@@ -49,7 +49,7 @@ Valid option parameters are:
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
-<tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This is useful for consistent hashing. ( XXX really? )
+<tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is only allowed if <tt>:distribution => :modula</tt>.
 
 Please note that when non-blocking IO is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
