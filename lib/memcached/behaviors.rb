@@ -60,6 +60,7 @@ class Memcached
         # Scoped values; still annoying
         when :hash then HASH_VALUES.invert[value]
         when :distribution then DISTRIBUTION_VALUES.invert[value]
+        when :retry_timeout, :connect_timeout then value
         else
           BEHAVIOR_VALUES.invert[value]
       end
