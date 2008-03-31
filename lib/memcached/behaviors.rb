@@ -34,14 +34,11 @@ class Memcached
     # Scoped validations; annoying
     msg =  "Invalid behavior value #{value.inspect} for #{behavior.inspect}" 
     case behavior 
-      when :hash
-        raise ArgumentError, msg unless HASH_VALUES[value]
-      when :distribution
-        raise ArgumentError, msg unless DISTRIBUTION_VALUES[value]
-      when :retry_timeout, :connect_timeout
-        raise ArgumentError, msg unless value.is_a? Fixnum and value > 0
+      when :hash then raise(ArgumentError, msg) unless HASH_VALUES[value]
+      when :distribution then raise(ArgumentError, msg) unless DISTRIBUTION_VALUES[value]
+      when :retry_timeout, :connect_timeout then raise(ArgumentError, msg) unless value.is_a? Fixnum and value > 0
       else
-        raise ArgumentError, msg unless BEHAVIOR_VALUES[value]
+        raise(ArgumentError, msg) unless BEHAVIOR_VALUES[value]
     end
     
     value = BEHAVIOR_VALUES[value] || value    
