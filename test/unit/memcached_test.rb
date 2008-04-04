@@ -126,7 +126,9 @@ class MemcachedTest < Test::Unit::TestCase
       
     # Reversed with sort_hosts
     cache = Memcached.new(@servers.sort.reverse,
-      :sort_hosts => true)
+      :sort_hosts => true,
+      :distribution => :modula
+    )
     assert_equal @servers.sort, 
       cache.servers
     cache.destroy
