@@ -59,6 +59,15 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     @struct = Lib::MemcachedSt.new    
     Lib.memcached_create(@struct)
 
+    # Servers
+    Array(servers).each_with_index do |server, index|
+      unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
+        raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
+      end
+      host, port = server.split(":")
+      Lib.memcached_server_add(@struct, host, port.to_i)
+    end  
+
     # Merge option defaults
     @options = DEFAULTS.merge(opts)
     
@@ -86,15 +95,6 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 
     # Freeze the hash
     options.freeze
-
-    # Add the servers; must be done after the behaviors are set
-    Array(servers).each_with_index do |server, index|
-      unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
-        raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
-      end
-      host, port = server.split(":")
-      Lib.memcached_server_add(@struct, host, port.to_i)
-    end  
         
     # Namespace
     raise ArgumentError, "Invalid namespace" if options[:namespace].to_s =~ / /
