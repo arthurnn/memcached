@@ -5,8 +5,6 @@ The Memcached client class.
 class Memcached
 
   FLAGS = 0x0
-  
-  UINT64 = 0
 
   DEFAULTS = {
     :hash => :default,
@@ -189,7 +187,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def set(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_send(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS, UINT64, Lib::SET_OP)
+      Lib.memcached_set(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
     )
   end
 
@@ -197,7 +195,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def add(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_send(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS, UINT64, Lib::ADD_OP)
+      Lib.memcached_add(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
     )
   end
 
@@ -228,7 +226,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def replace(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_send(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS, UINT64, Lib::REPLACE_OP)
+      Lib.memcached_replace(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
     )
   end
 
@@ -238,7 +236,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def append(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Lib.memcached_send(@struct, Lib.ns(@namespace, key), value.to_s, IGNORED, FLAGS, UINT64, Lib::APPEND_OP)
+      Lib.memcached_append(@struct, Lib.ns(@namespace, key), value.to_s, IGNORED, FLAGS)
     )
   end
   
@@ -246,7 +244,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def prepend(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Lib.memcached_send(@struct, Lib.ns(@namespace, key), value.to_s, IGNORED, FLAGS, UINT64, Lib::PREPEND_OP)
+      Lib.memcached_prepend(@struct, Lib.ns(@namespace, key), value.to_s, IGNORED, FLAGS)
     )
   end
   
@@ -264,7 +262,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     value = marshal ? Marshal.dump(value) : value.to_s
     
     check_return_code(
-      Lib.memcached_send(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS, @struct.result.cas, Lib::CAS_OP)
+      Lib.memcached_cas(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS, @struct.result.cas)
     )
   end
 
