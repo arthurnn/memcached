@@ -11,10 +11,12 @@ class Memcached
     :distribution => :consistent,
     :no_block => false,
     :buffer_requests => false,
+    :cache_lookups => true,
     :support_cas => false,
     :tcp_nodelay => false,
     :show_not_found_backtraces => false,
     :retry_timeout => 60,
+#    :poll_timeout => 5,
     :connect_timeout => 5,
     :namespace => nil,
     :sort_hosts => false

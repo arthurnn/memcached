@@ -22,13 +22,13 @@ raise "shared library 'libmemcached' not found" unless
   find_library('memcached', 'memcached_server_add', *ENV['LD_LIBRARY_PATH'].to_s.split(":"))
 
 [ 
-  'libmemcached/memcached.h', 
+  'libmemcached/memcached.h',
   'libmemcached/memcached_constants.h', 
   'libmemcached/memcached_storage.h',
   'libmemcached/memcached_result.h',
   'libmemcached/memcached_server.h'
 ].each do |header|
-  raise "header file '#{include}' not  found" unless 
+  raise "header file '#{header}' not  found" unless 
     find_header(header, *ENV['INCLUDE_PATH'].to_s.split(":"))
 end
 

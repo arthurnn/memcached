@@ -622,7 +622,6 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key)
     end    
 
-    return
     # XXX Waiting on failover support in Libmemcached    
     assert_nothing_raised do
       cache.set(key, @value)
