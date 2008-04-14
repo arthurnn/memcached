@@ -29,7 +29,7 @@ For Linux, download and extract the {libmemcached tarball}[http://download.tange
   make && sudo make install
   
 For OS X, you may be able to install it from MacPorts:
-  sudo port install libmemcached @0.19_0
+  sudo port install libmemcached @0.19
   
 Now install the gem:
   sudo gem install memcached --no-rdoc --no-ri
