@@ -277,6 +277,13 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     )  
   end
   
+  # Flushes all key/value pairs from the server.
+  def flush
+    check_return_code(
+      Lib.memcached_flush(@struct, 0)
+    )
+  end
+  
 ### Getters  
   
   # Gets a key's value from the server. Accepts a String <tt>key</tt> or array of String <tt>keys</tt>.

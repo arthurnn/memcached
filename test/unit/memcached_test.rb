@@ -273,7 +273,19 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(Memcached::NotFound) do
       @cache.delete key
     end
-  end  
+  end
+  
+  # Flush
+  
+  def test_flush
+    key1 = "#{key}_test_1"
+    key2 = "#{key}_test_2"
+    @cache.set key1, "test_1"
+    @cache.set key2, "test_2"
+    @cache.flush
+    assert_raise(Memcached::NotFound) { @cache.get key1 }
+    assert_raise(Memcached::NotFound) { @cache.get key2 }
+  end
   
   # Add
 
