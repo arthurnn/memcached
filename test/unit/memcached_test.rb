@@ -278,13 +278,13 @@ class MemcachedTest < Test::Unit::TestCase
   # Flush
   
   def test_flush
-    key1 = "#{key}_test_1"
-    key2 = "#{key}_test_2"
-    @cache.set key1, "test_1"
-    @cache.set key2, "test_2"
+    @cache.set key, @value
+    assert_equal @value, 
+      @cache.get(key)
     @cache.flush
-    assert_raise(Memcached::NotFound) { @cache.get key1 }
-    assert_raise(Memcached::NotFound) { @cache.get key2 }
+    assert_raise(Memcached::NotFound) do 
+      @cache.get key
+    end
   end
   
   # Add
