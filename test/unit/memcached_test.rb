@@ -621,7 +621,7 @@ class MemcachedTest < Test::Unit::TestCase
   
   def test_missing_server
     cache = Memcached.new(
-      [@servers.last, '127.0.0.1:43044'], # Use a server that isn't running
+      [@servers.last, '127.0.0.1:43041'], # Use a server that isn't running
       :namespace => @namespace
     )
     
@@ -639,6 +639,31 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set(key, @value)
       cache.get(key)
     end    
+  end
+  
+  def test_consistent_hashing
+    cache = Memcached.new(
+      @servers + ['127.0.0.1:43044', '127.0.0.1:43045', '127.0.0.1:43046'], # Five servers
+      :namespace => @namespace
+    )
+    
+    keys = ['zero1', 'one_', 'two__', 'three=', 'four-']
+    keys.each_with_index do |key, index|
+      assert_equal index, cache.send(:hash, key)
+    end
+
+    cache = Memcached.new(
+      @servers + ['127.0.0.1:43044', '127.0.0.1:43046'], # Pull a server
+      :namespace => @namespace
+    )
+    
+    targets, results = [], []
+    keys.each_with_index do |key, index|
+      targets << index
+      results << cache.send(:hash, key)
+    end
+    
+    assert_equal targets, results
   end
 
   # Concurrency
@@ -679,16 +704,6 @@ class MemcachedTest < Test::Unit::TestCase
   def key
     caller.first[/`(.*)'/, 1]
   end
-  
-  def start(port)
-    system "memcached -p #{port} >> /tmp/memcached.log 2>&1 &"  
-  end
-  
-  def stop(port)
-    `ps awx`.split("\n").grep(/#{port}/).map do |process| 
-      system("kill -9 #{process.to_i}")
-    end  
-  end
-
+ 
 end
 
