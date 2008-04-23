@@ -645,8 +645,9 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def test_consistent_hashing
+    # Five servers
     cache = Memcached.new(
-      @servers + ['127.0.0.1:43044', '127.0.0.1:43045', '127.0.0.1:43046'], # Five servers
+      @servers + ['127.0.0.1:43044', '127.0.0.1:43045', '127.0.0.1:43046'], 
       :namespace => @namespace
     )
     
@@ -655,8 +656,9 @@ class MemcachedTest < Test::Unit::TestCase
       assert_equal index, cache.send(:hash, key)
     end
 
+    # Pull a server
     cache = Memcached.new(
-      @servers + ['127.0.0.1:43044', '127.0.0.1:43046'], # Pull a server
+      @servers + ['127.0.0.1:43044', '127.0.0.1:43046'],
       :namespace => @namespace
     )
     
@@ -664,9 +666,8 @@ class MemcachedTest < Test::Unit::TestCase
     keys.each_with_index do |key, index|
       targets << index
       results << cache.send(:hash, key)
-    end
-    
-    assert_equal targets, results
+    end    
+    assert_equal targets, results    
   end
 
   # Concurrency
