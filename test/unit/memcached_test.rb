@@ -622,7 +622,8 @@ class MemcachedTest < Test::Unit::TestCase
   def test_missing_server
     cache = Memcached.new(
       [@servers.last, '127.0.0.1:43041'], # Use a server that isn't running
-      :namespace => @namespace
+      :namespace => @namespace,
+      :failover => true
     )
     
     # Verify that the second server is the hash target
@@ -634,7 +635,9 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key)
     end    
 
-    # XXX Waiting on failover support in Libmemcached    
+    # Verify that we are targeting the first server now
+    assert_equal 0, cache.send(:hash, key)
+
     assert_nothing_raised do
       cache.set(key, @value)
       cache.get(key)

@@ -22,6 +22,8 @@ class Memcached
 
   DISTRIBUTION_VALUES = {}
   BEHAVIOR_VALUES.merge!(load_constants("MEMCACHED_DISTRIBUTION_", DISTRIBUTION_VALUES, 2))
+  
+  DIRECT_VALUE_BEHAVIORS = [:retry_timeout, :connect_timeout, :socket_recv_size, :poll_timeout, :socket_send_size]
 
 #:startdoc:
 
@@ -36,7 +38,7 @@ class Memcached
     case behavior 
       when :hash then raise(ArgumentError, msg) unless HASH_VALUES[value]
       when :distribution then raise(ArgumentError, msg) unless DISTRIBUTION_VALUES[value]
-      when :retry_timeout, :connect_timeout then raise(ArgumentError, msg) unless value.is_a? Fixnum and value > 0
+      when *DIRECT_VALUE_BEHAVIORS then raise(ArgumentError, msg) unless value.is_a? Fixnum and value > 0
       else
         raise(ArgumentError, msg) unless BEHAVIOR_VALUES[value]
     end
@@ -57,7 +59,7 @@ class Memcached
         # Scoped values; still annoying
         when :hash then HASH_VALUES.invert[value]
         when :distribution then DISTRIBUTION_VALUES.invert[value]
-        when :retry_timeout, :connect_timeout then value
+        when *DIRECT_VALUE_BEHAVIORS then value
         else
           BEHAVIOR_VALUES.invert[value]
       end

@@ -18,7 +18,8 @@ class Memcached
 #    :poll_timeout => 5,
     :connect_timeout => 5,
     :namespace => nil,
-    :sort_hosts => false
+    :sort_hosts => false,
+    :failover => false
   } 
       
   # :verify_key => false # XXX We do this ourselves already in Rlibmemcached.ns()
@@ -57,15 +58,9 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     @struct = Lib::MemcachedSt.new    
     Lib.memcached_create(@struct)
 
-    # Servers
-    Array(servers).each_with_index do |server, index|
-      unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
-        raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
-      end
-      host, port = server.split(":")
-      Lib.memcached_server_add(@struct, host, port.to_i)
-    end  
-
+    # Set the servers on the struct
+    set_servers(servers)
+    
     # Merge option defaults
     @options = DEFAULTS.merge(opts)
     
@@ -76,9 +71,10 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     
     # Force :ketama to use :consistent_ketama, the rest use :modula
     if options[:hash] == :ketama
-      options[:distribution] == :consistent_ketama
+      options[:distribution] = :consistent_ketama
+      options[:ketama] = true
     else
-      options[:distribution] == :modula
+      options[:distribution] = :modula
     end
     
     # Disallow :sort_hosts with consistent hashing
@@ -86,17 +82,13 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       raise ArgumentError, ":sort_hosts defeats :ketama hashing"
     end
     
-    # Set the behaviors
-    options.each do |option, value|
-      unless [:namespace, :show_not_found_backtraces].include? option
-        set_behavior(option, value) 
-      end
-    end
-    
+    # Set the behaviors on the struct
+    set_behaviors
+     
     # Merge the actual behaviors back in
     BEHAVIORS.keys.each do |behavior|
       options[behavior] = get_behavior(behavior)
-    end
+    end    
 
     # Freeze the hash
     options.freeze
@@ -156,10 +148,13 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   end  
   
   # Reset the state of the libmemcached struct. Fixes out-of-sync errors with the Memcached pool.
-  def reset
-    new_struct = Lib.memcached_clone(nil, @struct)
-    Lib.memcached_free(@struct)
-    @struct = new_struct
+  def reset(current_servers = nil)
+    current_servers ||= servers
+    Lib.memcached_free(@struct)        
+    @struct = Lib::MemcachedSt.new    
+    Lib.memcached_create(@struct)
+    set_servers(current_servers)
+    set_behaviors
   end  
   
   #:stopdoc:
@@ -375,7 +370,48 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def check_return_code(ret) #:doc:
     # 0.16 --enable-debug returns 0 for an ActionQueued result but --disable-debug does not
     return if ret == 0 or ret == 31
-    raise EXCEPTIONS[ret], ""
+
+    # SystemError; eject from the pool
+    if ret == 25 and options[:failover]
+      failed = sweep_servers
+      raise EXCEPTIONS[ret], "Server #{failed} failed permanently"
+    else
+      raise EXCEPTIONS[ret], ""      
+    end
+  end  
+
+  # Eject the first dead server we find from the pool and reset the struct
+  def sweep_servers
+    server_structs.each do |server|
+      if server.next_retry > Time.now 
+        server_name = "#{server.hostname}:#{server.port}"
+        current_servers = servers
+        current_servers.delete(server_name) 
+        reset(current_servers)
+        return server_name        
+      end
+    end
+    "(unknown)"
+  end
+  
+  # Set the servers on the struct
+  def set_servers(servers)
+    Array(servers).each_with_index do |server, index|
+      unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
+        raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
+      end
+      host, port = server.split(":")
+      Lib.memcached_server_add(@struct, host, port.to_i)
+    end    
+  end
+  
+  # Set the behaviors on the struct from the current options
+  def set_behaviors
+    options.each do |option, value|
+      unless [:namespace, :show_not_found_backtraces, :failover].include? option
+        set_behavior(option, value) 
+      end
+    end   
   end  
     
 end
