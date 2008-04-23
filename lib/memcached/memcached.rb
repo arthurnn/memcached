@@ -7,8 +7,7 @@ class Memcached
   FLAGS = 0x0
 
   DEFAULTS = {
-    :hash => :default,
-    :distribution => :consistent,
+    :hash => :ketama,
     :no_block => false,
     :buffer_requests => false,
     :cache_lookups => true,
@@ -42,14 +41,13 @@ Hostname lookups are not currently supported; you need to use the IP address.
 Valid option parameters are:
 
 <tt>:namespace</tt>:: A namespace string to prepend to every key.
-<tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:ketama</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest.
-<tt>:distribution</tt>:: The type of distribution function to use. Possible values are <tt>:modula</tt> and <tt>:consistent</tt>. Note that this is decoupled from the choice of hash function.
+<tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:ketama</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest, but <tt>:ketama</tt> is the best at maintaining cache coherency. This library defaults to <tt>:ketama</tt>, not to <tt>:default</tt>.
 <tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
-<tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is only allowed if <tt>:distribution => :modula</tt>.
+<tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats ketama hashing.
 
 Please note that when non-blocking IO is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
@@ -76,9 +74,16 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # consistently
     options[:no_block] = true if options[:buffer_requests] 
     
+    # Force :ketama to use :consistent_ketama, the rest use :modula
+    if options[:hash] == :ketama
+      options[:distribution] == :g_ketama
+    else
+      options[:distribution] == :modula
+    end
+    
     # Disallow :sort_hosts with consistent hashing
-    if options[:sort_hosts] and options[:distribution] == :consistent
-      raise ArgumentError, ":sort_hosts defeats :consistent hashing"
+    if options[:sort_hosts] and options[:hash] == :ketama
+      raise ArgumentError, ":sort_hosts defeats :ketama hashing"
     end
     
     # Set the behaviors

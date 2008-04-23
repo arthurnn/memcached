@@ -9,7 +9,7 @@ class MemcachedTest < Test::Unit::TestCase
     
     @options = {      
       :namespace => @namespace, 
-      :distribution => :modula
+      :hash => :default
     }
     @cache = Memcached.new(@servers, @options)
     
@@ -17,7 +17,7 @@ class MemcachedTest < Test::Unit::TestCase
       :namespace => @namespace, 
       :no_block => true, 
       :buffer_requests => true, 
-      :distribution => :modula
+      :hash => :default
     }
     @nb_cache = Memcached.new(@servers, @nb_options)
 
@@ -127,7 +127,7 @@ class MemcachedTest < Test::Unit::TestCase
     # Reversed with sort_hosts
     cache = Memcached.new(@servers.sort.reverse,
       :sort_hosts => true,
-      :distribution => :modula
+      :hash => :default
     )
     assert_equal @servers.sort, 
       cache.servers
@@ -620,6 +620,8 @@ class MemcachedTest < Test::Unit::TestCase
   # Server removal and consistent hashing
   
   def test_missing_server
+    start 43044
+    
     cache = Memcached.new(
       [@servers.last, '127.0.0.1:43044'], # Use a server that isn't running
       :namespace => @namespace
@@ -678,6 +680,16 @@ class MemcachedTest < Test::Unit::TestCase
   
   def key
     caller.first[/`(.*)'/, 1]
+  end
+  
+  def start(port)
+    system "memcached -p #{port} >> /tmp/memcached.log 2>&1 &"  
+  end
+  
+  def stop(port)
+    `ps awx`.split("\n").grep(/#{port}/).map do |process| 
+      system("kill -9 #{process.to_i}")
+    end  
   end
 
 end
