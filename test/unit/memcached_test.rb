@@ -620,8 +620,6 @@ class MemcachedTest < Test::Unit::TestCase
   # Server removal and consistent hashing
   
   def test_missing_server
-    start 43044
-    
     cache = Memcached.new(
       [@servers.last, '127.0.0.1:43044'], # Use a server that isn't running
       :namespace => @namespace

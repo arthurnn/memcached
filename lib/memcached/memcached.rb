@@ -76,7 +76,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     
     # Force :ketama to use :consistent_ketama, the rest use :modula
     if options[:hash] == :ketama
-      options[:distribution] == :g_ketama
+      options[:distribution] == :consistent_ketama
     else
       options[:distribution] == :modula
     end
