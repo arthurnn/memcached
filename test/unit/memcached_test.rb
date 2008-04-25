@@ -9,7 +9,8 @@ class MemcachedTest < Test::Unit::TestCase
     
     @options = {      
       :namespace => @namespace, 
-      :hash => :default
+      :hash => :default,
+      :distribution => :modula
     }
     @cache = Memcached.new(@servers, @options)
     
@@ -127,7 +128,7 @@ class MemcachedTest < Test::Unit::TestCase
     # Reversed with sort_hosts
     cache = Memcached.new(@servers.sort.reverse,
       :sort_hosts => true,
-      :hash => :default
+      :distribution => :modula
     )
     assert_equal @servers.sort, 
       cache.servers
@@ -623,7 +624,8 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new(
       [@servers.last, '127.0.0.1:43041'], # Use a server that isn't running
       :namespace => @namespace,
-      :failover => true
+      :failover => true,
+      :hash => :md5
     )
     
     # Verify that the second server is the hash target
@@ -648,13 +650,18 @@ class MemcachedTest < Test::Unit::TestCase
     # Five servers
     cache = Memcached.new(
       @servers + ['127.0.0.1:43044', '127.0.0.1:43045', '127.0.0.1:43046'], 
-      :namespace => @namespace
+      :namespace => @namespace,
+      :hash => :md5
     )
     
-    keys = ['zero1', 'one_', 'two__', 'three=', 'four-']
+    keys = ['sfdfdszxc', 'onesf', 'jhpo0', 'ajjz', 'lmnk']
+    
+    targets, results = [], []
     keys.each_with_index do |key, index|
-      assert_equal index, cache.send(:hash, key)
-    end
+      targets << index
+      results << cache.send(:hash, key)
+    end    
+    assert_equal targets, results    
 
     # Pull a server
     cache = Memcached.new(

@@ -9960,7 +9960,6 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_HASH_FNV1A_64", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_64)));
   rb_define_const(mRlibmemcached, "MEMCACHED_HASH_FNV1_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1_32)));
   rb_define_const(mRlibmemcached, "MEMCACHED_HASH_FNV1A_32", SWIG_From_int((int)(MEMCACHED_HASH_FNV1A_32)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_HASH_KETAMA", SWIG_From_int((int)(MEMCACHED_HASH_KETAMA)));
   rb_define_const(mRlibmemcached, "MEMCACHED_HASH_HSIEH", SWIG_From_int((int)(MEMCACHED_HASH_HSIEH)));
   rb_define_const(mRlibmemcached, "MEMCACHED_HASH_MURMUR", SWIG_From_int((int)(MEMCACHED_HASH_MURMUR)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CONNECTION_UNKNOWN", SWIG_From_int((int)(MEMCACHED_CONNECTION_UNKNOWN)));
