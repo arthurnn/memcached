@@ -9,7 +9,7 @@ class Memcached
   DEFAULTS = {
     :hash => :default,
     :no_block => false,
-    :distribution => :consistent,
+    :distribution => :consistent_wheel,
     :buffer_requests => false,
     :cache_lookups => true,
     :support_cas => false,
