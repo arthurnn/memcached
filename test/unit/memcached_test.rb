@@ -114,13 +114,28 @@ class MemcachedTest < Test::Unit::TestCase
   
   def test_initialize_sort_hosts
     # Original
-    cache = Memcached.new(@servers.sort)
+    cache = Memcached.new(@servers.sort,
+      :sort_hosts => false,
+      :distribution => :modula
+    )
+    assert_equal @servers.sort, 
+      cache.servers
+    cache.destroy
+
+    # Original with sort_hosts
+    cache = Memcached.new(@servers.sort,
+      :sort_hosts => true,
+      :distribution => :modula
+    )
     assert_equal @servers.sort, 
       cache.servers
     cache.destroy
     
     # Reversed 
-    cache = Memcached.new(@servers.sort.reverse)
+    cache = Memcached.new(@servers.sort.reverse,
+      :sort_hosts => false,
+      :distribution => :modula
+    )
       assert_equal @servers.sort.reverse, 
     cache.servers
     cache.destroy
@@ -621,6 +636,7 @@ class MemcachedTest < Test::Unit::TestCase
   # Server removal and consistent hashing
   
   def test_missing_server
+    # XXX Does this test actually do anything? :hash behaves oddly
     cache = Memcached.new(
       [@servers.last, '127.0.0.1:43041'], # Use a server that isn't running
       :namespace => @namespace,
@@ -647,18 +663,19 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def test_consistent_hashing
+
+    keys = %w(EN6qtgMW n6Oz2W4I ss4A8Brr QShqFLZt Y3hgP9bs CokDD4OD Nd3iTSE1 24vBV4AU H9XBUQs5 E5j8vUq1 AzSh8fva PYBlK2Pi Ke3TgZ4I AyAIYanO oxj8Xhyd eBFnE6Bt yZyTikWQ pwGoU7Pw 2UNDkKRN qMJzkgo2 keFXbQXq pBl2QnIg ApRl3mWY wmalTJW1 TLueug8M wPQL4Qfg uACwus23 nmOk9R6w lwgZJrzJ v1UJtKdG RK629Cra U2UXFRqr d9OQLNl8 KAm1K3m5 Z13gKZ1v tNVai1nT LhpVXuVx pRib1Itj I1oLUob7 Z1nUsd5Q ZOwHehUa aXpFX29U ZsnqxlGz ivQRjOdb mB3iBEAj)
+    
     # Five servers
     cache = Memcached.new(
       @servers + ['127.0.0.1:43044', '127.0.0.1:43045', '127.0.0.1:43046'], 
-      :namespace => @namespace,
-      :hash => :md5
-    )
+      :namespace => @namespace
+    )        
     
-    keys = %w(EN6qtgMW n6Oz2W4I ss4A8Brr QShqFLZt Y3hgP9bs CokDD4OD Nd3iTSE1 24vBV4AU H9XBUQs5 E5j8vUq1 AzSh8fva PYBlK2Pi Ke3TgZ4I AyAIYanO oxj8Xhyd eBFnE6Bt yZyTikWQ pwGoU7Pw 2UNDkKRN qMJzkgo2 keFXbQXq pBl2QnIg ApRl3mWY wmalTJW1 TLueug8M wPQL4Qfg uACwus23 nmOk9R6w lwgZJrzJ v1UJtKdG RK629Cra U2UXFRqr d9OQLNl8 KAm1K3m5 Z13gKZ1v tNVai1nT LhpVXuVx pRib1Itj I1oLUob7 Z1nUsd5Q ZOwHehUa aXpFX29U ZsnqxlGz ivQRjOdb mB3iBEAj)
-    
-    targets = keys.map do |key|
-      cache.send(:hash, key)
-    end    
+    cache.flush    
+    keys.each do |key|
+      cache.set(key, @value)
+    end 
 
     # Pull a server
     cache = Memcached.new(
@@ -666,16 +683,15 @@ class MemcachedTest < Test::Unit::TestCase
       :namespace => @namespace
     )
     
-    results = keys.map do |key|
-      cache.send(:hash, key)
-    end    
-
     failed = 0
-    targets.each_with_index do |correct, i|
-      returned = results[i]
-      failed += 1 if correct != returned
+    keys.each_with_index do |key, i|
+      begin
+        cache.get(key)
+      rescue Memcached::NotFound
+        failed += 1
+      end
     end
-    
+
     assert(failed < keys.size / 3, "#{failed} failed out of #{keys.size}")   
   end
 

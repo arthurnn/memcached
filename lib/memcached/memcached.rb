@@ -9,7 +9,7 @@ class Memcached
   DEFAULTS = {
     :hash => :default,
     :no_block => false,
-    :distribution => :consistent_wheel,
+    :distribution => :consistent,
     :buffer_requests => false,
     :cache_lookups => true,
     :support_cas => false,
@@ -20,7 +20,7 @@ class Memcached
     :connect_timeout => 5,
     :namespace => nil,
     :sort_hosts => false,
-    :failover => false
+    :failover => true
   } 
       
   # :verify_key => false # XXX We do this ourselves already in Rlibmemcached.ns()
@@ -44,7 +44,8 @@ Valid option parameters are:
 
 <tt>:namespace</tt>:: A namespace string to prepend to every key.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
-<tt>:distribution</tt>:: Either <tt>:modula</tt> or <tt>:consistent</tt>. Default <tt>:consistent</tt>.
+<tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent</tt>, or <tt>:consistent_wheel</tt>. Default <tt>:consistent</tt>.
+<tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>true</tt>.
 <tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
