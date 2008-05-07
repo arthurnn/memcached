@@ -276,7 +276,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Flushes all key/value pairs from all the servers.
   def flush
     check_return_code(
-      Lib.memcached_flush(@struct, 0)
+      Lib.memcached_flush(@struct, IGNORED)
     )
   end
   
