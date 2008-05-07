@@ -1,5 +1,5 @@
 
-v0.10. Failover support. Finally close consistent hashing bugs in libmemcached 0.20.
+v0.10. Move to libmemcached 0.20. Failover support. Close consistent hashing bugs.
 
 v0.9. Move to libmemcached 0.19. Add some failover tests, but we are still waiting on libmemcached's replication branch for them to actually be useful. Fix CAS bug (ktheory).
 
