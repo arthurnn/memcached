@@ -20,7 +20,7 @@ class Memcached
     :connect_timeout => 5,
     :namespace => nil,
     :sort_hosts => false,
-    :failover => true
+    :failover => false
   } 
       
   # :verify_key => false # XXX We do this ourselves already in Rlibmemcached.ns()
@@ -44,14 +44,14 @@ Valid option parameters are:
 
 <tt>:namespace</tt>:: A namespace string to prepend to every key.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
-<tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent</tt>, or <tt>:consistent_wheel</tt>. Default <tt>:consistent</tt>.
-<tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>true</tt>. Note that in the event of a server failure, <tt>:failover</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
-<tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
+<tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent</tt>, or <tt>:consistent_wheel</tt>. Defaults to <tt>:consistent</tt>, which is ketama-compatible.
+<tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>false</tt>. Note that in the event of a server failure, <tt>:failover</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
+<tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Defaults to <tt>false</tt> because it imposes a slight performance penalty. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
-<tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing.
+<tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 
 Please note that when non-blocking IO is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
@@ -128,6 +128,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # runs much faster, but your instance will segfault if you try to call any other methods on it
   # after destroy. Defaults to <tt>true</tt>, which safely overwrites all instance methods.
   def destroy(disable_methods = true)
+    # XXX Should be implemented with rb_wrap_struct
     Lib.memcached_free(@struct)
     @struct = nil
     
@@ -142,7 +143,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     end
   end  
   
-  # Reset the state of the libmemcached struct. Fixes out-of-sync errors with the Memcached pool.
+  # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
   def reset(current_servers = nil)
     current_servers ||= servers
     Lib.memcached_free(@struct)        
@@ -272,7 +273,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     )  
   end
   
-  # Flushes all key/value pairs from the server.
+  # Flushes all key/value pairs from all the servers.
   def flush
     check_return_code(
       Lib.memcached_flush(@struct, 0)
@@ -377,6 +378,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 
   # Eject the first dead server we find from the pool and reset the struct
   def sweep_servers
+    # XXX This method is annoying, but necessary until we get Lib.memcached_delete_server or equivalent.
     server_structs.each do |server|
       if server.next_retry > Time.now 
         server_name = "#{server.hostname}:#{server.port}"
