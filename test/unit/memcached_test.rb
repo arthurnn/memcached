@@ -4,7 +4,7 @@ require "#{File.dirname(__FILE__)}/../test_helper"
 class MemcachedTest < Test::Unit::TestCase
 
   def setup
-    @servers = ['127.0.0.1:43042', '127.0.0.1:43043']
+    @servers = ['localhost:43042', 'localhost:43043']
 
     # Maximum allowed prefix key size
     @prefix_key = 'prefix_key_' 
@@ -40,9 +40,15 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new @servers, :prefix_key => 'test'
     assert_equal 'test', cache.options[:prefix_key]
     assert_equal 2, cache.send(:server_structs).size
+    assert_equal 'localhost', cache.send(:server_structs).first.hostname
+    assert_equal 'localhost', cache.send(:server_structs).last.hostname
+    assert_equal 43043, cache.send(:server_structs).last.port
+  end
+  
+  def test_initialize_with_ip_addresses
+    cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043'], :prefix_key => 'test'  
     assert_equal '127.0.0.1', cache.send(:server_structs).first.hostname
     assert_equal '127.0.0.1', cache.send(:server_structs).last.hostname
-    assert_equal 43043, cache.send(:server_structs).last.port
   end
   
   def test_options_are_set
@@ -67,9 +73,21 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def test_initialize_with_invalid_server_strings
-    assert_raise(ArgumentError) { Memcached.new "localhost:43042" }
-    assert_raise(ArgumentError) { Memcached.new "127.0.0.1:memcached" }
-    assert_raise(ArgumentError) { Memcached.new "127.0.0.1:43043:1" }
+    assert_raise(ArgumentError) { Memcached.new ":43042" }
+    assert_raise(ArgumentError) { Memcached.new "localhost:memcached" }
+    assert_raise(ArgumentError) { Memcached.new "local host:43043:1" }
+  end
+  
+  if ENV['USER'] == "eweaver"
+    def test_initialize_with_resolvable_hosts
+     `hostname` =~ /(chloe|mackenzie)/
+      host = "#{$1}.lan"
+      cache = Memcached.new ["#{host}:43042"]
+      assert_equal host, cache.send(:server_structs).first.hostname
+      
+      cache.set(key, @value)
+      assert_equal @value, cache.get(key)
+    end
   end
   
   def test_initialize_with_invalid_options
@@ -159,7 +177,7 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def test_initialize_single_server
-    cache = Memcached.new '127.0.0.1:43042'
+    cache = Memcached.new 'localhost:43042'
     assert_equal nil, cache.options[:prefix_key]
     assert_equal 1, cache.send(:server_structs).size
   end
@@ -633,14 +651,14 @@ class MemcachedTest < Test::Unit::TestCase
   
   def test_missing_server
     cache = Memcached.new(
-      [@servers.last, '127.0.0.1:43041'], # Use a server that isn't running
+      [@servers.last, 'localhost:43041'], # Use a server that isn't running
       :prefix_key => @prefix_key,
       :failover => true,
       :hash => :md5
     )
     
     # Hit second server
-    key = 'test_missing_server10'
+    key = 'test_missing_server9'
     assert_raise(Memcached::SystemError) do
       cache.set(key, @value)
       cache.get(key)
@@ -659,7 +677,7 @@ class MemcachedTest < Test::Unit::TestCase
     
     # Five servers
     cache = Memcached.new(
-      @servers + ['127.0.0.1:43044', '127.0.0.1:43045', '127.0.0.1:43046'], 
+      @servers + ['localhost:43044', 'localhost:43045', 'localhost:43046'], 
       :prefix_key => @prefix_key
     )        
     
@@ -670,7 +688,7 @@ class MemcachedTest < Test::Unit::TestCase
 
     # Pull a server
     cache = Memcached.new(
-      @servers + ['127.0.0.1:43044', '127.0.0.1:43046'],
+      @servers + ['localhost:43044', 'localhost:43046'],
       :prefix_key => @prefix_key
     )
     

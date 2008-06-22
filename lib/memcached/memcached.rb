@@ -35,9 +35,7 @@ class Memcached
 ###### Configuration
 
 =begin rdoc      
-Create a new Memcached instance. Accepts a single server string such as '127.0.0.1:11211', or an array of such strings, as well an an optional configuration hash.
-
-Hostname lookups are not currently supported; you need to use the IP address.
+Create a new Memcached instance. Accepts a single server string such as 'localhost:11211', or an array of such strings, as well an an optional configuration hash.
 
 Valid option parameters are:
 
@@ -45,6 +43,7 @@ Valid option parameters are:
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent</tt>, or <tt>:consistent_wheel</tt>. Defaults to <tt>:consistent</tt>, which is ketama-compatible.
 <tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>false</tt>. Note that in the event of a server failure, <tt>:failover</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
+<tt>:cache_lookups</tt>:: Whether to cache hostname lookups for the life of the instance. Defaults to <tt>true</tt>.
 <tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Defaults to <tt>false</tt> because it imposes a slight performance penalty. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
@@ -389,8 +388,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Set the servers on the struct
   def set_servers(servers)
     Array(servers).each_with_index do |server, index|
-      unless server.is_a? String and server =~ /^(\d{1,3}\.){3}\d{1,3}:\d{1,5}$/
-        raise ArgumentError, "Servers must be in the format ip:port (e.g., '127.0.0.1:11211')" 
+      unless server.is_a? String and server =~ /^[\w\d\.]+:\d{1,5}$/
+        raise ArgumentError, "Servers must be in the format host:port (e.g., 'localhost:11211')" 
       end
       host, port = server.split(":")
       Lib.memcached_server_add(@struct, host, port.to_i)

@@ -45,7 +45,7 @@ Start a local memcached server:
 Now, in Ruby, require the library and instantiate a Memcached object at a global level:
 
   require 'memcached'
-  $cache = Memcached.new("127.0.0.1:11211")
+  $cache = Memcached.new("localhost:11211")
   
 Now you can set things and get things:
  
