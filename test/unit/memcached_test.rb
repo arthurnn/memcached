@@ -281,7 +281,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       @cache.get key
     end
-    sleep(1)
+    sleep(2)
     assert_raise(Memcached::NotFound) do
       @cache.get key
     end
