@@ -20,7 +20,11 @@ require 'rlibmemcached'
 
 class Memcached
   Lib = Rlibmemcached
+  REQUIRED_VERSION = "0.21"
+  RECEIVED_VERSION = Lib.memcached_lib_version
+  raise LoadError, "Requires libmemcached #{REQUIRED_VERSION}; you have #{RECEIVED_VERSION}" unless REQUIRED_VERSION == RECEIVED_VERSION
 end  
+
 
 require 'memcached/integer'
 require 'memcached/exceptions'

@@ -1,5 +1,5 @@
 
-v0.11. Update to libmemcached 0.21. Support hostname lookups. Use wrapped struct so to avoid need for manual GC method. Use new built-in behavior for namespacing. Remove private hash function. Fix bug related to socket size behavior reset when struct is initialized with missing servers (Jeffrey Hardy).
+v0.11. Update to libmemcached 0.21. Support hostname lookups. Modify the MemcachedSt free method to free on garbage collection instead of with an explicit call. Use new built-in behavior for namespacing. Raise on version mismatch. Remove private hash function. Fix bug related to socket size behavior reset when struct is initialized with missing servers (Jeffrey Hardy).
 
 v0.10. Update to libmemcached 0.20. Failover support. Close consistent hashing bugs.
 

@@ -11,6 +11,20 @@
 
 %include "typemaps.i"
 
+// Register libmemcached's struct free function to prevent memory leaks
+%freefunc MemcachedSt "memcached_free";
+
+// XXX Does not work! Instead we use the following manual hack in rlibmemcached_wrap.c
+
+/* 
+SWIGINTERN void
+free_memcached_st(struct memcached_st *arg1) {
+    memcached_free(arg1); // HACK 
+    free((char *) arg1);
+} 
+*/
+
+
 //// Input maps
 
 %apply unsigned short { uint8_t };

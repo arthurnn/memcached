@@ -5253,8 +5253,9 @@ fail:
 
 SWIGINTERN void
 free_memcached_st(struct memcached_st *arg1) {
+    memcached_free(arg1); // HACK 
     free((char *) arg1);
-}
+} 
 
 SWIGINTERN VALUE
 _wrap_memcached_lib_version(int argc, VALUE *argv, VALUE self) {

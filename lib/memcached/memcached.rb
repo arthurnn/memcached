@@ -112,39 +112,17 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Safely copy this instance. Returns a Memcached instance. 
   #
   # <tt>clone</tt> is useful for threading, since each thread must have its own unshared Memcached 
-  # object. However, you must call destroy before each thread returns or you will leak significant memory.
+  # object. 
   #
   def clone
     memcached = super
     memcached.instance_variable_set('@struct', Lib.memcached_clone(nil, @struct))
     memcached
   end
-  
-  # Destroy this instance. Frees memory associated with the C implementation.
-  #
-  # Accepts an optional parameter <tt>disable_methods</tt>. When <tt>false</tt>, destroy
-  # runs much faster, but your instance will segfault if you try to call any other methods on it
-  # after destroy. Defaults to <tt>true</tt>, which safely overwrites all instance methods.
-  def destroy(disable_methods = true)
-    # XXX Should be implemented with rb_wrap_struct
-    Lib.memcached_free(@struct)
-    @struct = nil
     
-    if disable_methods
-      class << self
-        Memcached.instance_methods.each do |method_name|
-          define_method method_name do |*args|
-            raise Memcached::ClientError, "Instance has been explicitly destroyed"
-          end
-        end
-      end
-    end
-  end  
-  
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
   def reset(current_servers = nil)
     current_servers ||= servers
-    Lib.memcached_free(@struct)        
     @struct = Lib::MemcachedSt.new    
     Lib.memcached_create(@struct)
     set_servers(current_servers)

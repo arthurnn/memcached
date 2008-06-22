@@ -27,13 +27,7 @@ class MemcachedTest < Test::Unit::TestCase
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
-  
-  def teardown
-    ObjectSpace.each_object(Memcached) do |cache|
-      cache.destroy rescue Memcached::ClientError
-    end
-  end
-  
+    
   # Initialize
 
   def test_initialize
@@ -63,15 +57,7 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.options[:no_block] = true
     end
   end
-  
-  def test_destroy
-    cache = Memcached.new @servers, :prefix_key => 'test'
-    cache.destroy
-    assert_raise(Memcached::ClientError) do
-      cache.get key
-    end
-  end
-  
+    
   def test_initialize_with_invalid_server_strings
     assert_raise(ArgumentError) { Memcached.new ":43042" }
     assert_raise(ArgumentError) { Memcached.new "localhost:memcached" }
@@ -146,7 +132,6 @@ class MemcachedTest < Test::Unit::TestCase
     )
     assert_equal @servers.sort, 
       cache.servers
-    cache.destroy
 
     # Original with sort_hosts
     cache = Memcached.new(@servers.sort,
@@ -155,7 +140,6 @@ class MemcachedTest < Test::Unit::TestCase
     )
     assert_equal @servers.sort, 
       cache.servers
-    cache.destroy
     
     # Reversed 
     cache = Memcached.new(@servers.sort.reverse,
@@ -164,7 +148,6 @@ class MemcachedTest < Test::Unit::TestCase
     )
       assert_equal @servers.sort.reverse, 
     cache.servers
-    cache.destroy
       
     # Reversed with sort_hosts
     cache = Memcached.new(@servers.sort.reverse,
@@ -173,7 +156,6 @@ class MemcachedTest < Test::Unit::TestCase
     )
     assert_equal @servers.sort, 
       cache.servers
-    cache.destroy
   end
   
   def test_initialize_single_server
@@ -499,8 +481,6 @@ class MemcachedTest < Test::Unit::TestCase
         current
       end
     end
-    
-    cache.destroy    
   end
     
   # Error states
@@ -582,7 +562,9 @@ class MemcachedTest < Test::Unit::TestCase
     assert_not_equal cache, @cache
     
     # Definitely check that the structs are unlinked
-    cache.destroy
+    assert_not_equal @cache.instance_variable_get('@struct').object_id,
+      cache.instance_variable_get('@struct').object_id
+    
     assert_nothing_raised do
       @cache.set key, @value
     end
