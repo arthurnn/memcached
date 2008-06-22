@@ -505,8 +505,9 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @cache.get(key)
     end
-    # Multiget does not raise
-    assert_nothing_raised do
+
+    # XXX Libmemcached bug
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       response = @cache.get([key])
     end
   end  
@@ -519,10 +520,11 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @cache.get(key)
     end
-    # Multiget does not raise
-    assert_nothing_raised do
+
+    # XXX Libmemcached bug
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       response = @cache.get([key])
-    end    
+    end
   end
   
   def test_key_too_long
@@ -532,6 +534,10 @@ class MemcachedTest < Test::Unit::TestCase
     end
     assert_raises(Memcached::ClientError) do
       @cache.get(key)
+    end
+    
+    assert_raises(Memcached::ClientError) do
+      @cache.get([key])
     end
   end  
 
@@ -626,7 +632,6 @@ class MemcachedTest < Test::Unit::TestCase
   # Server removal and consistent hashing
   
   def test_missing_server
-    # XXX Does this test actually do anything? :hash behaves oddly
     cache = Memcached.new(
       [@servers.last, '127.0.0.1:43041'], # Use a server that isn't running
       :prefix_key => @prefix_key,
@@ -635,7 +640,7 @@ class MemcachedTest < Test::Unit::TestCase
     )
     
     # Hit second server
-    key = 'test_missing_server3'
+    key = 'test_missing_server10'
     assert_raise(Memcached::SystemError) do
       cache.set(key, @value)
       cache.get(key)
