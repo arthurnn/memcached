@@ -83,11 +83,6 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     set_behaviors
     set_callbacks
      
-    # Merge the actual behaviors back in
-    BEHAVIORS.keys.each do |behavior|
-      options[behavior] = get_behavior(behavior)
-    end    
-
     # Freeze the hash
     options.freeze
         
@@ -376,13 +371,11 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   
   # Set the behaviors on the struct from the current options
   def set_behaviors
-    options.each do |option, value|
-      unless [:prefix_key, :show_not_found_backtraces, :failover].include? option
-        set_behavior(option, value) 
-      end
-    end   
+    BEHAVIORS.keys.each do |behavior|
+      set_behavior(behavior, options[behavior]) if options.key?(behavior)
+    end
   end
-  
+
   # Set the callbacks on the struct from the current options
   def set_callbacks  
     # Only support prefix_key for now

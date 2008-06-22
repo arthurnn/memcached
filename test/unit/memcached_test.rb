@@ -58,6 +58,12 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
     
+  def test_behaviors_are_set
+    Memcached::BEHAVIORS.keys.each do |key, value|
+      assert_not_nil @cache.send(:get_behavior, key)
+    end
+  end
+
   def test_initialize_with_invalid_server_strings
     assert_raise(ArgumentError) { Memcached.new ":43042" }
     assert_raise(ArgumentError) { Memcached.new "localhost:memcached" }
@@ -653,6 +659,13 @@ class MemcachedTest < Test::Unit::TestCase
     end    
   end
   
+  def test_sweep_servers_with_missing_server_first
+    cache = Memcached.new(['127.0.0.1:00000'] + @servers)
+    assert_nothing_raised do
+      cache.send(:sweep_servers)
+    end
+  end
+
   def test_consistent_hashing
 
     keys = %w(EN6qtgMW n6Oz2W4I ss4A8Brr QShqFLZt Y3hgP9bs CokDD4OD Nd3iTSE1 24vBV4AU H9XBUQs5 E5j8vUq1 AzSh8fva PYBlK2Pi Ke3TgZ4I AyAIYanO oxj8Xhyd eBFnE6Bt yZyTikWQ pwGoU7Pw 2UNDkKRN qMJzkgo2 keFXbQXq pBl2QnIg ApRl3mWY wmalTJW1 TLueug8M wPQL4Qfg uACwus23 nmOk9R6w lwgZJrzJ v1UJtKdG RK629Cra U2UXFRqr d9OQLNl8 KAm1K3m5 Z13gKZ1v tNVai1nT LhpVXuVx pRib1Itj I1oLUob7 Z1nUsd5Q ZOwHehUa aXpFX29U ZsnqxlGz ivQRjOdb mB3iBEAj)
