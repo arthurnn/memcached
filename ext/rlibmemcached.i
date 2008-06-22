@@ -36,20 +36,20 @@
 }
 
 // Generic strings
-%typemap(in) (char *str, size_t len) {
+%typemap(in) (const char *str, size_t len) {
  $1 = STR2CSTR($input);
  $2 = (size_t) RSTRING($input)->len;
 };
 
-%apply (char *str, size_t len) {
-  (char *namespace, size_t namespace_length), 
-  (char *key, size_t key_length), 
-  (char *value, size_t value_length)
+%apply (const char *str, size_t len) {
+  (const char *namespace, size_t namespace_length), 
+  (const char *key, size_t key_length), 
+  (const char *value, size_t value_length)
 };
 
 // Key strings with same master key
-// XXX This will have to go once people start doing client-side replication and actually need to set the master key
-%typemap(in) (char *master_key, size_t master_key_length, char *key, size_t key_length) {
+// This will have to go if people actually want to set the master key separately
+%typemap(in) (const char *master_key, size_t master_key_length, const char *key, size_t key_length) {
  $3 = $1 = STR2CSTR($input);
  $4 = $2 = (size_t) RSTRING($input)->len;
 };
@@ -67,7 +67,7 @@
   $result = INT2FIX($1);
 };
 
-// String
+// String for memcached_fetch
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
   char string[256];
   size_t length = 0;
@@ -97,6 +97,7 @@
 
 %include "/opt/local/include/libmemcached/memcached.h"
 %include "/opt/local/include/libmemcached/memcached_constants.h"
+%include "/opt/local/include/libmemcached/memcached_get.h"
 %include "/opt/local/include/libmemcached/memcached_storage.h"
 %include "/opt/local/include/libmemcached/memcached_result.h"
 %include "/opt/local/include/libmemcached/memcached_server.h"
@@ -104,9 +105,9 @@
 //// Custom C functions
 
 // Namespace and validate key. We could avoid several more dispatches and allocations if we called this from the libmemcached wrappers directly.
-VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length);
+VALUE ns(const char *namespace, size_t namespace_length, const char *key, size_t key_length);
 %{
-VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length) {
+VALUE ns(const char *namespace, size_t namespace_length, const char *key, size_t key_length) {
   char namespaced_key[250];
   size_t namespaced_key_length = namespace_length + key_length;
   
@@ -130,9 +131,9 @@ VALUE ns(char *namespace, size_t namespace_length, char *key, size_t key_length)
 
 // Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because 
 // of the retval/argout split, so it truncates return values with \0 in them. 
-VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error);
+VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
-VALUE memcached_get_rvalue(memcached_st *ptr, char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
+VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
   VALUE ret;  
   size_t value_length;
   char *value = memcached_get(ptr, key, key_length, &value_length, flags, error);
@@ -190,6 +191,3 @@ memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat
   return &(stat_ptr[index]);
 };
 %}
-
-// Expose the hash generation function, which is not included in any header
-unsigned int memcached_generate_hash(memcached_st *ptr, char *key, size_t key_length);

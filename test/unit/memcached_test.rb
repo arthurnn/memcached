@@ -644,18 +644,14 @@ class MemcachedTest < Test::Unit::TestCase
       :hash => :md5
     )
     
-    # Verify that the second server is the hash target
+    # Hit second server
     key = 'test_missing_server3'
-    assert_equal 1, cache.send(:hash, key)
-
     assert_raise(Memcached::SystemError) do
       cache.set(key, @value)
       cache.get(key)
     end    
 
-    # Verify that we are targeting the first server now
-    assert_equal 0, cache.send(:hash, key)
-
+    # Hit first server on retry
     assert_nothing_raised do
       cache.set(key, @value)
       cache.get(key)
@@ -721,13 +717,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_not_equal original_struct, 
       @cache.instance_variable_get("@struct") 
   end
-  
-  # Private hash generation method
-  
-  def test_hash_generation
-    assert [0, 1].include?(@cache.send(:hash, key))
-  end
-  
+    
   private
   
   def key

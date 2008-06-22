@@ -1,7 +1,9 @@
 
-v0.10. Move to libmemcached 0.20. Failover support. Close consistent hashing bugs.
+v0.11. Update to libmemcached 0.21. Support hostname lookups. Use wrapped struct so to avoid need for manual GC method. Use new built-in behavior for namespacing. Remove private hash function. Fix bug related to socket size behavior reset when struct is initialized with missing servers (Jeffrey Hardy).
 
-v0.9. Move to libmemcached 0.19. Add some failover tests, but we are still waiting on libmemcached's replication branch for them to actually be useful. Fix CAS bug (ktheory).
+v0.10. Update to libmemcached 0.20. Failover support. Close consistent hashing bugs.
+
+v0.9. Update to libmemcached 0.19. Add some failover tests, but we are still waiting on libmemcached's replication branch for them to actually be useful. Fix CAS bug (ktheory).
 
 v0.8.1. Disable NotFound backtraces for speed (Blaine Cook).
 
