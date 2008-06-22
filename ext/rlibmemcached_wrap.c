@@ -5253,9 +5253,8 @@ fail:
 
 SWIGINTERN void
 free_memcached_st(struct memcached_st *arg1) {
-    memcached_free(arg1); // HACK 
     free((char *) arg1);
-} 
+}
 
 SWIGINTERN VALUE
 _wrap_memcached_lib_version(int argc, VALUE *argv, VALUE self) {
@@ -9929,7 +9928,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_method(cMemcachedSt.klass, "prefix_key_length=", _wrap_MemcachedSt_prefix_key_length_set, -1);
   rb_define_method(cMemcachedSt.klass, "prefix_key_length", _wrap_MemcachedSt_prefix_key_length_get, -1);
   cMemcachedSt.mark = 0;
-  cMemcachedSt.destroy = (void (*)(void *)) free_memcached_st;
+  cMemcachedSt.destroy = (void (*)(void *)) memcached_free;
   cMemcachedSt.trackObjects = 0;
   rb_define_module_function(mRlibmemcached, "memcached_lib_version", _wrap_memcached_lib_version, -1);
   rb_define_module_function(mRlibmemcached, "memcached_create", _wrap_memcached_create, -1);
