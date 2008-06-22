@@ -18,12 +18,11 @@ class Memcached
     :retry_timeout => 60,
 #    :poll_timeout => 5,
     :connect_timeout => 5,
-    :namespace => nil,
+    :prefix_key => nil,
     :sort_hosts => false,
-    :failover => false
+    :failover => false,
+    :verify_key => true
   } 
-      
-  # :verify_key => false # XXX We do this ourselves already in Rlibmemcached.ns()
   
 #:stopdoc:
   IGNORED = 0
@@ -42,7 +41,7 @@ Hostname lookups are not currently supported; you need to use the IP address.
 
 Valid option parameters are:
 
-<tt>:namespace</tt>:: A namespace string to prepend to every key.
+<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 12.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent</tt>, or <tt>:consistent_wheel</tt>. Defaults to <tt>:consistent</tt>, which is ketama-compatible.
 <tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>false</tt>. Note that in the event of a server failure, <tt>:failover</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
@@ -52,6 +51,7 @@ Valid option parameters are:
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
+<tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
 
 Please note that when non-blocking IO is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
@@ -72,6 +72,9 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # consistently
     options[:no_block] = true if options[:buffer_requests] 
     
+    # Legacy accessor
+    options[:prefix_key] = options.delete(:namespace) if options[:namespace]
+    
     # Disallow :sort_hosts with consistent hashing
     if options[:sort_hosts] and options[:distribution] == :consistent
       raise ArgumentError, ":sort_hosts defeats :consistent hashing"
@@ -79,6 +82,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     
     # Set the behaviors on the struct
     set_behaviors
+    set_callbacks
      
     # Merge the actual behaviors back in
     BEHAVIORS.keys.each do |behavior|
@@ -88,11 +92,6 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # Freeze the hash
     options.freeze
         
-    # Namespace
-    raise ArgumentError, "Invalid namespace" if options[:namespace].to_s =~ / /
-    @namespace = options[:namespace].to_s
-    @namespace_size = @namespace.size
-    
     # Not found exceptions
     # Note that these have global effects since the NotFound class itself is modified. You should only 
     # be enabling the backtrace for debugging purposes, so it's not really a big deal.
@@ -151,6 +150,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     Lib.memcached_create(@struct)
     set_servers(current_servers)
     set_behaviors
+    set_callbacks
   end  
   
   #:stopdoc:
@@ -185,7 +185,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def set(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_set(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
+      Lib.memcached_set(@struct, key, value, timeout, FLAGS)
     )
   end
 
@@ -193,7 +193,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def add(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_add(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
+      Lib.memcached_add(@struct, key, value, timeout, FLAGS)
     )
   end
 
@@ -203,14 +203,14 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #
   # Note that the key must be initialized to an unmarshalled integer first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
   def increment(key, offset=1)
-    ret, value = Lib.memcached_increment(@struct, Lib.ns(@namespace, key), offset)
+    ret, value = Lib.memcached_increment(@struct, key, offset)
     check_return_code(ret)
     value
   end
 
   # Decrement a key's value. The parameters and exception behavior are the same as <tt>increment</tt>.
   def decrement(key, offset=1)
-    ret, value = Lib.memcached_decrement(@struct, Lib.ns(@namespace, key), offset)
+    ret, value = Lib.memcached_decrement(@struct, key, offset)
     check_return_code(ret)
     value
   end
@@ -224,7 +224,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def replace(key, value, timeout=0, marshal=true)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_replace(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS)
+      Lib.memcached_replace(@struct, key, value, timeout, FLAGS)
     )
   end
 
@@ -234,7 +234,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def append(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Lib.memcached_append(@struct, Lib.ns(@namespace, key), value.to_s, IGNORED, FLAGS)
+      Lib.memcached_append(@struct, key, value.to_s, IGNORED, FLAGS)
     )
   end
   
@@ -242,7 +242,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def prepend(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Lib.memcached_prepend(@struct, Lib.ns(@namespace, key), value.to_s, IGNORED, FLAGS)
+      Lib.memcached_prepend(@struct, key, value.to_s, IGNORED, FLAGS)
     )
   end
   
@@ -260,7 +260,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     value = marshal ? Marshal.dump(value) : value.to_s
     
     check_return_code(
-      Lib.memcached_cas(@struct, Lib.ns(@namespace, key), value, timeout, FLAGS, @struct.result.cas)
+      Lib.memcached_cas(@struct, key, value, timeout, FLAGS, @struct.result.cas)
     )
   end
 
@@ -269,7 +269,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Deletes a key/value pair from the server. Accepts a String <tt>key</tt>. Raises <b>Memcached::NotFound</b> if the key does not exist.
   def delete(key)
     check_return_code(
-      Lib.memcached_delete(@struct, Lib.ns(@namespace, key), IGNORED)
+      Lib.memcached_delete(@struct, key, IGNORED)
     )  
   end
   
@@ -295,7 +295,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def get(keys, marshal=true)
     if keys.is_a? Array
       # Multi get
-      keys.map! { |key| Lib.ns(@namespace, key) }
+      keys.map! { |key| key }
       hash = {}
       
       Lib.memcached_mget(@struct, keys);
@@ -305,13 +305,13 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
         break if ret == Lib::MEMCACHED_END
         check_return_code(ret)
         value = Marshal.load(value) if marshal
-        # Assign the value, removing the namespace, if present
-        hash[key[@namespace_size..-1]] = value
+        # Assign the value
+        hash[key] = value
       end
       hash
     else
       # Single get
-      value, flags, ret = Lib.memcached_get_rvalue(@struct, Lib.ns(@namespace, keys))
+      value, flags, ret = Lib.memcached_get_rvalue(@struct, keys)
       check_return_code(ret)
       value = Marshal.load(value) if marshal
       value
@@ -400,10 +400,22 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Set the behaviors on the struct from the current options
   def set_behaviors
     options.each do |option, value|
-      unless [:namespace, :show_not_found_backtraces, :failover].include? option
+      unless [:prefix_key, :show_not_found_backtraces, :failover].include? option
         set_behavior(option, value) 
       end
     end   
-  end  
-    
+  end
+  
+  # Set the callbacks on the struct from the current options
+  def set_callbacks  
+    # Only support prefix_key for now
+    if options[:prefix_key]
+      # XXX Libmemcached doesn't validate the key length properly
+      if options[:prefix_key].size > Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1
+        raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
+      end      
+      Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
+    end
+  end
+  
 end

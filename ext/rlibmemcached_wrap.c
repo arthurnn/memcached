@@ -6278,7 +6278,6 @@ _wrap_memcached_callback_set(int argc, VALUE *argv, VALUE self) {
   int res1 = 0 ;
   int val2 ;
   int ecode2 = 0 ;
-  int res3 ;
   VALUE vresult = Qnil;
   
   if ((argc < 3) || (argc > 3)) {
@@ -6294,9 +6293,8 @@ _wrap_memcached_callback_set(int argc, VALUE *argv, VALUE self) {
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "memcached_callback_set" "', argument " "2"" of type '" "memcached_callback""'");
   } 
   arg2 = (memcached_callback)(val2);
-  res3 = SWIG_ConvertPtr(argv[2],SWIG_as_voidptrptr(&arg3), 0, 0);
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_callback_set" "', argument " "3"" of type '" "void *""'"); 
+  {
+    arg3 = STR2CSTR(argv[2]);
   }
   result = (memcached_return)memcached_callback_set(arg1,arg2,arg3);
   vresult = SWIG_From_int((int)(result));

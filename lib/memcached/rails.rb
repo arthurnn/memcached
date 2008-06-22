@@ -38,7 +38,7 @@ class Memcached
     
     # Namespace accessor.
     def namespace
-      @namespace
+      options[:prefix_key]
     end
 
     # Alias for get.

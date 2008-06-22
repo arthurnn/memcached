@@ -41,6 +41,11 @@
  $2 = (size_t) RSTRING($input)->len;
 };
 
+// Void type strings without lengths for prefix_key callback
+%typemap(in) (void *data) {
+ $1 = STR2CSTR($input);
+};
+
 %apply (const char *str, size_t len) {
   (const char *namespace, size_t namespace_length), 
   (const char *key, size_t key_length), 

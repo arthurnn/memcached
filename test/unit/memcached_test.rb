@@ -5,17 +5,19 @@ class MemcachedTest < Test::Unit::TestCase
 
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043']
-    @namespace = 'memcached_test_namespace'
+
+    # Maximum allowed prefix key size
+    @prefix_key = 'prefix_key_' 
     
     @options = {      
-      :namespace => @namespace, 
+      :prefix_key => @prefix_key, 
       :hash => :default,
       :distribution => :modula
     }
     @cache = Memcached.new(@servers, @options)
     
     @nb_options = {
-      :namespace => @namespace, 
+      :prefix_key => @prefix_key, 
       :no_block => true, 
       :buffer_requests => true, 
       :hash => :default
@@ -35,8 +37,8 @@ class MemcachedTest < Test::Unit::TestCase
   # Initialize
 
   def test_initialize
-    cache = Memcached.new @servers, :namespace => 'test'
-    assert_equal 'test', cache.options[:namespace]
+    cache = Memcached.new @servers, :prefix_key => 'test'
+    assert_equal 'test', cache.options[:prefix_key]
     assert_equal 2, cache.send(:server_structs).size
     assert_equal '127.0.0.1', cache.send(:server_structs).first.hostname
     assert_equal '127.0.0.1', cache.send(:server_structs).last.hostname
@@ -57,7 +59,7 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def test_destroy
-    cache = Memcached.new @servers, :namespace => 'test'
+    cache = Memcached.new @servers, :prefix_key => 'test'
     cache.destroy
     assert_raise(Memcached::ClientError) do
       cache.get key
@@ -75,10 +77,16 @@ class MemcachedTest < Test::Unit::TestCase
       Memcached.new @servers, :sort_hosts => true, :distribution => :consistent
     end
   end
+
+  def test_initialize_with_invalid_prefix_key
+    assert_raise(ArgumentError) do 
+      Memcached.new @servers, :prefix_key => "prefix_key__"
+    end
+  end
   
-  def test_initialize_without_namespace
+  def test_initialize_without_prefix_key
     cache = Memcached.new @servers
-    assert_equal nil, cache.options[:namespace]
+    assert_equal nil, cache.options[:prefix_key]
     assert_equal 2, cache.send(:server_structs).size
   end
   
@@ -152,7 +160,7 @@ class MemcachedTest < Test::Unit::TestCase
   
   def test_initialize_single_server
     cache = Memcached.new '127.0.0.1:43042'
-    assert_equal nil, cache.options[:namespace]
+    assert_equal nil, cache.options[:prefix_key]
     assert_equal 1, cache.send(:server_structs).size
   end
 
@@ -167,16 +175,6 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key
     assert_equal @value, result
   end
-  
-  def test_get_with_namespace
-    @cache.set key, @value
-    result = @cache.get key, false
-    direct_result = Rlibmemcached.memcached_get(
-      @cache.instance_variable_get("@struct"), 
-      "#{@namespace}#{key}"
-    ).first  
-    assert_equal result, direct_result
-  end
 
   def test_get_nil
     @cache.set key, nil, 0
@@ -190,6 +188,21 @@ class MemcachedTest < Test::Unit::TestCase
       result = @cache.get key
     end
   end
+  
+  def test_get_with_prefix_key
+    @cache.set key, @value
+    assert_equal @value, @cache.get(key)
+    
+    # No prefix_key specified
+    cache = Memcached.new(
+      @servers,
+      :hash => :default,
+      :distribution => :modula
+    )
+    assert_nothing_raised do    
+      assert_equal @value, cache.get("#{@prefix_key}#{key}")
+    end
+  end
 
   def test_values_with_null_characters_are_not_truncated
     value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
@@ -197,7 +210,7 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key, false
     non_wrapped_result = Rlibmemcached.memcached_get(
       @cache.instance_variable_get("@struct"), 
-      "#{@namespace}#{key}"
+      key
     ).first
     assert result.size > non_wrapped_result.size      
   end  
@@ -434,7 +447,7 @@ class MemcachedTest < Test::Unit::TestCase
   def test_cas
     cache = Memcached.new(
       @servers, 
-      :namespace => @namespace, 
+      :prefix_key => @prefix_key, 
       :support_cas => true
     )        
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
@@ -471,78 +484,55 @@ class MemcachedTest < Test::Unit::TestCase
     
     cache.destroy    
   end
-  
-  # Namespace and key validation
-  
-  def test_ns
-    assert_equal "#{@namespace}i_have_a_space", 
-      Rlibmemcached.ns(@namespace, "i have a space")     
-
-    # STR2CSTR doesn't handle strings with nulls very well, so this is what happens 
-    assert_equal "#{@namespace}with_____", 
-      Rlibmemcached.ns(@namespace, "with\000null")
-
-    assert_equal "#{@namespace}ch__teau", 
-      Rlibmemcached.ns(@namespace, "ch\303\242teau")
-
-    assert_equal "#{@namespace}#{'x'*251}"[0..249], 
-      Rlibmemcached.ns(@namespace, 'x'*251)
-  end  
-  
+    
   # Error states
   
   def test_key_with_spaces
-    value = "value"
     key = "i have a space"
-    assert_nothing_raised do
-      @cache.set key, value
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
+      @cache.set key, @value
     end
-    assert_nothing_raised do
-      assert_equal(value, @cache.get(key))
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
+      @cache.get(key)
     end
-    # Spaces were stripped
-    assert_not_equal(key,
-      @cache.get([key]).keys.first)
   end
   
   def test_key_with_null
-    value = "value"
     key = "with\000null"
-    assert_nothing_raised do
-      @cache.set key, value
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
+      @cache.set key, @value
     end
-    assert_nothing_raised do
-      assert_equal(value, @cache.get(key))
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
+      @cache.get(key)
     end
-    # Multiget returns
-    response = @cache.get([key])
-    assert_equal 1, response.size
-    # Nulls were stripped    
-    assert_not_equal(key, response.keys.first)
+    # Multiget does not raise
+    assert_nothing_raised do
+      response = @cache.get([key])
+    end
   end  
   
-  def test_key_with_valid_control_characters
-    value = "value"
+  def test_key_with_invalid_control_characters
     key = "ch\303\242teau"
-    @cache.set key, value
-    assert_equal(value, 
-      @cache.get(key))
-    assert_not_equal(key,
-      @cache.get([key]).keys.first)
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
+      @cache.set key, @value
+    end
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
+      @cache.get(key)
+    end
+    # Multiget does not raise
+    assert_nothing_raised do
+      response = @cache.get([key])
+    end    
   end
   
   def test_key_too_long
     key = "x"*251
-    assert_nothing_raised do    
+    assert_raises(Memcached::ClientError) do
       @cache.set key, @value
     end
-    assert_nothing_raised do
-      assert_equal(@value, 
-        @cache.get(key))  
+    assert_raises(Memcached::ClientError) do
+      @cache.get(key)
     end
-    # Key was truncated
-    assert_not_equal(key,
-      @cache.get([key]).keys.first)
   end  
 
   def test_set_object_too_large
@@ -584,7 +574,7 @@ class MemcachedTest < Test::Unit::TestCase
     end
     ret = Rlibmemcached.memcached_set(
       cache.instance_variable_get("@struct"), 
-      "#{@namespace}#{key}", 
+      key, 
       @marshalled_value, 
       0, 
       Memcached::FLAGS
@@ -598,7 +588,7 @@ class MemcachedTest < Test::Unit::TestCase
     end
     ret = Rlibmemcached.memcached_set(
       @nb_cache.instance_variable_get("@struct"), 
-      "#{@namespace}#{key}", 
+      key, 
       @marshalled_value, 
       0, 
       Memcached::FLAGS
@@ -614,7 +604,7 @@ class MemcachedTest < Test::Unit::TestCase
   end  
 
   def test_no_block_set_invalid_key
-    assert_nothing_raised do
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @nb_cache.set "I'm so bad", @value
     end
   end   
@@ -639,7 +629,7 @@ class MemcachedTest < Test::Unit::TestCase
     # XXX Does this test actually do anything? :hash behaves oddly
     cache = Memcached.new(
       [@servers.last, '127.0.0.1:43041'], # Use a server that isn't running
-      :namespace => @namespace,
+      :prefix_key => @prefix_key,
       :failover => true,
       :hash => :md5
     )
@@ -665,7 +655,7 @@ class MemcachedTest < Test::Unit::TestCase
     # Five servers
     cache = Memcached.new(
       @servers + ['127.0.0.1:43044', '127.0.0.1:43045', '127.0.0.1:43046'], 
-      :namespace => @namespace
+      :prefix_key => @prefix_key
     )        
     
     cache.flush    
@@ -676,7 +666,7 @@ class MemcachedTest < Test::Unit::TestCase
     # Pull a server
     cache = Memcached.new(
       @servers + ['127.0.0.1:43044', '127.0.0.1:43046'],
-      :namespace => @namespace
+      :prefix_key => @prefix_key
     )
     
     failed = 0
