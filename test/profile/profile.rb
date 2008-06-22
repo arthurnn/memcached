@@ -8,7 +8,7 @@ require 'ruby-prof'
 
 @cache = Memcached.new(
   '127.0.0.1:43042', '127.0.0.1:43043'], 
-   :namespace => "benchmark_namespace"
+   :namespace => "namespace"
  )
 
 result = RubyProf.profile do  

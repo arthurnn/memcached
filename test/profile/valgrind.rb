@@ -21,7 +21,7 @@ class Worker
       {
         :buffer_requests => false,
         :no_block => false,
-        :namespace => "benchmark_namespace"
+        :namespace => "namespace"
       }
     ]    
     system("ruby #{HERE}/../setup.rb")

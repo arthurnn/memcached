@@ -44,7 +44,7 @@ class Bench
       {
         :buffer_requests => false,
         :no_block => false,
-        :namespace => "benchmark_namespace"
+        :namespace => "namespace"
       }
     ]
     @key1 = "Short"
