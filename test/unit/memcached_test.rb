@@ -45,6 +45,12 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal '127.0.0.1', cache.send(:server_structs).last.hostname
   end
   
+  def test_initialize_without_port
+    cache = Memcached.new ['localhost'], :prefix_key => 'test'
+    assert_equal 'localhost', cache.send(:server_structs).first.hostname
+    assert_equal 11211, cache.send(:server_structs).first.port
+  end
+
   def test_options_are_set
     Memcached::DEFAULTS.merge(@nb_options).each do |key, expected|
       value = @nb_cache.options[key]

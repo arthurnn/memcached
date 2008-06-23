@@ -361,7 +361,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Set the servers on the struct
   def set_servers(servers)
     Array(servers).each_with_index do |server, index|
-      unless server.is_a? String and server =~ /^[\w\d\.]+:\d{1,5}$/
+      unless server.is_a? String and server =~ /^[\w\d\.]+(:\d{1,5})?$/
         raise ArgumentError, "Servers must be in the format host:port (e.g., 'localhost:11211')" 
       end
       host, port = server.split(":")
