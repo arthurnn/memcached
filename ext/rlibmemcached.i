@@ -29,7 +29,7 @@
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
   $1 = (char **) malloc(($3+1)*sizeof(char *)); 
   for(i = 0; i < $3; i ++) {
-    $2[i] = strlen(StringValuePtr(RARRAY_PTR($input)[i]));
+    $2[i] = RSTRING(RARRAY_PTR($input)[i])->len;
     $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
   }
 }
@@ -111,29 +111,6 @@
 %include "/opt/local/include/libmemcached/memcached_server.h"
 
 //// Custom C functions
-
-// Namespace and validate key. We could avoid several more dispatches and allocations if we called this from the libmemcached wrappers directly.
-VALUE ns(const char *namespace, size_t namespace_length, const char *key, size_t key_length);
-%{
-VALUE ns(const char *namespace, size_t namespace_length, const char *key, size_t key_length) {
-  char namespaced_key[250];
-  size_t namespaced_key_length = namespace_length + key_length;
-  
-  if (namespaced_key_length > 250)
-    namespaced_key_length = 250;
-  
-  strncpy(namespaced_key, namespace, namespace_length);
-  strncpy(namespaced_key + namespace_length, key, namespaced_key_length - namespace_length);
-  
-  int i;
-  for (i = 0; i < namespaced_key_length; i++)
-    if ((namespaced_key[i] < 33) || (namespaced_key[i] > 126))
-      // Outside printable range
-      namespaced_key[i] = '_';
-   
-  return rb_str_new(namespaced_key, namespaced_key_length);  
-};
-%}
 
 //// Manual wrappers
 

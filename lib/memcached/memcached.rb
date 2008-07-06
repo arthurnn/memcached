@@ -270,7 +270,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       keys.map! { |key| key }
       hash = {}
       
-      Lib.memcached_mget(@struct, keys);
+      ret = Lib.memcached_mget(@struct, keys);
+      check_return_code(ret)
       
       keys.size.times do 
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
