@@ -3,9 +3,9 @@ class Memcached
 
 #:stopdoc:
 
-  def self.load_constants(prefix, hash = {}, offset = 0)
+  def self.load_constants(prefix, hash = {})
     Lib.constants.grep(/^#{prefix}/).each do |const_name|
-      hash[const_name[prefix.length..-1].downcase.to_sym] = Lib.const_get(const_name) + offset
+      hash[const_name[prefix.length..-1].downcase.to_sym] = Lib.const_get(const_name)
     end
     hash
   end
@@ -18,10 +18,10 @@ class Memcached
   }
 
   HASH_VALUES = {}
-  BEHAVIOR_VALUES.merge!(load_constants("MEMCACHED_HASH_", HASH_VALUES, 2))
+  BEHAVIOR_VALUES.merge!(load_constants("MEMCACHED_HASH_", HASH_VALUES))
 
   DISTRIBUTION_VALUES = {}
-  BEHAVIOR_VALUES.merge!(load_constants("MEMCACHED_DISTRIBUTION_", DISTRIBUTION_VALUES, 2))
+  BEHAVIOR_VALUES.merge!(load_constants("MEMCACHED_DISTRIBUTION_", DISTRIBUTION_VALUES))
   
   DIRECT_VALUE_BEHAVIORS = [:retry_timeout, :connect_timeout, :socket_recv_size, :poll_timeout, :socket_send_size]
 
@@ -43,9 +43,10 @@ class Memcached
         raise(ArgumentError, msg) unless BEHAVIOR_VALUES[value]
     end
     
-    value = BEHAVIOR_VALUES[value] || value    
-    # STDERR.puts "Setting #{behavior}:#{b_id} => #{value}:#{value}"    
-    Lib.memcached_behavior_set(@struct, b_id, value)
+    lib_value = BEHAVIOR_VALUES[value] || value    
+    #STDERR.puts "Setting #{behavior}:#{b_id} => #{value} (#{lib_value})"
+    Lib.memcached_behavior_set(@struct, b_id, lib_value)    
+    #STDERR.puts " -> set to #{get_behavior(behavior).inspect}"
   end  
   
   # Get a behavior value for this Memcached instance. Accepts a Symbol.

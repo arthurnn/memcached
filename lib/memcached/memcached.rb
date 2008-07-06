@@ -60,9 +60,6 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     @struct = Lib::MemcachedSt.new    
     Lib.memcached_create(@struct)
 
-    # Set the servers on the struct
-    set_servers(servers)
-    
     # Merge option defaults
     @options = DEFAULTS.merge(opts)
     
@@ -82,9 +79,12 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # Set the behaviors on the struct
     set_behaviors
     set_callbacks
-     
+
     # Freeze the hash
     options.freeze
+
+    # Set the servers on the struct
+    set_servers(servers)         
         
     # Not found exceptions
     # Note that these have global effects since the NotFound class itself is modified. You should only 
@@ -93,8 +93,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       NotFound.restore_backtraces
     else
       NotFound.remove_backtraces
-    end
-    
+    end    
   end
 
   # Return the array of server strings used to configure this instance.
@@ -120,9 +119,9 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     current_servers ||= servers
     @struct = Lib::MemcachedSt.new    
     Lib.memcached_create(@struct)
-    set_servers(current_servers)
     set_behaviors
     set_callbacks
+    set_servers(current_servers)
   end  
   
   #:stopdoc:

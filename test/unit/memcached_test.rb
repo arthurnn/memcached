@@ -516,7 +516,6 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(key)
     end
 
-    # XXX Libmemcached bug
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       response = @cache.get([key])
     end
@@ -531,7 +530,6 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(key)
     end
 
-    # XXX Libmemcached bug
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       response = @cache.get([key])
     end
