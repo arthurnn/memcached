@@ -12,9 +12,9 @@ lib/memcached/rails.rb
 lib/memcached.rb
 LICENSE
 Manifest
+Rakefile
 README
 test/profile/benchmark.rb
-test/profile/key.rb
 test/profile/profile.rb
 test/profile/valgrind.rb
 test/setup.rb
