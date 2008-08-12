@@ -51,6 +51,15 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal 11211, cache.send(:server_structs).first.port
   end
 
+  def test_initialize_with_hostname_only
+    addresses = (1..8).map { |i| "app-cache-%02d" % i }
+    cache = Memcached.new(addresses, :prefix_key => 'test')
+    addresses.each_with_index do |address, index|
+      assert_equal address, cache.send(:server_structs)[index].hostname
+      assert_equal 11211, cache.send(:server_structs)[index].port
+    end
+  end
+
   def test_options_are_set
     Memcached::DEFAULTS.merge(@nb_options).each do |key, expected|
       value = @nb_cache.options[key]
