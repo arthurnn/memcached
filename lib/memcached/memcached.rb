@@ -353,11 +353,11 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
   def check_return_code(ret) #:doc:
-    # 0.16 --enable-debug returns 0 for an ActionQueued result but --disable-debug does not
-    return if ret == 0 or ret == 31
+    return if ret == 0 or # Lib::MEMCACHED_SUCCESS
+      ret == Lib::MEMCACHED_BUFFERED
 
     # SystemError; eject from the pool
-    if ret == 25 and options[:failover]
+    if options[:failover] and (ret == Lib::MEMCACHED_UNKNOWN_READ_FAILURE or ret == Lib::MEMCACHED_ERRNO)
       failed = sweep_servers
       raise EXCEPTIONS[ret], "Server #{failed} failed permanently"
     else

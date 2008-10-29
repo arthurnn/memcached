@@ -660,7 +660,7 @@ class MemcachedTest < Test::Unit::TestCase
       0,
       Memcached::FLAGS
     )
-    assert_equal 31, ret
+    assert_equal Rlibmemcached::MEMCACHED_BUFFERED, ret
   end
 
   def test_no_block_return_value
@@ -674,7 +674,7 @@ class MemcachedTest < Test::Unit::TestCase
       0,
       Memcached::FLAGS
     )
-    assert_equal 31, ret
+    assert_equal Rlibmemcached::MEMCACHED_BUFFERED, ret
   end
   
   def test_no_block_get
@@ -712,9 +712,10 @@ class MemcachedTest < Test::Unit::TestCase
 
   # Server removal and consistent hashing
 
-  def test_missing_server
+  def test_dying_server
+    socket = stub_server 43041  
     cache = Memcached.new(
-      [@servers.last, 'localhost:43041'], # Use a server that isn't running
+      [@servers.last, 'localhost:43041'],
       :prefix_key => @prefix_key,
       :failover => true,
       :hash_with_prefix_key => false,
@@ -728,7 +729,7 @@ class MemcachedTest < Test::Unit::TestCase
 
     # Hit second server
     key = 'test_missing_server3'
-    assert_raise(Memcached::SystemError) do
+    assert_raise(Memcached::UnknownReadFailure) do
       cache.set(key, @value)
       cache.get(key)
     end
