@@ -11016,7 +11016,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_STRIDE", SWIG_From_int((int)(4)));
   rb_define_const(mRlibmemcached, "MEMCACHED_DEFAULT_TIMEOUT", SWIG_From_int((int)(1000)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CONTINUUM_ADDITION", SWIG_From_int((int)(10)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_PREFIX_KEY_MAX_SIZE", SWIG_From_int((int)(64)));
+  rb_define_const(mRlibmemcached, "MEMCACHED_PREFIX_KEY_MAX_SIZE", SWIG_From_int((int)(12)));
   rb_define_const(mRlibmemcached, "MEMCACHED_SUCCESS", SWIG_From_int((int)(MEMCACHED_SUCCESS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_FAILURE", SWIG_From_int((int)(MEMCACHED_FAILURE)));
   rb_define_const(mRlibmemcached, "MEMCACHED_HOST_LOOKUP_FAILURE", SWIG_From_int((int)(MEMCACHED_HOST_LOOKUP_FAILURE)));

@@ -85,16 +85,13 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { Memcached.new "local host:43043:1" }
   end
   
-  if ENV['USER'] == "eweaver"
-    def test_initialize_with_resolvable_hosts
-     `hostname` =~ /(chloe|mackenzie)/
-      host = "#{$1}.lan"
-      cache = Memcached.new ["#{host}:43042"]
-      assert_equal host, cache.send(:server_structs).first.hostname
-      
-      cache.set(key, @value)
-      assert_equal @value, cache.get(key)
-    end
+  def test_initialize_with_resolvable_hosts
+    host = `hostname`.chomp
+    cache = Memcached.new ["#{host}:43042"]
+    assert_equal host, cache.send(:server_structs).first.hostname
+    
+    cache.set(key, @value)
+    assert_equal @value, cache.get(key)
   end
   
   def test_initialize_with_invalid_options
