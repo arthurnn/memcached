@@ -20,6 +20,7 @@ class Memcached
     :connect_timeout => 5,
     :prefix_key => nil,
     :hash_with_prefix_key => true,
+    :default_ttl => 604800, 
     :sort_hosts => false,
     :failover => false,
     :verify_key => true
@@ -56,7 +57,8 @@ Valid option parameters are:
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
-<tt>:hash_with_prefix_key</tt>:: Mhether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
+<tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
+<tt>:hash_with_prefix_key</tt>:: Whether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
 
@@ -157,22 +159,22 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     
   # Set a key/value pair. Accepts a String <tt>key</tt> and an arbitrary Ruby object. Overwrites any existing value on the server.
   #
-  # Accepts an optional <tt>timeout</tt> value to specify the maximum lifetime of the key on the server. <tt>timeout</tt> can be either an integer number of seconds, or a Time elapsed time object. <tt>0</tt> means no timeout. Note that there is no guarantee that the key will persist as long as the <tt>timeout</tt>, but it will not persist longer.
+  # Accepts an optional <tt>ttl</tt> value to specify the maximum lifetime of the key on the server. <tt>ttl</tt> can be either an integer number of seconds, or a Time elapsed time object. <tt>0</tt> means no ttl. Note that there is no guarantee that the key will persist as long as the <tt>ttl</tt>, but it will not persist longer.
   #
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be set directly. 
   # 
-  def set(key, value, timeout=0, marshal=true, flags=FLAGS)
+  def set(key, value, ttl=nil, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_set(@struct, key, value, timeout, flags)
+      Lib.memcached_set(@struct, key, value, ttl || options[:default_ttl], flags)
     )
   end
 
   # Add a key/value pair. Raises <b>Memcached::NotStored</b> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
-  def add(key, value, timeout=0, marshal=true, flags=FLAGS)
+  def add(key, value, ttl=nil, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_add(@struct, key, value, timeout, flags)
+      Lib.memcached_add(@struct, key, value, ttl || options[:default_ttl], flags)
     )
   end
 
@@ -200,10 +202,10 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #:startdoc:
 
   # Replace a key/value pair. Raises <b>Memcached::NotFound</b> if the key does not exist on the server. The parameters are the same as <tt>set</tt>.
-  def replace(key, value, timeout=0, marshal=true, flags=FLAGS)
+  def replace(key, value, ttl=nil, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_replace(@struct, key, value, timeout, flags)
+      Lib.memcached_replace(@struct, key, value, ttl || options[:default_ttl], flags)
     )
   end
 
@@ -227,11 +229,11 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   
   # Reads a key's value from the server and yields it to a block. Replaces the key's value with the result of the block as long as the key hasn't been updated in the meantime, otherwise raises <b>Memcached::NotStored</b>. Accepts a String <tt>key</tt> and a block.
   #
-  # Also accepts an optional <tt>timeout</tt> value.
+  # Also accepts an optional <tt>ttl</tt> value.
   #
   # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
   #
-  def cas(key, timeout = 0, marshal = true, flags=FLAGS)
+  def cas(key, ttl=0, marshal=true, flags=FLAGS)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
       
     value = get(key, marshal)
@@ -239,7 +241,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     value = marshal ? Marshal.dump(value) : value.to_s
     
     check_return_code(
-      Lib.memcached_cas(@struct, key, value, timeout, flags, @struct.result.cas)
+      Lib.memcached_cas(@struct, key, value, ttl || options[:default_ttl], flags, @struct.result.cas)
     )
   end
 

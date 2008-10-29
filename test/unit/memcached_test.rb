@@ -319,6 +319,21 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get key
     end
   end
+
+  def test_set_with_default_ttl
+    cache = Memcached.new(
+      @servers,
+      :default_ttl => 1
+    )
+    cache.set key, @value
+    assert_nothing_raised do
+      cache.get key
+    end
+    sleep(2)
+    assert_raise(Memcached::NotFound) do
+      cache.get key
+    end
+  end
   
   # Delete
   
