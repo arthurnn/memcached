@@ -1,7 +1,6 @@
 
 require "#{File.dirname(__FILE__)}/../test_helper"
 require 'socket'
-require 'timeout'
 require 'benchmark'
 
 class MemcachedTest < Test::Unit::TestCase
@@ -218,11 +217,10 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_get_with_server_timeout
-    socket = stub_server
+    socket = stub_server 43047
     cache = Memcached.new(
       "localhost:43047:1",
-      :rcv_timeout => 500_000,
-      :poll_timeout => 1
+      :timeout => 0.5
     )
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::UnknownReadFailure) do
@@ -232,11 +230,11 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_get_with_no_block_server_timeout
-    socket = stub_server
+    socket = stub_server 43048
     cache = Memcached.new(
-      "localhost:43047:1",
+      "localhost:43048:1",
       :no_block => true,
-      :poll_timeout => 250
+      :timeout => 0.25
     )
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::UnknownReadFailure) do
@@ -815,8 +813,8 @@ class MemcachedTest < Test::Unit::TestCase
     caller.first[/`(.*)'/, 1] # '
   end
 
-  def stub_server
-    socket = TCPServer.new('127.0.0.1', 43047)
+  def stub_server(port)
+    socket = TCPServer.new('127.0.0.1', port)
     Thread.new { socket.accept }
     socket
   end
