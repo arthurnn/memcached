@@ -4,7 +4,7 @@
 This chart shows which versions of the Ruby library are compatible with which versions of libmemcached.
 
 <b>Library version</b>:: <b>libmemcached version</b>
-0.12:: 0.24
+0.12:: 0.25
 0.11:: 0.22
 0.10:: 0.20
 0.9:: 0.19
