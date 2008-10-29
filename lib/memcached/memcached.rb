@@ -42,7 +42,7 @@ Create a new Memcached instance. Accepts a single server string such as 'localho
 
 Valid option parameters are:
 
-<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 11.
+<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 128 under default conditions.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent</tt>, or <tt>:consistent_wheel</tt>. Defaults to <tt>:consistent</tt>, which is ketama-compatible.
 <tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>false</tt>. Note that in the event of a server failure, <tt>:failover</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
@@ -52,6 +52,7 @@ Valid option parameters are:
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
+<tt>:hash_with_prefix_key</tt>:: Mhether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
 
@@ -384,7 +385,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # Only support prefix_key for now
     if options[:prefix_key]
       if options[:hash_with_prefix_key] 
-        options[:prefix_key].size < INTERNAL_MAX_PREFIX_KEY or
+        options[:prefix_key].size <= INTERNAL_MAX_PREFIX_KEY or
           raise ArgumentError, "Max prefix_key size for :hash_with_prefix_key => true is #{INTERNAL_MAX_PREFIX_KEY}"
       else
         # XXX Libmemcached doesn't validate the key length properly      
