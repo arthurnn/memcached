@@ -1,7 +1,7 @@
 
-v0.12. Update to libmemcached 0.22. Support weights and flags. Default to HASH_WITH_PREFIX behavior.
+v0.12. Update to libmemcached 0.24. Support weights and flags. Default to HASH_WITH_PREFIX behavior. Note, if you use ketama, upgrading will invalidate your entire cache.
 
-v0.11. Update to libmemcached 0.22. Support hostname lookups. Register %freefunc for MemcachedSt and remove destroy() method. Use new built-in behavior for namespacing. Raise on version mismatch. Remove private hash function. Fix bug related to socket size behavior reset when struct is initialized with missing servers (Jeffrey Hardy). WARNING! If you use a namespace, this version will effectively invalidate your entire cache.
+v0.11. Update to libmemcached 0.22. Support hostname lookups. Register %freefunc for MemcachedSt and remove destroy() method. Use new built-in behavior for namespacing. Raise on version mismatch. Remove private hash function. Fix bug related to socket size behavior reset when struct is initialized with missing servers (Jeffrey Hardy). Note, if you use a namespace, upgrading will invalidate your entire cache.
 
 v0.10. Update to libmemcached 0.20. Failover support. Close consistent hashing bugs.
 
