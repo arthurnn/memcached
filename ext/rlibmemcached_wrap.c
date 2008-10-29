@@ -11078,7 +11078,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_SERVER_FAILURE_LIMIT", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SERVER_FAILURE_LIMIT)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_IO_MSG_WATERMARK", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_IO_MSG_WATERMARK)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_IO_BYTES_WATERMARK", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_IO_BYTES_WATERMARK)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_HASH_WITH_PREFIX", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_HASH_WITH_PREFIX)));
+  rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_HASH_WITH_PREFIX_KEY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_HASH_WITH_PREFIX_KEY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_PREFIX_KEY", SWIG_From_int((int)(MEMCACHED_CALLBACK_PREFIX_KEY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_USER_DATA", SWIG_From_int((int)(MEMCACHED_CALLBACK_USER_DATA)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_CLEANUP_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLEANUP_FUNCTION)));

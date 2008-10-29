@@ -6,7 +6,7 @@ class MemcachedTest < Test::Unit::TestCase
   def setup
     @servers = ['localhost:43042', 'localhost:43043']
 
-    # Maximum allowed prefix key size
+    # Maximum allowed prefix key size for :hash_with_prefix_key_key => false
     @prefix_key = 'prefix_key_' 
     
     @options = {      
@@ -100,11 +100,22 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  def test_initialize_with_invalid_prefix_key
+  def test_initialize_with_invalid_unhashed_prefix_key
     assert_raise(ArgumentError) do 
-      Memcached.new @servers, :prefix_key => "prefix_key__"
+      Memcached.new @servers, 
+        :prefix_key => "prefix_key__",
+        :hash_with_prefix_key => false
     end
   end
+
+  def test_initialize_with_valid_hashed_prefix_key
+    assert_nothing_raised do 
+      Memcached.new @servers, 
+        :prefix_key => "prefix_key__",
+        :hash_with_prefix_key => true
+    end
+  end
+
   
   def test_initialize_without_prefix_key
     cache = Memcached.new @servers
@@ -660,6 +671,7 @@ class MemcachedTest < Test::Unit::TestCase
       [@servers.last, 'localhost:43041'], # Use a server that isn't running
       :prefix_key => @prefix_key,
       :failover => true,
+      :hash_with_prefix_key => false,
       :hash => :md5
     )
     

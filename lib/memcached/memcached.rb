@@ -4,6 +4,8 @@ The Memcached client class.
 =end
 class Memcached
 
+  INTERNAL_MAX_PREFIX_KEY = 128
+
   FLAGS = 0x0
 
   DEFAULTS = {
@@ -19,6 +21,7 @@ class Memcached
 #    :poll_timeout => 5,
     :connect_timeout => 5,
     :prefix_key => nil,
+    :hash_with_prefix_key => true,
     :sort_hosts => false,
     :failover => false,
     :verify_key => true
@@ -380,10 +383,14 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def set_callbacks  
     # Only support prefix_key for now
     if options[:prefix_key]
-      # XXX Libmemcached doesn't validate the key length properly
-      if options[:prefix_key].size > Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1
-        raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
-      end      
+      if options[:hash_with_prefix_key] 
+        options[:prefix_key].size < INTERNAL_MAX_PREFIX_KEY or
+          raise ArgumentError, "Max prefix_key size for :hash_with_prefix_key => true is #{INTERNAL_MAX_PREFIX_KEY}"
+      else
+        # XXX Libmemcached doesn't validate the key length properly      
+        options[:prefix_key].size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE or
+          raise ArgumentError, "Max prefix_key size for :hash_with_prefix_key => false is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
+      end
       Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
     end
   end
