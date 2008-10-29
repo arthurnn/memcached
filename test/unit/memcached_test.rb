@@ -40,20 +40,27 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def test_initialize_with_ip_addresses
-    cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043'], :prefix_key => 'test'  
+    cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043']
     assert_equal '127.0.0.1', cache.send(:server_structs).first.hostname
     assert_equal '127.0.0.1', cache.send(:server_structs).last.hostname
   end
   
   def test_initialize_without_port
-    cache = Memcached.new ['localhost'], :prefix_key => 'test'
+    cache = Memcached.new ['localhost']
     assert_equal 'localhost', cache.send(:server_structs).first.hostname
     assert_equal 11211, cache.send(:server_structs).first.port
   end
 
+  def test_initialize_with_ports_and_weights
+    cache = Memcached.new ['localhost:43042:2', 'localhost:43043:10']
+    assert_equal 2, cache.send(:server_structs).first.weight
+    assert_equal 43043, cache.send(:server_structs).last.port
+    assert_equal 10, cache.send(:server_structs).last.weight
+  end
+
   def test_initialize_with_hostname_only
     addresses = (1..8).map { |i| "app-cache-%02d" % i }
-    cache = Memcached.new(addresses, :prefix_key => 'test')
+    cache = Memcached.new(addresses)
     addresses.each_with_index do |address, index|
       assert_equal address, cache.send(:server_structs)[index].hostname
       assert_equal 11211, cache.send(:server_structs)[index].port

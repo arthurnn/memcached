@@ -18,7 +18,7 @@
 
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
-%apply unsigned long { uint32_t flags, uint32_t offset };
+%apply unsigned long { uint32_t flags, uint32_t offset, uint32_t weight };
 %apply unsigned long long {uint64_t data, uint64_t cas };
 
 // Array of strings map for multiget
