@@ -275,13 +275,11 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #
   def get(keys, marshal=true)
     if keys.is_a? Array
-      # Multi get
-      keys.map! { |key| key }
-      hash = {}
-      
+      # Multi get      
       ret = Lib.memcached_mget(@struct, keys);
       check_return_code(ret)
-      
+
+      hash = {}      
       keys.size.times do 
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
         break if ret == Lib::MEMCACHED_END
