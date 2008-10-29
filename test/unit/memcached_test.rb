@@ -231,6 +231,20 @@ class MemcachedTest < Test::Unit::TestCase
     end).real
   end
 
+  def test_get_with_no_block_server_timeout
+    socket = stub_server
+    cache = Memcached.new(
+      "localhost:43047:1",
+      :no_block => true,
+      :poll_timeout => 250
+    )
+    assert 0.24 < (Benchmark.measure do
+      assert_raise(Memcached::UnknownReadFailure) do
+        result = cache.get key
+      end
+    end).real
+  end
+
   def test_get_with_prefix_key
     # Prefix_key
     cache = Memcached.new(
@@ -663,6 +677,12 @@ class MemcachedTest < Test::Unit::TestCase
       Memcached::FLAGS
     )
     assert_equal 31, ret
+  end
+  
+  def test_no_block_get
+    @nb_cache.set key, @value
+    assert_equal @value, 
+      @nb_cache.get(key)
   end
 
   def test_no_block_missing_delete
