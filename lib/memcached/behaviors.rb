@@ -23,7 +23,7 @@ class Memcached
   DISTRIBUTION_VALUES = {}
   BEHAVIOR_VALUES.merge!(load_constants("MEMCACHED_DISTRIBUTION_", DISTRIBUTION_VALUES))
   
-  DIRECT_VALUE_BEHAVIORS = [:retry_timeout, :connect_timeout, :socket_recv_size, :poll_timeout, :socket_send_size]
+  DIRECT_VALUE_BEHAVIORS = [:retry_timeout, :connect_timeout, :rcv_timeout, :socket_recv_size, :poll_timeout, :socket_send_size]
 
 #:startdoc:
 

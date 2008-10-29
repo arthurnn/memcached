@@ -1,5 +1,8 @@
 
 require "#{File.dirname(__FILE__)}/../test_helper"
+require 'socket'
+require 'timeout'
+require 'benchmark'
 
 class MemcachedTest < Test::Unit::TestCase
 
@@ -7,19 +10,19 @@ class MemcachedTest < Test::Unit::TestCase
     @servers = ['localhost:43042', 'localhost:43043']
 
     # Maximum allowed prefix key size for :hash_with_prefix_key_key => false
-    @prefix_key = 'prefix_key_' 
-    
-    @options = {      
-      :prefix_key => @prefix_key, 
+    @prefix_key = 'prefix_key_'
+
+    @options = {
+      :prefix_key => @prefix_key,
       :hash => :default,
       :distribution => :modula
     }
     @cache = Memcached.new(@servers, @options)
-    
+
     @nb_options = {
-      :prefix_key => @prefix_key, 
-      :no_block => true, 
-      :buffer_requests => true, 
+      :prefix_key => @prefix_key,
+      :no_block => true,
+      :buffer_requests => true,
       :hash => :default
     }
     @nb_cache = Memcached.new(@servers, @nb_options)
@@ -27,7 +30,7 @@ class MemcachedTest < Test::Unit::TestCase
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
-    
+
   # Initialize
 
   def test_initialize
@@ -38,13 +41,13 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal 'localhost', cache.send(:server_structs).last.hostname
     assert_equal 43043, cache.send(:server_structs).last.port
   end
-  
+
   def test_initialize_with_ip_addresses
     cache = Memcached.new ['127.0.0.1:43042', '127.0.0.1:43043']
     assert_equal '127.0.0.1', cache.send(:server_structs).first.hostname
     assert_equal '127.0.0.1', cache.send(:server_structs).last.hostname
   end
-  
+
   def test_initialize_without_port
     cache = Memcached.new ['localhost']
     assert_equal 'localhost', cache.send(:server_structs).first.hostname
@@ -73,13 +76,13 @@ class MemcachedTest < Test::Unit::TestCase
       assert(expected == value, "#{key} should be #{expected} but was #{value}")
     end
   end
-  
+
   def test_options_are_frozen
     assert_raise(TypeError) do
       @cache.options[:no_block] = true
     end
   end
-    
+
   def test_behaviors_are_set
     Memcached::BEHAVIORS.keys.each do |key, value|
       assert_not_nil @cache.send(:get_behavior, key)
@@ -91,34 +94,34 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { Memcached.new "localhost:memcached" }
     assert_raise(ArgumentError) { Memcached.new "local host:43043:1" }
   end
-  
+
   def test_initialize_with_resolvable_hosts
     host = `hostname`.chomp
     cache = Memcached.new ["#{host}:43042"]
     assert_equal host, cache.send(:server_structs).first.hostname
-    
+
     cache.set(key, @value)
     assert_equal @value, cache.get(key)
   end
-  
+
   def test_initialize_with_invalid_options
-    assert_raise(ArgumentError) do 
+    assert_raise(ArgumentError) do
       Memcached.new @servers, :sort_hosts => true, :distribution => :consistent
     end
   end
 
   def test_initialize_with_invalid_prefix_key
-    assert_raise(ArgumentError) do 
+    assert_raise(ArgumentError) do
       Memcached.new @servers, :prefix_key => "x" * 128
     end
   end
-  
+
   def test_initialize_without_prefix_key
     cache = Memcached.new @servers
     assert_equal nil, cache.options[:prefix_key]
     assert_equal 2, cache.send(:server_structs).size
   end
-  
+
   def test_initialize_negative_behavior
     cache = Memcached.new @servers,
       :buffer_requests => false
@@ -126,7 +129,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set key, @value
     end
   end
-  
+
   def test_initialize_without_not_found_backtraces
     cache = Memcached.new @servers,
       :show_not_found_backtraces => false
@@ -146,16 +149,16 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get key
     rescue Memcached::NotFound => e
       assert !e.backtrace.empty?
-    end  
-  end  
-  
+    end
+  end
+
   def test_initialize_sort_hosts
     # Original
     cache = Memcached.new(@servers.sort,
       :sort_hosts => false,
       :distribution => :modula
     )
-    assert_equal @servers.sort, 
+    assert_equal @servers.sort,
       cache.servers
 
     # Original with sort_hosts
@@ -163,26 +166,26 @@ class MemcachedTest < Test::Unit::TestCase
       :sort_hosts => true,
       :distribution => :modula
     )
-    assert_equal @servers.sort, 
+    assert_equal @servers.sort,
       cache.servers
-    
-    # Reversed 
+
+    # Reversed
     cache = Memcached.new(@servers.sort.reverse,
       :sort_hosts => false,
       :distribution => :modula
     )
-      assert_equal @servers.sort.reverse, 
+      assert_equal @servers.sort.reverse,
     cache.servers
-      
+
     # Reversed with sort_hosts
     cache = Memcached.new(@servers.sort.reverse,
       :sort_hosts => true,
       :distribution => :modula
     )
-    assert_equal @servers.sort, 
+    assert_equal @servers.sort,
       cache.servers
   end
-  
+
   def test_initialize_single_server
     cache = Memcached.new 'localhost:43042'
     assert_equal nil, cache.options[:prefix_key]
@@ -192,9 +195,9 @@ class MemcachedTest < Test::Unit::TestCase
   def test_initialize_strange_argument
     assert_raise(ArgumentError) { Memcached.new 1 }
   end
-  
+
   # Get
-  
+
   def test_get
     @cache.set key, @value
     result = @cache.get key
@@ -206,33 +209,47 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key
     assert_equal nil, result
   end
-  
+
   def test_get_missing
     @cache.delete key rescue nil
     assert_raise(Memcached::NotFound) do
       result = @cache.get key
     end
   end
-  
+
+  def test_get_with_server_timeout
+    socket = stub_server
+    cache = Memcached.new(
+      "localhost:43047:1",
+      :rcv_timeout => 500_000,
+      :poll_timeout => 1
+    )
+    assert 0.49 < (Benchmark.measure do
+      assert_raise(Memcached::UnknownReadFailure) do
+        result = cache.get key
+      end
+    end).real
+  end
+
   def test_get_with_prefix_key
     # Prefix_key
     cache = Memcached.new(
       # We can only use one server because the key is hashed separately from the prefix key
       @servers.first,
-      :prefix_key => @prefix_key, 
+      :prefix_key => @prefix_key,
       :hash => :default,
       :distribution => :modula
     )
     cache.set key, @value
     assert_equal @value, cache.get(key)
-    
+
     # No prefix_key specified
     cache = Memcached.new(
       @servers.first,
       :hash => :default,
       :distribution => :modula
     )
-    assert_nothing_raised do    
+    assert_nothing_raised do
       assert_equal @value, cache.get("#{@prefix_key}#{key}")
     end
   end
@@ -242,11 +259,11 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.set key, value
     result = @cache.get key, false
     non_wrapped_result = Rlibmemcached.memcached_get(
-      @cache.instance_variable_get("@struct"), 
+      @cache.instance_variable_get("@struct"),
       key
     ).first
-    assert result.size > non_wrapped_result.size      
-  end  
+    assert result.size > non_wrapped_result.size
+  end
 
   def test_get_multi
     @cache.set "#{key}_1", 1
@@ -254,33 +271,33 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal({"#{key}_1" => 1, "#{key}_2" => 2},
       @cache.get(["#{key}_1", "#{key}_2"]))
   end
-  
+
   def test_get_multi_missing
     @cache.set "#{key}_1", 1
     @cache.delete "#{key}_2" rescue nil
     @cache.set "#{key}_3", 3
-    @cache.delete "#{key}_4" rescue nil    
+    @cache.delete "#{key}_4" rescue nil
     assert_equal(
-      {"test_get_multi_missing_3"=>3, "test_get_multi_missing_1"=>1}, 
+      {"test_get_multi_missing_3"=>3, "test_get_multi_missing_1"=>1},
       @cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"])
      )
   end
-  
+
   def test_get_multi_completely_missing
     @cache.delete "#{key}_1" rescue nil
-    @cache.delete "#{key}_2" rescue nil    
+    @cache.delete "#{key}_2" rescue nil
     assert_equal(
       {},
       @cache.get(["#{key}_1", "#{key}_2"])
      )
-  end  
+  end
 
   def test_set_and_get_unmarshalled
     @cache.set key, @value
     result = @cache.get key, false
     assert_equal @marshalled_value, result
   end
-  
+
   def test_get_multi_unmarshalled
     @cache.set "#{key}_1", 1, 0, false
     @cache.set "#{key}_2", 2, 0, false
@@ -289,7 +306,7 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(["#{key}_1", "#{key}_2"], false)
     )
   end
-  
+
   def test_get_multi_mixed_marshalling
     @cache.set "#{key}_1", 1
     @cache.set "#{key}_2", 2, 0, false
@@ -299,7 +316,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(ArgumentError) do
       @cache.get(["#{key}_1", "#{key}_2"])
     end
-  end  
+  end
 
   # Set
 
@@ -308,7 +325,7 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.set(key, @value)
     end
   end
-    
+
   def test_set_expiry
     @cache.set key, @value, 1
     assert_nothing_raised do
@@ -334,16 +351,16 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get key
     end
   end
-  
+
   # Delete
-  
+
   def test_delete
     @cache.set key, @value
     @cache.delete key
     assert_raise(Memcached::NotFound) do
       @cache.get key
     end
-  end  
+  end
 
   def test_missing_delete
     @cache.delete key rescue nil
@@ -351,19 +368,19 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.delete key
     end
   end
-  
+
   # Flush
-  
+
   def test_flush
     @cache.set key, @value
-    assert_equal @value, 
+    assert_equal @value,
       @cache.get(key)
     @cache.flush
-    assert_raise(Memcached::NotFound) do 
+    assert_raise(Memcached::NotFound) do
       @cache.get key
     end
   end
-  
+
   # Add
 
   def test_add
@@ -388,7 +405,7 @@ class MemcachedTest < Test::Unit::TestCase
     sleep(1)
     assert_raise(Memcached::NotFound) do
       @cache.get key
-    end  
+    end
   end
 
   def test_unmarshalled_add
@@ -397,14 +414,14 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal @marshalled_value, @cache.get(key, false)
     assert_equal @value, @cache.get(key)
   end
-  
+
   # Increment and decrement
 
   def test_increment
     @cache.set key, 10, 0, false
     assert_equal 11, @cache.increment(key)
   end
-  
+
   def test_increment_offset
     @cache.set key, 10, 0, false
     assert_equal 15, @cache.increment(key, 5)
@@ -421,11 +438,11 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.set key, 10, 0, false
     assert_equal 9, @cache.decrement(key)
   end
-  
+
   def test_decrement_offset
     @cache.set key, 10, 0, false
     assert_equal 5, @cache.decrement(key, 5)
-  end  
+  end
 
   def test_missing_decrement
     @cache.delete key rescue nil
@@ -433,9 +450,9 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.decrement key
     end
   end
-  
+
   # Replace
-  
+
   def test_replace
     @cache.set key, nil
     assert_nothing_raised do
@@ -449,11 +466,11 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(Memcached::NotStored) do
       @cache.replace key, @value
     end
-    assert_raise(Memcached::NotFound) do    
-      assert_equal @value, @cache.get(key)    
+    assert_raise(Memcached::NotFound) do
+      assert_equal @value, @cache.get(key)
     end
   end
-  
+
   # Append and prepend
 
   def test_append
@@ -469,8 +486,8 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(Memcached::NotStored) do
       @cache.append key, "end"
     end
-    assert_raise(Memcached::NotFound) do    
-      assert_equal @value, @cache.get(key)    
+    assert_raise(Memcached::NotFound) do
+      assert_equal @value, @cache.get(key)
     end
   end
 
@@ -487,17 +504,17 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(Memcached::NotStored) do
       @cache.prepend key, "end"
     end
-    assert_raise(Memcached::NotFound) do    
-      assert_equal @value, @cache.get(key)    
+    assert_raise(Memcached::NotFound) do
+      assert_equal @value, @cache.get(key)
     end
   end
 
   def test_cas
     cache = Memcached.new(
-      @servers, 
-      :prefix_key => @prefix_key, 
+      @servers,
+      :prefix_key => @prefix_key,
       :support_cas => true
-    )        
+    )
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
 
     # Existing set
@@ -507,20 +524,20 @@ class MemcachedTest < Test::Unit::TestCase
       value2
     end
     assert_equal value2, cache.get(key)
-    
+
     # Existing test without marshalling
     cache.set(key, "foo", 0, false)
     cache.cas(key, 0, false) do |current|
       "#{current}bar"
     end
     assert_equal "foobar", cache.get(key, false)
-    
+
     # Missing set
     cache.delete key
     assert_raises(Memcached::NotFound) do
       cache.cas(key) {}
     end
-    
+
     # Conflicting set
     cache.set key, @value
     assert_raises(Memcached::ConnectionDataExists) do
@@ -530,9 +547,9 @@ class MemcachedTest < Test::Unit::TestCase
       end
     end
   end
-    
+
   # Error states
-  
+
   def test_key_with_spaces
     key = "i have a space"
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
@@ -542,7 +559,7 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(key)
     end
   end
-  
+
   def test_key_with_null
     key = "with\000null"
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
@@ -555,8 +572,8 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       response = @cache.get([key])
     end
-  end  
-  
+  end
+
   def test_key_with_invalid_control_characters
     key = "ch\303\242teau"
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
@@ -570,7 +587,7 @@ class MemcachedTest < Test::Unit::TestCase
       response = @cache.get([key])
     end
   end
-  
+
   def test_key_too_long
     key = "x"*251
     assert_raises(Memcached::ClientError) do
@@ -579,18 +596,18 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raises(Memcached::ClientError) do
       @cache.get(key)
     end
-    
+
     assert_raises(Memcached::ClientError) do
       @cache.get([key])
     end
-  end  
+  end
 
   def test_set_object_too_large
     assert_raise(Memcached::ServerError) do
       @cache.set key, "I'm big" * 1000000
     end
   end
-  
+
   # Stats
 
   def test_stats
@@ -599,25 +616,25 @@ class MemcachedTest < Test::Unit::TestCase
     assert_instance_of Fixnum, stats[:pid].first
     assert_instance_of String, stats[:version].first
   end
-  
+
   # Clone
-  
+
   def test_clone
     cache = @cache.clone
     assert_equal cache.servers, @cache.servers
     assert_not_equal cache, @cache
-    
+
     # Definitely check that the structs are unlinked
     assert_not_equal @cache.instance_variable_get('@struct').object_id,
       cache.instance_variable_get('@struct').object_id
-    
+
     assert_nothing_raised do
       @cache.set key, @value
     end
   end
-  
+
   # Non-blocking IO
-  
+
   def test_buffered_requests_return_value
     cache = Memcached.new @servers,
       :buffer_requests => true
@@ -625,10 +642,10 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set key, @value
     end
     ret = Rlibmemcached.memcached_set(
-      cache.instance_variable_get("@struct"), 
-      key, 
-      @marshalled_value, 
-      0, 
+      cache.instance_variable_get("@struct"),
+      key,
+      @marshalled_value,
+      0,
       Memcached::FLAGS
     )
     assert_equal 31, ret
@@ -639,44 +656,44 @@ class MemcachedTest < Test::Unit::TestCase
       @nb_cache.set key, @value
     end
     ret = Rlibmemcached.memcached_set(
-      @nb_cache.instance_variable_get("@struct"), 
-      key, 
-      @marshalled_value, 
-      0, 
+      @nb_cache.instance_variable_get("@struct"),
+      key,
+      @marshalled_value,
+      0,
       Memcached::FLAGS
     )
     assert_equal 31, ret
   end
-  
+
   def test_no_block_missing_delete
     @nb_cache.delete key rescue nil
     assert_nothing_raised do
       @nb_cache.delete key
     end
-  end  
+  end
 
   def test_no_block_set_invalid_key
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @nb_cache.set "I'm so bad", @value
     end
-  end   
+  end
 
   def test_no_block_set_object_too_large
     assert_nothing_raised do
       @nb_cache.set key, "I'm big" * 1000000
     end
   end
-  
+
   def test_no_block_existing_add
     # Should still raise
     @nb_cache.set key, @value
     assert_raise(Memcached::NotStored) do
       @nb_cache.add key, @value
     end
-  end  
-  
+  end
+
   # Server removal and consistent hashing
-  
+
   def test_missing_server
     cache = Memcached.new(
       [@servers.last, 'localhost:43041'], # Use a server that isn't running
@@ -685,26 +702,26 @@ class MemcachedTest < Test::Unit::TestCase
       :hash_with_prefix_key => false,
       :hash => :md5
     )
-    
+
     # Hit first server
     key = 'test_missing_server'
     cache.set(key, @value)
     cache.get(key) == @value
-        
+
     # Hit second server
     key = 'test_missing_server3'
     assert_raise(Memcached::SystemError) do
       cache.set(key, @value)
       cache.get(key)
-    end    
+    end
 
     # Hit first server on retry
     assert_nothing_raised do
       cache.set(key, @value)
       cache.get(key)
-    end    
+    end
   end
-  
+
   def test_sweep_servers_with_missing_server_first
     cache = Memcached.new(['127.0.0.1:00000'] + @servers)
     assert_nothing_raised do
@@ -715,24 +732,24 @@ class MemcachedTest < Test::Unit::TestCase
   def test_consistent_hashing
 
     keys = %w(EN6qtgMW n6Oz2W4I ss4A8Brr QShqFLZt Y3hgP9bs CokDD4OD Nd3iTSE1 24vBV4AU H9XBUQs5 E5j8vUq1 AzSh8fva PYBlK2Pi Ke3TgZ4I AyAIYanO oxj8Xhyd eBFnE6Bt yZyTikWQ pwGoU7Pw 2UNDkKRN qMJzkgo2 keFXbQXq pBl2QnIg ApRl3mWY wmalTJW1 TLueug8M wPQL4Qfg uACwus23 nmOk9R6w lwgZJrzJ v1UJtKdG RK629Cra U2UXFRqr d9OQLNl8 KAm1K3m5 Z13gKZ1v tNVai1nT LhpVXuVx pRib1Itj I1oLUob7 Z1nUsd5Q ZOwHehUa aXpFX29U ZsnqxlGz ivQRjOdb mB3iBEAj)
-    
+
     # Five servers
     cache = Memcached.new(
-      @servers + ['localhost:43044', 'localhost:43045', 'localhost:43046'], 
+      @servers + ['localhost:43044', 'localhost:43045', 'localhost:43046'],
       :prefix_key => @prefix_key
-    )        
-    
-    cache.flush    
+    )
+
+    cache.flush
     keys.each do |key|
       cache.set(key, @value)
-    end 
+    end
 
     # Pull a server
     cache = Memcached.new(
       @servers + ['localhost:43044', 'localhost:43046'],
       :prefix_key => @prefix_key
     )
-    
+
     failed = 0
     keys.each_with_index do |key, i|
       begin
@@ -742,15 +759,15 @@ class MemcachedTest < Test::Unit::TestCase
       end
     end
 
-    assert(failed < keys.size / 3, "#{failed} failed out of #{keys.size}")   
+    assert(failed < keys.size / 3, "#{failed} failed out of #{keys.size}")
   end
 
   # Concurrency
-  
+
   def test_thread_contention
     threads = []
     4.times do |index|
-      threads << Thread.new do 
+      threads << Thread.new do
         cache = @cache.clone
         assert_nothing_raised do
           cache.set("test_thread_contention_#{index}", index)
@@ -760,23 +777,29 @@ class MemcachedTest < Test::Unit::TestCase
     end
     threads.each {|thread| thread.join}
   end
-  
+
   # Memory cleanup
-  
+
   def test_reset
     original_struct = @cache.instance_variable_get("@struct")
     assert_nothing_raised do
       @cache.reset
-    end 
-    assert_not_equal original_struct, 
-      @cache.instance_variable_get("@struct") 
+    end
+    assert_not_equal original_struct,
+      @cache.instance_variable_get("@struct")
   end
-    
+
   private
-  
+
   def key
-    caller.first[/`(.*)'/, 1]
+    caller.first[/`(.*)'/, 1] # '
   end
- 
+
+  def stub_server
+    socket = TCPServer.new('127.0.0.1', 43047)
+    Thread.new { socket.accept }
+    socket
+  end
+
 end
 
