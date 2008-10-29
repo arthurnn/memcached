@@ -38,8 +38,14 @@ class Memcached
 ###### Configuration
 
 =begin rdoc      
-Create a new Memcached instance. Accepts a single server string such as 'localhost:11211', or an array of such strings, as well an an optional configuration hash.
+Create a new Memcached instance. Accepts string or array of server strings, as well an an optional configuration hash.
 
+  Memcached.new('localhost', ...) # A single server
+  Memcached.new(['web001:11212', 'web002:11212'], ...) # Two servers with custom ports
+  Memcached.new(['web001:11211:2', 'web002:11211:8'], ...) # Two servers with default ports and explicit weights
+  
+Weights only affect Ketama hashing.  If you use Ketama hashing and don't specify a weight, the client will poll each server's stats and use its size as the weight.
+  
 Valid option parameters are:
 
 <tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 128 under default conditions.
@@ -365,11 +371,11 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Set the servers on the struct
   def set_servers(servers)
     Array(servers).each_with_index do |server, index|
-      unless server.is_a? String and server =~ /^[\w\d\.-]+(:\d{1,5})?$/
-        raise ArgumentError, "Servers must be in the format host:port (e.g., 'localhost:11211')" 
+      unless server.is_a? String and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
+        raise ArgumentError, "Servers must be in the format host:port[:weight] (e.g., 'localhost:11211' or  'localhost:11211:10')"
       end
-      host, port = server.split(":")
-      Lib.memcached_server_add(@struct, host, port.to_i)
+      host, port, weight = server.split(":")
+      Lib.memcached_server_add(@struct, host, port.to_i, weight || 0)
     end    
   end
   
