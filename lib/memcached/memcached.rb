@@ -153,18 +153,18 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be set directly. 
   # 
-  def set(key, value, timeout=0, marshal=true)
+  def set(key, value, timeout=0, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_set(@struct, key, value, timeout, FLAGS)
+      Lib.memcached_set(@struct, key, value, timeout, flags)
     )
   end
 
   # Add a key/value pair. Raises <b>Memcached::NotStored</b> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
-  def add(key, value, timeout=0, marshal=true)
+  def add(key, value, timeout=0, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_add(@struct, key, value, timeout, FLAGS)
+      Lib.memcached_add(@struct, key, value, timeout, flags)
     )
   end
 
@@ -192,10 +192,10 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #:startdoc:
 
   # Replace a key/value pair. Raises <b>Memcached::NotFound</b> if the key does not exist on the server. The parameters are the same as <tt>set</tt>.
-  def replace(key, value, timeout=0, marshal=true)
+  def replace(key, value, timeout=0, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_replace(@struct, key, value, timeout, FLAGS)
+      Lib.memcached_replace(@struct, key, value, timeout, flags)
     )
   end
 
@@ -205,7 +205,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def append(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Lib.memcached_append(@struct, key, value.to_s, IGNORED, FLAGS)
+      Lib.memcached_append(@struct, key, value.to_s, IGNORED, IGNORED)
     )
   end
   
@@ -213,7 +213,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def prepend(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Lib.memcached_prepend(@struct, key, value.to_s, IGNORED, FLAGS)
+      Lib.memcached_prepend(@struct, key, value.to_s, IGNORED, IGNORED)
     )
   end
   
@@ -223,7 +223,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #
   # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
   #
-  def cas(key, timeout = 0, marshal = true)
+  def cas(key, timeout = 0, marshal = true, flags=FLAGS)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
       
     value = get(key, marshal)
@@ -231,7 +231,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     value = marshal ? Marshal.dump(value) : value.to_s
     
     check_return_code(
-      Lib.memcached_cas(@struct, key, value, timeout, FLAGS, @struct.result.cas)
+      Lib.memcached_cas(@struct, key, value, timeout, flags, @struct.result.cas)
     )
   end
 
