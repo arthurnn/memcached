@@ -10859,7 +10859,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   cMemcachedContinuumItemSt.mark = 0;
   cMemcachedContinuumItemSt.destroy = (void (*)(void *)) free_memcached_continuum_item_st;
   cMemcachedContinuumItemSt.trackObjects = 0;
-  rb_define_const(mRlibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.24"));
+  rb_define_const(mRlibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.25"));
   
   cMemcachedStatSt.klass = rb_define_class_under(mRlibmemcached, "MemcachedStatSt", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_memcached_stat_st, (void *) &cMemcachedStatSt);
