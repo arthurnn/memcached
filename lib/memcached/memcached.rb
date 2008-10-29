@@ -4,8 +4,6 @@ The Memcached client class.
 =end
 class Memcached
 
-  INTERNAL_MAX_PREFIX_KEY = 128
-
   FLAGS = 0x0
 
   DEFAULTS = {
@@ -48,7 +46,7 @@ Weights only affect Ketama hashing.  If you use Ketama hashing and don't specify
   
 Valid option parameters are:
 
-<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 128 under default conditions.
+<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 127.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent</tt>, or <tt>:consistent_wheel</tt>. Defaults to <tt>:consistent</tt>, which is ketama-compatible.
 <tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>false</tt>. Note that in the event of a server failure, <tt>:failover</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
@@ -388,13 +386,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def set_callbacks  
     # Only support prefix_key for now
     if options[:prefix_key]
-      if options[:hash_with_prefix_key] 
-        options[:prefix_key].size <= INTERNAL_MAX_PREFIX_KEY or
-          raise ArgumentError, "Max prefix_key size for :hash_with_prefix_key => true is #{INTERNAL_MAX_PREFIX_KEY}"
-      else
-        # XXX Libmemcached doesn't validate the key length properly      
-        options[:prefix_key].size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE or
-          raise ArgumentError, "Max prefix_key size for :hash_with_prefix_key => false is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
+      unless options[:prefix_key].size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
+        raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}" 
       end
       Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
     end

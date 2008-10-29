@@ -107,22 +107,11 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  def test_initialize_with_invalid_unhashed_prefix_key
+  def test_initialize_with_invalid_prefix_key
     assert_raise(ArgumentError) do 
-      Memcached.new @servers, 
-        :prefix_key => "prefix_key__",
-        :hash_with_prefix_key => false
+      Memcached.new @servers, :prefix_key => "x" * 128
     end
   end
-
-  def test_initialize_with_valid_hashed_prefix_key
-    assert_nothing_raised do 
-      Memcached.new @servers, 
-        :prefix_key => "prefix_key__",
-        :hash_with_prefix_key => true
-    end
-  end
-
   
   def test_initialize_without_prefix_key
     cache = Memcached.new @servers
