@@ -330,6 +330,21 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
+  def test_get_with_random_distribution
+    cache = Memcached.new(@servers, :distribution => :random)
+    cache.set key, @value
+    
+    hits = (0..10).to_a.map do
+      begin
+        cache.get(key)
+      rescue Memcached::NotFound
+      end
+    end.compact.size
+
+    assert 0 < hits
+    assert 10 > hits
+  end
+
   # Set
 
   def test_set

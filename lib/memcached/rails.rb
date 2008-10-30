@@ -61,6 +61,8 @@ class Memcached
     def namespace
       options[:prefix_key]
     end
+    
+    alias :flush_all :flush
 
     alias :"[]" :get
     alias :"[]=" :set    
