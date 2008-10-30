@@ -9,7 +9,8 @@ class Memcached
   DEFAULTS = {
     :hash => :default,
     :no_block => false,
-    :distribution => :consistent,
+    :distribution => :consistent_ketama,
+    :ketama_weighted => true,
     :buffer_requests => false,
     :cache_lookups => true,
     :support_cas => false,
@@ -21,6 +22,7 @@ class Memcached
     :prefix_key => nil,
     :hash_with_prefix_key => true,
     :default_ttl => 604800,
+    :default_weight => 8,
     :sort_hosts => false,
     :failover => false,
     :verify_key => true
@@ -49,7 +51,7 @@ Valid option parameters are:
 
 <tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 127.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
-<tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent</tt>, or <tt>:consistent_wheel</tt>. Defaults to <tt>:consistent</tt>, which is ketama-compatible.
+<tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent_ketama</tt>, or <tt>:consistent_wheel</tt>. Defaults to <tt>:ketama</tt>.
 <tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>false</tt>. Note that in the event of a server failure, <tt>:failover</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
 <tt>:cache_lookups</tt>:: Whether to cache hostname lookups for the life of the instance. Defaults to <tt>true</tt>.
 <tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Defaults to <tt>false</tt> because it imposes a slight performance penalty. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
@@ -59,7 +61,7 @@ Valid option parameters are:
 <tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 <tt>:timeout</tt>:: How long to wait for a response from the server. Defaults to 0.5 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
-<tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
+<tt>:default_weight</tt>:: The weight to use if <tt>:ketama_weighted</tt> is <tt>true</tt>, but no weight is specified for a server.
 <tt>:hash_with_prefix_key</tt>:: Whether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
@@ -79,6 +81,9 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # XXX Deleting the :no_block key should also work, but libmemcached doesn't seem to set it
     # consistently
     options[:no_block] = true if options[:buffer_requests]
+
+    # Disallow weights without ketama
+    options.delete(:ketama_weighted) if options[:distribution] != :consistent_ketama
 
     # Legacy accessor
     options[:prefix_key] = options.delete(:namespace) if options[:namespace]
@@ -387,7 +392,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
         raise ArgumentError, "Servers must be in the format host:port[:weight] (e.g., 'localhost:11211' or  'localhost:11211:10')"
       end
       host, port, weight = server.split(":")
-      Lib.memcached_server_add(@struct, host, port.to_i, weight.to_i)
+      Lib.memcached_server_add(@struct, host, port.to_i, (weight || options[:default_weight]).to_i)
     end
   end
 

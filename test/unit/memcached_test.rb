@@ -723,12 +723,12 @@ class MemcachedTest < Test::Unit::TestCase
     )
 
     # Hit first server
-    key = 'test_missing_server'
+    key = 'test_missing_server1'
     cache.set(key, @value)
     cache.get(key) == @value
 
     # Hit second server
-    key = 'test_missing_server3'
+    key = 'test_missing_server'
     assert_raise(Memcached::UnknownReadFailure) do
       cache.set(key, @value)
       cache.get(key)
