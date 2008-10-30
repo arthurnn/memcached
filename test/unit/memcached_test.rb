@@ -738,21 +738,21 @@ class MemcachedTest < Test::Unit::TestCase
     )
 
     # Hit first server
-    key = 'test_missing_server1'
-    cache.set(key, @value)
-    cache.get(key) == @value
+    key1 = 'test_missing_server6'
+    cache.set(key1, @value)
+    cache.get(key1) == @value
 
     # Hit second server
-    key = 'test_missing_server'
+    key2 = 'test_missing_server'
     assert_raise(Memcached::UnknownReadFailure) do
-      cache.set(key, @value)
-      cache.get(key)
+      cache.set(key2, @value)
+      cache.get(key2)
     end
 
     # Hit first server on retry
     assert_nothing_raised do
-      cache.set(key, @value)
-      cache.get(key)
+      cache.set(key2, @value)
+      cache.get(key2)
     end
   end
 

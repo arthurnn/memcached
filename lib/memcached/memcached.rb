@@ -72,8 +72,10 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
 
-    # Merge option defaults
-    @options = DEFAULTS.merge(opts)
+    # Merge option defaults and discard meaningless keys
+    @options = Hash[*DEFAULTS.map do |key, default|
+      [key, opts[key] || default]
+    end.flatten]
 
     # Force :buffer_requests to use :no_block
     # XXX Deleting the :no_block key should also work, but libmemcached doesn't seem to set it
@@ -112,7 +114,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 
     # Set the servers on the struct
     set_servers(servers)
-
+    
     # Not found exceptions
     unless options[:show_backtraces]
       @not_found_instance = NotFound.new
@@ -123,10 +125,10 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Return the array of server strings used to configure this instance.
   def servers
     server_structs.map do |server|
-      "#{server.hostname}:#{server.port}"
+      inspect_server(server)
     end
   end
-
+  
   # Safely copy this instance. Returns a Memcached instance.
   #
   # <tt>clone</tt> is useful for threading, since each thread must have its own unshared Memcached
@@ -372,7 +374,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     # XXX This method is annoying, but necessary until we get Lib.memcached_delete_server or equivalent.
     server_structs.each do |server|
       if server.next_retry > Time.now
-        server_name = "#{server.hostname}:#{server.port}"
+        server_name = inspect_server(server)
         current_servers = servers
         current_servers.delete(server_name)
         reset(current_servers)
@@ -391,6 +393,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       host, port, weight = server.split(":")
       Lib.memcached_server_add(@struct, host, port.to_i, (weight || options[:default_weight]).to_i)
     end
+    # For inspect
+    @servers = send(:servers)
   end
 
   # Set the behaviors on the struct from the current options
@@ -409,6 +413,11 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       end
       Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
     end
+  end
+  
+  # Stringify an opaque server struct
+  def inspect_server(server)
+    "#{server.hostname}:#{server.port}#{":#{server.weight}" if options[:ketama_weighted]}"  
   end
 
 end

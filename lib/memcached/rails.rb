@@ -11,6 +11,7 @@ class Memcached
     # See Memcached#new for details.
     def initialize(opts = {})
       servers = opts.delete(:servers)
+      opts[:prefix_key] ||= opts[:namespace]
       super(servers, DEFAULTS.merge(opts))      
     end
     
