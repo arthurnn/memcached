@@ -161,8 +161,10 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Return an array of raw <tt>memcached_host_st</tt> structs for this instance.
   def server_structs
     array = []
-    @struct.hosts.count.times do |i|
-      array << Lib.memcached_select_server_at(@struct, i)
+    if @struct.hosts
+      @struct.hosts.count.times do |i|
+        array << Lib.memcached_select_server_at(@struct, i)
+      end
     end
     array
   end
