@@ -66,21 +66,14 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
   end
   
   class NotFound
-    def self.remove_backtraces
-      class_eval do
-        def set_backtrace(*args); []; end
-        alias :backtrace :set_backtrace
-      end
+    attr_accessor :no_backtrace
+    
+    def set_backtrace(*args)
+      @no_backtrace ? [] : super
     end
     
-    def self.restore_backtraces
-      class_eval do
-        begin
-          remove_method :set_backtrace
-          remove_method :backtrace
-        rescue NameError
-        end
-      end
+    def backtrace(*args)
+      @no_backtrace ? [] : super
     end
   end
   

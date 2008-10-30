@@ -129,9 +129,9 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  def test_initialize_without_not_found_backtraces
+  def test_initialize_without_backtraces
     cache = Memcached.new @servers,
-      :show_not_found_backtraces => false
+      :show_backtraces => false
     cache.delete key rescue
     begin
       cache.get key
@@ -140,9 +140,9 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  def test_initialize_with_not_found_backtraces
+  def test_initialize_with_backtraces
     cache = Memcached.new @servers,
-      :show_not_found_backtraces => true
+      :show_backtraces => true
     cache.delete key rescue
     begin
       cache.get key

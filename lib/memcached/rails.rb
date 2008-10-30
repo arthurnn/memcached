@@ -9,7 +9,8 @@ class Memcached
     DEFAULTS = {}
          
     # See Memcached#new for details.
-    def initialize(servers, opts = {})
+    def initialize(opts = {})
+      servers = opts.delete(:servers)
       super(servers, DEFAULTS.merge(opts))      
     end
     
@@ -32,7 +33,19 @@ class Memcached
     
     # Wraps Memcached#delete so that it doesn't raise. 
     def delete(key)
-      super(key)
+      super
+    rescue NotFound
+    end
+    
+    # Wraps Memcached#incr so that it doesn't raise. 
+    def incr(*args)
+      super
+    rescue NotFound
+    end
+
+    # Wraps Memcached#decr so that it doesn't raise. 
+    def decr(*args)
+      super
     rescue NotFound
     end
     
@@ -41,15 +54,8 @@ class Memcached
       options[:prefix_key]
     end
 
-    # Alias for get.
-    def [](key)
-      get key
-    end        
-
-    # Alias for Memcached#set.
-    def []=(key, value)
-      set key, value
-    end
+    alias :"[]" :get
+    alias :"[]=" :set    
     
   end
 end

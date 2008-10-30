@@ -15,7 +15,7 @@ class Memcached
     :cache_lookups => true,
     :support_cas => false,
     :tcp_nodelay => false,
-    :show_not_found_backtraces => false,
+    :show_backtraces => false,
     :retry_timeout => 60,
     :timeout => 0.5,
     :connect_timeout => 5,
@@ -30,8 +30,6 @@ class Memcached
 
 #:stopdoc:
   IGNORED = 0
-
-  NOTFOUND_INSTANCE = NotFound.new
 #:startdoc:
 
   attr_reader :options # Return the options Hash used to configure this instance.
@@ -58,7 +56,7 @@ Valid option parameters are:
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use non-blocking, asynchronous IO for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
-<tt>:show_not_found_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
+<tt>:show_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 <tt>:timeout</tt>:: How long to wait for a response from the server. Defaults to 0.5 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
 <tt>:default_weight</tt>:: The weight to use if <tt>:ketama_weighted</tt> is <tt>true</tt>, but no weight is specified for a server.
@@ -116,12 +114,9 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     set_servers(servers)
 
     # Not found exceptions
-    # Note that these have global effects since the NotFound class itself is modified. You should only
-    # be enabling the backtrace for debugging purposes, so it's not really a big deal.
-    if options[:show_not_found_backtraces]
-      NotFound.restore_backtraces
-    else
-      NotFound.remove_backtraces
+    unless options[:show_backtraces]
+      @not_found_instance = NotFound.new
+      @not_found_instance.no_backtrace = true
     end
   end
 
@@ -252,7 +247,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   #
   # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
   #
-  def cas(key, ttl=0, marshal=true, flags=FLAGS)
+  def cas(key, ttl=nil, marshal=true, flags=FLAGS)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
 
     value = get(key, marshal)
@@ -362,7 +357,9 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       ret == Lib::MEMCACHED_BUFFERED
 
     # SystemError; eject from the pool
-    if options[:failover] and (ret == Lib::MEMCACHED_UNKNOWN_READ_FAILURE or ret == Lib::MEMCACHED_ERRNO)
+    if ret == Lib::MEMCACHED_NOTFOUND and !options[:show_backtraces]
+      raise @not_found_instance
+    elsif options[:failover] and (ret == Lib::MEMCACHED_UNKNOWN_READ_FAILURE or ret == Lib::MEMCACHED_ERRNO)
       failed = sweep_servers
       raise EXCEPTIONS[ret], "Server #{failed} failed permanently"
     else
