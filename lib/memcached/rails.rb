@@ -16,7 +16,7 @@ class Memcached
     
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from 
     # storing <tt>nil</tt> values.
-    def get(key, raw = false)
+    def get(key, raw=false)
       super(key, !raw)
     rescue NotFound
     end
@@ -27,8 +27,16 @@ class Memcached
     end
     
     # Wraps Memcached#set.
-    def set(key, value, ttl = 0, raw = false)
+    def set(key, value, ttl=nil, raw=false)
       super(key, value, ttl, !raw)
+    end
+
+    # Wraps Memcached#add so that it doesn't raise. 
+    def add(key, value, ttl=nil, raw=false)
+      super(key, value, ttl, !raw)
+      true
+    rescue NotStored
+      false    
     end
     
     # Wraps Memcached#delete so that it doesn't raise. 
