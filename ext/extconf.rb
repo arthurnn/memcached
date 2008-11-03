@@ -6,6 +6,10 @@ if ENV['SWIG']
   $stdout.write `swig -I/opt/local/include -ruby -autorename rlibmemcached.i`
 end
 
+if `uname -sp` == "Darwin i386\n"
+  ENV['ARCHFLAGS'] = "-arch i386"
+end
+
 $CFLAGS.gsub! /-O\d/, ''
 
 if ENV['DEBUG']
@@ -15,7 +19,9 @@ else
   $CFLAGS << " -O3"
 end
 
-find_library(*['memcached', 'memcached_server_add', dir_config('libmemcached').last].compact) or
+p dir_config('libmemcached')
+
+find_library(*['memcached', 'memcached_server_add_with_weight', dir_config('libmemcached').last].compact) or
   raise "shared library 'libmemcached' not found"
 
 [ 
