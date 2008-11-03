@@ -393,7 +393,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
         raise ArgumentError, "Servers must be in the format host:port[:weight] (e.g., 'localhost:11211' or  'localhost:11211:10')"
       end
       host, port, weight = server.split(":")
-      Lib.memcached_server_add(@struct, host, port.to_i, (weight || options[:default_weight]).to_i)
+      Lib.memcached_server_add_with_weight(@struct, host, port.to_i, (weight || options[:default_weight]).to_i)
     end
     # For inspect
     @servers = send(:servers)
