@@ -9,8 +9,10 @@ class Memcached
     DEFAULTS = {}
          
     # See Memcached#new for details.
-    def initialize(opts = {})
-      servers = opts.delete(:servers)
+    def initialize(*args)
+      opts = args.last.is_a?(Hash) ? args.pop : {}
+      servers = args.any? ? args.unshift : opts.delete(:servers)
+
       opts[:prefix_key] ||= opts[:namespace]
       super(servers, DEFAULTS.merge(opts))      
     end
