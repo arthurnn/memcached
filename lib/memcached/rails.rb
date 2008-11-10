@@ -11,10 +11,12 @@ class Memcached
     # See Memcached#new for details.
     def initialize(*args)
       opts = args.last.is_a?(Hash) ? args.pop : {}
-      servers = args.any? ? args.unshift : opts.delete(:servers)
+      servers = Array(
+        args.any? ? args.unshift : opts.delete(:servers)
+      ).flatten.compact
 
       opts[:prefix_key] ||= opts[:namespace]
-      super(servers.flatten, DEFAULTS.merge(opts))      
+      super(servers, DEFAULTS.merge(opts))      
     end
     
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from 
