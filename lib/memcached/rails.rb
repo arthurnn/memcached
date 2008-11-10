@@ -14,7 +14,7 @@ class Memcached
       servers = args.any? ? args.unshift : opts.delete(:servers)
 
       opts[:prefix_key] ||= opts[:namespace]
-      super(servers, DEFAULTS.merge(opts))      
+      super(servers.flatten, DEFAULTS.merge(opts))      
     end
     
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from 
