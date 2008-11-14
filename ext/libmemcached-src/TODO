@@ -1,0 +1,11 @@
+- Write a shell application (?)
+- Fix version in command line tools
+- Write (more) test cases for all command line tools (!!!)
+- Write some sort of "default" options bit for tools
+- More examples using libraries
+- Doxygen?
+- Make a "make deb"... or accept patch...
+- implement more connection/hash algo
+- implement compression
+- Finish UDP protocol
+- Revisit get() code (look for performance enhancements)

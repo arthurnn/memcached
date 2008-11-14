@@ -1,0 +1,3 @@
+[submodule "ext/memcache"]
+	path = ext/memcache
+	url = http://consoleninja.net/code/memcached/memcached.git

@@ -1,0 +1,30 @@
+Hi!
+
+If you are getting this code from http://hg.tangent.org/libmemcached then
+continue reading. Otherwise these directions are not for you (well maybe...).
+
+To obtain code from http://hg.tangent.org/libmemcached you will need to issue
+the following command:
+
+hg clone http://hg.tangent.org/libmemcached
+
+Once the tree is cloned you will need to build the "configure" script. You
+can do this by running the script:
+
+./config/bootstrap
+
+It will set up all of the files you need to build libmemcached. At that
+point it is just the typical "./configure; make; make test; make install"
+
+For a tarball release do a "make dist" and for an RPM type "make rpm".
+
+For patches either send diffs or make use of hg's ability to do bundles. You
+can read more about this on the hg websites:
+
+http://www.selenic.com/mercurial/wiki/
+
+Thanks and keep hacking!
+
+Cheers,
+  -Brian
+  Seattle, WA.

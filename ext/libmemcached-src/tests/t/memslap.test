@@ -1,0 +1,5 @@
+MEMSLAP="../src/memslap"
+
+$MEMSLAP --help
+
+$MEMSLAP --initial-load=5000 --verbose --flush --concurrency=500 --execute-number=500 > /dev/null

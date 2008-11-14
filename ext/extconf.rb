@@ -1,9 +1,20 @@
 
 require 'mkmf'
 
+additional_include=""
+additional_libdir=""
+
+unless ENV['NO_MEMCACHE_BUILD']
+  puts "building memcache"
+  base=File.dirname(__FILE__)
+  $stdout.write `cd #{base} && ./build-libmemcached.sh`
+  additional_include=" -I./libmemcache-include"
+  additional_libdir=" -L./libmemcache-lib"
+end
+
 if ENV['SWIG']
   puts "running SWIG"
-  $stdout.write `swig -I/opt/local/include -ruby -autorename rlibmemcached.i`
+  $stdout.write `swig -I/opt/local/include #{additional_include} #{additional_libdir} -ruby -autorename rlibmemcached.i`
 end
 
 if `uname -sp` == "Darwin i386\n"

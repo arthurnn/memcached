@@ -1,0 +1,3 @@
+MEMSTAT="../src/memslap"
+
+$MEMSTAT --help
