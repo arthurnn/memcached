@@ -48,8 +48,8 @@ Or a local unix domain socket memcached server:
 Now, in Ruby, require the library and instantiate a Memcached object at a global level:
 
   require 'memcached'
-  $cache = Memcached.new("localhost:11211") for network socket
-	$cache = Memcached.new("memcached_socket") for unix domain socket
+  $cache = Memcached.new("localhost:11211") # for network socket
+	$cache = Memcached.new("memcached_socket") # for unix domain socket
   
 Now you can set things and get things:
  
