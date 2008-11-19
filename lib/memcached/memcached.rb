@@ -389,11 +389,25 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Set the servers on the struct
   def set_servers(servers)
     Array(servers).each_with_index do |server, index|
-      unless server.is_a? String and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
-        raise ArgumentError, "Servers must be in the format host:port[:weight] (e.g., 'localhost:11211' or  'localhost:11211:10')"
+      begin
+        raise unless server.is_a? String
+        if File.socket? server
+          Lib.memcached_server_add_unix_socket_with_weight(@struct, server, options[:default_weight].to_i)
+          next
+        end
+        if server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
+          host, port, weight = server.split(":")
+          Lib.memcached_server_add_with_weight(@struct, host, port.to_i, (weight || options[:default_weight]).to_i)
+          next
+        end
+        raise
+      rescue
+        raise ArgumentError, "
+        Servers must be either: 
+        - in the format host:port[:weight] (e.g., 'localhost:11211' or  'localhost:11211:10') for network memcached
+        - in the format file (e.g., /var/run/memcached) for unix domain socket memcached
+        "
       end
-      host, port, weight = server.split(":")
-      Lib.memcached_server_add_with_weight(@struct, host, port.to_i, (weight || options[:default_weight]).to_i)
     end
     # For inspect
     @servers = send(:servers)
@@ -417,9 +431,14 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     end
   end
   
+  def is_unix_socket?(server)
+    server.type == Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
+  end
+  
   # Stringify an opaque server struct
   def inspect_server(server)
-    "#{server.hostname}:#{server.port}#{":#{server.weight}" if options[:ketama_weighted]}"  
+    # zero port means unix domain socket memcached
+    "#{server.hostname}#{":#{server.port}" unless is_unix_socket?(server)}#{":#{server.weight}" if !is_unix_socket?(server) and options[:ketama_weighted]}"  
   end
 
 end
