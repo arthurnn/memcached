@@ -617,14 +617,14 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_key_too_long
     key = "x"*251
-    assert_raises(Memcached::ClientError) do
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @cache.set key, @value
     end
-    assert_raises(Memcached::ClientError) do
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @cache.get(key)
     end
 
-    assert_raises(Memcached::ClientError) do
+    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @cache.get([key])
     end
   end
