@@ -114,7 +114,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 
     # Set the servers on the struct
     set_servers(servers)
-    
+
     # Not found exceptions
     unless options[:show_backtraces]
       @not_found_instance = NotFound.new
@@ -128,7 +128,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       inspect_server(server)
     end
   end
-  
+
   # Safely copy this instance. Returns a Memcached instance.
   #
   # <tt>clone</tt> is useful for threading, since each thread must have its own unshared Memcached
@@ -325,6 +325,12 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
 
   ### Information methods
 
+  # Return the server used by a particular key.
+  def server_by_key(key)
+    ret = Lib.memcached_server_by_key(@struct, key)    
+    inspect_server(ret.first) if ret.is_a?(Array)
+  end
+
   # Return a Hash of statistics responses from the set of servers. Each value is an array with one entry for each server, in the same order the servers were defined.
   def stats
     stats = Hash.new([])
@@ -372,10 +378,17 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       raise @not_found_instance
     elsif options[:failover] and (ret == Lib::MEMCACHED_UNKNOWN_READ_FAILURE or ret == Lib::MEMCACHED_ERRNO)
       failed = sweep_servers
-      raise EXCEPTIONS[ret], "Server #{failed} failed permanently on key #{key.inspect}"
+      raise EXCEPTIONS[ret], "Server #{failed} failed permanently on key #{inspect_keys(key).inspect}"
     else
-      raise EXCEPTIONS[ret], "Key #{key.inspect}"
+      raise EXCEPTIONS[ret], "Key #{inspect_keys(key).inspect}"
     end
+  end
+
+  # Turn an array of keys into a hash of keys to servers.
+  def inspect_keys(keys)
+    Hash[*Array(keys).map do |key|
+      [key, server_by_key(key)]
+    end.flatten]
   end
 
   # Eject the first dead server we find from the pool and reset the struct
@@ -423,10 +436,10 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
     end
   end
-  
+
   # Stringify an opaque server struct
   def inspect_server(server)
-    "#{server.hostname}:#{server.port}#{":#{server.weight}" if options[:ketama_weighted]}"  
+    "#{server.hostname}:#{server.port}#{":#{server.weight}" if options[:ketama_weighted]}"
   end
 
 end
