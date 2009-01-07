@@ -184,7 +184,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def set(key, value, ttl=nil, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_set(@struct, key, value, ttl || options[:default_ttl], flags)
+      Lib.memcached_set(@struct, key, value, ttl || options[:default_ttl], flags),
+      key
     )
   end
 
@@ -192,7 +193,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def add(key, value, ttl=nil, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_add(@struct, key, value, ttl || options[:default_ttl], flags)
+      Lib.memcached_add(@struct, key, value, ttl || options[:default_ttl], flags),
+      key
     )
   end
 
@@ -203,14 +205,14 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Note that the key must be initialized to an unmarshalled integer first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
   def increment(key, offset=1)
     ret, value = Lib.memcached_increment(@struct, key, offset)
-    check_return_code(ret)
+    check_return_code(ret, key)
     value
   end
 
   # Decrement a key's value. The parameters and exception behavior are the same as <tt>increment</tt>.
   def decrement(key, offset=1)
     ret, value = Lib.memcached_decrement(@struct, key, offset)
-    check_return_code(ret)
+    check_return_code(ret, key)
     value
   end
 
@@ -223,7 +225,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def replace(key, value, ttl=nil, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_replace(@struct, key, value, ttl || options[:default_ttl], flags)
+      Lib.memcached_replace(@struct, key, value, ttl || options[:default_ttl], flags),
+      key
     )
   end
 
@@ -233,7 +236,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def append(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Lib.memcached_append(@struct, key, value.to_s, IGNORED, IGNORED)
+      Lib.memcached_append(@struct, key, value.to_s, IGNORED, IGNORED),
+      key
     )
   end
 
@@ -241,7 +245,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   def prepend(key, value)
     # Requires memcached 1.2.4
     check_return_code(
-      Lib.memcached_prepend(@struct, key, value.to_s, IGNORED, IGNORED)
+      Lib.memcached_prepend(@struct, key, value.to_s, IGNORED, IGNORED),
+      key
     )
   end
 
@@ -259,7 +264,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     value = marshal ? Marshal.dump(value) : value.to_s
 
     check_return_code(
-      Lib.memcached_cas(@struct, key, value, ttl || options[:default_ttl], flags, @struct.result.cas)
+      Lib.memcached_cas(@struct, key, value, ttl || options[:default_ttl], flags, @struct.result.cas),
+      key
     )
   end
 
@@ -268,7 +274,8 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   # Deletes a key/value pair from the server. Accepts a String <tt>key</tt>. Raises <b>Memcached::NotFound</b> if the key does not exist.
   def delete(key)
     check_return_code(
-      Lib.memcached_delete(@struct, key, IGNORED)
+      Lib.memcached_delete(@struct, key, IGNORED),
+      key
     )
   end
 
@@ -295,13 +302,13 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     if keys.is_a? Array
       # Multi get
       ret = Lib.memcached_mget(@struct, keys);
-      check_return_code(ret)
+      check_return_code(ret, keys)
 
       hash = {}
       keys.size.times do
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
         break if ret == Lib::MEMCACHED_END
-        check_return_code(ret)
+        check_return_code(ret, key)
         value = Marshal.load(value) if marshal
         # Assign the value
         hash[key] = value
@@ -310,7 +317,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
     else
       # Single get
       value, flags, ret = Lib.memcached_get_rvalue(@struct, keys)
-      check_return_code(ret)
+      check_return_code(ret, keys)
       value = Marshal.load(value) if marshal
       value
     end
@@ -335,7 +342,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
            @struct,
            Lib.memcached_select_stat_at(@struct, stat_struct, index),
            key)
-         check_return_code(ret)
+         check_return_code(ret, key)
 
          value = case value
            when /^\d+\.\d+$/: value.to_f
@@ -356,7 +363,7 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
   private
 
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
-  def check_return_code(ret) #:doc:
+  def check_return_code(ret, key = nil) #:doc:
     return if ret == 0 or # Lib::MEMCACHED_SUCCESS
       ret == Lib::MEMCACHED_BUFFERED
 
@@ -365,9 +372,9 @@ Please note that when non-blocking IO is enabled, setter and deleter methods do 
       raise @not_found_instance
     elsif options[:failover] and (ret == Lib::MEMCACHED_UNKNOWN_READ_FAILURE or ret == Lib::MEMCACHED_ERRNO)
       failed = sweep_servers
-      raise EXCEPTIONS[ret], "Server #{failed} failed permanently"
+      raise EXCEPTIONS[ret], "Server #{failed} failed permanently on key #{key.inspect}"
     else
-      raise EXCEPTIONS[ret], ""
+      raise EXCEPTIONS[ret], "Key #{key.inspect}"
     end
   end
 
