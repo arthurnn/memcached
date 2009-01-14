@@ -16,15 +16,16 @@ class Memcached
     :support_cas => false,
     :tcp_nodelay => false,
     :show_backtraces => false,
-    :retry_timeout => 60,
+    :retry_timeout => 30,
     :timeout => 0.5,
-    :connect_timeout => 5,
+    :connect_timeout => 2,
     :prefix_key => nil,
     :hash_with_prefix_key => true,
     :default_ttl => 604800,
     :default_weight => 8,
     :sort_hosts => false,
-    :failover => false,
+    :auto_eject_hosts => true,
+    :server_failure_limit => 2,
     :verify_key => true
   }
 
@@ -50,13 +51,16 @@ Valid option parameters are:
 <tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 127.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent_ketama</tt>, <tt>:consistent_wheel</tt>, or <tt>:ketama</tt>. Defaults to <tt>:ketama</tt>.
-<tt>:failover</tt>:: Whether to permanently eject failed hosts from the pool. Defaults to <tt>false</tt>. Note that in the event of a server failure, <tt>:failover</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
+<tt>:server_failure_limit</tt>:: How many consecutive failures to allow before marking a host as dead. Has no effect unless <tt>:retry_timeout</tt> is also set.
+<tt>:retry_timeout</tt>:: How long to wait until retrying a dead server. Has no effect unless <tt>:server_failure_limit</tt> is non-zero. Defaults to <tt>30</tt>.
+<tt>:auto_eject_hosts</tt>:: Whether to temporarily eject dead hosts from the pool. Defaults to <tt>true</tt>. Note that in the event of an ejection, <tt>:auto_eject_hosts</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
 <tt>:cache_lookups</tt>:: Whether to cache hostname lookups for the life of the instance. Defaults to <tt>true</tt>.
 <tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Defaults to <tt>false</tt> because it imposes a slight performance penalty. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use pipelining for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
+<tt>:connect_timeout</tt>:: How long to wait for a connection to a server. Defaults to 2 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:timeout</tt>:: How long to wait for a response from the server. Defaults to 0.5 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
 <tt>:default_weight</tt>:: The weight to use if <tt>:ketama_weighted</tt> is <tt>true</tt>, but no weight is specified for a server.
@@ -368,17 +372,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   private
 
-  # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code.
+  # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code and an optional key, for exception messages.
   def check_return_code(ret, key = nil) #:doc:
-    return if ret == 0 or # Lib::MEMCACHED_SUCCESS
-      ret == Lib::MEMCACHED_BUFFERED
+    return if ret == 0 # Lib::MEMCACHED_SUCCESS
+    return if ret == Lib::MEMCACHED_BUFFERED
 
-    # SystemError; eject from the pool
     if ret == Lib::MEMCACHED_NOTFOUND and !options[:show_backtraces]
       raise @not_found_instance
-    elsif options[:failover] and (ret == Lib::MEMCACHED_UNKNOWN_READ_FAILURE or ret == Lib::MEMCACHED_ERRNO)
-      failed = sweep_servers
-      raise EXCEPTIONS[ret], "Server #{failed} failed permanently on key #{inspect_keys(key).inspect}"
     else
       raise EXCEPTIONS[ret], "Key #{inspect_keys(key).inspect}"
     end
@@ -391,22 +391,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     end.flatten]
   end
 
-  # Eject the first dead server we find from the pool and reset the struct
-  def sweep_servers
-    # XXX This method is annoying, but necessary until we get Lib.memcached_delete_server or equivalent.
-    server_structs.each do |server|
-      if server.next_retry > Time.now
-        server_name = inspect_server(server)
-        current_servers = servers
-        current_servers.delete(server_name)
-        reset(current_servers)
-        return server_name
-      end
-    end
-    "(unknown)"
-  end
-
-  # Set the servers on the struct
+  # Set the servers on the struct.
   def set_servers(servers)
     Array(servers).each_with_index do |server, index|
       unless server.is_a? String and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
@@ -419,14 +404,14 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     @servers = send(:servers)
   end
 
-  # Set the behaviors on the struct from the current options
+  # Set the behaviors on the struct from the current options.
   def set_behaviors
     BEHAVIORS.keys.each do |behavior|
       set_behavior(behavior, options[behavior]) if options.key?(behavior)
     end
   end
 
-  # Set the callbacks on the struct from the current options
+  # Set the callbacks on the struct from the current options.
   def set_callbacks
     # Only support prefix_key for now
     if options[:prefix_key]
@@ -437,7 +422,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     end
   end
 
-  # Stringify an opaque server struct
+  # Stringify an opaque server struct.
   def inspect_server(server)
     "#{server.hostname}:#{server.port}#{":#{server.weight}" if options[:ketama_weighted]}"
   end
