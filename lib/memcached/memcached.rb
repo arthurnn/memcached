@@ -158,6 +158,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     set_callbacks
     set_servers(current_servers)
   end
+  
+  # Disconnect from all currently connected servers
+  def quit
+    Lib.memcached_quit(@struct)
+    self
+  end
 
   #:stopdoc:
   alias :dup :clone #:nodoc:
