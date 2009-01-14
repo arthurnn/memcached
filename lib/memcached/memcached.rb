@@ -97,7 +97,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       raise ArgumentError, ":sort_hosts defeats :consistent hashing"
     end
 
-    # Set timeouts
+    # Set connect timeouts
+    if options[:connect_timeout] > 0
+      options[:connect_timeout] = (options[:connect_timeout] * 1_000_000).to_i
+    end
+
+    # Set send/receive timeouts
     if options[:timeout] > 0
       if options[:no_block]
         options[:poll_timeout] = (options[:timeout] * 1_000).to_i
