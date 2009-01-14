@@ -732,7 +732,7 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new(
       [@servers.last, 'localhost:43041'],
       :prefix_key => @prefix_key,
-      :failover => true,
+      :auto_eject_hosts => true,
       :hash_with_prefix_key => false,
       :hash => :md5
     )
@@ -753,13 +753,6 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       cache.set(key2, @value)
       cache.get(key2)
-    end
-  end
-
-  def test_sweep_servers_with_missing_server_first
-    cache = Memcached.new(['127.0.0.1:00000'] + @servers)
-    assert_nothing_raised do
-      cache.send(:sweep_servers)
     end
   end
 

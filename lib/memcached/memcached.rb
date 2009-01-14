@@ -24,7 +24,7 @@ class Memcached
     :default_ttl => 604800,
     :default_weight => 8,
     :sort_hosts => false,
-    :auto_eject_hosts => true,
+    :auto_eject_hosts => false,
     :server_failure_limit => 2,
     :verify_key => true
   }
@@ -53,7 +53,7 @@ Valid option parameters are:
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent_ketama</tt>, <tt>:consistent_wheel</tt>, or <tt>:ketama</tt>. Defaults to <tt>:ketama</tt>.
 <tt>:server_failure_limit</tt>:: How many consecutive failures to allow before marking a host as dead. Has no effect unless <tt>:retry_timeout</tt> is also set.
 <tt>:retry_timeout</tt>:: How long to wait until retrying a dead server. Has no effect unless <tt>:server_failure_limit</tt> is non-zero. Defaults to <tt>30</tt>.
-<tt>:auto_eject_hosts</tt>:: Whether to temporarily eject dead hosts from the pool. Defaults to <tt>true</tt>. Note that in the event of an ejection, <tt>:auto_eject_hosts</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
+<tt>:auto_eject_hosts</tt>:: Whether to temporarily eject dead hosts from the pool. Defaults to <tt>false</tt>. Note that in the event of an ejection, <tt>:auto_eject_hosts</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
 <tt>:cache_lookups</tt>:: Whether to cache hostname lookups for the life of the instance. Defaults to <tt>true</tt>.
 <tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Defaults to <tt>false</tt> because it imposes a slight performance penalty. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
