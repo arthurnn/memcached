@@ -380,7 +380,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     if ret == Lib::MEMCACHED_NOTFOUND and !options[:show_backtraces]
       raise @not_found_instance
     else
-      raise EXCEPTIONS[ret], "Key #{inspect_keys(key).inspect}"
+      message = "Key #{inspect_keys(key).inspect}"
+      if ret == Lib::MEMCACHED_ERRNO and key.is_a?(String)
+        server = Lib.memcached_server_by_key(@struct, key)
+        message += ", errno #{server.first.cached_errno}."
+      end
+      raise EXCEPTIONS[ret], message
     end
   end
 
