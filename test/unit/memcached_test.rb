@@ -727,12 +727,14 @@ class MemcachedTest < Test::Unit::TestCase
 
   # Server removal and consistent hashing
 
-  def test_dying_server
+  def test_missing_server
     socket = stub_server 43041  
     cache = Memcached.new(
       [@servers.last, 'localhost:43041'],
       :prefix_key => @prefix_key,
       :auto_eject_hosts => true,
+      :server_failure_limit => 1,
+      :retry_timeout => 1,
       :hash_with_prefix_key => false,
       :hash => :md5
     )
@@ -746,6 +748,11 @@ class MemcachedTest < Test::Unit::TestCase
     key2 = 'test_missing_server'
     assert_raise(Memcached::UnknownReadFailure) do
       cache.set(key2, @value)
+    end
+
+    # Hit second server again
+    key2 = 'test_missing_server'
+    assert_raise(Memcached::ServerIsMarkedDead) do
       cache.get(key2)
     end
 
@@ -754,6 +761,14 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set(key2, @value)
       cache.get(key2)
     end
+    
+    sleep(2)
+    
+    # Hit second server again after restore, expect same failure
+    key2 = 'test_missing_server'
+    assert_raise(Memcached::UnknownReadFailure) do
+      cache.set(key2, @value)
+    end        
   end
 
   def test_consistent_hashing
