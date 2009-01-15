@@ -819,6 +819,13 @@ class MemcachedTest < Test::Unit::TestCase
     end
     threads.each {|thread| thread.join}
   end
+  
+  # Hash
+  
+  def test_hash
+    assert_equal 1009519593, 
+      Rlibmemcached.memcached_generate_hash_value("test", Rlibmemcached::MEMCACHED_HASH_FNV1_32)
+  end  
 
   # Memory cleanup
 

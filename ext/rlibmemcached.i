@@ -70,6 +70,11 @@
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
 
+// Uint32
+%typemap(out) (uint32_t) {
+  $result = INT2FIX($1);
+};
+
 // Uint64
 %typemap(out) (uint64_t) {
   $result = INT2FIX($1);
