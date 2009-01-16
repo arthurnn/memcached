@@ -235,7 +235,7 @@ class MemcachedTest < Test::Unit::TestCase
     end).real
 
     cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25)
-    assert 0.49 < (Benchmark.measure do
+    assert 0.4 > (Benchmark.measure do
       assert_raise(Memcached::UnknownReadFailure) do
         result = cache.get key
       end
@@ -257,16 +257,16 @@ class MemcachedTest < Test::Unit::TestCase
         result = cache.get key
       end
     end).real
-    
-    cache = Memcached.new("localhost:43048:1", :no_block => true, 
-      :poll_timeout => 0.001, 
+
+    cache = Memcached.new("localhost:43048:1", :no_block => true,
+      :poll_timeout => 0.001,
       :rcv_timeout => 0.25 # No affect in no-block mode
     )
     assert 0.24 > (Benchmark.measure do
       assert_raise(Memcached::UnknownReadFailure) do
         result = cache.get key
       end
-    end).real    
+    end).real
   end
 
   def test_get_with_prefix_key

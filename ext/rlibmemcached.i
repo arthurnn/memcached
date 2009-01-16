@@ -19,7 +19,7 @@
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
 %apply unsigned long { uint32_t flags, uint32_t offset, uint32_t weight };
-%apply unsigned long long {uint64_t data, uint64_t cas };
+%apply unsigned long long { uint64_t data, uint64_t cas };
 
 // Array of strings map for multiget
 %typemap(in) (char **keys, size_t *key_length, unsigned int number_of_keys) {
@@ -98,7 +98,7 @@
   int i;  
   VALUE ary = rb_ary_new();
   $result = rb_ary_new();
-  
+
   for(i=0; $1[i] != NULL; i++) {
     rb_ary_store(ary, i, rb_str_new2($1[i]));
   }

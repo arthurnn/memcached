@@ -99,7 +99,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     if options[:sort_hosts] and options[:distribution] == :consistent
       raise ArgumentError, ":sort_hosts defeats :consistent hashing"
     end
-    
+
     # Read timeouts
     options[:rcv_timeout] ||= options[:timeout]
     options[:poll_timeout] ||= options[:timeout]
@@ -148,7 +148,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     set_callbacks
     set_servers(current_servers)
   end
-  
+
   # Disconnect from all currently connected servers
   def quit
     Lib.memcached_quit(@struct)
@@ -396,7 +396,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       [key, server || server_by_key(key)]
     end.flatten]
   end
-  
+
   # Find which server failed most recently.
   def detect_failure
     time = Time.now
