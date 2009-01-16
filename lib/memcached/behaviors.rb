@@ -25,6 +25,12 @@ class Memcached
   
   DIRECT_VALUE_BEHAVIORS = [:retry_timeout, :connect_timeout, :rcv_timeout, :socket_recv_size, :poll_timeout, :socket_send_size, :server_failure_limit]
 
+  CONVERSION_FACTORS = {
+    :connect_timeout => 1_000_000,
+    :rcv_timeout => 1_000_000, 
+    :poll_timeout => 1_000
+  }
+
 #:startdoc:
 
   private
@@ -38,12 +44,12 @@ class Memcached
     case behavior 
       when :hash then raise(ArgumentError, msg) unless HASH_VALUES[value]
       when :distribution then raise(ArgumentError, msg) unless DISTRIBUTION_VALUES[value]
-      when *DIRECT_VALUE_BEHAVIORS then raise(ArgumentError, msg) unless value.is_a? Fixnum and value > 0
+      when *DIRECT_VALUE_BEHAVIORS then raise(ArgumentError, msg) unless value.is_a?(Numeric) and value > 0
       else
         raise(ArgumentError, msg) unless BEHAVIOR_VALUES[value]
     end
     
-    lib_value = BEHAVIOR_VALUES[value] || value    
+    lib_value = BEHAVIOR_VALUES[value] || (value * (CONVERSION_FACTORS[behavior] || 1)).to_i
     #STDERR.puts "Setting #{behavior}:#{b_id} => #{value} (#{lib_value})"
     Lib.memcached_behavior_set(@struct, b_id, lib_value)    
     #STDERR.puts " -> set to #{get_behavior(behavior).inspect}"

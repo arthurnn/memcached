@@ -17,7 +17,8 @@ class Memcached
     :tcp_nodelay => false,
     :show_backtraces => false,
     :retry_timeout => 30,
-    :timeout => 0.5,
+    :poll_timeout => 0.5,
+    :rcv_timeout => 0.5,
     :connect_timeout => 2,
     :prefix_key => nil,
     :hash_with_prefix_key => true,
@@ -61,7 +62,7 @@ Valid option parameters are:
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
 <tt>:show_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 <tt>:connect_timeout</tt>:: How long to wait for a connection to a server. Defaults to 2 seconds. Set to <tt>0</tt> if you want to wait forever.
-<tt>:timeout</tt>:: How long to wait for a response from the server. Defaults to 0.5 seconds. Set to <tt>0</tt> if you want to wait forever.
+<tt>:poll_timeout</tt>:: How long to wait for a response from the server. Defaults to 0.5 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
 <tt>:default_weight</tt>:: The weight to use if <tt>:ketama_weighted</tt> is <tt>true</tt>, but no weight is specified for a server.
 <tt>:hash_with_prefix_key</tt>:: Whether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
@@ -97,21 +98,9 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       raise ArgumentError, ":sort_hosts defeats :consistent hashing"
     end
 
-    # Set connect timeouts
-    if options[:connect_timeout] > 0
-      options[:connect_timeout] = (options[:connect_timeout] * 1_000_000).to_i
-    end
-
     # Set send/receive timeouts
-    if options[:timeout] > 0
-      if options[:no_block]
-        options[:poll_timeout] = (options[:timeout] * 1_000).to_i
-      else
-        options[:poll_timeout] = 1
-        options[:rcv_timeout] = (options[:timeout] * 1_000_000).to_i
-      end
-    elsif options[:no_block]
-      raise ArgumentError, "Can't set :timeout => 0 when :no_block => true."
+    if options[:no_block] and options[:poll_timeout] == 0
+      raise ArgumentError, "Can't set :poll_timeout => 0 when :no_block => true."
     end
 
     # Set the behaviors on the struct

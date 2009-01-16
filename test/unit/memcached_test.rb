@@ -96,7 +96,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_initialize_with_resolvable_hosts
     host = `hostname`.chomp
-    cache = Memcached.new ["#{host}:43042"]
+    cache = Memcached.new("#{host}:43042")
     assert_equal host, cache.send(:server_structs).first.hostname
 
     cache.set(key, @value)
@@ -752,8 +752,11 @@ class MemcachedTest < Test::Unit::TestCase
 
     # Hit second server again
     key2 = 'test_missing_server'
-    assert_raise(Memcached::ServerIsMarkedDead) do
+    begin
       cache.get(key2)
+    rescue => e
+      assert_equal Memcached::ServerIsMarkedDead, e.class
+      assert_match /localhost:43041/, e.message
     end
 
     # Hit first server on retry
