@@ -72,12 +72,12 @@
 
 // Uint32
 %typemap(out) (uint32_t) {
-  $result = INT2FIX($1);
+  $result = UINT2NUM($1);
 };
 
 // Uint64
 %typemap(out) (uint64_t) {
-  $result = INT2FIX($1);
+  $result = ULL2NUM($1);
 };
 
 // String for memcached_fetch
