@@ -380,20 +380,29 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     if ret == Lib::MEMCACHED_NOTFOUND and !options[:show_backtraces]
       raise @not_found_instance
     else
-      message = "Key #{inspect_keys(key).inspect}"
+      message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"
       if ret == Lib::MEMCACHED_ERRNO and key.is_a?(String)
         server = Lib.memcached_server_by_key(@struct, key)
-        message += ", errno #{server.first.cached_errno}."
+        message = "Errno #{server.first.cached_errno}. #{message}"
       end
       raise EXCEPTIONS[ret], message
     end
   end
 
   # Turn an array of keys into a hash of keys to servers.
-  def inspect_keys(keys)
+  def inspect_keys(keys, server = nil)
     Hash[*Array(keys).map do |key|
-      [key, server_by_key(key)]
+      [key, server || server_by_key(key)]
     end.flatten]
+  end
+  
+  # Find which server failed most recently.
+  def detect_failure
+    time = Time.now
+    server = server_structs.detect do |server|
+      server.next_retry > time
+    end
+    inspect_server(server) if server
   end
 
   # Set the servers on the struct.
