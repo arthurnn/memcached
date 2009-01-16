@@ -72,7 +72,9 @@ class MemcachedTest < Test::Unit::TestCase
   def test_options_are_set
     Memcached::DEFAULTS.merge(@nb_options).each do |key, expected|
       value = @nb_cache.options[key]
-      assert(expected == value, "#{key} should be #{expected} but was #{value}")
+      unless key == :rcv_timeout or key == :poll_timeout
+        assert(expected == value, "#{key} should be #{expected} but was #{value}")
+      end
     end
   end
 
