@@ -853,7 +853,7 @@ class MemcachedTest < Test::Unit::TestCase
   
   def test_hash
     assert_equal 3157003241, 
-      Rlibmemcached.memcached_generate_hash_value("test", Rlibmemcached::MEMCACHED_HASH_FNV1_32)
+      Rlibmemcached.memcached_generate_hash_rvalue("test", Rlibmemcached::MEMCACHED_HASH_FNV1_32)
   end  
 
   # Memory cleanup

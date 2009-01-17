@@ -70,11 +70,6 @@
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
 
-// Uint32
-%typemap(out) (uint32_t) {
-  $result = UINT2NUM($1);
-};
-
 // Uint64
 %typemap(out) (uint64_t) {
   $result = ULL2NUM($1);
@@ -181,3 +176,13 @@ memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat
   return &(stat_ptr[index]);
 };
 %}
+
+// Wrap only hash function
+// Uint32
+VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length, memcached_hash hash_algorithm);
+%{
+VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {  
+  return UINT2NUM(memcached_generate_hash_value(key, key_length, hash_algorithm));
+};
+%}
+
