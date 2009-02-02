@@ -1,4 +1,6 @@
 
+v0.14. Update to libmemcached 0.26. Various bugfixes. Expose memcached_generate_hash_rvalue.
+
 v0.13. Update to libmemcached 0.25. Use new built-in failover. Document fixed timeouts.
 
 v0.12. Update to libmemcached 0.24. Support weights and flags. Default to HASH_WITH_PREFIX behavior. Note, if you use ketama, upgrading will invalidate your entire cache.
