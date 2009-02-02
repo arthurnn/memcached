@@ -29,7 +29,7 @@
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
   $1 = (char **) malloc(($3+1)*sizeof(char *)); 
   for(i = 0; i < $3; i ++) {
-    $2[i] = RSTRING(RARRAY_PTR($input)[i])->len;
+    $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
     $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
   }
 }
@@ -41,7 +41,7 @@
 // Generic strings
 %typemap(in) (const char *str, size_t len) {
  $1 = STR2CSTR($input);
- $2 = (size_t) RSTRING($input)->len;
+ $2 = (size_t) RSTRING_LEN($input);
 };
 
 // Void type strings without lengths for prefix_key callback
@@ -59,7 +59,7 @@
 // This will have to go if people actually want to set the master key separately
 %typemap(in) (const char *master_key, size_t master_key_length, const char *key, size_t key_length) {
  $3 = $1 = STR2CSTR($input);
- $4 = $2 = (size_t) RSTRING($input)->len;
+ $4 = $2 = (size_t) RSTRING_LEN($input);
 };
 
 

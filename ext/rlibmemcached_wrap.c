@@ -6011,7 +6011,7 @@ _wrap_memcached_delete(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     if (NIL_P(argv[2]))
@@ -6054,7 +6054,7 @@ _wrap_memcached_increment(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   ecode4 = SWIG_AsVal_unsigned_SS_long(argv[2], &val4);
   if (!SWIG_IsOK(ecode4)) {
@@ -6102,7 +6102,7 @@ _wrap_memcached_decrement(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   ecode4 = SWIG_AsVal_unsigned_SS_long(argv[2], &val4);
   if (!SWIG_IsOK(ecode4)) {
@@ -6456,7 +6456,7 @@ _wrap_memcached_generate_hash_value(int argc, VALUE *argv, VALUE self) {
   }
   {
     arg1 = STR2CSTR(argv[0]);
-    arg2 = (size_t) RSTRING(argv[0])->len;
+    arg2 = (size_t) RSTRING_LEN(argv[0]);
   }
   ecode3 = SWIG_AsVal_int(argv[1], &val3);
   if (!SWIG_IsOK(ecode3)) {
@@ -7083,7 +7083,7 @@ _wrap_memcached_delete_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING(argv[1])->len;
+    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     if (NIL_P(argv[2]))
@@ -7255,7 +7255,7 @@ _wrap_memcached_get(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   result = (char *)memcached_get(arg1,(char const *)arg2,arg3,arg4,arg5,arg6);
   vresult = SWIG_FromCharPtr((const char *)result);
@@ -7309,7 +7309,7 @@ _wrap_memcached_mget(int argc, VALUE *argv, VALUE self) {
     arg3 = (size_t *) malloc((arg4+1)*sizeof(size_t));
     arg2 = (char **) malloc((arg4+1)*sizeof(char *)); 
     for(i = 0; i < arg4; i ++) {
-      arg3[i] = RSTRING(RARRAY_PTR(argv[1])[i])->len;
+      arg3[i] = RSTRING_LEN(RARRAY_PTR(argv[1])[i]);
       arg2[i] = StringValuePtr(RARRAY_PTR(argv[1])[i]);
     }
   }
@@ -7363,7 +7363,7 @@ _wrap_memcached_get_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING(argv[1])->len;
+    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   result = (char *)memcached_get_by_key(arg1,(char const *)arg2,arg3,(char const *)arg4,arg5,arg6,arg7,arg8);
   vresult = SWIG_FromCharPtr((const char *)result);
@@ -7434,7 +7434,7 @@ _wrap_memcached_mget_by_key(int argc, VALUE *argv, VALUE self) {
     arg5 = (size_t *) malloc((arg6+1)*sizeof(size_t));
     arg4 = (char **) malloc((arg6+1)*sizeof(char *)); 
     for(i = 0; i < arg6; i ++) {
-      arg5[i] = RSTRING(RARRAY_PTR(argv[3])[i])->len;
+      arg5[i] = RSTRING_LEN(RARRAY_PTR(argv[3])[i]);
       arg4[i] = StringValuePtr(RARRAY_PTR(argv[3])[i]);
     }
   }
@@ -7590,11 +7590,11 @@ _wrap_memcached_set(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (size_t) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -7641,11 +7641,11 @@ _wrap_memcached_add(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (size_t) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -7692,11 +7692,11 @@ _wrap_memcached_replace(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (size_t) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -7743,11 +7743,11 @@ _wrap_memcached_append(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (size_t) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -7794,11 +7794,11 @@ _wrap_memcached_prepend(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (size_t) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -7848,11 +7848,11 @@ _wrap_memcached_cas(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg4 = STR2CSTR(argv[2]);
-    arg5 = (size_t) RSTRING(argv[2])->len;
+    arg5 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -7906,11 +7906,11 @@ _wrap_memcached_set_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING(argv[1])->len;
+    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg6 = STR2CSTR(argv[2]);
-    arg7 = (size_t) RSTRING(argv[2])->len;
+    arg7 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -7959,11 +7959,11 @@ _wrap_memcached_add_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING(argv[1])->len;
+    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg6 = STR2CSTR(argv[2]);
-    arg7 = (size_t) RSTRING(argv[2])->len;
+    arg7 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -8012,11 +8012,11 @@ _wrap_memcached_replace_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING(argv[1])->len;
+    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg6 = STR2CSTR(argv[2]);
-    arg7 = (size_t) RSTRING(argv[2])->len;
+    arg7 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -8065,11 +8065,11 @@ _wrap_memcached_prepend_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING(argv[1])->len;
+    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg6 = STR2CSTR(argv[2]);
-    arg7 = (size_t) RSTRING(argv[2])->len;
+    arg7 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -8118,11 +8118,11 @@ _wrap_memcached_append_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING(argv[1])->len;
+    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg6 = STR2CSTR(argv[2]);
-    arg7 = (size_t) RSTRING(argv[2])->len;
+    arg7 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -8174,11 +8174,11 @@ _wrap_memcached_cas_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING(argv[1])->len;
+    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   {
     arg6 = STR2CSTR(argv[2]);
-    arg7 = (size_t) RSTRING(argv[2])->len;
+    arg7 = (size_t) RSTRING_LEN(argv[2]);
   }
   {
     if (NIL_P(argv[3]))
@@ -10331,7 +10331,7 @@ _wrap_memcached_server_by_key(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   result = (memcached_server_st *)memcached_server_by_key(arg1,(char const *)arg2,arg3,arg4);
   vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_server_st, 0 |  0 );
@@ -10527,7 +10527,7 @@ _wrap_memcached_get_rvalue(int argc, VALUE *argv, VALUE self) {
   arg1 = (memcached_st *)(argp1);
   {
     arg2 = STR2CSTR(argv[1]);
-    arg3 = (size_t) RSTRING(argv[1])->len;
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   result = (VALUE)memcached_get_rvalue(arg1,(char const *)arg2,arg3,arg4,arg5);
   vresult = result;
@@ -10745,7 +10745,7 @@ _wrap_memcached_generate_hash_rvalue(int argc, VALUE *argv, VALUE self) {
   }
   {
     arg1 = STR2CSTR(argv[0]);
-    arg2 = (size_t) RSTRING(argv[0])->len;
+    arg2 = (size_t) RSTRING_LEN(argv[0]);
   }
   ecode3 = SWIG_AsVal_int(argv[1], &val3);
   if (!SWIG_IsOK(ecode3)) {
