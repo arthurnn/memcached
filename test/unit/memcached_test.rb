@@ -69,6 +69,12 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
+  def test_initialize_with_ip_address_and_options
+    cache = Memcached.new '127.0.0.1:43042', :ketama_weighted => false
+    assert_equal '127.0.0.1', cache.send(:server_structs).first.hostname
+    assert_equal false, cache.options[:ketama_weighted]
+  end
+
   def test_options_are_set
     Memcached::DEFAULTS.merge(@nb_options).each do |key, expected|
       value = @nb_cache.options[key]

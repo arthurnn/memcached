@@ -80,9 +80,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     Lib.memcached_create(@struct)
 
     # Merge option defaults and discard meaningless keys
-    @options = Hash[*DEFAULTS.map do |key, default|
-      [key, opts[key] || default]
-    end.flatten]
+    @options = DEFAULTS.merge(opts)
+    @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
 
     # Force :buffer_requests to use :no_block
     # XXX Deleting the :no_block key should also work, but libmemcached doesn't seem to set it
