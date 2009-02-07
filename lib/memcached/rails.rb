@@ -32,6 +32,8 @@ class Memcached
     rescue NotFound    
     end
     
+    alias :compare_and_swap :cas    
+    
     # Wraps Memcached#get with multiple arguments.
     def get_multi(*keys)
       super(keys)
