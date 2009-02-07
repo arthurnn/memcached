@@ -47,6 +47,36 @@ class RailsTest < Test::Unit::TestCase
     assert_equal @value, result
   end
   
+  def test_cas
+    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
+    value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
+
+    # Existing set
+    cache.set key, @value
+    cache.cas(key) do |current|
+      assert_equal @value, current
+      value2
+    end
+    assert_equal value2, cache.get(key)
+
+    # Missing set
+    cache.delete key
+    assert_nothing_raised do
+      cache.cas(key) { @called = true }
+    end
+    assert_nil cache.get(key)
+    assert_nil @called
+
+    # Conflicting set
+    cache.set key, @value
+    assert_raises(Memcached::ConnectionDataExists) do
+      cache.cas(key) do |current|
+        cache.set key, value2
+        current
+      end
+    end
+  end  
+  
   def test_get_missing
     @cache.delete key rescue nil
     result = @cache.get key

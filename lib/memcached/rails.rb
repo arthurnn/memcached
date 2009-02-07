@@ -25,6 +25,12 @@ class Memcached
       super(key, !raw)
     rescue NotFound
     end
+
+    # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
+    def cas(key, ttl=nil, raw=false, &block)
+      super(key, ttl, !raw, &block)
+    rescue NotFound    
+    end
     
     # Wraps Memcached#get with multiple arguments.
     def get_multi(*keys)

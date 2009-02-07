@@ -264,7 +264,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   def cas(key, ttl=nil, marshal=true, flags=FLAGS)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
 
-    value = get(key, marshal)
+    value, flags, ret = Lib.memcached_get_rvalue(@struct, key)
+    check_return_code(ret, key)
+    value = Marshal.load(value) if marshal
+
     value = yield value
     value = marshal ? Marshal.dump(value) : value.to_s
 
@@ -273,6 +276,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       key
     )
   end
+  
+  alias :compare_and_swap :cas
 
 ### Deleters
 
