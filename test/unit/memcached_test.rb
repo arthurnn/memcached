@@ -241,7 +241,7 @@ class MemcachedTest < Test::Unit::TestCase
     end).real
 
     cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25)
-    assert 0.4 > (Benchmark.measure do
+    assert 0.51 > (Benchmark.measure do
       assert_raise(Memcached::UnknownReadFailure) do
         result = cache.get key
       end
