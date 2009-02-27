@@ -1,5 +1,5 @@
 
-v0.14. Update to libmemcached 0.26. Various bugfixes. Expose memcached_generate_hash_rvalue.
+v0.14.1. Update to libmemcached 0.26.1. Various bugfixes. Expose memcached_generate_hash_rvalue.
 
 v0.13. Update to libmemcached 0.25. Use new built-in failover. Document fixed timeouts.
 
