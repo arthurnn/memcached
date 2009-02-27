@@ -26,9 +26,9 @@ class Memcached
   DIRECT_VALUE_BEHAVIORS = [:retry_timeout, :connect_timeout, :rcv_timeout, :socket_recv_size, :poll_timeout, :socket_send_size, :server_failure_limit]
 
   CONVERSION_FACTORS = {
-    :connect_timeout => 1_000_000,
     :rcv_timeout => 1_000_000,
-    :poll_timeout => 1_000
+    :poll_timeout => 1_000,
+    :connect_timeout => 1_000
   }
 
 #:startdoc:
