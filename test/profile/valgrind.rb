@@ -19,7 +19,7 @@ class Worker
     @opts = [
       ['127.0.0.1:43042', '127.0.0.1:43043'], 
       {
-        :buffer_requests => false,
+        :buffer_requests => false,g
         :no_block => false,
         :namespace => "namespace"
       }
@@ -103,11 +103,6 @@ class Worker
       when "clone"
         @i.times do
           cache = @cache.clone
-          cache.destroy(false)
-        end
-      when "clone-nodestroy"
-        @i.times do
-          @cache.clone      
         end
       when "servers"
         @i.times do
@@ -117,7 +112,7 @@ class Worker
         raise "No such method"
     end
     
-    @cache.destroy    
+    GC.start
   end  
   
 end
