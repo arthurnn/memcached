@@ -386,9 +386,14 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       raise @not_found_instance
     else
       message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"
-      if ret == Lib::MEMCACHED_ERRNO and key.is_a?(String)
-        server = Lib.memcached_server_by_key(@struct, key)
-        message = "Errno #{server.first.cached_errno}. #{message}"
+      if key.is_a?(String)
+        if ret == Lib::MEMCACHED_ERRNO
+          server = Lib.memcached_server_by_key(@struct, key)
+          message = "Errno #{server.first.cached_errno}. #{message}"
+        elsif ret == Lib::MEMCACHED_SERVER_ERROR
+          server = Lib.memcached_server_by_key(@struct, key)
+          message = "\"#{server.first.cached_server_error}\". #{message}."
+        end
       end
       raise EXCEPTIONS[ret], message
     end

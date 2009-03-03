@@ -661,10 +661,11 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  def test_set_object_too_large
-    assert_raise(Memcached::ServerError) do
-      @cache.set key, "I'm big" * 1000000
-    end
+  def test_server_error_message
+    @cache.set key, "I'm big" * 1000000
+    assert false # Never reached
+  rescue Memcached::ServerError => e
+    assert_match /^".+". Key/, e.message
   end
 
   # Stats
