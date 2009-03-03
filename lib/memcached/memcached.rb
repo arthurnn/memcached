@@ -389,7 +389,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       if key.is_a?(String)
         if ret == Lib::MEMCACHED_ERRNO
           server = Lib.memcached_server_by_key(@struct, key)
-          message = "Errno #{server.first.cached_errno}. #{message}"
+          errno = server.first.cached_errno
+          message = "Errno #{errno}: #{ERRNO_HASH[errno].inspect}. #{message}"
         elsif ret == Lib::MEMCACHED_SERVER_ERROR
           server = Lib.memcached_server_by_key(@struct, key)
           message = "\"#{server.first.cached_server_error}\". #{message}."

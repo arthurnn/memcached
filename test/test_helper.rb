@@ -1,8 +1,10 @@
 
 $LOAD_PATH << "#{File.dirname(__FILE__)}/../lib"
 
+require 'rubygems'
+require 'mocha'
+
 if ENV['DEBUG']
-  require 'rubygems'
   require 'ruby-debug' 
 end
   

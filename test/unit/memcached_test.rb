@@ -1,6 +1,7 @@
 
 require "#{File.dirname(__FILE__)}/../test_helper"
 require 'socket'
+require 'mocha'
 require 'benchmark'
 
 class MemcachedTest < Test::Unit::TestCase
@@ -665,7 +666,14 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.set key, "I'm big" * 1000000
     assert false # Never reached
   rescue Memcached::ServerError => e
-    assert_match /^".+". Key/, e.message
+    assert_match /^"object too large for cache". Key/, e.message
+  end
+  
+  def test_errno_message
+    Rlibmemcached::MemcachedServerSt.any_instance.expects("cached_errno").returns(1)
+    @cache.send(:check_return_code, Rlibmemcached::MEMCACHED_ERRNO, key)    
+  rescue Memcached::SystemError => e
+    assert_match /^Errno 1: "Operation not permitted". Key/, e.message
   end
 
   # Stats
@@ -856,7 +864,7 @@ class MemcachedTest < Test::Unit::TestCase
     threads.each {|thread| thread.join}
   end
   
-  # Hash
+  # Hash  
   
   def test_hash
     assert_equal 3157003241, 
