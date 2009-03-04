@@ -54,7 +54,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
     end           
   end
   
-  ERRNO_HASH = Hash[*Errno.constants.map{ |c| [Errno.const_get(c).const_get("Errno"), Errno.const_get(c).new.message] }.flatten]
+  ERRNO_HASH = Hash[*Errno.constants.map{ |c| [Errno.const_get(c)::Errno, Errno.const_get(c).new.message] }.flatten]
   
   EXCEPTIONS = []
   EMPTY_STRUCT = Rlibmemcached::MemcachedSt.new
