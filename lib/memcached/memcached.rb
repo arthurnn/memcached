@@ -7,7 +7,7 @@ class Memcached
   FLAGS = 0x0
 
   DEFAULTS = {
-    :hash => :default,
+    :hash => :murmur,
     :no_block => false,
     :distribution => :consistent_ketama,
     :ketama_weighted => true,
@@ -51,7 +51,7 @@ Weights only affect Ketama hashing.  If you use Ketama hashing and don't specify
 Valid option parameters are:
 
 <tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 127.
-<tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:default</tt> is the fastest. Use <tt>:md5</tt> for compatibility with other ketama clients.
+<tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:murmer</tt> is the fastest, and the default. Use <tt>:md5</tt> for compatibility with other ketama clients.
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent_ketama</tt>, <tt>:consistent_wheel</tt>, or <tt>:ketama</tt>. Defaults to <tt>:ketama</tt>.
 <tt>:server_failure_limit</tt>:: How many consecutive failures to allow before marking a host as dead. Has no effect unless <tt>:retry_timeout</tt> is also set.
 <tt>:retry_timeout</tt>:: How long to wait until retrying a dead server. Has no effect unless <tt>:server_failure_limit</tt> is non-zero. Defaults to <tt>30</tt>.
