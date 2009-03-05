@@ -419,17 +419,16 @@ class Bench
     
       if defined? Memcached
         unless ARGV.include? "--no-hash"
-          n = 10000
-          Memcached::HASH_VALUES.each do |mode,|
-            @m = Memcached.new(@opts[0], @opts[1].merge(:hash => mode))
+          n = 100000
+          Memcached::HASH_VALUES.each do |mode, int|
             x.report("hash:#{mode}:memcached") do
               n.times do
-                @m.set @key1, @marshalled, 0, false
-                @m.get @key1, false
-                @m.set @key2, @marshalled, 0, false
-                @m.get @key2, false
-                @m.set @key3, @marshalled, 0, false
-                @m.get @key3, false
+                Rlibmemcached.memcached_generate_hash_rvalue(@key1, int)
+                Rlibmemcached.memcached_generate_hash_rvalue(@key2, int)
+                Rlibmemcached.memcached_generate_hash_rvalue(@key3, int)
+                Rlibmemcached.memcached_generate_hash_rvalue(@key4, int)
+                Rlibmemcached.memcached_generate_hash_rvalue(@key5, int)
+                Rlibmemcached.memcached_generate_hash_rvalue(@key6, int)
               end
             end
           end
