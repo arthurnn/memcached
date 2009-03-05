@@ -34,9 +34,9 @@ class Memcached
     
     alias :compare_and_swap :cas    
     
-    # Wraps Memcached#get with multiple arguments.
-    def get_multi(*keys)
-      super(keys)
+    # Wraps Memcached#get.
+    def get_multi(keys, raw=false)
+      super(keys, !raw)
     end
     
     # Wraps Memcached#set.

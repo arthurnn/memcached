@@ -19,7 +19,7 @@ class RailsTest < Test::Unit::TestCase
   
   def test_get_multi
     @cache.set key, @value
-    result = @cache.get_multi key
+    result = @cache.get_multi([key])
     assert_equal(
       {key => @value}, 
       result
