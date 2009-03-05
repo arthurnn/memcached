@@ -1,4 +1,6 @@
 
+v0.14.3. Change Rails#get_multi API.
+
 v0.14.2. Update to libmemcached 0.26.2. Return errno description.
 
 v0.14.1. Update to libmemcached 0.26.1. Various bugfixes. Expose memcached_generate_hash_rvalue.
