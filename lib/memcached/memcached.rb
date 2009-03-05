@@ -434,6 +434,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     BEHAVIORS.keys.each do |behavior|
       set_behavior(behavior, options[behavior]) if options.key?(behavior)
     end
+    # BUG Hash must be last due to the weird Libmemcached multi-behaviors
+    set_behavior(:hash, options[:hash])
   end
 
   # Set the callbacks on the struct from the current options.
