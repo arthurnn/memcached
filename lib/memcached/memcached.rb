@@ -185,19 +185,19 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   #
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be set directly.
   #
-  def set(key, value, ttl=nil, marshal=true, flags=FLAGS)
+  def set(key, value,ttl=options[:default_ttl], marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_set(@struct, key, value, ttl || options[:default_ttl], flags),
+      Lib.memcached_set(@struct, key, value, ttl, flags),
       key
     )
   end
 
   # Add a key/value pair. Raises <b>Memcached::NotStored</b> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
-  def add(key, value, ttl=nil, marshal=true, flags=FLAGS)
+  def add(key, value,ttl=options[:default_ttl], marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_add(@struct, key, value, ttl || options[:default_ttl], flags),
+      Lib.memcached_add(@struct, key, value, ttl, flags),
       key
     )
   end
@@ -226,10 +226,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   #:startdoc:
 
   # Replace a key/value pair. Raises <b>Memcached::NotFound</b> if the key does not exist on the server. The parameters are the same as <tt>set</tt>.
-  def replace(key, value, ttl=nil, marshal=true, flags=FLAGS)
+  def replace(key, value,ttl=options[:default_ttl], marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value.to_s
     check_return_code(
-      Lib.memcached_replace(@struct, key, value, ttl || options[:default_ttl], flags),
+      Lib.memcached_replace(@struct, key, value, ttl, flags),
       key
     )
   end
@@ -260,20 +260,18 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   #
   # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
   #
-  def cas(key, ttl=nil, marshal=true, flags=FLAGS)
+  def cas(key,ttl=options[:default_ttl], marshal=true, flags=FLAGS)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
 
     value, flags, ret = Lib.memcached_get_rvalue(@struct, key)
     check_return_code(ret, key)
+    cas = @struct.result.cas
+
     value = Marshal.load(value) if marshal
-
     value = yield value
-    value = marshal ? Marshal.dump(value) : value.to_s
+    value = Marshal.dump(value) if marshal
 
-    check_return_code(
-      Lib.memcached_cas(@struct, key, value, ttl || options[:default_ttl], flags, @struct.result.cas),
-      key
-    )
+    check_return_code(Lib.memcached_cas(@struct, key, value, ttl, flags, cas), key)
   end
   
   alias :compare_and_swap :cas
