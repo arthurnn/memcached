@@ -27,7 +27,7 @@ class Memcached
     end
 
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
-    def cas(key, ttl=nil, raw=false, &block)
+    def cas(key, ttl=@default_ttl, raw=false, &block)
       super(key, ttl, !raw, &block)
     rescue NotFound    
     end
@@ -40,12 +40,12 @@ class Memcached
     end
     
     # Wraps Memcached#set.
-    def set(key, value, ttl=nil, raw=false)
+    def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
     end
 
     # Wraps Memcached#add so that it doesn't raise. 
-    def add(key, value, ttl=nil, raw=false)
+    def add(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
       true
     rescue NotStored
