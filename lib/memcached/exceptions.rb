@@ -34,6 +34,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
 * Memcached::ServerDelete
 * Memcached::ServerEnd
 * Memcached::ServerError
+* Memcached::ServerIsMarkedDead
 * Memcached::ServerValue
 * Memcached::SomeErrorsWereReported
 * Memcached::StatValue
@@ -62,7 +63,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
   
   # Generate exception classes
   Rlibmemcached::MEMCACHED_MAXIMUM_RETURN.times do |index|
-    description = Rlibmemcached.memcached_strerror(EMPTY_STRUCT, index).gsub(/!/, "")
+    description = Rlibmemcached.memcached_strerror(EMPTY_STRUCT, index).gsub("!", "")
     exception_class = eval("class #{camelize(description)} < Error; self; end")
     EXCEPTIONS << exception_class
   end
@@ -78,9 +79,6 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
       @no_backtrace ? [] : super
     end
   end
-  
-  # Verify library version
-  # XXX Waiting on libmemcached 0.18
   
 #:startdoc:
 end
