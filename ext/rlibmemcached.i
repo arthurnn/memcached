@@ -75,6 +75,11 @@
   $result = ULL2NUM($1);
 };
 
+// Uint32
+%typemap(out) (uint32_t) {
+ $result = UINT2NUM($1);
+};
+
 // String for memcached_fetch
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
   char string[256];

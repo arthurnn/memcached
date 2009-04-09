@@ -2320,7 +2320,9 @@ _wrap_MemcachedContinuumItemSt_index_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_continuum_item_st *)(argp1);
   result =  ((arg1)->index);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2379,7 +2381,9 @@ _wrap_MemcachedContinuumItemSt_value_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_continuum_item_st *)(argp1);
   result =  ((arg1)->value);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2599,7 +2603,9 @@ _wrap_MemcachedAnalysisSt_average_item_size_get(int argc, VALUE *argv, VALUE sel
   }
   arg1 = (struct memcached_analysis_st *)(argp1);
   result =  ((arg1)->average_item_size);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2658,7 +2664,9 @@ _wrap_MemcachedAnalysisSt_longest_uptime_get(int argc, VALUE *argv, VALUE self) 
   }
   arg1 = (struct memcached_analysis_st *)(argp1);
   result =  ((arg1)->longest_uptime);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2717,7 +2725,9 @@ _wrap_MemcachedAnalysisSt_least_free_server_get(int argc, VALUE *argv, VALUE sel
   }
   arg1 = (struct memcached_analysis_st *)(argp1);
   result =  ((arg1)->least_free_server);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2776,7 +2786,9 @@ _wrap_MemcachedAnalysisSt_most_consumed_server_get(int argc, VALUE *argv, VALUE 
   }
   arg1 = (struct memcached_analysis_st *)(argp1);
   result =  ((arg1)->most_consumed_server);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2835,7 +2847,9 @@ _wrap_MemcachedAnalysisSt_oldest_server_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_analysis_st *)(argp1);
   result =  ((arg1)->oldest_server);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -2986,7 +3000,9 @@ _wrap_MemcachedStatSt_pid_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->pid);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3045,7 +3061,9 @@ _wrap_MemcachedStatSt_uptime_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->uptime);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3104,7 +3122,9 @@ _wrap_MemcachedStatSt_threads_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->threads);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3163,7 +3183,9 @@ _wrap_MemcachedStatSt_time_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->time);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3222,7 +3244,9 @@ _wrap_MemcachedStatSt_pointer_size_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->pointer_size);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3281,7 +3305,9 @@ _wrap_MemcachedStatSt_rusage_user_seconds_get(int argc, VALUE *argv, VALUE self)
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->rusage_user_seconds);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3340,7 +3366,9 @@ _wrap_MemcachedStatSt_rusage_user_microseconds_get(int argc, VALUE *argv, VALUE 
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->rusage_user_microseconds);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3399,7 +3427,9 @@ _wrap_MemcachedStatSt_rusage_system_seconds_get(int argc, VALUE *argv, VALUE sel
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->rusage_system_seconds);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3458,7 +3488,9 @@ _wrap_MemcachedStatSt_rusage_system_microseconds_get(int argc, VALUE *argv, VALU
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->rusage_system_microseconds);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3517,7 +3549,9 @@ _wrap_MemcachedStatSt_curr_items_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->curr_items);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3576,7 +3610,9 @@ _wrap_MemcachedStatSt_total_items_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->total_items);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3696,7 +3732,9 @@ _wrap_MemcachedStatSt_curr_connections_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->curr_connections);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3755,7 +3793,9 @@ _wrap_MemcachedStatSt_total_connections_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->total_connections);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -3814,7 +3854,9 @@ _wrap_MemcachedStatSt_connection_structures_get(int argc, VALUE *argv, VALUE sel
   }
   arg1 = (struct memcached_stat_st *)(argp1);
   result =  ((arg1)->connection_structures);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -4619,7 +4661,9 @@ _wrap_MemcachedSt_number_of_hosts_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_st *)(argp1);
   result =  ((arg1)->number_of_hosts);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -4678,7 +4722,9 @@ _wrap_MemcachedSt_cursor_server_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_st *)(argp1);
   result =  ((arg1)->cursor_server);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -5360,7 +5406,9 @@ _wrap_MemcachedSt_continuum_count_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_st *)(argp1);
   result =  ((arg1)->continuum_count);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6051,7 +6099,9 @@ _wrap_MemcachedSt_continuum_points_counter_get(int argc, VALUE *argv, VALUE self
   }
   arg1 = (struct memcached_st *)(argp1);
   result =  ((arg1)->continuum_points_counter);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6228,7 +6278,9 @@ _wrap_MemcachedSt_server_failure_limit_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_st *)(argp1);
   result =  ((arg1)->server_failure_limit);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6287,7 +6339,9 @@ _wrap_MemcachedSt_io_msg_watermark_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_st *)(argp1);
   result =  ((arg1)->io_msg_watermark);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6346,7 +6400,9 @@ _wrap_MemcachedSt_io_bytes_watermark_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_st *)(argp1);
   result =  ((arg1)->io_bytes_watermark);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -7006,7 +7062,9 @@ _wrap_memcached_generate_hash_value(int argc, VALUE *argv, VALUE self) {
   } 
   arg3 = (memcached_hash)(val3);
   result = memcached_generate_hash_value((char const *)arg1,arg2,arg3);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -7036,7 +7094,9 @@ _wrap_memcached_generate_hash(int argc, VALUE *argv, VALUE self) {
     arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   result = memcached_generate_hash(arg1,(char const *)arg2,arg3);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -10763,7 +10823,9 @@ _wrap_MemcachedServerSt_server_failure_counter_get(int argc, VALUE *argv, VALUE 
   }
   arg1 = (struct memcached_server_st *)(argp1);
   result =  ((arg1)->server_failure_counter);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -10822,7 +10884,9 @@ _wrap_MemcachedServerSt_io_bytes_sent_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_server_st *)(argp1);
   result =  ((arg1)->io_bytes_sent);
-  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
