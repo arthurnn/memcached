@@ -7014,6 +7014,36 @@ fail:
 
 
 SWIGINTERN VALUE
+_wrap_memcached_generate_hash(int argc, VALUE *argv, VALUE self) {
+  memcached_st *arg1 = (memcached_st *) 0 ;
+  char *arg2 = (char *) 0 ;
+  size_t arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  uint32_t result;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 2) || (argc > 2)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "memcached_st *","memcached_generate_hash", 1, argv[0] )); 
+  }
+  arg1 = (memcached_st *)(argp1);
+  {
+    arg2 = STR2CSTR(argv[1]);
+    arg3 = (size_t) RSTRING_LEN(argv[1]);
+  }
+  result = memcached_generate_hash(arg1,(char const *)arg2,arg3);
+  vresult = SWIG_NewPointerObj((uint32_t *)memcpy((uint32_t *)malloc(sizeof(uint32_t)),&result,sizeof(uint32_t)), SWIGTYPE_p_uint32_t, SWIG_POINTER_OWN |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
 _wrap_memcached_flush_buffers(int argc, VALUE *argv, VALUE self) {
   memcached_st *arg1 = (memcached_st *) 0 ;
   void *argp1 = 0 ;
@@ -11836,7 +11866,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   cMemcachedContinuumItemSt.mark = 0;
   cMemcachedContinuumItemSt.destroy = (void (*)(void *)) free_memcached_continuum_item_st;
   cMemcachedContinuumItemSt.trackObjects = 0;
-  rb_define_const(mRlibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.26"));
+  rb_define_const(mRlibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.26.3"));
   
   cMemcachedAnalysisSt.klass = rb_define_class_under(mRlibmemcached, "MemcachedAnalysisSt", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_memcached_analysis_st, (void *) &cMemcachedAnalysisSt);
@@ -12012,6 +12042,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_module_function(mRlibmemcached, "memcached_behavior_set", _wrap_memcached_behavior_set, -1);
   rb_define_module_function(mRlibmemcached, "memcached_behavior_get", _wrap_memcached_behavior_get, -1);
   rb_define_module_function(mRlibmemcached, "memcached_generate_hash_value", _wrap_memcached_generate_hash_value, -1);
+  rb_define_module_function(mRlibmemcached, "memcached_generate_hash", _wrap_memcached_generate_hash, -1);
   rb_define_module_function(mRlibmemcached, "memcached_flush_buffers", _wrap_memcached_flush_buffers, -1);
   rb_define_module_function(mRlibmemcached, "memcached_server_add_udp", _wrap_memcached_server_add_udp, -1);
   rb_define_module_function(mRlibmemcached, "memcached_server_add_unix_socket", _wrap_memcached_server_add_unix_socket, -1);
@@ -12076,6 +12107,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_TIMEOUT", SWIG_From_int((int)(MEMCACHED_TIMEOUT)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BUFFERED", SWIG_From_int((int)(MEMCACHED_BUFFERED)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BAD_KEY_PROVIDED", SWIG_From_int((int)(MEMCACHED_BAD_KEY_PROVIDED)));
+  rb_define_const(mRlibmemcached, "MEMCACHED_INVALID_HOST_PROTOCOL", SWIG_From_int((int)(MEMCACHED_INVALID_HOST_PROTOCOL)));
   rb_define_const(mRlibmemcached, "MEMCACHED_SERVER_MARKED_DEAD", SWIG_From_int((int)(MEMCACHED_SERVER_MARKED_DEAD)));
   rb_define_const(mRlibmemcached, "MEMCACHED_MAXIMUM_RETURN", SWIG_From_int((int)(MEMCACHED_MAXIMUM_RETURN)));
   rb_define_const(mRlibmemcached, "MEMCACHED_DISTRIBUTION_MODULA", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_MODULA)));
@@ -12108,6 +12140,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_IO_BYTES_WATERMARK", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_IO_BYTES_WATERMARK)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_HASH_WITH_PREFIX_KEY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_HASH_WITH_PREFIX_KEY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_NOREPLY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NOREPLY)));
+  rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_USE_UDP", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USE_UDP)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_PREFIX_KEY", SWIG_From_int((int)(MEMCACHED_CALLBACK_PREFIX_KEY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_USER_DATA", SWIG_From_int((int)(MEMCACHED_CALLBACK_USER_DATA)));
