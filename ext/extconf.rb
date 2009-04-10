@@ -1,10 +1,16 @@
 
 require 'mkmf'
 
+INCLUDES = ENV['INCLUDE_PATH'].split(':').map{|s| " -I#{s}"}.uniq.join
+
 if ENV['SWIG']
   puts "running SWIG"
-  $stdout.write `swig -I/opt/local/include -ruby -autorename rlibmemcached.i`
+  cmd = "swig #{INCLUDES} -ruby -autorename rlibmemcached.i"
+  puts cmd
+  $stdout.write `#{cmd}`
 end
+
+$CFLAGS << INCLUDES
 
 if `uname -sp` == "Darwin i386\n"
   $CFLAGS.gsub! /-arch \S+/, ''
