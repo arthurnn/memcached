@@ -1,7 +1,7 @@
 
 require 'mkmf'
 
-INCLUDES = ENV['INCLUDE_PATH'].split(':').map{|s| " -I#{s}"}.uniq.join
+INCLUDES = ENV['INCLUDE_PATH'].to_s.split(':').map{|s| " -I#{s}"}.uniq.join
 
 if ENV['SWIG']
   puts "running SWIG"
