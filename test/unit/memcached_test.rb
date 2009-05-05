@@ -19,6 +19,14 @@ class MemcachedTest < Test::Unit::TestCase
     }
     @cache = Memcached.new(@servers, @options)
 
+    @udp_options = {
+      :prefix_key => @prefix_key,
+      :hash => :default,
+      :udp => true,
+      :distribution => :modula
+    }
+    @udp_cache = Memcached.new(@servers, @udp_options)
+
     @nb_options = {
       :prefix_key => @prefix_key,
       :no_block => true,
@@ -211,6 +219,12 @@ class MemcachedTest < Test::Unit::TestCase
     result = @cache.get key
     assert_equal @value, result
   end
+  
+  def test_udp_get
+    @udp_cache.set key, @value
+    result = @udp_cache.get key
+    assert_equal @value, result
+  end  
 
   def test_get_nil
     @cache.set key, nil, 0
@@ -229,21 +243,21 @@ class MemcachedTest < Test::Unit::TestCase
     socket = stub_server 43047
     cache = Memcached.new("localhost:43047:1", :timeout => 0.5)
     assert 0.49 < (Benchmark.measure do
-      assert_raise(Memcached::UnknownReadFailure) do
+      assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5)
     assert 0.49 < (Benchmark.measure do
-      assert_raise(Memcached::UnknownReadFailure) do
+      assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25)
     assert 0.51 > (Benchmark.measure do
-      assert_raise(Memcached::UnknownReadFailure) do
+      assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
@@ -253,14 +267,14 @@ class MemcachedTest < Test::Unit::TestCase
     socket = stub_server 43048
     cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25)
     assert 0.24 < (Benchmark.measure do
-      assert_raise(Memcached::UnknownReadFailure) do
+      assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001)
     assert 0.24 < (Benchmark.measure do
-      assert_raise(Memcached::UnknownReadFailure) do
+      assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
@@ -270,7 +284,7 @@ class MemcachedTest < Test::Unit::TestCase
       :rcv_timeout => 0.25 # No affect in no-block mode
     )
     assert 0.24 > (Benchmark.measure do
-      assert_raise(Memcached::UnknownReadFailure) do
+      assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
@@ -383,6 +397,12 @@ class MemcachedTest < Test::Unit::TestCase
   def test_set
     assert_nothing_raised do
       @cache.set(key, @value)
+    end
+  end
+
+  def test_udp_set
+    assert_nothing_raised do
+      @udp_cache.set(key, @value)
     end
   end
 
@@ -787,7 +807,7 @@ class MemcachedTest < Test::Unit::TestCase
 
     # Hit second server
     key2 = 'test_missing_server'
-    assert_raise(Memcached::UnknownReadFailure) do
+    assert_raise(Memcached::ATimeoutOccurred) do
       cache.set(key2, @value)
     end
 
