@@ -29,7 +29,7 @@ class Memcached
     :auto_eject_hosts => true,
     :server_failure_limit => 2,
     :verify_key => true,
-    :udp => false
+    :use_udp => false
   }
 
 #:stopdoc:
@@ -69,7 +69,7 @@ Valid option parameters are:
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
 <tt>:default_weight</tt>:: The weight to use if <tt>:ketama_weighted</tt> is <tt>true</tt>, but no weight is specified for a server.
 <tt>:hash_with_prefix_key</tt>:: Whether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
-<tt>:udp</tt>:: Use the UDP protocol to reduce connection overhead. Defaults to false.
+<tt>:use_udp</tt>:: Use the UDP protocol to reduce connection overhead. Defaults to false.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
 
@@ -419,7 +419,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Set the servers on the struct.
   def set_servers(servers)
-    add_method = options[:udp] ? "memcached_server_add_udp_with_weight" : "memcached_server_add_with_weight"
+    add_method = options[:use_udp] ? "memcached_server_add_udp_with_weight" : "memcached_server_add_with_weight"
     Array(servers).each_with_index do |server, index|
       unless server.is_a? String and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
         raise ArgumentError, "Servers must be in the format host:port[:weight] (e.g., 'localhost:11211' or  'localhost:11211:10')"

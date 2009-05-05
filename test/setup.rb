@@ -13,5 +13,5 @@ system ">#{log}"
 verbosity = (ENV['DEBUG'] ? "-vv" : "")
 
 (43042..43046).each do |port|
-  system "memcached #{verbosity} -U 0 -p #{port} >> #{log} 2>&1 &"
+  system "memcached #{verbosity} -U #{port} -p #{port} >> #{log} 2>&1 &"
 end
