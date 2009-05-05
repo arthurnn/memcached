@@ -1,4 +1,6 @@
 
+v0.15. Update to libmemcached 0.28. UDP support.
+
 v0.14.4. Re-SWIG.
 
 v0.14.3. Change Rails#get_multi API.
