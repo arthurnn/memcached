@@ -65,7 +65,6 @@ Valid option parameters are:
 <tt>:show_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 <tt>:connect_timeout</tt>:: How long to wait for a connection to a server. Defaults to 2 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:timeout</tt>:: How long to wait for a response from the server. Defaults to 0.25 seconds. Set to <tt>0</tt> if you want to wait forever.
-<tt>:poll_timeout</tt>:: How long to wait for a response from the server in the non-blocking select loop. Defaults to 0.25 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
 <tt>:default_weight</tt>:: The weight to use if <tt>:ketama_weighted</tt> is <tt>true</tt>, but no weight is specified for a server.
 <tt>:hash_with_prefix_key</tt>:: Whether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
