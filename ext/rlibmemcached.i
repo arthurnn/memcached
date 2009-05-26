@@ -108,12 +108,12 @@
 
 //// SWIG includes, for functions, constants, and structs
 
-%include "/opt/local/include/libmemcached/memcached.h"
-%include "/opt/local/include/libmemcached/memcached_constants.h"
-%include "/opt/local/include/libmemcached/memcached_get.h"
-%include "/opt/local/include/libmemcached/memcached_storage.h"
-%include "/opt/local/include/libmemcached/memcached_result.h"
-%include "/opt/local/include/libmemcached/memcached_server.h"
+%include "libmemcached/memcached.h"
+%include "libmemcached/memcached_constants.h"
+%include "libmemcached/memcached_get.h"
+%include "libmemcached/memcached_storage.h"
+%include "libmemcached/memcached_result.h"
+%include "libmemcached/memcached_server.h"
 
 //// Custom C functions
 
