@@ -7,7 +7,9 @@ if ENV['SWIG']
   puts "running SWIG"
   cmd = "swig #{INCLUDES} -ruby -autorename rlibmemcached.i"
   puts cmd
-  $stdout.write `#{cmd}`
+  res =  `#{cmd}`
+  raise "SWIG fail!" if res.match(/rlibmemcached.i:\d+: Error:/)
+  $stdout.write res
 end
 
 $CFLAGS << INCLUDES
@@ -32,6 +34,7 @@ find_library(*['memcached', 'memcached_server_add_with_weight', dir_config('libm
   raise "shared library 'libmemcached' not found"
 
 [
+ 'libmemcached/visibility.h',
   'libmemcached/memcached.h',
   'libmemcached/memcached_constants.h',
   'libmemcached/memcached_storage.h',

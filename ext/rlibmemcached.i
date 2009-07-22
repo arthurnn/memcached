@@ -1,5 +1,6 @@
 %module rlibmemcached
 %{
+#include <libmemcached/visibility.h>
 #include <libmemcached/memcached.h>
 %}
 
@@ -10,6 +11,7 @@
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_result_st;
 
 %include "typemaps.i"
+%include "libmemcached/visibility.h"
 
 // Register libmemcached's struct free function to prevent memory leaks
 %freefunc memcached_st "memcached_free";
@@ -22,6 +24,17 @@
 %apply unsigned long long { uint64_t data, uint64_t cas };
 
 // Array of strings map for multiget
+%typemap(in) (const char **keys, size_t *key_length, size_t number_of_keys) {
+  int i;
+  Check_Type($input, T_ARRAY);
+  $3 = (unsigned int) RARRAY_LEN($input);
+  $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
+  $1 = (char **) malloc(($3+1)*sizeof(char *)); 
+  for(i = 0; i < $3; i ++) {
+    $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
+    $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
+  }
+}
 %typemap(in) (char **keys, size_t *key_length, unsigned int number_of_keys) {
   int i;
   Check_Type($input, T_ARRAY);
@@ -33,7 +46,7 @@
     $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
   }
 }
-%typemap(freearg) (char **keys, size_t *key_length, unsigned int number_of_keys) {
+%typemap(freearg) (char **keys, size_t *key_length, size_t number_of_keys) {
    free($1);
    free($2);
 }
@@ -108,8 +121,10 @@
 
 //// SWIG includes, for functions, constants, and structs
 
+%include "libmemcached/visibility.h"
 %include "libmemcached/memcached.h"
 %include "libmemcached/memcached_constants.h"
+%include "libmemcached/memcached_error.h"
 %include "libmemcached/memcached_get.h"
 %include "libmemcached/memcached_storage.h"
 %include "libmemcached/memcached_result.h"

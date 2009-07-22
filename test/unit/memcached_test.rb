@@ -803,7 +803,7 @@ class MemcachedTest < Test::Unit::TestCase
     # Hit first server
     key1 = 'test_missing_server6'
     cache.set(key1, @value)
-    cache.get(key1) == @value
+    assert_equal cache.get(key1), @value
 
     # Hit second server
     key2 = 'test_missing_server'
