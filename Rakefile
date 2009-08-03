@@ -7,6 +7,7 @@ Echoe.new("memcached") do |p|
   p.url = "http://blog.evanweaver.com/files/doc/fauna/memcached/"
   p.docs_host = "blog.evanweaver.com:~/www/bax/public/files/doc/"
   p.rdoc_pattern = /README|TODO|LICENSE|CHANGELOG|BENCH|COMPAT|exceptions|behaviors|rails.rb|memcached.rb/
+  p.clean_pattern += ["ext/lib", "ext/include", "ext/share", "ext/libmemcached-?.??", "ext/bin", "ext/conftest.dSYM"]
 end
 
 task :exceptions do
