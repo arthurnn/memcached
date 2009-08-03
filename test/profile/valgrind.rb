@@ -1,14 +1,14 @@
 
-HERE = File.dirname(__FILE__)
-$LOAD_PATH << "#{HERE}/../../lib/"
+require "#{File.dirname(__FILE__)}/../setup"
 
+$LOAD_PATH << "#{File.dirname(__FILE__)}/../../lib/"
 require 'memcached'
 require 'rubygems'
 
 class Worker  
   def initialize(method_name, iterations)
     @method = method_name || 'mixed'
-    @i = (iterations || 1000).to_i
+    @i = (iterations || 10000).to_i
 
     @key1 = "key1-"*8  
     @key2 = "key2-"*8  
@@ -17,15 +17,13 @@ class Worker
     @marshalled = Marshal.dump(@value)
     
     @opts = [
-      ['127.0.0.1:43042', '127.0.0.1:43043'], 
+      ["#{UNIX_SOCKET_NAME}0", "#{UNIX_SOCKET_NAME}1"], 
       {
-        :buffer_requests => false,g
+        :buffer_requests => false,
         :no_block => false,
         :namespace => "namespace"
       }
     ]    
-    system("ruby #{HERE}/../setup.rb")
-    sleep(1)  
     @cache = Memcached.new(*@opts)
 
     @cache.set @key1, @value

@@ -379,10 +379,9 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code and an optional key, for exception messages.
   def check_return_code(ret, key = nil) #:doc:
-    return if ret == 0 # Lib::MEMCACHED_SUCCESS
-    return if ret == Lib::MEMCACHED_BUFFERED
-
-    if ret == Lib::MEMCACHED_NOTFOUND and !options[:show_backtraces]
+    if ret == 0 # Lib::MEMCACHED_SUCCESS
+    elsif ret == Lib::MEMCACHED_BUFFERED
+    elsif ret == Lib::MEMCACHED_NOTFOUND and !options[:show_backtraces]
       raise @not_found_instance
     else
       message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"
