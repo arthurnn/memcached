@@ -14,7 +14,7 @@ rescue LoadError
 end
 
 if ARGV.join !~ /--with/
-  ARGV << "--with-memcached" #<< "--with-memcache-client" << "--with-caffeine"
+  ARGV << "--with-memcached" << "--with-memcache-client" << "--with-caffeine"
 end
 
 ARGV.grep(/--with-(\w+)/) do
@@ -87,16 +87,16 @@ class Bench
   end
 
   def benchmark    
-    Benchmark.bm(31) do |x|
+    Benchmark.bm(35) do |x|
     
-      n = 2500
+      n = (ENV["LOOPS"] || 10000).to_i
     
       if defined? Memcached
         @m = Memcached.new(
         @opts_networked[0],
         @opts_networked[1].merge(:no_block => true, :buffer_requests => true)
         )
-        x.report("set:plain:noblock:memcached") do
+        x.report("set:plain:noblock:memcached:net") do
           n.times do
             @m.set @key1, @marshalled, 0, false
             @m.set @key2, @marshalled, 0, false
@@ -110,7 +110,7 @@ class Bench
         @opt_unix[0],
         @opt_unix[1].merge(:no_block => true, :buffer_requests => true)
         )
-        x.report("set:plain:noblock:memcache_uds") do
+        x.report("set:plain:noblock:memcached:uds") do
           n.times do
             @m.set @key1, @marshalled, 0, false
             @m.set @key2, @marshalled, 0, false
@@ -121,7 +121,7 @@ class Bench
           end
         end
         @m = Memcached.new(*@opts_networked)
-        x.report("set:plain:memcached") do
+        x.report("set:plain:memcached:net") do
           n.times do
             @m.set @key1, @marshalled, 0, false
             @m.set @key2, @marshalled, 0, false
@@ -132,7 +132,7 @@ class Bench
           end
         end # if false
         @m = Memcached.new(*@opt_unix)
-        x.report("set:plain:memcache_uds") do
+        x.report("set:plain:memcached:uds") do
           n.times do
             @m.set @key1, @marshalled, 0, false
             @m.set @key2, @marshalled, 0, false
@@ -166,7 +166,7 @@ class Bench
         @opts_networked[0],
         @opts_networked[1].merge(:no_block => true, :buffer_requests => true)
         )
-        x.report("set:ruby:noblock:memcached") do
+        x.report("set:ruby:noblock:memcached:net") do
           n.times do
             @m.set @key1, @value
             @m.set @key2, @value
@@ -180,7 +180,7 @@ class Bench
         @opt_unix[0],
         @opt_unix[1].merge(:no_block => true, :buffer_requests => true)
         )
-        x.report("set:ruby:noblock:memcache_uds") do
+        x.report("set:ruby:noblock:memcached:uds") do
           n.times do
             @m.set @key1, @value
             @m.set @key2, @value
@@ -191,7 +191,7 @@ class Bench
           end
         end
         @m = Memcached.new(*@opts_networked)
-        x.report("set:ruby:memcached") do
+        x.report("set:ruby:memcached:net") do
           n.times do
             @m.set @key1, @value
             @m.set @key2, @value
@@ -202,7 +202,7 @@ class Bench
           end
         end # if false
         @m = Memcached.new(*@opt_unix)
-        x.report("set:ruby:memcache_uds") do
+        x.report("set:ruby:memcached:uds") do
           n.times do
             @m.set @key1, @value
             @m.set @key2, @value
@@ -242,7 +242,7 @@ class Bench
     
       if defined? Memcached
         @m = Memcached.new(*@opts_networked)
-        x.report("get:plain:memcached") do
+        x.report("get:plain:memcached:net") do
           n.times do
             @m.get @key1, false
             @m.get @key2, false
@@ -253,7 +253,7 @@ class Bench
           end
         end
         @m = Memcached.new(*@opt_unix)
-        x.report("get:plain:memcache_uds") do
+        x.report("get:plain:memcached:uds") do
           n.times do
             @m.get @key1, false
             @m.get @key2, false
@@ -281,7 +281,7 @@ class Bench
     
       if defined? Memcached
         @m = Memcached.new(*@opts_networked)
-        x.report("get:ruby:memcached") do
+        x.report("get:ruby:memcached:net") do
           n.times do
             @m.get @key1
             @m.get @key2
@@ -292,7 +292,7 @@ class Bench
           end
         end
         @m = Memcached.new(*@opt_unix)
-        x.report("get:ruby:memcache_uds") do
+        x.report("get:ruby:memcached:uds") do
           n.times do
             @m.get @key1
             @m.get @key2
@@ -336,7 +336,7 @@ class Bench
         # Avoid rebuilding the array every request
         keys = [@key1, @key2, @key3, @key4, @key5, @key6]
 
-        x.report("multiget:ruby:memcached") do
+        x.report("multiget:ruby:memcached:net") do
           n.times do
             @m.get keys
           end
@@ -346,7 +346,7 @@ class Bench
         # Avoid rebuilding the array every request
         keys = [@key1, @key2, @key3, @key4, @key5, @key6]
 
-        x.report("multiget:ruby:memcache_uds") do
+        x.report("multiget:ruby:memcached:uds") do
           n.times do
             @m.get keys
           end
@@ -375,7 +375,7 @@ class Bench
     
       if defined? Memcached
         @m = Memcached.new(*@opts_networked)
-        x.report("missing:ruby:memcached") do
+        x.report("missing:ruby:memcached:net") do
           n.times do
             begin @m.delete @key1; rescue Memcached::NotFound; end
             begin @m.get @key1; rescue Memcached::NotFound; end
@@ -386,7 +386,7 @@ class Bench
           end
         end
         @m = Memcached.new(*@opt_unix)
-        x.report("missing:ruby:memcache_uds") do
+        x.report("missing:ruby:memcached:uds") do
           n.times do
             begin @m.delete @key1; rescue Memcached::NotFound; end
             begin @m.get @key1; rescue Memcached::NotFound; end
@@ -410,7 +410,7 @@ class Bench
           end
         end
         @m = Memcached.new(*@opt_unix)
-        x.report("missing:ruby:memcache_uds:inline") do
+        x.report("missing:ruby:memcached_UDS:inline") do
           n.times do
             @m.delete @key1 rescue nil
             @m.get @key1 rescue nil
@@ -455,7 +455,7 @@ class Bench
         @opts_networked[0],
         @opts_networked[1].merge(:no_block => true, :buffer_requests => true)
         )
-        x.report("mixed:ruby:noblock:memcached") do
+        x.report("mixed:ruby:noblock:memcached:net") do
           n.times do
             @m.set @key1, @value
             @m.set @key2, @value
@@ -475,7 +475,7 @@ class Bench
         @opt_unix[0],
         @opt_unix[1].merge(:no_block => true, :buffer_requests => true)
         )
-        x.report("mixed:ruby:noblock:memcache_uds") do
+        x.report("mixed:ruby:noblock:memcached:uds") do
           n.times do
             @m.set @key1, @value
             @m.set @key2, @value
@@ -492,7 +492,7 @@ class Bench
           end
         end
         @m = Memcached.new(*@opts_networked)
-        x.report("mixed:ruby:memcached") do
+        x.report("mixed:ruby:memcached:net") do
           n.times do
             @m.set @key1, @value
             @m.set @key2, @value
@@ -509,7 +509,7 @@ class Bench
           end
         end # if false
         @m = Memcached.new(*@opt_unix)
-        x.report("mixed:ruby:memcache_uds") do
+        x.report("mixed:ruby:memcached:uds") do
           n.times do
             @m.set @key1, @value
             @m.set @key2, @value
@@ -569,10 +569,9 @@ class Bench
     
       if defined? Memcached
         unless ARGV.include? "--no-hash"
-          n = 100000
           Memcached::HASH_VALUES.each do |mode, int|
             @m = Memcached.new(@opt_unix[0], @opt_unix[1].merge(:hash => mode))
-            x.report("hash:#{mode}:memcached") do
+            x.report("hash:#{mode}") do
               n.times do
                 Rlibmemcached.memcached_generate_hash_rvalue(@key1, int)
                 Rlibmemcached.memcached_generate_hash_rvalue(@key2, int)
