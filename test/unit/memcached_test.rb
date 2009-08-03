@@ -822,7 +822,7 @@ class MemcachedTest < Test::Unit::TestCase
     # Hit first server on retry
     assert_nothing_raised do
       cache.set(key2, @value)
-      cache.get(key2)
+      assert_equal cache.get(key2), @value
     end
     
     sleep(2)
