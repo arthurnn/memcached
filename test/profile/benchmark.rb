@@ -583,21 +583,6 @@ class Bench
               end
             end
           end
-
-          n = 10000
-          Memcached::HASH_VALUES.each do |mode,|
-            @m = Memcached.new(@opt_unix[0], @opt_unix[1].merge(:hash => mode))
-            x.report("hash:#{mode}:memcache_uds") do
-              n.times do
-                @m.set @key1, @marshalled, 0, false
-                @m.get @key1, false
-                @m.set @key2, @marshalled, 0, false
-                @m.get @key2, false
-                @m.set @key3, @marshalled, 0, false
-                @m.get @key3, false
-              end
-            end
-          end
         end
     
       end
