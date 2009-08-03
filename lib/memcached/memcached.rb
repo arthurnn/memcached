@@ -408,6 +408,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   end
 
   # Find which server failed most recently.
+  # FIXME Is this still necessary with cached_errno?
   def detect_failure
     time = Time.now
     server = server_structs.detect do |server|
@@ -419,12 +420,15 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Set the servers on the struct.
   def set_servers(servers)
     add_method = options[:use_udp] ? "memcached_server_add_udp_with_weight" : "memcached_server_add_with_weight"
-    Array(servers).each_with_index do |server, index|
-      unless server.is_a? String and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
-        raise ArgumentError, "Servers must be in the format host:port[:weight] (e.g., 'localhost:11211' or  'localhost:11211:10')"
+    Array(servers).each_with_index do |server, index|        
+      if server.is_a?(String) and File.socket?(server)
+        Lib.memcached_server_add_unix_socket_with_weight(@struct, server, options[:default_weight].to_i)
+      elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
+        host, port, weight = server.split(":")
+        Lib.memcached_server_add_with_weight(@struct, host, port.to_i, (weight || options[:default_weight]).to_i)
+      else
+        raise ArgumentError, "Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or  'localhost:11211:10') for a network server, or a valid pathname (e.g., /var/run/memcached) for a Unix domain socket."
       end
-      host, port, weight = server.split(":")
-      Lib.send(add_method, @struct, host, port.to_i, (weight || options[:default_weight]).to_i)
     end
     # For inspect
     @servers = send(:servers)
@@ -449,9 +453,14 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
     end
   end
-
-  # Stringify an opaque server struct.
+  
+  def is_unix_socket?(server)
+    server.type == Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
+  end
+  
+  # Stringify an opaque server struct
   def inspect_server(server)
-    "#{server.hostname}:#{server.port}#{":#{server.weight}" if options[:ketama_weighted]}"
-  end  
+    # zero port means unix domain socket memcached
+    "#{server.hostname}#{":#{server.port}" unless is_unix_socket?(server)}#{":#{server.weight}" if !is_unix_socket?(server) and options[:ketama_weighted]}"  
+  end
 end

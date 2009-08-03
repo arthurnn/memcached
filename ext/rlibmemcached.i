@@ -124,7 +124,6 @@
 %include "libmemcached/visibility.h"
 %include "libmemcached/memcached.h"
 %include "libmemcached/memcached_constants.h"
-%include "libmemcached/memcached_error.h"
 %include "libmemcached/memcached_get.h"
 %include "libmemcached/memcached_storage.h"
 %include "libmemcached/memcached_result.h"

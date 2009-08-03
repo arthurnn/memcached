@@ -7,7 +7,7 @@ require 'benchmark'
 class MemcachedTest < Test::Unit::TestCase
 
   def setup
-    @servers = ['localhost:43042', 'localhost:43043']
+    @servers = ['localhost:43042', 'localhost:43043',UNIX_SOCKET_NAME]
 
     # Maximum allowed prefix key size for :hash_with_prefix_key_key => false
     @prefix_key = 'prefix_key_'
@@ -44,10 +44,9 @@ class MemcachedTest < Test::Unit::TestCase
   def test_initialize
     cache = Memcached.new @servers, :prefix_key => 'test'
     assert_equal 'test', cache.options[:prefix_key]
-    assert_equal 2, cache.send(:server_structs).size
+    assert_equal 3, cache.send(:server_structs).size
     assert_equal 'localhost', cache.send(:server_structs).first.hostname
-    assert_equal 'localhost', cache.send(:server_structs).last.hostname
-    assert_equal 43043, cache.send(:server_structs).last.port
+    assert_equal 43042, cache.send(:server_structs).first.port
   end
 
   def test_initialize_with_ip_addresses
@@ -135,7 +134,7 @@ class MemcachedTest < Test::Unit::TestCase
   def test_initialize_without_prefix_key
     cache = Memcached.new @servers
     assert_equal nil, cache.options[:prefix_key]
-    assert_equal 2, cache.send(:server_structs).size
+    assert_equal 3, cache.send(:server_structs).size
   end
 
   def test_initialize_negative_behavior
@@ -700,7 +699,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_stats
     stats = @cache.stats
-    assert_equal 2, stats[:pid].size
+    assert_equal 3, stats[:pid].size
     assert_instance_of Fixnum, stats[:pid].first
     assert_instance_of String, stats[:version].first
   end

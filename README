@@ -39,13 +39,17 @@ Note that on OS X 10.5 you may need to set the architecture explicitly:
   
 == Usage
 
-Start a local memcached server:
+Start a local networked memcached server:
   $ memcached -p 11211 &
+Or a local unix domain socket memcached server:
+  $ memcached -s memcached_socket &
+
 
 Now, in Ruby, require the library and instantiate a Memcached object at a global level:
 
   require 'memcached'
-  $cache = Memcached.new("localhost:11211")
+  $cache = Memcached.new("localhost:11211") # for network socket
+	$cache = Memcached.new("memcached_socket") # for unix domain socket
   
 Now you can set things and get things:
  
