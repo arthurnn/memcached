@@ -7,7 +7,7 @@ require 'benchmark'
 class MemcachedTest < Test::Unit::TestCase
 
   def setup
-    @servers = ['localhost:43042', 'localhost:43043',UNIX_SOCKET_NAME]
+    @servers = ['localhost:43042', 'localhost:43043', "#{UNIX_SOCKET_NAME}0"]
 
     # Maximum allowed prefix key size for :hash_with_prefix_key_key => false
     @prefix_key = 'prefix_key_'

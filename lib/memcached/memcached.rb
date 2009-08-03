@@ -421,14 +421,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   def set_servers(servers)
     add_method = options[:use_udp] ? "memcached_server_add_udp_with_weight" : "memcached_server_add_with_weight"
     Array(servers).each_with_index do |server, index|
-      debugger
       if server.is_a?(String) and File.socket?(server)
         Lib.memcached_server_add_unix_socket_with_weight(@struct, server, options[:default_weight].to_i)
       elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
         host, port, weight = server.split(":")
         Lib.memcached_server_add_with_weight(@struct, host, port.to_i, (weight || options[:default_weight]).to_i)
       else
-        raise ArgumentError, "Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or  'localhost:11211:10') for a network server, or a valid pathname (e.g., /var/run/memcached) for a Unix domain socket."
+        raise ArgumentError, "Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or  'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached)."
       end
     end
     # For inspect
