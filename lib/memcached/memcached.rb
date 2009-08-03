@@ -84,7 +84,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     @options = DEFAULTS.merge(opts)
     @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
     @default_ttl = options[:default_ttl]
- 
+
     # Force :buffer_requests to use :no_block
     # XXX Deleting the :no_block key should also work, but libmemcached doesn't seem to set it
     # consistently
@@ -275,7 +275,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
     check_return_code(Lib.memcached_cas(@struct, key, value, ttl, flags, cas), key)
   end
-  
+
   alias :compare_and_swap :cas
 
 ### Deleters
@@ -336,7 +336,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Return the server used by a particular key.
   def server_by_key(key)
-    ret = Lib.memcached_server_by_key(@struct, key)    
+    ret = Lib.memcached_server_by_key(@struct, key)
     inspect_server(ret.first) if ret.is_a?(Array)
   end
 
@@ -420,7 +420,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Set the servers on the struct.
   def set_servers(servers)
     add_method = options[:use_udp] ? "memcached_server_add_udp_with_weight" : "memcached_server_add_with_weight"
-    Array(servers).each_with_index do |server, index|        
+    Array(servers).each_with_index do |server, index|
+      debugger
       if server.is_a?(String) and File.socket?(server)
         Lib.memcached_server_add_unix_socket_with_weight(@struct, server, options[:default_weight].to_i)
       elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
@@ -453,14 +454,14 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
     end
   end
-  
+
   def is_unix_socket?(server)
     server.type == Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
   end
-  
+
   # Stringify an opaque server struct
   def inspect_server(server)
     # zero port means unix domain socket memcached
-    "#{server.hostname}#{":#{server.port}" unless is_unix_socket?(server)}#{":#{server.weight}" if !is_unix_socket?(server) and options[:ketama_weighted]}"  
+    "#{server.hostname}#{":#{server.port}" unless is_unix_socket?(server)}#{":#{server.weight}" if !is_unix_socket?(server) and options[:ketama_weighted]}"
   end
 end
