@@ -459,7 +459,11 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Stringify an opaque server struct
   def inspect_server(server)
-    # zero port means unix domain socket memcached
-    "#{server.hostname}#{":#{server.port}" unless is_unix_socket?(server)}#{":#{server.weight}" if !is_unix_socket?(server) and options[:ketama_weighted]}"
+    strings = [server.hostname]
+    if !is_unix_socket?(server)
+      strings << ":#{server.port}"      
+      strings << ":#{server.weight}" if options[:ketama_weighted]
+    end
+    strings.join
   end
 end

@@ -12,7 +12,7 @@ require 'memcached'
 require 'test/unit'
 require 'ostruct'
 
-UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached') 
+UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached') unless defined? UNIX_SOCKET_NAME
 
 class GenericClass
 end
