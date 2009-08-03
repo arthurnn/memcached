@@ -1,13 +1,9 @@
-
+ 
 HERE = File.dirname(__FILE__)
 UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached')
 
 # Kill memcached
-pids = `ps awx`.split("\n").grep(/4304[2-6]/)
-pids << `lsof -t -a -U -c memcached #{UNIX_SOCKET_NAME}0`
-pids << `lsof -t -a -U -c memcached #{UNIX_SOCKET_NAME}1`
-
-pids.each { |pid| system("kill -9 #{pid.to_i}") }
+system("killall -9 memcached")
 
 # Start memcached
 verbosity = (ENV['DEBUG'] ? "-vv" : "")
