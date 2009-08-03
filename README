@@ -22,16 +22,9 @@ The <b>memcached</b> library wraps the pure-C libmemcached client via SWIG.
 
 == Installation
 
-You need Ruby 1.8.6, and {libmemcached 0.32}[http://tangent.org/552/libmemcached.html]. Other versions are not guaranteed to work. You also need {memcached itself}[http://www.danga.com/memcached/] if you want to test against a local server.
+You need Ruby 1.8.6. Other versions are not guaranteed to work. You also need {memcached itself}[http://www.danga.com/memcached/] if you want to test against a local server.
 
-For Linux, download and extract the {libmemcached tarball}[http://download.tangent.org/libmemcached-0.32.tar.gz]. Then run:
-  ./configure
-  make && sudo make install
-  
-For OS X, you may be able to install it from MacPorts:
-  sudo port install libmemcached @0.32
-  
-Now install the gem:
+Install the gem:
   sudo gem install memcached --no-rdoc --no-ri
   
 Note that on OS X 10.5 you may need to set the architecture explicitly: 
