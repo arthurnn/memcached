@@ -1,0 +1,87 @@
+# Exact paths to config junk
+^INSTALL$
+^aclocal.m4$
+^configure$
+^config/(config.guess|config.sub|depcomp|install-sh|ltmain.sh|missing)$
+^config.(log|status)$
+^libtool$
+^autom4te.cache$
+^libmemcached/(libmemcached_config.h(.in)?|stamp-h1)$
+^libmemcached/libmemcached_config.h.in$
+^stamp-h1$
+^lib/libmemcachedPlus.la$
+^tests/testplus$
+
+# Don't bother with TAGS files
+TAGS
+clients/TAGS
+clients/memdump
+libmemcached/TAGS
+libmemcachedutil/TAGS
+tests/TAGS
+
+
+
+# Build artifacts
+^libmemcached/libmemcached.la$
+^libmemcachedutil/libmemcachedutil.la$
+^clients/mem(cat|cp|flush|rm|slap|stat|error)$
+^tests/testapp$
+.(deps|libs)/*$
+.cmp$
+autom4te.cache/*$
+.(gz|cmp|tar|rpm|srpm)$
+support/libmemcached.pc$
+support/libmemcached.spec$
+support/libmemcached-fc.spec$
+docs/pod2htmd.tmp
+docs/pod2htmi.tmp
+libmemcached/memcachedplus.loT
+tests/atomsmasher
+tests/startservers
+tests/stopservers
+tests/udptest
+^libmemcached/dtrace_probes.h$
+^tests/core$
+
+Makefile(.in)?$
+.(deps|libs)$
+\.l?o$
+
+# Generated man files
+\.1$
+\.3$
+
+# Merged files
+\.orig$
+
+#HTML files
+docs/libmemcached/default.css
+docs/libmemcached/memcached.html
+docs/libmemcached/memcached_auto.html
+docs/libmemcached/memcached_behavior.html
+docs/libmemcached/memcached_callback.html
+docs/libmemcached/memcached_create.html
+docs/libmemcached/memcached_delete.html
+docs/libmemcached/memcached_examples.html
+docs/libmemcached/memcached_flush.html
+docs/libmemcached/memcached_get.html
+docs/libmemcached/memcached_quit.html
+docs/libmemcached/memcached_result_st.html
+docs/libmemcached/memcached_server_st.html
+docs/libmemcached/memcached_servers.html
+docs/libmemcached/memcached_set.html
+docs/libmemcached/memcached_stats.html
+docs/libmemcached/memcached_strerror.html
+docs/libmemcached/memcached_verbosity.html
+docs/libmemcached/memcached_version.html
+docs/libmemcached/memcat.html
+docs/libmemcached/memcp.html
+docs/libmemcached/memerror.html
+docs/libmemcached/memflush.html
+docs/libmemcached/memrm.html
+docs/libmemcached/memslap.html
+docs/libmemcached/memstat.html
+
+# Backup files created by emacs
+.*~$

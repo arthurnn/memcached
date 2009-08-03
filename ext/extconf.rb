@@ -1,14 +1,28 @@
 
 require 'mkmf'
 
+HERE = File.expand_path(File.dirname(__FILE__))
+
 INCLUDES = ENV['INCLUDE_PATH'].to_s.split(':').map{|s| " -I#{s}"}.uniq.join
+
+unless ENV['EXTERNAL_LIB']
+  puts "building memcache"
+  Dir.chdir(HERE) do
+    cmd = "cd libmemcached-src && ./configure --prefix=#{HERE}/unused --libdir=#{HERE}/.. --includedir=#{HERE}/..
+  make && make install"
+    puts cmd
+    res = `#{cmd}`
+    $stdout.write res
+  end
+  INCLUDES += " -I./libmemcache-include -L./libmemcache-lib"
+end
 
 if ENV['SWIG']
   puts "running SWIG"
   cmd = "swig #{INCLUDES} -ruby -autorename rlibmemcached.i"
   puts cmd
-  res =  `#{cmd}`
-  raise "SWIG fail!" if res.match(/rlibmemcached.i:\d+: Error:/)
+  res = `#{cmd}`
+  raise "SWIG failure" if res.match(/rlibmemcached.i:\d+: Error:/)
   $stdout.write res
 end
 

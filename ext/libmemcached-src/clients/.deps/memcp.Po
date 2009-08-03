@@ -1,0 +1,211 @@
+memcp.o memcp.o: memcp.c ../libmemcached/common.h ../config.h \
+  /usr/include/stdio.h /usr/include/_types.h /usr/include/sys/_types.h \
+  /usr/include/sys/cdefs.h /usr/include/machine/_types.h \
+  /usr/include/i386/_types.h /usr/include/stdlib.h \
+  /usr/include/available.h /usr/include/sys/wait.h \
+  /usr/include/sys/signal.h /usr/include/sys/appleapiopts.h \
+  /usr/include/machine/signal.h /usr/include/i386/signal.h \
+  /usr/include/i386/_structs.h /usr/include/sys/_structs.h \
+  /usr/include/machine/_structs.h /usr/include/mach/i386/_structs.h \
+  /usr/include/sys/resource.h /usr/include/machine/endian.h \
+  /usr/include/i386/endian.h /usr/include/sys/_endian.h \
+  /usr/include/libkern/_OSByteOrder.h \
+  /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
+  /usr/include/machine/types.h /usr/include/i386/types.h \
+  /usr/include/i386/_types.h /usr/include/string.h /usr/include/strings.h \
+  /usr/include/ctype.h /usr/include/runetype.h /usr/include/sys/types.h \
+  /usr/include/sys/socket.h /usr/include/machine/_param.h \
+  /usr/include/i386/_param.h /usr/include/netinet/in.h \
+  /usr/lib/gcc/i686-apple-darwin9/4.2.1/include/stdint.h \
+  /usr/include/netinet6/in6.h /usr/include/arpa/inet.h \
+  /usr/include/netdb.h /usr/include/unistd.h /usr/include/sys/unistd.h \
+  /usr/include/sys/select.h /usr/include/sys/_select.h \
+  /usr/lib/gcc/i686-apple-darwin9/4.2.1/include/limits.h \
+  /usr/lib/gcc/i686-apple-darwin9/4.2.1/include/syslimits.h \
+  /usr/include/limits.h /usr/include/machine/limits.h \
+  /usr/include/i386/limits.h /usr/include/i386/_limits.h \
+  /usr/include/sys/syslimits.h /usr/include/errno.h \
+  /usr/include/sys/errno.h /usr/include/fcntl.h /usr/include/sys/fcntl.h \
+  /usr/include/sys/un.h /usr/include/netinet/tcp.h \
+  /usr/include/sys/time.h /usr/include/time.h /usr/include/_structs.h \
+  ../libmemcached/memcached.h /usr/include/inttypes.h \
+  /usr/lib/gcc/i686-apple-darwin9/4.2.1/include/stdbool.h \
+  ../libmemcached/visibility.h ../libmemcached/memcached_configure.h \
+  ../libmemcached/memcached_constants.h ../libmemcached/memcached_types.h \
+  ../libmemcached/memcached_get.h ../libmemcached/memcached_server.h \
+  ../libmemcached/memcached_string.h ../libmemcached/memcached_result.h \
+  ../libmemcached/memcached_storage.h \
+  ../libmemcached/memcached_watchpoint.h ../libmemcached/memcached_io.h \
+  ../libmemcached/memcached_internal.h \
+  ../libmemcached/libmemcached_probes.h \
+  ../libmemcached/memcached/protocol_binary.h /usr/include/getopt.h \
+  /usr/include/sys/stat.h ../libmemcached/memcached.h client_options.h \
+  utilities.h
+
+../libmemcached/common.h:
+
+../config.h:
+
+/usr/include/stdio.h:
+
+/usr/include/_types.h:
+
+/usr/include/sys/_types.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/machine/_types.h:
+
+/usr/include/i386/_types.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/available.h:
+
+/usr/include/sys/wait.h:
+
+/usr/include/sys/signal.h:
+
+/usr/include/sys/appleapiopts.h:
+
+/usr/include/machine/signal.h:
+
+/usr/include/i386/signal.h:
+
+/usr/include/i386/_structs.h:
+
+/usr/include/sys/_structs.h:
+
+/usr/include/machine/_structs.h:
+
+/usr/include/mach/i386/_structs.h:
+
+/usr/include/sys/resource.h:
+
+/usr/include/machine/endian.h:
+
+/usr/include/i386/endian.h:
+
+/usr/include/sys/_endian.h:
+
+/usr/include/libkern/_OSByteOrder.h:
+
+/usr/include/libkern/i386/_OSByteOrder.h:
+
+/usr/include/alloca.h:
+
+/usr/include/machine/types.h:
+
+/usr/include/i386/types.h:
+
+/usr/include/i386/_types.h:
+
+/usr/include/string.h:
+
+/usr/include/strings.h:
+
+/usr/include/ctype.h:
+
+/usr/include/runetype.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/sys/socket.h:
+
+/usr/include/machine/_param.h:
+
+/usr/include/i386/_param.h:
+
+/usr/include/netinet/in.h:
+
+/usr/lib/gcc/i686-apple-darwin9/4.2.1/include/stdint.h:
+
+/usr/include/netinet6/in6.h:
+
+/usr/include/arpa/inet.h:
+
+/usr/include/netdb.h:
+
+/usr/include/unistd.h:
+
+/usr/include/sys/unistd.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/sys/_select.h:
+
+/usr/lib/gcc/i686-apple-darwin9/4.2.1/include/limits.h:
+
+/usr/lib/gcc/i686-apple-darwin9/4.2.1/include/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/machine/limits.h:
+
+/usr/include/i386/limits.h:
+
+/usr/include/i386/_limits.h:
+
+/usr/include/sys/syslimits.h:
+
+/usr/include/errno.h:
+
+/usr/include/sys/errno.h:
+
+/usr/include/fcntl.h:
+
+/usr/include/sys/fcntl.h:
+
+/usr/include/sys/un.h:
+
+/usr/include/netinet/tcp.h:
+
+/usr/include/sys/time.h:
+
+/usr/include/time.h:
+
+/usr/include/_structs.h:
+
+../libmemcached/memcached.h:
+
+/usr/include/inttypes.h:
+
+/usr/lib/gcc/i686-apple-darwin9/4.2.1/include/stdbool.h:
+
+../libmemcached/visibility.h:
+
+../libmemcached/memcached_configure.h:
+
+../libmemcached/memcached_constants.h:
+
+../libmemcached/memcached_types.h:
+
+../libmemcached/memcached_get.h:
+
+../libmemcached/memcached_server.h:
+
+../libmemcached/memcached_string.h:
+
+../libmemcached/memcached_result.h:
+
+../libmemcached/memcached_storage.h:
+
+../libmemcached/memcached_watchpoint.h:
+
+../libmemcached/memcached_io.h:
+
+../libmemcached/memcached_internal.h:
+
+../libmemcached/libmemcached_probes.h:
+
+../libmemcached/memcached/protocol_binary.h:
+
+/usr/include/getopt.h:
+
+/usr/include/sys/stat.h:
+
+../libmemcached/memcached.h:
+
+client_options.h:
+
+utilities.h:
