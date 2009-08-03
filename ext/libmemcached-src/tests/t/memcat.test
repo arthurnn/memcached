@@ -1,4 +1,0 @@
-#!/bin/sh
-MEMCAT="../src/memcat"
-
-$MEMCAT --help

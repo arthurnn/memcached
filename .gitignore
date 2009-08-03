@@ -1,3 +1,5 @@
 pkg/*
-ext/libmemcache.*
-ext/libmemcache/*
+ext/libmemcached-*
+*.bundle
+*.o
+ext/Makefile

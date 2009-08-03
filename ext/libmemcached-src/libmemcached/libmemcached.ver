@@ -1,1 +1,0 @@
-libmemcached_2 { global: *; };
