@@ -316,21 +316,19 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       check_return_code(ret, keys)
 
       hash = {}
-      keys.size.times do
+      keys.each do
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
         break if ret == Lib::MEMCACHED_END
         check_return_code(ret, key)
-        value = Marshal.load(value) if marshal
         # Assign the value
-        hash[key] = value
+        hash[key] = (marshal ? Marshal.load(value) : value)
       end
       hash
     else
       # Single get
       value, flags, ret = Lib.memcached_get_rvalue(@struct, keys)
       check_return_code(ret, keys)
-      value = Marshal.load(value) if marshal
-      value
+      marshal ? Marshal.load(value) : value
     end
   end
 
