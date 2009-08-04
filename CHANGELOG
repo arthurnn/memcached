@@ -1,4 +1,6 @@
 
+v0.15.1. Fix build problem.
+
 v0.15. Update to libmemcached 0.31.1. UDP support. Domain socket support (hellvinz). Bugfixes. Bundle libmemcached itself with the gem (antifuchs).
 
 v0.14.4. Re-SWIG.

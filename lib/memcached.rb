@@ -22,7 +22,7 @@ class Memcached
   Lib = Rlibmemcached
   REQUIRED_VERSION = File.read("#{File.dirname(__FILE__)}/../COMPATIBILITY")[/:: ([\d\.]+)/, 1]
   RECEIVED_VERSION = Lib.memcached_lib_version
-  STDERR.puts "Warning: libmemcached #{REQUIRED_VERSION} suggested; you have #{RECEIVED_VERSION}." unless REQUIRED_VERSION == RECEIVED_VERSION
+  raise "libmemcached #{REQUIRED_VERSION} required; your gem is linked to #{RECEIVED_VERSION}." unless REQUIRED_VERSION == RECEIVED_VERSION
 end
 
 require 'memcached/integer'

@@ -5,10 +5,10 @@ HERE = File.expand_path(File.dirname(__FILE__))
 BUNDLE = Dir.glob("libmemcached-*.tar.gz").first
 BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 
-$includes = ENV['INCLUDE_PATH'].to_s.split(':').map{|s| " -I#{s}"}.uniq.join
+$LIBS << " -lmemcached"
 
 if !ENV["EXTERNAL_LIB"]
-  $includes = " -I#{HERE}/include" + $includes
+  $includes = " -I#{HERE}/include"
   $libraries = " -L#{HERE}/lib"
 
   $CFLAGS = "#{$includes} #{$libraries} #{$CFLAGS}"
@@ -35,6 +35,8 @@ if !ENV["EXTERNAL_LIB"]
       system("rm -rf #{BUNDLE_PATH}")
     end      
   end
+  
+  find_header('libmemcached/memcached.h', "#{HERE}/include") or raise
 end
 
 if ENV['SWIG']
