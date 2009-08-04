@@ -11,20 +11,26 @@ if !ENV["EXTERNAL_LIB"]
   $includes = " -I#{HERE}/include" + $includes
   $libraries = " -L#{HERE}/lib"
 
+  $CFLAGS = "#{$includes} #{$libraries} #{$CFLAGS}"
+  $LDFLAGS = "#{$libraries} #{$LDFLAGS}"
+  $CPPFLAGS = ""
+  $LIBPATH = ["#{HERE}/lib"]
+  $DEFLIBPATH = []
+
   Dir.chdir(HERE) do
     if File.exist?("lib")
       puts "Libmemcached already built; run 'rake clean' first if you need to rebuild."
     else    
       puts "Building libmemcached."
-      puts(cmd = "tar xzf #{BUNDLE}")
-      $stdout.write `#{cmd}`    
+      puts(cmd = "tar xzf #{BUNDLE} 2>&1")
+      raise "'#{cmd}' failed" unless system(cmd)    
       Dir.chdir(BUNDLE_PATH) do
-        puts(cmd = "./configure --prefix=#{HERE}") 
-        $stdout.write `#{cmd}`      
+        puts(cmd = "./configure --prefix=#{HERE} 2>&1") 
+        raise "'#{cmd}' failed" unless system(cmd)      
         puts(cmd = "make 2>&1")
-        $stdout.write `#{cmd}`
+        raise "'#{cmd}' failed" unless system(cmd)
         puts(cmd = "make install 2>&1")
-        $stdout.write `#{cmd}`
+        raise "'#{cmd}' failed" unless system(cmd)
       end      
       system("rm -rf #{BUNDLE_PATH}")
     end      
@@ -34,13 +40,8 @@ end
 if ENV['SWIG']
   puts "Running SWIG."
   puts(cmd = "swig #{$includes} -ruby -autorename rlibmemcached.i")  
-  res = `#{cmd}`
-  raise "SWIG failure" if res.match(/rlibmemcached.i:\d+: Error:/)
-  $stdout.write res
+  raise "'#{cmd}' failed" unless system(cmd)    
 end
-
-$CFLAGS << $includes.to_s << $libraries.to_s
-$LDFLAGS << $libraries.to_s
 
 if `uname -sp` == "Darwin i386\n"
   $CFLAGS.gsub! /-arch \S+/, ''
@@ -56,20 +57,6 @@ if ENV['DEBUG']
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
 else
   $CFLAGS << " -O3"
-end
-
-find_library(*['memcached', 'memcached_server_add_with_weight', dir_config('libmemcached').last].compact) or
-  raise "Shared library 'libmemcached' not found."
-
-[ 'libmemcached/visibility.h',
-  'libmemcached/memcached.h',
-  'libmemcached/memcached_constants.h',
-  'libmemcached/memcached_storage.h',
-  'libmemcached/memcached_result.h',
-  'libmemcached/memcached_server.h'
-].each do |header|
-    find_header(*[header, dir_config('libmemcached').first].compact) or
-      raise "Header file '#{header}' not  found."
 end
 
 create_makefile 'rlibmemcached'
