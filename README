@@ -5,7 +5,7 @@ An interface to the libmemcached C client.
 
 == License
 
-Copyright 2008 Cloudburst, LLC. Licensed under the AFL 3. See the included LICENSE file. Portions copyright 2008 TangentOrg, Brian Aker, licensed under the BSD license, and used with permission.
+Copyright 2009 Cloudburst, LLC. Licensed under the AFL 3. See the included LICENSE file. Portions copyright 2007-2009 TangentOrg, Brian Aker, licensed under the BSD license, and used with permission.
 
 The public certificate for this gem is here[http://rubyforge.org/frs/download.php/25331/evan_weaver-original-public_cert.pem]. 
 
