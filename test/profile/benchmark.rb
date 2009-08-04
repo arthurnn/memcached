@@ -410,7 +410,7 @@ class Bench
           end
         end
         @m = Memcached.new(*@opt_unix)
-        x.report("missing:ruby:memcached_UDS:inline") do
+        x.report("missing:ruby:memcached:uds:inline") do
           n.times do
             @m.delete @key1 rescue nil
             @m.get @key1 rescue nil
