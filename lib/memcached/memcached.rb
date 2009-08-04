@@ -29,7 +29,8 @@ class Memcached
     :auto_eject_hosts => true,
     :server_failure_limit => 2,
     :verify_key => true,
-    :use_udp => false
+    :use_udp => false,
+    :binary_protocol => false
   }
 
 #:stopdoc:
@@ -69,6 +70,7 @@ Valid option parameters are:
 <tt>:default_weight</tt>:: The weight to use if <tt>:ketama_weighted</tt> is <tt>true</tt>, but no weight is specified for a server.
 <tt>:hash_with_prefix_key</tt>:: Whether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
 <tt>:use_udp</tt>:: Use the UDP protocol to reduce connection overhead. Defaults to false.
+<tt>:binary_protocol</tt>:: Use the binary protocol to reduce query processing overhead. Defaults to false.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
 
