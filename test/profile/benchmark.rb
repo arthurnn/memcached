@@ -45,8 +45,7 @@ class Bench
       {
         :buffer_requests => false,
         :no_block => false,
-        :namespace => "namespace",
-        :binary_protocol => true
+        :namespace => "namespace"
       }
     ]
     @opt_unix = [
