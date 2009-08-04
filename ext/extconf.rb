@@ -11,20 +11,23 @@ if !ENV["EXTERNAL_LIB"]
   $includes = " -I#{HERE}/include" + $includes
   $libraries = " -L#{HERE}/lib"
 
-  puts "Building libmemcached."
   Dir.chdir(HERE) do
-    puts(cmd = "tar xzf #{BUNDLE}")
-    $stdout.write `#{cmd}`    
-    Dir.chdir(BUNDLE_PATH) do
-      puts(cmd = "./configure --prefix=#{HERE}") 
-      $stdout.write `#{cmd}`      
-      puts(cmd = "make 2>&1")
-      $stdout.write `#{cmd}`
-      puts(cmd = "make install 2>&1")
-      $stdout.write `#{cmd}`
-    end
-    
-    system("rm -rf #{BUNDLE_PATH}")
+    if File.exist?("lib")
+      puts "Libmemcached already built; run 'rake clean' first if you need to rebuild."
+    else    
+      puts "Building libmemcached."
+      puts(cmd = "tar xzf #{BUNDLE}")
+      $stdout.write `#{cmd}`    
+      Dir.chdir(BUNDLE_PATH) do
+        puts(cmd = "./configure --prefix=#{HERE}") 
+        $stdout.write `#{cmd}`      
+        puts(cmd = "make 2>&1")
+        $stdout.write `#{cmd}`
+        puts(cmd = "make install 2>&1")
+        $stdout.write `#{cmd}`
+      end      
+      system("rm -rf #{BUNDLE_PATH}")
+    end      
   end
 end
 

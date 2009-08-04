@@ -1,4 +1,4 @@
-
+ 
 require "#{File.dirname(__FILE__)}/../test_helper"
 require 'socket'
 require 'mocha'
@@ -787,30 +787,24 @@ class MemcachedTest < Test::Unit::TestCase
 
   # Server removal and consistent hashing
 
-  def test_missing_server
+  def test_unresponsive_server
     socket = stub_server 43041  
     cache = Memcached.new(
       [@servers.last, 'localhost:43041'],
       :prefix_key => @prefix_key,
       :auto_eject_hosts => true,
-      :server_failure_limit => 1,
+      :server_failure_limit => 2,
       :retry_timeout => 1,
       :hash_with_prefix_key => false,
       :hash => :md5
     )
 
-    # Hit first server
-    key1 = 'test_missing_server6'
-    cache.set(key1, @value)
-    assert_equal cache.get(key1), @value
-
-    # Hit second server
+    # Hit second server up to the server_failure_limit 
     key2 = 'test_missing_server'
-    assert_raise(Memcached::ATimeoutOccurred) do
-      cache.set(key2, @value)
-    end
+    assert_raise(Memcached::ATimeoutOccurred) { cache.set(key2, @value) }
+    assert_raise(Memcached::ATimeoutOccurred) { cache.get(key2, @value) }
 
-    # Hit second server again
+    # Hit second server and pass the limit
     key2 = 'test_missing_server'
     begin
       cache.get(key2)
@@ -829,7 +823,47 @@ class MemcachedTest < Test::Unit::TestCase
     
     # Hit second server again after restore, expect same failure
     key2 = 'test_missing_server'
-    assert_raise(Memcached::UnknownReadFailure) do
+    assert_raise(Memcached::ATimeoutOccurred) do
+      cache.set(key2, @value)
+    end        
+  end
+
+  def test_missing_server
+    cache = Memcached.new(
+      [@servers.last, 'localhost:43041'],
+      :prefix_key => @prefix_key,
+      :auto_eject_hosts => true,
+      :server_failure_limit => 2,
+      :retry_timeout => 1,
+      :hash_with_prefix_key => false,
+      :hash => :md5
+    )
+
+    # Hit second server up to the server_failure_limit 
+    key2 = 'test_missing_server'
+    assert_raise(Memcached::SystemError) { cache.set(key2, @value) }
+    assert_raise(Memcached::SystemError) { cache.get(key2, @value) }
+
+    # Hit second server and pass the limit
+    key2 = 'test_missing_server'
+    begin
+      cache.get(key2)
+    rescue => e
+      assert_equal Memcached::ServerIsMarkedDead, e.class
+      assert_match /localhost:43041/, e.message
+    end
+
+    # Hit first server on retry
+    assert_nothing_raised do
+      cache.set(key2, @value)
+      assert_equal cache.get(key2), @value
+    end
+    
+    sleep(2)
+    
+    # Hit second server again after restore, expect same failure
+    key2 = 'test_missing_server'
+    assert_raise(Memcached::SystemError) do
       cache.set(key2, @value)
     end        
   end
