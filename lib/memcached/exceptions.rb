@@ -21,9 +21,11 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
 * Memcached::ConnectionFailure
 * Memcached::ConnectionSocketCreateFailure
 * Memcached::CouldNotOpenUnixSocket
+* Memcached::EncounteredAnUnknownStatKey
 * Memcached::Failure
 * Memcached::FetchWasNotCompleted
 * Memcached::HostnameLookupFailure
+* Memcached::ItemValue
 * Memcached::MemoryAllocationFailure
 * Memcached::NoServersDefined
 * Memcached::NotFound
@@ -39,6 +41,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
 * Memcached::SomeErrorsWereReported
 * Memcached::StatValue
 * Memcached::SystemError
+* Memcached::TheHostTransportProtocolDoesNotMatchThatOfTheClient
 * Memcached::UnknownReadFailure
 * Memcached::WriteFailure
 
