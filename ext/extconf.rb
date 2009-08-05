@@ -27,7 +27,7 @@ if !ENV["EXTERNAL_LIB"]
       raise "'#{cmd}' failed" unless system(cmd)
 
       Dir.chdir(BUNDLE_PATH) do
-        puts(cmd = "env CFLAGS=-fPIC LDFLAGS=-fPIC ./configure --prefix=#{HERE} --disable-shared --disable-utils 2>&1")
+        puts(cmd = "env CFLAGS=-fPIC LDFLAGS=-fPIC ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
         puts(cmd = "make || true 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
