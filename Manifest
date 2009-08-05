@@ -13,7 +13,6 @@ lib/memcached/rails.rb
 lib/memcached.rb
 LICENSE
 Manifest
-memcached.gemspec
 Rakefile
 README
 test/profile/benchmark.rb
