@@ -1,5 +1,5 @@
 
-v0.15.2. Don't require memcached itself to build. Fix for AUTO_EJECT_HOSTS in random and modulus pools.
+v0.15.2. Don't require memcached itself to build. Fix for AUTO_EJECT_HOSTS in random and modulus pools. Support binary protocol.
 
 v0.15.1. Fix build problem.
 

@@ -40,8 +40,8 @@ if !ENV["EXTERNAL_LIB"]
   
   # Absolutely prevent the linker from picking up any other libmemcached
   Dir.chdir("#{HERE}/lib") do
-    system("cp libmemcached.a libmemcached_gem.a") 
-    system("cp libmemcached.la libmemcached_gem.la") 
+    system("cp -f libmemcached.a libmemcached_gem.a") 
+    system("cp -f libmemcached.la libmemcached_gem.la") 
   end
   $LIBS << " -lmemcached_gem"
 end
