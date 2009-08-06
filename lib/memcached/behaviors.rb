@@ -44,7 +44,7 @@ class Memcached
     case behavior
       when :hash then raise(ArgumentError, msg) unless HASH_VALUES[value]
       when :distribution then raise(ArgumentError, msg) unless DISTRIBUTION_VALUES[value]
-      when *DIRECT_VALUE_BEHAVIORS then raise(ArgumentError, msg) unless value.is_a?(Numeric) and value > 0
+      when *DIRECT_VALUE_BEHAVIORS then raise(ArgumentError, msg) unless value.is_a?(Numeric) and value >= 0
       else
         raise(ArgumentError, msg) unless BEHAVIOR_VALUES[value]
     end
