@@ -422,15 +422,15 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       # Socket
       if server.is_a?(String) and File.socket?(server)
         args = [@struct, server, options[:default_weight].to_i]
-        Lib.memcached_server_add_unix_socket_with_weight(*args)
+        check_return_code(Lib.memcached_server_add_unix_socket_with_weight(*args))
       # Network
       elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
         host, port, weight = server.split(":")
         args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]                
         if options[:udp] #
-          Lib.memcached_server_add_udp_with_weight(*args)        
+          check_return_code(Lib.memcached_server_add_udp_with_weight(*args))
         else
-          Lib.memcached_server_add_with_weight(*args)
+          check_return_code(Lib.memcached_server_add_with_weight(*args))
         end
       else
         raise ArgumentError, "Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or  'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached)."

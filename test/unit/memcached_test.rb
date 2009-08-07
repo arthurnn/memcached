@@ -220,12 +220,6 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal @value, result
   end
   
-  def test_udp_get
-    @udp_cache.set key, @value
-    result = @udp_cache.get key
-    assert_equal @value, result
-  end  
-
   def test_get_nil
     @cache.set key, nil, 0
     result = @cache.get key
