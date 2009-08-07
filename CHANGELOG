@@ -1,5 +1,5 @@
 
-v0.16. UDP fix. 0-value fix.
+v0.15.3. UDP fix. 0-value fix. Enforce server_add response code. Better tests.
 
 v0.15.2. Don't require memcached itself to build. Fix for AUTO_EJECT_HOSTS in random and modulus pools. Support binary protocol.
 

@@ -23,7 +23,7 @@ class MemcachedTest < Test::Unit::TestCase
     @udp_options = {
       :prefix_key => @prefix_key,
       :hash => :default,
-      :udp => true,
+      :use_udp => true,
       :distribution => :modula
     }
     @udp_cache = Memcached.new(@udp_servers, @udp_options)
