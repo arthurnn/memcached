@@ -8,6 +8,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def setup
     @servers = ['localhost:43042', 'localhost:43043', "#{UNIX_SOCKET_NAME}0"]
+    @udp_servers = ['localhost:43052', 'localhost:43053']
 
     # Maximum allowed prefix key size for :hash_with_prefix_key_key => false
     @prefix_key = 'prefix_key_'
@@ -25,7 +26,7 @@ class MemcachedTest < Test::Unit::TestCase
       :udp => true,
       :distribution => :modula
     }
-    @udp_cache = Memcached.new(@servers, @udp_options)
+    @udp_cache = Memcached.new(@udp_servers, @udp_options)
 
     @nb_options = {
       :prefix_key => @prefix_key,

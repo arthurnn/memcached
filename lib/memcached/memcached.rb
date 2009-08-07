@@ -29,7 +29,7 @@ class Memcached
     :auto_eject_hosts => true,
     :server_failure_limit => 2,
     :verify_key => true,
-    :use_udp => false,
+    :udp => false,
     :binary_protocol => false
   }
 
@@ -69,7 +69,7 @@ Valid option parameters are:
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
 <tt>:default_weight</tt>:: The weight to use if <tt>:ketama_weighted</tt> is <tt>true</tt>, but no weight is specified for a server.
 <tt>:hash_with_prefix_key</tt>:: Whether to include the prefix when calculating which server a key falls on. Defaults to <tt>true</tt>.
-<tt>:use_udp</tt>:: Use the UDP protocol to reduce connection overhead. Defaults to false.
+<tt>:udp</tt>:: Use the UDP protocol to reduce connection overhead. Defaults to false.
 <tt>:binary_protocol</tt>:: Use the binary protocol to reduce query processing overhead. Defaults to false.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
@@ -427,8 +427,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
         host, port, weight = server.split(":")
         args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]                
-        if options[:use_udp]
-          Lib.memcached_server_add_upd_with_weight(*args)        
+        if options[:udp] #
+          Lib.memcached_server_add_udp_with_weight(*args)        
         else
           Lib.memcached_server_add_with_weight(*args)
         end
