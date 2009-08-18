@@ -1,4 +1,3 @@
-
 require 'mkmf'
 
 HERE = File.expand_path(File.dirname(__FILE__))
@@ -6,6 +5,17 @@ BUNDLE = Dir.glob("libmemcached-*.tar.gz").first
 BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 
 DARWIN = `uname -sp` == "Darwin i386\n"
+
+# is there a better way to do this?
+if ENV['ARCHFLAGS']
+  archflags = ENV['ARCHFLAGS']
+elsif Config::CONFIG['host_os'] == 'darwin10.0'
+  archflags = "-arch i386 -arch x86_64"
+elsif Config::CONFIG['host_os'] =~ /darwin/
+  archflags = "-arch i386 -arch ppc"
+else
+  archflags = ''
+end
 
 if !ENV["EXTERNAL_LIB"]
   $includes = " -I#{HERE}/include"
@@ -27,9 +37,23 @@ if !ENV["EXTERNAL_LIB"]
       raise "'#{cmd}' failed" unless system(cmd)
 
       Dir.chdir(BUNDLE_PATH) do
-        puts(cmd = "env CFLAGS=-fPIC LDFLAGS=-fPIC ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils 2>&1")
+        
+        cflags = "-fPIC"
+        cxxflags = cflags
+        ldflags = "-fPIC"
+        extraconf = ''
+        
+        # again... is there a better way to do this?
+        if DARWIN
+          cflags = "#{cflags} #{archflags}"
+          cxxflags = "-std=gnu++98 #{cflags}"
+          ldflags = "#{ldflags} #{archflags}"
+          extraconf = '--enable-dtrace --disable-dependency-tracking'
+        end
+        
+        puts(cmd = "env CFLAGS='#{cflags}' LDFLAGS='#{ldflags}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils #{extraconf} 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
-        puts(cmd = "make || true 2>&1")
+        puts(cmd = "make CXXFLAGS='#{cxxflags}' || true 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
         puts(cmd = "make install || true 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
@@ -48,9 +72,9 @@ end
 
 if DARWIN
   $CFLAGS.gsub! /-arch \S+/, ''
-  $CFLAGS << " -arch i386"
+  $CFLAGS << " #{archflags}"
   $LDFLAGS.gsub! /-arch \S+/, ''
-  $LDFLAGS << " -arch i386"
+  $LDFLAGS << " #{archflags}"
 end
 
 if ENV['SWIG']
