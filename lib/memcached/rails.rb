@@ -1,7 +1,8 @@
-
 class Memcached
 
   alias :get_multi :get #:nodoc:
+  alias :servers= :set_servers #:nodoc:
+  public :servers=
 
   # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
   class Rails < ::Memcached
