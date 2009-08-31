@@ -7,12 +7,12 @@ BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 DARWIN = `uname -sp` == "Darwin i386\n"
 
 # is there a better way to do this?
-if ENV['ARCHFLAGS']
-  archflags = ENV['ARCHFLAGS']
+archflags = if ENV['ARCHFLAGS']
+  ENV['ARCHFLAGS']
 elsif Config::CONFIG['host_os'] == 'darwin10.0'
-  archflags = "-arch i386 -arch x86_64"
+  "-arch i386 -arch x86_64"
 elsif Config::CONFIG['host_os'] =~ /darwin/
-  archflags = "-arch i386 -arch ppc"
+  "-arch i386 -arch ppc"
 else
   archflags = ''
 end
