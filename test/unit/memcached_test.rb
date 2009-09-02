@@ -382,19 +382,21 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  def test_get_with_random_distribution
+  def test_random_distribution_is_statistically_random
     cache = Memcached.new(@servers, :distribution => :random)
-    cache.set key, @value
+    cache.flush
+    20.times { |i| cache.set "#{key}#{i}", @value }
     
-    hits = (0..10).to_a.map do
+    cache, hits = Memcached.new(@servers.first), 0
+    20.times do |i| 
       begin
-        cache.get(key)
+        cache.get "#{key}#{i}"
+        hits += 1
       rescue Memcached::NotFound
       end
-    end.compact.size
+    end
 
-    assert 0 < hits
-    assert 10 > hits
+    assert_not_equal 4, hits
   end
 
   # Set
