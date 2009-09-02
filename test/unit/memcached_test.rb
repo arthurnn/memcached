@@ -381,7 +381,7 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(["#{key}_1", "#{key}_2"])
     end
   end
-
+  
   def test_random_distribution_is_statistically_random
     cache = Memcached.new(@servers, :distribution => :random)
     cache.flush

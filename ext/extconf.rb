@@ -58,7 +58,7 @@ if !ENV["EXTERNAL_LIB"]
         puts(cmd = "make install || true 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
       end
-      system("rm -rf #{BUNDLE_PATH}")
+      system("rm -rf #{BUNDLE_PATH}") unless ENV['DEV']
     end
   end
   
