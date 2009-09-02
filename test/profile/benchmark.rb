@@ -4,25 +4,21 @@ $LOAD_PATH << "#{HERE}/../../lib/"
 UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached') 
 
 require 'memcached'
-
 require 'benchmark'
 require 'rubygems'
+require 'ruby-debug' if ENV['DEBUG']
+begin; require 'memory'; rescue LoadError; end
 
-begin
-  require 'memory'
-rescue LoadError
-end
+ARGV << "--with-memcached" << "--with-memcache-client" if ARGV.join !~ /--with/
 
-if ARGV.join !~ /--with/
-  ARGV << "--with-memcached" << "--with-memcache-client" << "--with-caffeine"
-end
-
-ARGV.grep(/--with-(\w+)/) do
+ARGV.each do |flag|
+  require_name = flag[/--with-(\w+)/, 1]
+  gem_name = flag[/--with-(.*)$/, 1]
   begin
-    puts "Loading #{$1}"
-    require $1
+    require require_name
+    gem gem_name
+    puts "Loaded #{$1} #{Gem.loaded_specs[gem_name].version.to_s rescue nil}"
   rescue LoadError
-    puts "Failed"
   end
 end
 
@@ -42,19 +38,11 @@ class Bench
     
     @opts_networked = [
       ['127.0.0.1:43042', '127.0.0.1:43043'],
-      {
-        :buffer_requests => false,
-        :no_block => false,
-        :namespace => "namespace"
-      }
+      {:buffer_requests => false, :no_block => false, :namespace => "namespace"}
     ]
     @opt_unix = [
       ["#{UNIX_SOCKET_NAME}0","#{UNIX_SOCKET_NAME}1"],
-      {
-        :buffer_requests => false,
-        :no_block => false,
-        :namespace => "namespace"
-      }
+      {:buffer_requests => false, :no_block => false, :namespace => "namespace"}
     ]
     @key1 = "Short"
     @key2 = "Sym1-2-3::45"*8
@@ -64,28 +52,16 @@ class Bench
     @key5 = "Medium2"*8 
     @key6 = "Long3"*40 
     
-    restart_servers
-  end
-
-  def run(level = @recursion)
-    if level > 0
-      run_inner(level - 1)
-    else
-      benchmark
-    end  
-  end
-  
-  def run_inner(level)
-    run(level)
-  end
-  
-  private
-  
-  def restart_servers
     system("ruby #{HERE}/../setup.rb")
     sleep(1)
   end
 
+  def run(level = @recursion)
+    level > 0 ? run(level - 1) : benchmark
+  end
+  
+  private
+  
   def benchmark    
     Benchmark.bm(35) do |x|
     
@@ -143,7 +119,6 @@ class Bench
           end
         end
       end
-      #  Not supported by Caffeine
       if defined? MemCache
         @m = MemCache.new(*@opts_networked)
         x.report("set:plain:memcache-client") do
@@ -157,9 +132,6 @@ class Bench
           end
         end
       end
-    
-      # restart_servers
-    
     
       if defined? Memcached
         @m = Memcached.new(
@@ -213,19 +185,6 @@ class Bench
           end
         end
       end
-      if defined? Caffeine
-        @m = Caffeine::MemCache.new(@opts_networked[1]); @m.servers = @opts_networked[0]
-        x.report("set:ruby:caffeine") do
-          n.times do
-            @m.set @key1, @value
-            @m.set @key2, @value
-            @m.set @key3, @value
-            @m.set @key1, @value
-            @m.set @key2, @value
-            @m.set @key3, @value
-          end
-        end
-      end
       if defined? MemCache
         @m = MemCache.new(*@opts_networked)
         x.report("set:ruby:memcache-client") do
@@ -264,7 +223,6 @@ class Bench
           end
         end
       end
-      #  Not supported by Caffeine
       if defined? MemCache
         @m = MemCache.new(*@opts_networked)
         x.report("get:plain:memcache-client") do
@@ -293,19 +251,6 @@ class Bench
         end
         @m = Memcached.new(*@opt_unix)
         x.report("get:ruby:memcached:uds") do
-          n.times do
-            @m.get @key1
-            @m.get @key2
-            @m.get @key3
-            @m.get @key1
-            @m.get @key2
-            @m.get @key3
-          end
-        end
-      end
-      if defined? Caffeine
-        @m = Caffeine::MemCache.new(@opts_networked[1]); @m.servers = @opts_networked[0]
-        x.report("get:ruby:caffeine") do
           n.times do
             @m.get @key1
             @m.get @key2
@@ -352,15 +297,6 @@ class Bench
           end
         end
       end
-      if defined? Caffeine
-        @m = Caffeine::MemCache.new(@opts_networked[1]); @m.servers = @opts_networked[0]
-        x.report("multiget:ruby:caffeine") do
-          n.times do
-            # We don't use the keys array because splat is slow
-            @m.get @key1, @key2, @key3, @key4, @key5, @key6
-          end
-        end
-      end
       if defined? MemCache
         @m = MemCache.new(*@opts_networked)
         x.report("multiget:ruby:memcache-client") do
@@ -370,8 +306,6 @@ class Bench
           end
         end
       end
-    
-      # restart_servers
     
       if defined? Memcached
         @m = Memcached.new(*@opts_networked)
@@ -421,19 +355,6 @@ class Bench
           end
         end
       end
-      if defined? Caffeine
-        @m = Caffeine::MemCache.new(@opts_networked[1]); @m.servers = @opts_networked[0]
-        x.report("missing:ruby:caffeine") do
-          n.times do
-            begin @m.delete @key1; rescue; end
-            begin @m.get @key1; rescue; end
-            begin @m.delete @key2; rescue; end
-            begin @m.get @key2; rescue; end
-            begin @m.delete @key3; rescue; end
-            begin @m.get @key3; rescue; end
-          end
-        end
-      end
       if defined? MemCache
         @m = MemCache.new(*@opts_networked)
         x.report("missing:ruby:memcache-client") do
@@ -448,8 +369,6 @@ class Bench
         end
       end
           
-      # restart_servers
-    
       if defined? Memcached
         @m = Memcached.new(
         @opts_networked[0],
@@ -526,25 +445,6 @@ class Bench
           end
         end # if false
       end
-      if defined? Caffeine
-        @m = Caffeine::MemCache.new(@opts_networked[1]); @m.servers = @opts_networked[0]
-        x.report("mixed:ruby:caffeine") do
-          n.times do
-            @m.set @key1, @value
-            @m.set @key2, @value
-            @m.set @key3, @value
-            @m.get @key1
-            @m.get @key2
-            @m.get @key3
-            @m.set @key1, @value
-            @m.get @key1
-            @m.set @key2, @value
-            @m.get @key2
-            @m.set @key3, @value
-            @m.get @key3
-          end
-        end
-      end
       if defined? MemCache
         @m = MemCache.new(*@opts_networked)
         x.report("mixed:ruby:memcache-client") do
@@ -564,8 +464,6 @@ class Bench
           end
         end
       end
-    
-      # restart_servers
     
       if defined? Memcached
         unless ARGV.include? "--no-hash"
