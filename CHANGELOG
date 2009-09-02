@@ -1,4 +1,6 @@
 
+v0.16.1. Use seeded random. Fix realloc bug on Linux.
+
 v0.16. Build properly on OS X Snow Leopard.
 
 v0.15.3. UDP fix. 0-value fix. Enforce server_add response code. Better tests.
