@@ -11,6 +11,9 @@ begin; require 'memory'; rescue LoadError; end
 
 ARGV << "--with-memcached" << "--with-memcache-client" if ARGV.join !~ /--with/
 
+puts `uname -a`
+puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
+
 ARGV.each do |flag|
   require_name = flag[/--with-(\w+)/, 1]
   gem_name = flag[/--with-(.*)$/, 1]
