@@ -340,7 +340,11 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Return the server used by a particular key.
   def server_by_key(key)
     ret = Lib.memcached_server_by_key(@struct, key)
-    inspect_server(ret.first) if ret.is_a?(Array)
+    if ret.is_a?(Array)
+      string = inspect_server(ret.first) 
+      Rlibmemcached.memcached_server_free(ret.first)
+      string
+    end
   end
 
   # Return a Hash of statistics responses from the set of servers. Each value is an array with one entry for each server, in the same order the servers were defined.

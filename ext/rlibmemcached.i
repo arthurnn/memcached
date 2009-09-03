@@ -17,6 +17,8 @@
 %freefunc memcached_st "memcached_free";
 %freefunc memcached_server_st "memcached_server_free";
 
+// %trackobjects; // Doesn't fix any interesting leaks
+
 //// Input maps
 
 %apply unsigned short { uint8_t };
