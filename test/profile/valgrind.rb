@@ -9,6 +9,8 @@ class Worker
   def initialize(method_name, iterations)
     @method = method_name || 'mixed'
     @i = (iterations || 10000).to_i
+    
+    puts "Running #{@method.inspect} test for #{@i} loops."
 
     @key1 = "key1-"*8  
     @key2 = "key2-"*8  
