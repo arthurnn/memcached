@@ -10,7 +10,7 @@ class Worker
     @method = method_name || 'mixed'
     @i = (iterations || 10000).to_i
     
-    puts "Running #{@method.inspect} test for #{@i} loops."
+    puts "*** Running #{@method.inspect} test for #{@i} loops. ***"
 
     @key1 = "key1-"*8  
     @key2 = "key2-"*8  
@@ -104,6 +104,10 @@ class Worker
         @i.times do
           cache = @cache.clone
         end
+      when "reset"
+        @i.times do
+          @cache.reset
+        end
       when "servers"
         @i.times do
           @cache.servers
@@ -112,9 +116,18 @@ class Worker
         raise "No such method"
     end
     
-    GC.start
+    puts "*** Garbage collect. ***"
+    10.times do       
+      GC.start
+      sleep 0.1
+    end
+
+    sts, clients = 0, 0
+    ObjectSpace.each_object(Memcached) { clients += 1 }
+    ObjectSpace.each_object(Rlibmemcached::MemcachedSt) { sts += 1 }  
+    puts "*** Structs: #{sts} ***"
+    puts "*** Clients: #{clients} ***"
   end  
-  
 end
 
 Worker.new(ENV['METHOD'], ENV['LOOPS']).work

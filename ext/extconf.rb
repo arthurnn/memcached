@@ -38,9 +38,7 @@ if !ENV["EXTERNAL_LIB"]
 
       Dir.chdir(BUNDLE_PATH) do
         
-        cflags = "-fPIC"
-        cxxflags = cflags
-        ldflags = "-fPIC"
+        cxxflags = cflags = ldflags = "-fPIC"
         extraconf = ''
         
         # again... is there a better way to do this?
@@ -50,6 +48,12 @@ if !ENV["EXTERNAL_LIB"]
           ldflags = "#{ldflags} #{archflags}"
           extraconf = '--enable-dtrace --disable-dependency-tracking'
         end
+                
+        if ENV['DEBUG']
+          puts "Setting debug flags for libmemcached."
+          cflags << " -O0 -ggdb -DHAVE_DEBUG"
+          extraconf << " --enable-debug"
+        end
         
         puts(cmd = "env CFLAGS='#{cflags}' LDFLAGS='#{ldflags}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils #{extraconf} 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
@@ -58,7 +62,10 @@ if !ENV["EXTERNAL_LIB"]
         puts(cmd = "make install || true 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
       end
-      system("rm -rf #{BUNDLE_PATH}") unless ENV['DEV']
+
+      unless ENV['DEBUG'] or ENV['DEV']
+        system("rm -rf #{BUNDLE_PATH}")
+      end
     end
   end
   
@@ -68,6 +75,15 @@ if !ENV["EXTERNAL_LIB"]
     system("cp -f libmemcached.la libmemcached_gem.la") 
   end
   $LIBS << " -lmemcached_gem"
+end
+
+$CFLAGS.gsub! /-O\d/, ''
+
+if ENV['DEBUG']
+  puts "Setting debug flags for gem."
+  $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
+else
+  $CFLAGS << " -O3"
 end
 
 if DARWIN
@@ -81,15 +97,6 @@ if ENV['SWIG']
   puts "Running SWIG."
   puts(cmd = "swig #{$includes} -ruby -autorename rlibmemcached.i")
   raise "'#{cmd}' failed" unless system(cmd)
-end
-
-$CFLAGS.gsub! /-O\d/, ''
-
-if ENV['DEBUG']
-  puts "Setting debug flags."
-  $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
-else
-  $CFLAGS << " -O3"
 end
 
 create_makefile 'rlibmemcached'

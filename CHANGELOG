@@ -1,4 +1,6 @@
 
+v0.16.2. Fix memory leak.
+
 v0.16.1. Use seeded random. Fix realloc bug on Linux.
 
 v0.16. Build properly on OS X Snow Leopard.

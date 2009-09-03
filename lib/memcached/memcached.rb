@@ -137,9 +137,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # object.
   #
   def clone
-    memcached = super
-    memcached.instance_variable_set('@struct', Lib.memcached_clone(nil, @struct))
-    memcached
+    # FIXME Memory leak
+    # memcached = super
+    # struct = Lib.memcached_clone(nil, @struct)
+    # memcached.instance_variable_set('@struct', struct)
+    # memcached
+    self.class.new(servers, options)
   end
 
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
