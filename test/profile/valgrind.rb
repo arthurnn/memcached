@@ -112,6 +112,10 @@ class Worker
         @i.times do
           @cache.servers
         end
+      when "server_by_key"
+        @i.times do
+          @cache.server_by_key(@key1)
+        end
       else
         raise "No such method"
     end
@@ -122,10 +126,12 @@ class Worker
       sleep 0.1
     end
 
-    sts, clients = 0, 0
+    sts, server_sts, clients = 0, 0, 0
     ObjectSpace.each_object(Memcached) { clients += 1 }
     ObjectSpace.each_object(Rlibmemcached::MemcachedSt) { sts += 1 }  
+    ObjectSpace.each_object(Rlibmemcached::MemcachedServerSt) { server_sts += 1 }  
     puts "*** Structs: #{sts} ***"
+    puts "*** Server structs: #{server_sts} ***"
     puts "*** Clients: #{clients} ***"
   end  
 end

@@ -15,6 +15,7 @@
 
 // Register libmemcached's struct free function to prevent memory leaks
 %freefunc memcached_st "memcached_free";
+%freefunc memcached_server_st "memcached_server_free";
 
 //// Input maps
 

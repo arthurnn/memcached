@@ -11595,11 +11595,6 @@ fail:
 }
 
 
-SWIGINTERN void
-free_memcached_server_st(struct memcached_server_st *arg1) {
-    free((char *) arg1);
-}
-
 SWIGINTERN VALUE
 _wrap_memcached_server_cursor(int argc, VALUE *argv, VALUE self) {
   memcached_st *arg1 = (memcached_st *) 0 ;
@@ -13040,7 +13035,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_method(cMemcachedServerSt.klass, "hostname=", _wrap_MemcachedServerSt_hostname_set, -1);
   rb_define_method(cMemcachedServerSt.klass, "hostname", _wrap_MemcachedServerSt_hostname_get, -1);
   cMemcachedServerSt.mark = 0;
-  cMemcachedServerSt.destroy = (void (*)(void *)) free_memcached_server_st;
+  cMemcachedServerSt.destroy = (void (*)(void *)) memcached_server_free;
   cMemcachedServerSt.trackObjects = 0;
   rb_define_module_function(mRlibmemcached, "memcached_server_cursor", _wrap_memcached_server_cursor, -1);
   rb_define_module_function(mRlibmemcached, "memcached_server_by_key", _wrap_memcached_server_by_key, -1);
