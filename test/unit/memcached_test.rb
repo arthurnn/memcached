@@ -697,7 +697,7 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def test_errno_message
-    Rlibmemcached::MemcachedServerSt.any_instance.expects("cached_errno").returns(1)
+    Rlibmemcached::MemcachedServerSt.any_instance.stubs("cached_errno").returns(1)
     @cache.send(:check_return_code, Rlibmemcached::MEMCACHED_ERRNO, key)    
   rescue Memcached::SystemError => e
     assert_match /^Errno 1: "Operation not permitted". Key/, e.message
