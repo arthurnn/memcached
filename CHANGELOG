@@ -1,4 +1,6 @@
 
+v0.16.3. Optimize append/prepend on miss.
+
 v0.16.2. Fix memory leak.
 
 v0.16.1. Use seeded random. Fix realloc bug on Linux.

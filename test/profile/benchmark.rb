@@ -312,66 +312,81 @@ class Bench
     
       if defined? Memcached
         @m = Memcached.new(*@opts_networked)
-        x.report("missing:ruby:memcached:net") do
+        x.report("get-miss:ruby:memcached:net") do
           n.times do
             begin @m.delete @key1; rescue Memcached::NotFound; end
-            begin @m.get @key1; rescue Memcached::NotFound; end
             begin @m.delete @key2; rescue Memcached::NotFound; end
-            begin @m.get @key2; rescue Memcached::NotFound; end
             begin @m.delete @key3; rescue Memcached::NotFound; end
+            begin @m.get @key1; rescue Memcached::NotFound; end
+            begin @m.get @key2; rescue Memcached::NotFound; end
             begin @m.get @key3; rescue Memcached::NotFound; end
           end
         end
         @m = Memcached.new(*@opt_unix)
-        x.report("missing:ruby:memcached:uds") do
+        x.report("get-miss:ruby:memcached:uds") do
           n.times do
             begin @m.delete @key1; rescue Memcached::NotFound; end
-            begin @m.get @key1; rescue Memcached::NotFound; end
             begin @m.delete @key2; rescue Memcached::NotFound; end
-            begin @m.get @key2; rescue Memcached::NotFound; end
             begin @m.delete @key3; rescue Memcached::NotFound; end
+            begin @m.get @key1; rescue Memcached::NotFound; end
+            begin @m.get @key2; rescue Memcached::NotFound; end
             begin @m.get @key3; rescue Memcached::NotFound; end
+          end
+        end
+      end      
+
+      if defined? MemCache
+        @m = MemCache.new(*@opts_networked)
+        x.report("get-miss:ruby:memcache-client") do
+          n.times do
+            begin @m.delete @key1; rescue; end
+            begin @m.delete @key2; rescue; end
+            begin @m.delete @key3; rescue; end
+            begin @m.get @key1; rescue; end
+            begin @m.get @key2; rescue; end
+            begin @m.get @key3; rescue; end
           end
         end
       end
+      
       if defined? Memcached
         @m = Memcached.new(*@opts_networked)
-        x.report("missing:ruby:memcached:inline") do
+        x.report("append-miss:ruby:memcached:net") do
           n.times do
-            @m.delete @key1 rescue nil
-            @m.get @key1 rescue nil
-            @m.delete @key2 rescue nil
-            @m.get @key2 rescue nil
-            @m.delete @key3 rescue nil
-            @m.get @key3 rescue nil
+            begin @m.delete @key1; rescue Memcached::NotFound; end
+            begin @m.delete @key2; rescue Memcached::NotFound; end
+            begin @m.delete @key3; rescue Memcached::NotFound; end
+            begin @m.append @key1, @value; rescue Memcached::NotStored; end
+            begin @m.append @key2, @value; rescue Memcached::NotStored; end
+            begin @m.append @key3, @value; rescue Memcached::NotStored; end
           end
         end
         @m = Memcached.new(*@opt_unix)
-        x.report("missing:ruby:memcached:uds:inline") do
+        x.report("append-miss:ruby:memcached:uds") do
           n.times do
-            @m.delete @key1 rescue nil
-            @m.get @key1 rescue nil
-            @m.delete @key2 rescue nil
-            @m.get @key2 rescue nil
-            @m.delete @key3 rescue nil
-            @m.get @key3 rescue nil
+            begin @m.delete @key1; rescue Memcached::NotFound; end
+            begin @m.delete @key2; rescue Memcached::NotFound; end
+            begin @m.delete @key3; rescue Memcached::NotFound; end
+            begin @m.append @key1, @value; rescue Memcached::NotStored; end
+            begin @m.append @key2, @value; rescue Memcached::NotStored; end
+            begin @m.append @key3, @value; rescue Memcached::NotStored; end
           end
         end
       end
       if defined? MemCache
         @m = MemCache.new(*@opts_networked)
-        x.report("missing:ruby:memcache-client") do
+        x.report("append-miss:ruby:memcache-client") do
           n.times do
             begin @m.delete @key1; rescue; end
-            begin @m.get @key1; rescue; end
             begin @m.delete @key2; rescue; end
-            begin @m.get @key2; rescue; end
             begin @m.delete @key3; rescue; end
-            begin @m.get @key3; rescue; end
+            begin @m.append @key1, @value; rescue; end
+            begin @m.append @key2, @value; rescue; end
+            begin @m.append @key3, @value; rescue; end
           end
         end
       end
-          
+                      
       if defined? Memcached
         @m = Memcached.new(
         @opts_networked[0],
@@ -484,10 +499,9 @@ class Bench
             end
           end
         end
-    
       end
-    end
-    
+
+    end    
   end
 end
 

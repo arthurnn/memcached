@@ -63,7 +63,7 @@ Valid option parameters are:
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use pipelining for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
-<tt>:show_backtraces</tt>:: Whether <b>Memcached::NotFound</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
+<tt>:show_backtraces</tt>:: Whether <b>Memcached::NotFound</b> and <b>Memcached::NotStored</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 <tt>:connect_timeout</tt>:: How long to wait for a connection to a server. Defaults to 2 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:timeout</tt>:: How long to wait for a response from the server. Defaults to 0.25 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
@@ -119,8 +119,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
     # Not found exceptions
     unless options[:show_backtraces]
-      @not_found_instance = NotFound.new
-      @not_found_instance.no_backtrace = true
+      @not_found = NotFound.new
+      @not_found.no_backtrace = true      
+      @not_stored = NotStored.new
+      @not_stored.no_backtrace = true      
     end
   end
 
@@ -386,10 +388,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code and an optional key, for exception messages.
   def check_return_code(ret, key = nil) #:doc:
-    if ret == 0 # Lib::MEMCACHED_SUCCESS
-    elsif ret == Lib::MEMCACHED_BUFFERED
-    elsif ret == Lib::MEMCACHED_NOTFOUND and !options[:show_backtraces]
-      raise @not_found_instance
+    if ret == 0 # Memcached::Success
+    elsif ret == Lib::MEMCACHED_BUFFERED # Memcached::ActionQueued
+    elsif ret == Lib::MEMCACHED_NOTFOUND and @not_found
+      raise @not_found
+    elsif ret == Lib::MEMCACHED_NOTSTORED and @not_stored
+      raise @not_stored
     else
       message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"
       if key.is_a?(String)

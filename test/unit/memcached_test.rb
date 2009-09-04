@@ -155,6 +155,11 @@ class MemcachedTest < Test::Unit::TestCase
     rescue Memcached::NotFound => e
       assert e.backtrace.empty?
     end
+    begin
+      cache.append key, @value
+    rescue Memcached::NotStored => e
+      assert e.backtrace.empty?
+    end     
   end
 
   def test_initialize_with_backtraces

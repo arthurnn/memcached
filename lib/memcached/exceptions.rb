@@ -47,6 +47,15 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
 
 =end
   class Error < RuntimeError
+    attr_accessor :no_backtrace
+    
+    def set_backtrace(*args)
+      @no_backtrace ? [] : super
+    end
+    
+    def backtrace(*args)
+      @no_backtrace ? [] : super
+    end
   end 
 
 #:stopdoc:
@@ -69,18 +78,6 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
     description = Rlibmemcached.memcached_strerror(EMPTY_STRUCT, index).gsub("!", "")
     exception_class = eval("class #{camelize(description)} < Error; self; end")
     EXCEPTIONS << exception_class
-  end
-  
-  class NotFound
-    attr_accessor :no_backtrace
-    
-    def set_backtrace(*args)
-      @no_backtrace ? [] : super
-    end
-    
-    def backtrace(*args)
-      @no_backtrace ? [] : super
-    end
   end
   
 #:startdoc:
