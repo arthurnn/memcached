@@ -104,8 +104,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     end
 
     # Read timeouts
-    options[:rcv_timeout] ||= options[:timeout]
-    options[:poll_timeout] ||= options[:timeout]
+    options[:rcv_timeout] ||= options[:timeout] || 0
+    options[:poll_timeout] ||= options[:timeout] || 0
 
     # Set the behaviors on the struct
     set_behaviors
