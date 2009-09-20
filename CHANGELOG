@@ -1,4 +1,6 @@
 
+v0.17. Update to libmemcached 0.32. Snow Leopard changed its Darwin flag (various). Update benchmarks to use the binary protocol. Add set_servers= accessor for compatibility (defunkt).
+
 v0.16.3. Optimize append/prepend on miss.
 
 v0.16.2. Fix memory leak.
