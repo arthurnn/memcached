@@ -1,6 +1,5 @@
 BENCHMARKS
 CHANGELOG
-COMPATIBILITY
 LICENSE
 Manifest
 README
@@ -8,6 +7,7 @@ Rakefile
 TODO
 ext/extconf.rb
 ext/libmemcached-0.32.tar.gz
+ext/libmemcached.patch
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
 lib/memcached.rb

@@ -35,6 +35,10 @@ if !ENV["EXTERNAL_LIB"]
       puts "Building libmemcached."
       puts(cmd = "tar xzf #{BUNDLE} 2>&1")
       raise "'#{cmd}' failed" unless system(cmd)
+      
+      puts "Patching libmemcached."
+      puts(cmd = "patch -p1 < libmemcached.patch")
+      raise "'#{cmd}' failed" unless system(cmd)
 
       Dir.chdir(BUNDLE_PATH) do
         
