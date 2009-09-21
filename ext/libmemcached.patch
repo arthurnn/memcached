@@ -1,6 +1,19 @@
-diff --git a/libmemcached-0.32/libmemcached/memcached.c b/libmemcached-0.31/libmemcached/memcached.c
+
+diff --git a/libmemcached-0.32/libmemcached/memcached_response.c b/libmemcached/libmemcached/memcached_response.c
+--- a/libmemcached-0.32/libmemcached/memcached_response.c
++++ b/libmemcached/libmemcached/memcached_response.c
+@@ -496,6 +496,8 @@
+     case PROTOCOL_BINARY_RESPONSE_E2BIG:
+     case PROTOCOL_BINARY_RESPONSE_EINVAL:
+     case PROTOCOL_BINARY_RESPONSE_NOT_STORED:
++      rc= MEMCACHED_NOTSTORED;
++      break;
+     case PROTOCOL_BINARY_RESPONSE_UNKNOWN_COMMAND:
+     case PROTOCOL_BINARY_RESPONSE_ENOMEM:
+     default:
+diff --git a/libmemcached-0.32/libmemcached/memcached.c b/libmemcached/libmemcached/memcached.c
 --- a/libmemcached-0.32/libmemcached/memcached.c
-+++ b/libmemcached-0.31/libmemcached/memcached.c
++++ b/libmemcached/libmemcached/memcached.c
 @@ -50,6 +50,9 @@ void memcached_free(memcached_st *ptr)
    if (ptr->continuum)
      ptr->call_free(ptr, ptr->continuum);
@@ -11,9 +24,9 @@ diff --git a/libmemcached-0.32/libmemcached/memcached.c b/libmemcached-0.31/libm
    if (ptr->is_allocated)
      ptr->call_free(ptr, ptr);
    else
-diff --git a/libmemcached-0.32/libmemcached/memcached.h b/libmemcached-0.31/libmemcached/memcached.h
+diff --git a/libmemcached-0.32/libmemcached/memcached.h b/libmemcached/libmemcached/memcached.h
 --- a/libmemcached-0.32/libmemcached/memcached.h
-+++ b/libmemcached-0.31/libmemcached/memcached.h
++++ b/libmemcached/libmemcached/memcached.h
 @@ -112,6 +112,9 @@ struct memcached_st {
    memcached_trigger_delete_key delete_trigger;
    char prefix_key[MEMCACHED_PREFIX_KEY_MAX_SIZE];
@@ -24,9 +37,9 @@ diff --git a/libmemcached-0.32/libmemcached/memcached.h b/libmemcached-0.31/libm
  };
  
  LIBMEMCACHED_API
-diff --git a/libmemcached-0.32/libmemcached/memcached_connect.c b/libmemcached-0.31/libmemcached/memcached_connect.c
+diff --git a/libmemcached-0.32/libmemcached/memcached_connect.c b/libmemcached/libmemcached/memcached_connect.c
 --- a/libmemcached-0.32/libmemcached/memcached_connect.c
-+++ b/libmemcached-0.31/libmemcached/memcached_connect.c
++++ b/libmemcached/libmemcached/memcached_connect.c
 @@ -273,7 +272,6 @@ static memcached_return network_connect(memcached_server_st *ptr)
            (void)fcntl(ptr->fd, F_SETFL, flags & ~O_NONBLOCK);
  
@@ -68,11 +81,11 @@ diff --git a/libmemcached-0.32/libmemcached/memcached_connect.c b/libmemcached-0
      {
        ptr->next_retry= next_time.tv_sec + ptr->root->retry_timeout;
        ptr->server_failure_counter= 0;
-diff --git a/libmemcached-0.32/libmemcached/memcached_get.h b/libmemcached-0.31/libmemcached/memcached_get.h
-diff --git a/libmemcached-0.32/libmemcached/memcached_hash.c b/libmemcached-0.31/libmemcached/memcached_hash.c
+diff --git a/libmemcached-0.32/libmemcached/memcached_get.h b/libmemcached/libmemcached/memcached_get.h
+diff --git a/libmemcached-0.32/libmemcached/memcached_hash.c b/libmemcached/libmemcached/memcached_hash.c
 index 129d761..3a7fa55 100644
 --- a/libmemcached-0.32/libmemcached/memcached_hash.c
-+++ b/libmemcached-0.31/libmemcached/memcached_hash.c
++++ b/libmemcached/libmemcached/memcached_hash.c
 @@ -11,6 +11,7 @@ static uint32_t FNV_32_PRIME= 16777619;
  /* Prototypes */
  static uint32_t internal_generate_hash(const char *key, size_t key_length);
@@ -115,9 +128,9 @@ index 129d761..3a7fa55 100644
  static uint32_t internal_generate_hash(const char *key, size_t key_length)
  {
    const char *ptr= key;
-diff --git a/libmemcached-0.32/libmemcached/memcached_hosts.c b/libmemcached-0.31/libmemcached/memcached_hosts.c
+diff --git a/libmemcached-0.32/libmemcached/memcached_hosts.c b/libmemcached/libmemcached/memcached_hosts.c
 --- a/libmemcached-0.32/libmemcached/memcached_hosts.c
-+++ b/libmemcached-0.31/libmemcached/memcached_hosts.c
++++ b/libmemcached/libmemcached/memcached_hosts.c
 @@ -7,6 +7,7 @@ static memcached_return server_add(memcached_st *ptr, const char *hostname,
                                     uint32_t weight,
                                     memcached_connection type);
@@ -197,10 +210,10 @@ diff --git a/libmemcached-0.32/libmemcached/memcached_hosts.c b/libmemcached-0.3
    uint32_t points_per_server= 0;
    uint32_t live_servers= 0;
    struct timeval now;
-diff --git a/libmemcached-0.32/libmemcached/memcached_storage.c b/libmemcached-0.31/libmemcached/memcached_storage.c
+diff --git a/libmemcached-0.32/libmemcached/memcached_storage.c b/libmemcached/libmemcached/memcached_storage.c
 index ecefc56..ee79a7e 100644
 --- a/libmemcached-0.32/libmemcached/memcached_storage.c
-+++ b/libmemcached-0.31/libmemcached/memcached_storage.c
++++ b/libmemcached/libmemcached/memcached_storage.c
 @@ -135,22 +135,16 @@ static inline memcached_return memcached_send(memcached_st *ptr,
    }
  
