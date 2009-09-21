@@ -16,25 +16,29 @@ class MemcachedTest < Test::Unit::TestCase
     @options = {
       :prefix_key => @prefix_key,
       :hash => :default,
-      :distribution => :modula
-    }
+      :distribution => :modula}
     @cache = Memcached.new(@servers, @options)
+    
+    @binary_protocol_options = {
+      :prefix_key => @prefix_key,
+      :hash => :default,
+      :distribution => :modula,
+      :binary_protocol => true}
+    @binary_protocol_cache = Memcached.new(@servers, @binary_protocol_options)
 
     @udp_options = {
       :prefix_key => @prefix_key,
       :hash => :default,
       :use_udp => true,
-      :distribution => :modula
-    }
+      :distribution => :modula}
     @udp_cache = Memcached.new(@udp_servers, @udp_options)
 
-    @nb_options = {
+    @noblock_options = {
       :prefix_key => @prefix_key,
       :no_block => true,
       :buffer_requests => true,
-      :hash => :default
-    }
-    @nb_cache = Memcached.new(@servers, @nb_options)
+      :hash => :default}
+    @noblock_cache = Memcached.new(@servers, @noblock_options)
 
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
@@ -85,8 +89,8 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_options_are_set
-    Memcached::DEFAULTS.merge(@nb_options).each do |key, expected|
-      value = @nb_cache.options[key]
+    Memcached::DEFAULTS.merge(@noblock_options).each do |key, expected|
+      value = @noblock_cache.options[key]
       unless key == :rcv_timeout or key == :poll_timeout
         assert(expected == value, "#{key} should be #{expected} but was #{value}")
       end
@@ -110,15 +114,6 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { Memcached.new "localhost:memcached" }
     assert_raise(ArgumentError) { Memcached.new "local host:43043:1" }
   end
-
-#  def test_initialize_with_resolvable_hosts
-#    host = `hostname`.chomp
-#    cache = Memcached.new("#{host}:43042")
-#    assert_equal host, cache.send(:server_structs).first.hostname
-#
-#    cache.set(key, @value)
-#    assert_equal @value, cache.get(key)
-#  end
 
   def test_initialize_with_invalid_options
     assert_raise(ArgumentError) do
@@ -223,9 +218,11 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.set key, @value
     result = @cache.get key
     assert_equal @value, result
-  end
 
-  def test_udp_get
+    @binary_protocol_cache.set key, @value
+    result = @binary_protocol_cache.get key
+    assert_equal @value, result
+
     @udp_cache.set(key, @value)
     assert_raises(Memcached::ActionNotSupported) do
       @udp_cache.get(key)
@@ -410,9 +407,11 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       @cache.set(key, @value)
     end
-  end
+    
+    assert_nothing_raised do
+      @binary_protocol_cache.set(key, @value)
+    end
 
-  def test_udp_set
     assert_nothing_raised do
       @udp_cache.set(key, @value)
     end
@@ -571,6 +570,12 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.append key, "end"
     end
     assert_equal "startend", @cache.get(key, false)
+
+    @binary_protocol_cache.set key, "start", 0, false
+    assert_nothing_raised do
+      @binary_protocol_cache.append key, "end"
+    end
+    assert_equal "startend", @binary_protocol_cache.get(key, false)
   end
 
   def test_missing_append
@@ -580,6 +585,14 @@ class MemcachedTest < Test::Unit::TestCase
     end
     assert_raise(Memcached::NotFound) do
       assert_equal @value, @cache.get(key)
+    end
+
+    @binary_protocol_cache.delete key rescue nil
+    assert_raise(Memcached::NotStored) do
+      @binary_protocol_cache.append key, "end"
+    end
+    assert_raise(Memcached::NotFound) do
+      assert_equal @value, @binary_protocol_cache.get(key)
     end
   end
 
@@ -753,10 +766,10 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_no_block_return_value
     assert_nothing_raised do
-      @nb_cache.set key, @value
+      @noblock_cache.set key, @value
     end
     ret = Rlibmemcached.memcached_set(
-      @nb_cache.instance_variable_get("@struct"),
+      @noblock_cache.instance_variable_get("@struct"),
       key,
       @marshalled_value,
       0,
@@ -766,35 +779,35 @@ class MemcachedTest < Test::Unit::TestCase
   end
   
   def test_no_block_get
-    @nb_cache.set key, @value
+    @noblock_cache.set key, @value
     assert_equal @value, 
-      @nb_cache.get(key)
+      @noblock_cache.get(key)
   end
 
   def test_no_block_missing_delete
-    @nb_cache.delete key rescue nil
+    @noblock_cache.delete key rescue nil
     assert_nothing_raised do
-      @nb_cache.delete key
+      @noblock_cache.delete key
     end
   end
 
   def test_no_block_set_invalid_key
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-      @nb_cache.set "I'm so bad", @value
+      @noblock_cache.set "I'm so bad", @value
     end
   end
 
   def test_no_block_set_object_too_large
     assert_nothing_raised do
-      @nb_cache.set key, "I'm big" * 1000000
+      @noblock_cache.set key, "I'm big" * 1000000
     end
   end
 
   def test_no_block_existing_add
     # Should still raise
-    @nb_cache.set key, @value
+    @noblock_cache.set key, @value
     assert_raise(Memcached::NotStored) do
-      @nb_cache.add key, @value
+      @noblock_cache.add key, @value
     end
   end
 
