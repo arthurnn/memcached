@@ -20,7 +20,7 @@ require 'rlibmemcached'
 
 class Memcached
   Lib = Rlibmemcached
-  REQUIRED_VERSION = File.read("#{File.dirname(__FILE__)}/../COMPATIBILITY")[/:: ([\d\.]+)/, 1]
+  REQUIRED_VERSION = "0.32"
   RECEIVED_VERSION = Lib.memcached_lib_version
   raise "libmemcached #{REQUIRED_VERSION} required; you somehow linked to #{RECEIVED_VERSION}." unless REQUIRED_VERSION == RECEIVED_VERSION
 end
