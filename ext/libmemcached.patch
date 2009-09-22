@@ -104,7 +104,7 @@ index 129d761..3a7fa55 100644
 +    return memcached_live_host_index(ptr, hash);
    case MEMCACHED_DISTRIBUTION_RANDOM:
 -    return (uint32_t) random() % ptr->number_of_hosts;
-+    return memcached_live_host_index(ptr, (int)random());
++    return memcached_live_host_index(ptr, (uint32_t) random());
    default:
      WATCHPOINT_ASSERT(0); /* We have added a distribution without extending the logic */
      return hash % ptr->number_of_hosts;
