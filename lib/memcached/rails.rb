@@ -1,14 +1,14 @@
 class Memcached
 
-  alias :get_multi :get #:nodoc:
-  alias :servers= :set_servers #:nodoc:
-  public :servers=
+  (instance_methods - NilClass.instance_methods).each do |method_name|
+    eval("alias :'#{method_name}_orig' :'#{method_name}'")
+  end
 
   # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
   class Rails < ::Memcached
-    
-    DEFAULTS = {}
-         
+
+    alias :servers= :set_servers
+
     # See Memcached#new for details.
     def initialize(*args)
       opts = args.last.is_a?(Hash) ? args.pop : {}
@@ -17,10 +17,10 @@ class Memcached
       ).flatten.compact
 
       opts[:prefix_key] ||= opts[:namespace]
-      super(servers, DEFAULTS.merge(opts))      
+      super(servers, opts)
     end
-    
-    # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from 
+
+    # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from
     # storing <tt>nil</tt> values.
     def get(key, raw=false)
       super(key, !raw)
@@ -30,56 +30,68 @@ class Memcached
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
     def cas(key, ttl=@default_ttl, raw=false, &block)
       super(key, ttl, !raw, &block)
-    rescue NotFound    
+    rescue NotFound
     end
-    
-    alias :compare_and_swap :cas    
-    
+
+    alias :compare_and_swap :cas
+
     # Wraps Memcached#get.
     def get_multi(keys, raw=false)
-      super(keys, !raw)
+      get_orig(keys, !raw)
     end
-    
+
     # Wraps Memcached#set.
     def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
     end
 
-    # Wraps Memcached#add so that it doesn't raise. 
+    # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
       true
     rescue NotStored
-      false    
+      false
     end
-    
-    # Wraps Memcached#delete so that it doesn't raise. 
+
+    # Wraps Memcached#delete so that it doesn't raise.
     def delete(key)
       super
     rescue NotFound
     end
-    
-    # Wraps Memcached#incr so that it doesn't raise. 
+
+    # Wraps Memcached#incr so that it doesn't raise.
     def incr(*args)
       super
     rescue NotFound
     end
 
-    # Wraps Memcached#decr so that it doesn't raise. 
+    # Wraps Memcached#decr so that it doesn't raise.
     def decr(*args)
       super
     rescue NotFound
     end
-    
+
+    # Wraps Memcached#append so that it doesn't raise.
+    def append(*args)
+      super
+    rescue NotStored
+    end
+
+    # Wraps Memcached#prepend so that it doesn't raise.
+    def prepend(*args)
+      super
+    rescue NotStored
+    end
+
     # Namespace accessor.
     def namespace
       options[:prefix_key]
     end
-    
+
     alias :flush_all :flush
 
     alias :"[]" :get
-    alias :"[]=" :set    
-    
+    alias :"[]=" :set
+
   end
 end
