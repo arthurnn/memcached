@@ -170,13 +170,13 @@ diff --git a/libmemcached-0.32/libmemcached/memcached_hosts.c b/libmemcached/lib
 +  }
 +
 +  if (ptr->live_host_indices == NULL) {
-+    ptr->live_host_indices = (uint32_t *)ptr->call_malloc(ptr, sizeof(uint32_t) * ptr->number_of_live_hosts);
++    ptr->live_host_indices = (uint32_t *)ptr->call_malloc(ptr, sizeof(uint32_t) * ptr->number_of_hosts);
 +    ptr->live_host_indices_size = ptr->number_of_live_hosts;
 +  }
 +
 +  /* somehow we added some hosts.  Shouldn't get here much, if at all. */
 +  if (ptr->live_host_indices_size < ptr->number_of_hosts ) {
-+    ptr->live_host_indices = (uint32_t *)ptr->call_realloc(ptr, ptr->live_host_indices,  sizeof(uint32_t) * ptr->number_of_live_hosts);
++    ptr->live_host_indices = (uint32_t *)ptr->call_realloc(ptr, ptr->live_host_indices,  sizeof(uint32_t) * ptr->number_of_hosts);
 +    ptr->live_host_indices_size = ptr->number_of_live_hosts;
 +  }
 +
