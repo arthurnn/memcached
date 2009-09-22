@@ -90,8 +90,6 @@ There is a compatibility wrapper for legacy applications called Memcached::Rails
     # Perform operations on cache, not $cache
     cache.set 'example', 1
     cache.get 'example'
-    # ...
-    cache.destroy
   end  
 
   # Join the thread so that exceptions don't get lost
