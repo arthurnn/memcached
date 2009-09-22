@@ -394,8 +394,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
          check_return_code(ret, key)
 
          value = case value
-           when /^\d+\.\d+$/: value.to_f
-           when /^\d+$/: value.to_i
+           when /^\d+\.\d+$/ then value.to_f
+           when /^\d+$/ then value.to_i
            else value
          end
 

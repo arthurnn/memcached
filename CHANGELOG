@@ -1,4 +1,6 @@
 
+v0.17.1. Ruby 1.9 compatibility.
+
 v0.17. Update to libmemcached 0.32. Update Darwin version string for Snow Leopard final. Improve benchmarks. Add Memcached::Rails#append and #prepend, alias all original Memcached methods to _orig, and add set_servers= accessor for compatibility.
 
 v0.16.3. Optimize append/prepend on miss.

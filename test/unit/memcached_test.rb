@@ -98,7 +98,7 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_options_are_frozen
-    assert_raise(TypeError) do
+    assert_raise(TypeError, RuntimeError) do
       @cache.options[:no_block] = true
     end
   end
@@ -995,7 +995,7 @@ class MemcachedTest < Test::Unit::TestCase
   private
 
   def key
-    caller.first[/`(.*)'/, 1] # '
+    caller.first[/.*[` ](.*)'/, 1] # '
   end
 
   def stub_server(port)
