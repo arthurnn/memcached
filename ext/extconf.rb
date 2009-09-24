@@ -57,6 +57,8 @@ if !ENV["EXTERNAL_LIB"]
           puts "Setting debug flags for libmemcached."
           cflags << " -O0 -ggdb -DHAVE_DEBUG"
           extraconf << " --enable-debug"
+        else
+          cflags << " -Os"
         end
         
         puts(cmd = "env CFLAGS='#{cflags}' LDFLAGS='#{ldflags}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils #{extraconf} 2>&1")
@@ -87,7 +89,7 @@ if ENV['DEBUG']
   puts "Setting debug flags for gem."
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
 else
-  $CFLAGS << " -O3"
+  $CFLAGS << " -Os"
 end
 
 if DARWIN

@@ -1,4 +1,6 @@
 
+v0.18. Compile with -Os.
+
 v0.17.2. Fix realloc bug on Linux that got regressed.
 
 v0.17.1. Ruby 1.9 compatibility.
