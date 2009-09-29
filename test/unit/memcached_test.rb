@@ -1,4 +1,4 @@
- 
+
 require "#{File.dirname(__FILE__)}/../test_helper"
 require 'socket'
 require 'mocha'
@@ -18,7 +18,7 @@ class MemcachedTest < Test::Unit::TestCase
       :hash => :default,
       :distribution => :modula}
     @cache = Memcached.new(@servers, @options)
-    
+
     @binary_protocol_options = {
       :prefix_key => @prefix_key,
       :hash => :default,
@@ -154,7 +154,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.append key, @value
     rescue Memcached::NotStored => e
       assert e.backtrace.empty?
-    end     
+    end
   end
 
   def test_initialize_with_backtraces
@@ -228,7 +228,7 @@ class MemcachedTest < Test::Unit::TestCase
       @udp_cache.get(key)
     end
   end
-  
+
   def test_get_nil
     @cache.set key, nil, 0
     result = @cache.get key
@@ -264,7 +264,7 @@ class MemcachedTest < Test::Unit::TestCase
         result = cache.get key
       end
     end).real
-    
+
     socket.close
   end
 
@@ -383,14 +383,14 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(["#{key}_1", "#{key}_2"])
     end
   end
-  
+
   def test_random_distribution_is_statistically_random
     cache = Memcached.new(@servers, :distribution => :random)
     cache.flush
     20.times { |i| cache.set "#{key}#{i}", @value }
-    
+
     cache, hits = Memcached.new(@servers.first), 0
-    20.times do |i| 
+    20.times do |i|
       begin
         cache.get "#{key}#{i}"
         hits += 1
@@ -407,7 +407,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       @cache.set(key, @value)
     end
-    
+
     assert_nothing_raised do
       @binary_protocol_cache.set(key, @value)
     end
@@ -440,6 +440,16 @@ class MemcachedTest < Test::Unit::TestCase
     sleep(2)
     assert_raise(Memcached::NotFound) do
       cache.get key
+    end
+  end
+
+  def disabled_test_set_retry_on_client_error
+    # FIXME Test passes, but Mocha doesn't restore the original method properly
+    Rlibmemcached.stubs(:memcached_set).raises(Memcached::ClientError)
+    Rlibmemcached.stubs(:memcached_set).returns(0)
+
+    assert_nothing_raised do
+      @cache.set(key, @value)
     end
   end
 
@@ -713,10 +723,10 @@ class MemcachedTest < Test::Unit::TestCase
   rescue Memcached::ServerError => e
     assert_match /^"object too large for cache". Key/, e.message
   end
-  
+
   def test_errno_message
     Rlibmemcached::MemcachedServerSt.any_instance.stubs("cached_errno").returns(1)
-    @cache.send(:check_return_code, Rlibmemcached::MEMCACHED_ERRNO, key)    
+    @cache.send(:check_return_code, Rlibmemcached::MEMCACHED_ERRNO, key)
   rescue Memcached::SystemError => e
     assert_match /^Errno 1: "Operation not permitted". Key/, e.message
   end
@@ -777,10 +787,10 @@ class MemcachedTest < Test::Unit::TestCase
     )
     assert_equal Rlibmemcached::MEMCACHED_BUFFERED, ret
   end
-  
+
   def test_no_block_get
     @noblock_cache.set key, @value
-    assert_equal @value, 
+    assert_equal @value,
       @noblock_cache.get(key)
   end
 
@@ -814,8 +824,8 @@ class MemcachedTest < Test::Unit::TestCase
   # Server removal and consistent hashing
 
   def test_unresponsive_server
-    socket = stub_server 43041  
-    
+    socket = stub_server 43041
+
     cache = Memcached.new(
       [@servers.last, 'localhost:43041'],
       :prefix_key => @prefix_key,
@@ -826,7 +836,7 @@ class MemcachedTest < Test::Unit::TestCase
       :hash => :md5
     )
 
-    # Hit second server up to the server_failure_limit 
+    # Hit second server up to the server_failure_limit
     key2 = 'test_missing_server'
     assert_raise(Memcached::ATimeoutOccurred) { cache.set(key2, @value) }
     assert_raise(Memcached::ATimeoutOccurred) { cache.get(key2, @value) }
@@ -845,14 +855,14 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set(key2, @value)
       assert_equal cache.get(key2), @value
     end
-    
+
     sleep(2)
-    
+
     # Hit second server again after restore, expect same failure
     key2 = 'test_missing_server'
     assert_raise(Memcached::ATimeoutOccurred) do
       cache.set(key2, @value)
-    end        
+    end
 
     socket.close
   end
@@ -868,7 +878,7 @@ class MemcachedTest < Test::Unit::TestCase
       :hash => :md5
     )
 
-    # Hit second server up to the server_failure_limit 
+    # Hit second server up to the server_failure_limit
     key2 = 'test_missing_server'
     assert_raise(Memcached::SystemError) { cache.set(key2, @value) }
     assert_raise(Memcached::SystemError) { cache.get(key2, @value) }
@@ -887,16 +897,16 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set(key2, @value)
       assert_equal cache.get(key2), @value
     end
-    
+
     sleep(2)
-    
+
     # Hit second server again after restore, expect same failure
     key2 = 'test_missing_server'
     assert_raise(Memcached::SystemError) do
       cache.set(key2, @value)
-    end        
+    end
   end
-  
+
   def test_unresponsive_with_random_distribution
     socket = stub_server 43041
     failures = [Memcached::ATimeoutOccurred, Memcached::ServerIsMarkedDead]
@@ -913,15 +923,15 @@ class MemcachedTest < Test::Unit::TestCase
     exceptions = []
     100.times { begin; cache.set key, @value; rescue => e; exceptions << e; end }
     assert_equal failures, exceptions.map { |x| x.class }
-    
+
     # Hit first server on retry
-    assert_nothing_raised { cache.set(key, @value) }    
-    
+    assert_nothing_raised { cache.set(key, @value) }
+
     # Hit second server again after restore, expect same failures
     sleep(2)
     exceptions = []
     100.times { begin; cache.set key, @value; rescue => e; exceptions << e; end }
-    assert_equal failures, exceptions.map { |x| x.class }    
+    assert_equal failures, exceptions.map { |x| x.class }
 
     socket.close
   end
@@ -973,13 +983,13 @@ class MemcachedTest < Test::Unit::TestCase
     end
     threads.each {|thread| thread.join}
   end
-  
-  # Hash  
-  
+
+  # Hash
+
   def test_hash
-    assert_equal 3157003241, 
+    assert_equal 3157003241,
       Rlibmemcached.memcached_generate_hash_rvalue("test", Rlibmemcached::MEMCACHED_HASH_FNV1_32)
-  end  
+  end
 
   # Memory cleanup
 

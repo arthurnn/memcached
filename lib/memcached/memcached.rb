@@ -225,6 +225,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       Lib.memcached_set(@struct, key, value, ttl, flags),
       key
     )
+  rescue ClientError
+    # FIXME Memcached 1.2.8 occasionally rejects valid sets 
+    tried = 1 and retry unless defined?(tried)
+    raise
   end
 
   # Add a key/value pair. Raises <b>Memcached::NotStored</b> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
