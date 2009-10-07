@@ -6,15 +6,13 @@ BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 
 DARWIN = `uname -sp` == "Darwin i386\n"
 
-# is there a better way to do this?
+# Is there a better way to do this?
 archflags = if ENV['ARCHFLAGS']
   ENV['ARCHFLAGS']
-elsif Config::CONFIG['host_os'] =~ /darwin10\.0\.*/
+elsif Config::CONFIG['host_os'][0,8] == "darwin10"
   "-arch i386 -arch x86_64"
-elsif Config::CONFIG['host_os'] =~ /darwin/
+elsif Config::CONFIG['host_os'][0,6] == "darwin"
   "-arch i386 -arch ppc"
-else
-  archflags = ''
 end
 
 if !ENV["EXTERNAL_LIB"]
