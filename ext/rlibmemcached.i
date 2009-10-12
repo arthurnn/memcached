@@ -34,6 +34,7 @@
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
   $1 = (char **) malloc(($3+1)*sizeof(char *)); 
   for(i = 0; i < $3; i ++) {
+    Check_Type(RARRAY_PTR($input)[i], T_STRING);
     $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
     $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
   }
@@ -45,6 +46,7 @@
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
   $1 = (char **) malloc(($3+1)*sizeof(char *)); 
   for(i = 0; i < $3; i ++) {
+    Check_Type(RARRAY_PTR($input)[i], T_STRING);
     $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
     $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
   }

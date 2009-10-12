@@ -358,6 +358,12 @@ class MemcachedTest < Test::Unit::TestCase
      )
   end
 
+  def test_get_multi_checks_types
+    assert_raises(TypeError, ArgumentError) do
+      @cache.get([nil])
+    end
+  end
+
   def test_set_and_get_unmarshalled
     @cache.set key, @value
     result = @cache.get key, false

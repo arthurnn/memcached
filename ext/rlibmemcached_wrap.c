@@ -8629,6 +8629,7 @@ _wrap_memcached_mget(int argc, VALUE *argv, VALUE self) {
     arg3 = (size_t *) malloc((arg4+1)*sizeof(size_t));
     arg2 = (char **) malloc((arg4+1)*sizeof(char *)); 
     for(i = 0; i < arg4; i ++) {
+      Check_Type(RARRAY_PTR(argv[1])[i], T_STRING);
       arg3[i] = RSTRING_LEN(RARRAY_PTR(argv[1])[i]);
       arg2[i] = StringValuePtr(RARRAY_PTR(argv[1])[i]);
     }
@@ -8746,6 +8747,7 @@ _wrap_memcached_mget_by_key(int argc, VALUE *argv, VALUE self) {
     arg5 = (size_t *) malloc((arg6+1)*sizeof(size_t));
     arg4 = (char **) malloc((arg6+1)*sizeof(char *)); 
     for(i = 0; i < arg6; i ++) {
+      Check_Type(RARRAY_PTR(argv[3])[i], T_STRING);
       arg5[i] = RSTRING_LEN(RARRAY_PTR(argv[3])[i]);
       arg4[i] = StringValuePtr(RARRAY_PTR(argv[3])[i]);
     }
