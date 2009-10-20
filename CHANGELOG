@@ -1,4 +1,6 @@
 
+v0.17.4. Don't segfault on invalid keys in get_multi.
+
 v0.17.3. Compile with -Os. Retry once on Memcached::ClientError.
 
 v0.17.2. Fix realloc bug on Linux that got regressed.
