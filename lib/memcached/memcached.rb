@@ -409,6 +409,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
     Lib.memcached_stat_free(@struct, stat_struct)
     stats
+  rescue Memcached::SomeErrorsWereReported => _
+    e = _.class.new("Error getting stats")
+    e.set_backtrace(_.backtrace)
+    raise e
   end
 
   ### Operations helpers

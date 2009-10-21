@@ -746,6 +746,11 @@ class MemcachedTest < Test::Unit::TestCase
     assert_instance_of String, stats[:version].first
   end
 
+  def test_missing_stats
+    cache = Memcached.new('localhost:43041')
+    assert_raises(Memcached::SomeErrorsWereReported) { cache.stats }
+  end
+
   # Clone
 
   def test_clone
