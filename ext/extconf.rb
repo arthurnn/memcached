@@ -11,8 +11,8 @@ if ENV['DEBUG']
   $EXTRA_CONF = " --enable-debug"
 end
 
-$CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".split(" ").uniq.join(" ").gsub("$(cflags)", "").gsub("ppc", "")
-$LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".split(" ").uniq.join(" ").gsub("$(ldflags)", "").gsub("ppc", "")
+$CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "")
+$LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".gsub("$(ldflags)", "")
 $CXXFLAGS = " -std=gnu++98"
 $CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
 
