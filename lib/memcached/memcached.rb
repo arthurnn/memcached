@@ -30,7 +30,7 @@ class Memcached
     :server_failure_limit => 2,
     :verify_key => true,
     :use_udp => false,
-    :binary_protocol => false
+    :binary_protocol => false,
   }
 
 #:stopdoc:
@@ -81,7 +81,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Track structs so we can free them
   @@structs = {}
 
-  def initialize(servers = "localhost:11211", opts = {}, credentials = nil)
+  def initialize(servers = "localhost:11211", opts = {})
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
     @@structs[object_id] = @struct
@@ -90,6 +90,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     @options = DEFAULTS.merge(opts)
     @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
     @default_ttl = options[:default_ttl]
+    
+    if options[:credentials] == nil && ENV.key?("MEMCACHED_USERNAME") && ENV.key?("MEMCACHED_PASSWORD")
+      options[:credentials] = [ENV["MEMCACHED_USERNAME"], ENV["MEMCACHED_PASSWORD"]]
+    end
+
+    options[:binary_protocol] = true if options[:credentials] != nil
 
     # Force :buffer_requests to use :no_block
     # XXX Deleting the :no_block key should also work, but libmemcached doesn't seem to set it
@@ -114,10 +120,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     # Set the behaviors on the struct
     set_behaviors
     set_callbacks
-
-    # (Maybe) set the credentials on the struct
-    @has_credentials = false
-    set_credentials(credentials)
+    set_credentials
 
     # Freeze the hash
     options.freeze
@@ -141,6 +144,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     # Don't leak clients!
     struct = @@structs[id]
     @@structs.delete(id)
+    # Don't leak authentication data either. This will silently fail if it's not set.
+    Lib.memcached_destroy_sasl_auth_data(struct)
     Lib.memcached_free(struct)
   end
 
@@ -193,11 +198,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
   def reset(current_servers = nil)
     current_servers ||= servers
+    destroy_credentials
     Lib.memcached_free(@struct)
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
     set_behaviors
     set_callbacks
+    set_credentials
     set_servers(current_servers)
   end
 

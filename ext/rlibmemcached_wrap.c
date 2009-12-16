@@ -13686,9 +13686,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_module_function(mRlibmemcached, "memcached_select_stat_at", _wrap_memcached_select_stat_at, -1);
   rb_define_module_function(mRlibmemcached, "memcached_generate_hash_rvalue", _wrap_memcached_generate_hash_rvalue, -1);
   
-  if (sasl_client_init(NULL) == SASL_OK) {
-    fprintf(stderr, "SASL initialized successfully.\n");
-  } else {
+  if (sasl_client_init(NULL) != SASL_OK) {
     fprintf(stderr, "Failed to initialized SASL.\n");
   }
   

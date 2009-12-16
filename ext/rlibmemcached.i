@@ -214,9 +214,7 @@ VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcache
 
 // Initialization for SASL
 %init %{
-  if (sasl_client_init(NULL) == SASL_OK) {
-    fprintf(stderr, "SASL initialized successfully.\n");
-  } else {
+  if (sasl_client_init(NULL) != SASL_OK) {
     fprintf(stderr, "Failed to initialized SASL.\n");
   }
 %}
