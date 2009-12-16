@@ -78,9 +78,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
 =end
 
-  def initialize(servers = "localhost:11211", opts = {})
+  # Track structs so we can free them
+  @@structs = {}
+
+  def initialize(servers = "localhost:11211", opts = {}, credentials = nil)
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
+    @@structs[object_id] = @struct
 
     # Merge option defaults and discard meaningless keys
     @options = DEFAULTS.merge(opts)
@@ -111,6 +115,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     set_behaviors
     set_callbacks
 
+    # (Maybe) set the credentials on the struct
+    @has_credentials = false
+    set_credentials(credentials)
+
     # Freeze the hash
     options.freeze
 
@@ -124,6 +132,16 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       @not_stored = NotStored.new
       @not_stored.no_backtrace = true      
     end
+
+    ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
+
+  end
+
+  def Memcached.finalize(id)
+    # Don't leak clients!
+    struct = @@structs[id]
+    @@structs.delete(id)
+    Lib.memcached_free(struct)
   end
 
   # Set the server list.
@@ -175,6 +193,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
   def reset(current_servers = nil)
     current_servers ||= servers
+    Lib.memcached_free(@struct)
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
     set_behaviors
