@@ -31,6 +31,7 @@ class Memcached
     :verify_key => true,
     :use_udp => false,
     :binary_protocol => false,
+    :credentials => nil
   }
 
 #:stopdoc:
