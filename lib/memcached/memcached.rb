@@ -82,7 +82,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Track structs so we can free them
   @@structs = {}
 
-  def initialize(servers = "localhost:11211", opts = {})
+  def initialize(servers = nil, opts = {})
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
     @@structs[object_id] = @struct
@@ -92,8 +92,16 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
     @default_ttl = options[:default_ttl]
     
-    if options[:credentials] == nil && ENV.key?("MEMCACHED_USERNAME") && ENV.key?("MEMCACHED_PASSWORD")
-      options[:credentials] = [ENV["MEMCACHED_USERNAME"], ENV["MEMCACHED_PASSWORD"]]
+    if servers == nil 
+      if ENV.key?("MEMCACHE_SERVERS")
+        servers = ENV["MEMCACHE_SERVERS"].split(",").map do | s | s.strip end
+      else
+        servers = "127.0.0.1:11211"
+      end
+    end
+
+    if options[:credentials] == nil && ENV.key?("MEMCACHE_USERNAME") && ENV.key?("MEMCACHE_PASSWORD")
+      options[:credentials] = [ENV["MEMCACHE_USERNAME"], ENV["MEMCACHE_PASSWORD"]]
     end
 
     options[:binary_protocol] = true if options[:credentials] != nil
@@ -406,10 +414,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   end
 
   # Return a Hash of statistics responses from the set of servers. Each value is an array with one entry for each server, in the same order the servers were defined.
-  def stats
+  def stats(subcommand=nil)
     stats = Hash.new([])
 
-    stat_struct, ret = Lib.memcached_stat(@struct, "")
+    stat_struct, ret = Lib.memcached_stat(@struct, subcommand)
     check_return_code(ret)
 
     keys, ret = Lib.memcached_stat_get_keys(@struct, stat_struct)
