@@ -7,6 +7,10 @@ class Memcached
   # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
   class Rails < ::Memcached
 
+    DEFAULTS[:logger] = nil
+    
+    attr_reader :logger
+    
     alias :servers= :set_servers
 
     # See Memcached#new for details.
@@ -17,7 +21,13 @@ class Memcached
       ).flatten.compact
 
       opts[:prefix_key] ||= opts[:namespace]
+      @logger = opts[:logger]
+      logger.info { "memcached #{VERSION} #{servers.inspect}" } if logger
       super(servers, opts)
+    end
+
+    def logger=(logger)
+      @logger = logger
     end
 
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from
