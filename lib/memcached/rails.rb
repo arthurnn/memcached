@@ -36,6 +36,12 @@ class Memcached
       super(key, !raw)
     rescue NotFound
     end
+    
+    def read(key, options)
+      raw = false
+      raw = options[:raw] if options.has_key?(:raw)
+      self.get(key, raw)
+    end
 
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
     def cas(key, ttl=@default_ttl, raw=false, &block)
@@ -53,6 +59,14 @@ class Memcached
     # Wraps Memcached#set.
     def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
+    end
+    
+    def write(key, value, options)
+      ttl = @default_ttl
+      ttl = options[:ttl] if options.has_key?(:ttl)      
+      raw = false
+      raw = options[:raw] if options.has_key?(:raw)
+      self.set(key, value, ttl=ttl, raw=raw)      
     end
 
     # Wraps Memcached#add so that it doesn't raise.
