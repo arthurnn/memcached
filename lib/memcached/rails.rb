@@ -8,9 +8,9 @@ class Memcached
   class Rails < ::Memcached
 
     DEFAULTS[:logger] = nil
-    
+
     attr_reader :logger
-    
+
     alias :servers= :set_servers
 
     # See Memcached#new for details.
@@ -36,11 +36,11 @@ class Memcached
       super(key, !raw)
     rescue NotFound
     end
-    
-    def read(key, options)
-      raw = false
-      raw = options[:raw] if options.has_key?(:raw)
-      self.get(key, raw)
+
+    # Alternative to #get. Accepts a key and an optional options hash supporting the single option
+    # :raw.
+    def read(key, options = {})
+      get(key, options[:raw])
     end
 
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
@@ -60,13 +60,11 @@ class Memcached
     def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
     end
-    
-    def write(key, value, options)
-      ttl = @default_ttl
-      ttl = options[:ttl] if options.has_key?(:ttl)      
-      raw = false
-      raw = options[:raw] if options.has_key?(:raw)
-      self.set(key, value, ttl=ttl, raw=raw)      
+
+    # Alternative to #set. Accepts a key, value, and an optional options hash supporting the 
+    # options :raw and :ttl.
+    def write(key, value, options = {})
+      set(key, value, options[:ttl] || @default_ttl, options[:raw])
     end
 
     # Wraps Memcached#add so that it doesn't raise.
