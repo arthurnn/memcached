@@ -88,7 +88,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
     @default_ttl = options[:default_ttl]
 
-    if servers == nil
+    if servers == nil || servers == []
       if ENV.key?("MEMCACHE_SERVERS")
         servers = ENV["MEMCACHE_SERVERS"].split(",").map do | s | s.strip end
       else
