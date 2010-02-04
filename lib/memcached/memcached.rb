@@ -480,6 +480,21 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     end
   end
 
+  def prefix_key=(key)
+    return unless key
+    unless key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
+      raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
+    end
+
+    Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, "#{key}:")
+  end
+  alias namespace= prefix_key= 
+
+  def prefix_key
+    @struct.prefix_key
+  end
+  alias namespace prefix_key
+
   def is_unix_socket?(server)
     server.type == Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
   end
