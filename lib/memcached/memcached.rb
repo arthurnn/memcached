@@ -22,6 +22,7 @@ class Memcached
     :poll_timeout => nil,
     :connect_timeout => 2,
     :prefix_key => nil,
+    :prefix_delimiter => '',
     :hash_with_prefix_key => true,
     :default_ttl => 604800,
     :default_weight => 8,
@@ -486,12 +487,16 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
     end
 
-    Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, "#{key}:")
+    Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, "#{key}#{options[:prefix_delimiter]}")
   end
   alias namespace= prefix_key= 
 
   def prefix_key
-    @struct.prefix_key
+    if options[:prefix_delimiter] && options[:prefix_delimiter].size == 0 
+      @struct.prefix_key 
+    else 
+      @struct.prefix_key.gsub(/#{ options[:prefix_delimiter] }$/,'')
+    end
   end
   alias namespace prefix_key
 
