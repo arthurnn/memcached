@@ -1,4 +1,6 @@
 
+v0.18.0. Make Memcached::Rails compatible with Rails 2.3.2 (Ian Fung).
+
 v0.17.7. Disable dependency tracking.
 
 v0.17.6. Again.
