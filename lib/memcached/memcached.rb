@@ -492,11 +492,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   alias namespace= prefix_key= 
 
   def prefix_key
-    if options[:prefix_delimiter] && options[:prefix_delimiter].size == 0 
-      @struct.prefix_key 
-    else 
-      @struct.prefix_key.gsub(/#{ options[:prefix_delimiter] }$/,'')
-    end
+    @struct.prefix_key[0..-1 - (options[:prefix_delimiter]||'').size]
   end
   alias namespace prefix_key
 
