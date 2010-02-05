@@ -48,7 +48,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_initialize
     cache = Memcached.new @servers, :prefix_key => 'test'
-    assert_equal 'test', cache.options[:prefix_key]
+    assert_equal 'test', cache.prefix_key
     assert_equal 3, cache.send(:server_structs).size
     assert_equal 'localhost', cache.send(:server_structs).first.hostname
     assert_equal 43042, cache.send(:server_structs).first.port
@@ -91,7 +91,7 @@ class MemcachedTest < Test::Unit::TestCase
   def test_options_are_set
     Memcached::DEFAULTS.merge(@noblock_options).each do |key, expected|
       value = @noblock_cache.options[key]
-      unless key == :rcv_timeout or key == :poll_timeout
+      unless key == :rcv_timeout or key == :poll_timeout or key == :prefix_key
         assert(expected == value, "#{key} should be #{expected} but was #{value}")
       end
     end
@@ -135,21 +135,17 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_set_prefix_key
     cache = Memcached.new @servers, :prefix_key => "foo"
-    cache.prefix_key = "bar"
+    cache.set_prefix_key("bar")
     assert_equal "bar", cache.prefix_key
   end
 
-  def test_set_prefix_key_to_empty_string
+  def test_set_prefix_key_to_nil
     cache = Memcached.new @servers, :prefix_key => "foo"
-    cache.prefix_key = "" 
-    assert_equal "", cache.prefix_key
-  end
+    cache.set(key, 1)
 
-  def test_memcached_callback_set_with_empty_string_should_not_raise_exception
-    cache = Memcached.new @servers, :prefix_key => "foo"
-    assert_nothing_raised do
-      cache.prefix_key = ""
-    end
+    cache.set_prefix_key(nil)
+    assert_equal nil, cache.prefix_key
+    assert_equal 1, cache.get("foo" + key)
   end
 
   def test_initialize_negative_behavior

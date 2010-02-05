@@ -105,11 +105,6 @@ class Memcached
     rescue NotStored
     end
 
-    # Namespace accessor.
-    def namespace
-      options[:prefix_key]
-    end
-
     alias :flush_all :flush
 
     alias :"[]" :get
