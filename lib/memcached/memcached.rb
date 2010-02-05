@@ -193,6 +193,26 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   alias :dup :clone #:nodoc:
   #:startdoc:
 
+  # change the prefix_key after we're in motion
+  def prefix_key=(key)
+    unless key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
+      raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
+    end
+    ret = Lib.memcached_callback_set(@struct, 
+      Lib::MEMCACHED_CALLBACK_PREFIX_KEY, 
+      "#{key}#{options[:prefix_delimiter]}")
+      
+    check_return_code(ret)
+  end
+  alias namespace= prefix_key=
+
+  # report the prefix_key
+  def prefix_key
+    @struct.prefix_key[0..-1 - options[:prefix_delimiter].size]
+  end
+  alias namespace prefix_key
+
+
 ### Configuration helpers
 
   private
@@ -480,21 +500,6 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
     end
   end
-
-  def prefix_key=(key)
-    return unless key
-    unless key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
-      raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
-    end
-
-    Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, "#{key}#{options[:prefix_delimiter]}")
-  end
-  alias namespace= prefix_key= 
-
-  def prefix_key
-    @struct.prefix_key[0..-1 - (options[:prefix_delimiter]||'').size]
-  end
-  alias namespace prefix_key
 
   def is_unix_socket?(server)
     server.type == Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
