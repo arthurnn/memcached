@@ -1818,9 +1818,8 @@ int SWIG_Ruby_arity( VALUE proc, int minimal )
 #define SWIGTYPE_p_time_t swig_types[29]
 #define SWIGTYPE_p_uint32_t swig_types[30]
 #define SWIGTYPE_p_uint64_t swig_types[31]
-#define SWIGTYPE_p_void swig_types[32]
-static swig_type_info *swig_types[34];
-static swig_module_info swig_module = {swig_types, 33, 0, 0, 0, 0};
+static swig_type_info *swig_types[33];
+static swig_module_info swig_module = {swig_types, 32, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -5645,7 +5644,10 @@ _wrap_MemcachedSt_user_data_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_st *)(argp1);
   result = (void *) ((arg1)->user_data);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  {
+    vresult = rb_str_new2(result);
+    // free(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -8269,7 +8271,10 @@ _wrap_memcached_callback_get(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (memcached_callback)(val2);
   result = (void *)memcached_callback_get(arg1,arg2,arg3);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  {
+    vresult = rb_str_new2(result);
+    // free(result);
+  }
   if (SWIG_IsTmpObj(res3)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_short((*arg3)));
   } else {
@@ -8484,7 +8489,10 @@ _wrap_memcached_get_user_data(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (memcached_st *)(argp1);
   result = (void *)memcached_get_user_data(arg1);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  {
+    vresult = rb_str_new2(result);
+    // free(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -8512,7 +8520,10 @@ _wrap_memcached_set_user_data(int argc, VALUE *argv, VALUE self) {
     arg2 = STR2CSTR(argv[1]);
   }
   result = (void *)memcached_set_user_data(arg1,arg2);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  {
+    vresult = rb_str_new2(result);
+    // free(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -12273,7 +12284,6 @@ static swig_type_info _swigt__p_size_t = {"_p_size_t", "size_t *", 0, 0, (void*)
 static swig_type_info _swigt__p_time_t = {"_p_time_t", "time_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_uint32_t = {"_p_uint32_t", "uint32_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_uint64_t = {"_p_uint64_t", "uint64_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_addrinfo,
@@ -12308,7 +12318,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_time_t,
   &_swigt__p_uint32_t,
   &_swigt__p_uint64_t,
-  &_swigt__p_void,
 };
 
 static swig_cast_info _swigc__p_addrinfo[] = {  {&_swigt__p_addrinfo, 0, 0, 0},{0, 0, 0, 0}};
@@ -12343,7 +12352,6 @@ static swig_cast_info _swigc__p_size_t[] = {  {&_swigt__p_size_t, 0, 0, 0},{0, 0
 static swig_cast_info _swigc__p_time_t[] = {  {&_swigt__p_time_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_uint32_t[] = {  {&_swigt__p_uint32_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_uint64_t[] = {  {&_swigt__p_uint64_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_addrinfo,
@@ -12378,7 +12386,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_time_t,
   _swigc__p_uint32_t,
   _swigc__p_uint64_t,
-  _swigc__p_void,
 };
 
 

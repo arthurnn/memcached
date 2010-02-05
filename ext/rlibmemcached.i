@@ -99,10 +99,9 @@
 };
 
 // Void type strings without lengths for prefix_key callback
-// Currently not used currently by the gem
+// Currently not used by the gem
 %typemap(out) (void *) {
  $result = rb_str_new2($1);
- // free($1);
 };
 
 // String for memcached_fetch
