@@ -48,7 +48,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_initialize
     cache = Memcached.new @servers, :prefix_key => 'test'
-    assert_equal 'test', cache.options[:prefix_key]
+    assert_equal 'test', cache.prefix_key
     assert_equal 3, cache.send(:server_structs).size
     assert_equal 'localhost', cache.send(:server_structs).first.hostname
     assert_equal 43042, cache.send(:server_structs).first.port
@@ -91,7 +91,7 @@ class MemcachedTest < Test::Unit::TestCase
   def test_options_are_set
     Memcached::DEFAULTS.merge(@noblock_options).each do |key, expected|
       value = @noblock_cache.options[key]
-      unless key == :rcv_timeout or key == :poll_timeout
+      unless key == :rcv_timeout or key == :poll_timeout or key == :prefix_key
         assert(expected == value, "#{key} should be #{expected} but was #{value}")
       end
     end

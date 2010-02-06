@@ -53,7 +53,8 @@ Weights only affect Ketama hashing.  If you use Ketama hashing and don't specify
 
 Valid option parameters are:
 
-<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 127.
+<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 127. Defaults to nil (do not prefix).
+<tt>:prefix_delimiter</tt>:: A character to postpend to the prefix key. Defaults to the empty string.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:fnv1_32</tt> is fast and well known, and is the default. Use <tt>:md5</tt> for compatibility with other ketama clients.
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent_ketama</tt>, <tt>:consistent_wheel</tt>, or <tt>:ketama</tt>. Defaults to <tt>:ketama</tt>.
 <tt>:server_failure_limit</tt>:: How many consecutive failures to allow before marking a host as dead. Has no effect unless <tt>:retry_timeout</tt> is also set.
@@ -96,9 +97,6 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     # Disallow weights without ketama
     options.delete(:ketama_weighted) if options[:distribution] != :consistent_ketama
 
-    # Legacy accessor
-    options[:prefix_key] = options.delete(:namespace) if options[:namespace]
-
     # Disallow :sort_hosts with consistent hashing
     if options[:sort_hosts] and options[:distribution] == :consistent
       raise ArgumentError, ":sort_hosts defeats :consistent hashing"
@@ -110,7 +108,9 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
     # Set the behaviors on the struct
     set_behaviors
-    set_callbacks
+
+    # Set the prefix key. Support the legacy name.
+    set_prefix_key(options.delete(:prefix_key) || options.delete(:namespace))
 
     # Freeze the hash
     options.freeze
@@ -158,6 +158,25 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       inspect_server(server)
     end
   end
+  
+  # Set the prefix key.
+  def set_prefix_key(key)    
+    if key and key.size > 0
+      key += options[:prefix_delimiter]
+      raise ArgumentError, "Max prefix key + prefix delimiter size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}" unless 
+        key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
+      check_return_code(Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, key))
+    elsif prefix_key != key
+      reset(nil, false)
+    end
+  end
+  alias :set_namespace :set_prefix_key
+
+  # Return the current prefix key.
+  def prefix_key
+    @struct.prefix_key[0..-1 - options[:prefix_delimiter].size] if @struct.prefix_key.size > 0
+  end  
+  alias :namespace :prefix_key
 
   # Safely copy this instance. Returns a Memcached instance.
   #
@@ -174,12 +193,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   end
 
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
-  def reset(current_servers = nil)
+  def reset(current_servers = nil, with_prefix_key = true)
     current_servers ||= servers
+    prev_prefix_key = prefix_key
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
+    set_prefix_key(prev_prefix_key) if with_prefix_key
     set_behaviors
-    set_callbacks
     set_servers(current_servers)
   end
 
@@ -391,11 +411,14 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Return the server used by a particular key.
   def server_by_key(key)
-    ret = Lib.memcached_server_by_key(@struct, key)
+    ret = Lib.memcached_server_by_key(@struct, key)    
     if ret.is_a?(Array)
-      string = inspect_server(ret.first) 
+      check_return_code(ret.last)
+      string = inspect_server(ret.first)
       Rlibmemcached.memcached_server_free(ret.first)
       string
+    else
+      check_return_code(ret)
     end
   end
 
@@ -488,17 +511,6 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     end
     # BUG Hash must be last due to the weird Libmemcached multi-behaviors
     set_behavior(:hash, options[:hash])
-  end
-
-  # Set the callbacks on the struct from the current options.
-  def set_callbacks
-    # Only support prefix_key for now
-    if options[:prefix_key]
-      unless options[:prefix_key].size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
-        raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
-      end
-      Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, options[:prefix_key])
-    end
   end
 
   def is_unix_socket?(server)

@@ -5,16 +5,16 @@ HERE = File.expand_path(File.dirname(__FILE__))
 BUNDLE = Dir.glob("libmemcached-*.tar.gz").first
 BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 
+$CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "")
+$LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".gsub("$(ldflags)", "")
+$CXXFLAGS = " -std=gnu++98"
+$CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
+
 if ENV['DEBUG']
   puts "Setting debug flags."
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
   $EXTRA_CONF = " --enable-debug"
 end
-
-$CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "")
-$LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".gsub("$(ldflags)", "")
-$CXXFLAGS = " -std=gnu++98"
-$CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
 
 if !ENV["EXTERNAL_LIB"]
   $includes = " -I#{HERE}/include"

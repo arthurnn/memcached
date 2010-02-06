@@ -98,6 +98,12 @@
  $result = UINT2NUM($1);
 };
 
+// Void type strings without lengths for prefix_key callback
+// Currently not used by the gem
+%typemap(out) (void *) {
+ $result = rb_str_new2($1);
+};
+
 // String for memcached_fetch
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
   char string[256];
