@@ -28,7 +28,7 @@
 %apply unsigned long long { uint64_t data, uint64_t cas };
 
 // Array of strings map for multiget
-%typemap(in) (const char **keys, size_t *key_length, size_t number_of_keys) {
+%typemap(in) (const char * const *keys, const size_t *key_length, size_t number_of_keys) {
   int i;
   Check_Type($input, T_ARRAY);
   $3 = (unsigned int) RARRAY_LEN($input);
