@@ -17,17 +17,17 @@ class Memcached
     :tcp_nodelay => false,
     :show_backtraces => false,
     :retry_timeout => 30,
-    :timeout => 0.25,
+    :timeout => 4,
     :rcv_timeout => nil,
     :poll_timeout => nil,
-    :connect_timeout => 2,
+    :connect_timeout => 4,
     :prefix_key => nil,
     :hash_with_prefix_key => true,
     :default_ttl => 604800,
     :default_weight => 8,
     :sort_hosts => false,
     :auto_eject_hosts => true,
-    :server_failure_limit => 2,
+    :server_failure_limit => 4,
     :verify_key => true,
     :use_udp => false,
     :binary_protocol => false,
@@ -91,8 +91,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     @options = DEFAULTS.merge(opts)
     @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
     @default_ttl = options[:default_ttl]
-    
-    if servers == nil 
+
+    if servers == nil
       if ENV.key?("MEMCACHE_SERVERS")
         servers = ENV["MEMCACHE_SERVERS"].split(",").map do | s | s.strip end
       else
@@ -140,9 +140,9 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     # Not found exceptions
     unless options[:show_backtraces]
       @not_found = NotFound.new
-      @not_found.no_backtrace = true      
+      @not_found.no_backtrace = true
       @not_stored = NotStored.new
-      @not_stored.no_backtrace = true      
+      @not_stored.no_backtrace = true
     end
 
     ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
@@ -169,7 +169,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       # Network
       elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
         host, port, weight = server.split(":")
-        args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]                
+        args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]
         if options[:use_udp] #
           check_return_code(Lib.memcached_server_add_udp_with_weight(*args))
         else
@@ -261,7 +261,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       key
     )
   rescue ClientError
-    # FIXME Memcached 1.2.8 occasionally rejects valid sets 
+    # FIXME Memcached 1.2.8 occasionally rejects valid sets
     tried = 1 and retry unless defined?(tried)
     raise
   end
@@ -407,7 +407,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   def server_by_key(key)
     ret = Lib.memcached_server_by_key(@struct, key)
     if ret.is_a?(Array)
-      string = inspect_server(ret.first) 
+      string = inspect_server(ret.first)
       Rlibmemcached.memcached_server_free(ret.first)
       string
     end
@@ -523,7 +523,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   def inspect_server(server)
     strings = [server.hostname]
     if !is_unix_socket?(server)
-      strings << ":#{server.port}"      
+      strings << ":#{server.port}"
       strings << ":#{server.weight}" if options[:ketama_weighted]
     end
     strings.join
