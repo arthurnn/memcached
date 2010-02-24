@@ -101,7 +101,7 @@ There is a compatibility wrapper for legacy applications called Memcached::Rails
 
 == Reporting problems
 
-The support forum is here[http://rubyforge.org/forum/forum.php?forum_id=20894].
+The support forum is here[http://github.com/fauna/memcached/issues].
 
 Patches and contributions are very welcome. Please note that contributors are required to assign copyright for their additions to Cloudburst, LLC.
 
