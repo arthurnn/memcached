@@ -32,10 +32,14 @@ if !ENV["EXTERNAL_LIB"]
       puts "Building libmemcached."
       puts(cmd = "tar xzf #{BUNDLE} 2>&1")
       raise "'#{cmd}' failed" unless system(cmd)
-      
+
+      puts "Patching libmemcached."
+      puts(cmd = "patch -p1 -d #{BUNDLE_PATH} < libmemcached.patch")
+      raise "'#{cmd}' failed" unless system(cmd)
+
       Dir.chdir(BUNDLE_PATH) do        
         puts(cmd = "env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1")
-        
+
         raise "'#{cmd}' failed" unless system(cmd)
         puts(cmd = "make CXXFLAGS='#{$CXXFLAGS}' || true 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
