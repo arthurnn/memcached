@@ -3,7 +3,6 @@
 The Memcached client class.
 =end
 class Memcached
-
   FLAGS = 0x0
 
   DEFAULTS = {
@@ -22,7 +21,7 @@ class Memcached
     :poll_timeout => nil,
     :connect_timeout => 2,
     :prefix_key => nil,
-    :prefix_delimiter => "",
+    :prefix_delimiter => '',
     :hash_with_prefix_key => true,
     :default_ttl => 604800,
     :default_weight => 8,
@@ -161,13 +160,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   
   # Set the prefix key.
   def set_prefix_key(key)    
-    if key and key.size > 0
+    if key
       key += options[:prefix_delimiter]
       raise ArgumentError, "Max prefix key + prefix delimiter size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}" unless 
         key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
       check_return_code(Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, key))
-    elsif prefix_key != key
-      reset(nil, false)
+    else
+      check_return_code(Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, ""))
     end
   end
   alias :set_namespace :set_prefix_key
@@ -212,6 +211,26 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   #:stopdoc:
   alias :dup :clone #:nodoc:
   #:startdoc:
+
+  # change the prefix_key after we're in motion
+  def prefix_key=(key)
+    unless key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
+      raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
+    end
+    ret = Lib.memcached_callback_set(@struct, 
+      Lib::MEMCACHED_CALLBACK_PREFIX_KEY, 
+      "#{key}#{options[:prefix_delimiter]}")
+      
+    check_return_code(ret)
+  end
+  alias namespace= prefix_key=
+
+  # report the prefix_key
+  def prefix_key
+    @struct.prefix_key[0..-1 - options[:prefix_delimiter].size]
+  end
+  alias namespace prefix_key
+
 
 ### Configuration helpers
 

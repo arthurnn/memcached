@@ -5646,7 +5646,6 @@ _wrap_MemcachedSt_user_data_get(int argc, VALUE *argv, VALUE self) {
   result = (void *) ((arg1)->user_data);
   {
     vresult = rb_str_new2(result);
-    // free(result);
   }
   return vresult;
 fail:
@@ -8232,7 +8231,11 @@ _wrap_memcached_callback_set(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (memcached_callback)(val2);
   {
-    arg3 = STR2CSTR(argv[2]);
+    if ( (size_t) RSTRING_LEN(argv[2]) == 0) {
+      arg3 = NULL;
+    } else {
+      arg3 = STR2CSTR(argv[2]);
+    }
   }
   result = (memcached_return)memcached_callback_set(arg1,arg2,arg3);
   vresult = SWIG_From_int((int)(result));
@@ -8273,7 +8276,6 @@ _wrap_memcached_callback_get(int argc, VALUE *argv, VALUE self) {
   result = (void *)memcached_callback_get(arg1,arg2,arg3);
   {
     vresult = rb_str_new2(result);
-    // free(result);
   }
   if (SWIG_IsTmpObj(res3)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_short((*arg3)));
@@ -8491,7 +8493,6 @@ _wrap_memcached_get_user_data(int argc, VALUE *argv, VALUE self) {
   result = (void *)memcached_get_user_data(arg1);
   {
     vresult = rb_str_new2(result);
-    // free(result);
   }
   return vresult;
 fail:
@@ -8517,12 +8518,15 @@ _wrap_memcached_set_user_data(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (memcached_st *)(argp1);
   {
-    arg2 = STR2CSTR(argv[1]);
+    if ( (size_t) RSTRING_LEN(argv[1]) == 0) {
+      arg2 = NULL;
+    } else {
+      arg2 = STR2CSTR(argv[1]);
+    }
   }
   result = (void *)memcached_set_user_data(arg1,arg2);
   {
     vresult = rb_str_new2(result);
-    // free(result);
   }
   return vresult;
 fail:

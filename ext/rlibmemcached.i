@@ -64,7 +64,11 @@
 
 // Void type strings without lengths for prefix_key callback
 %typemap(in) (void *data) {
- $1 = STR2CSTR($input);
+  if ( (size_t) RSTRING_LEN($input) == 0) {
+    $1 = NULL;
+  } else {
+    $1 = STR2CSTR($input);
+  }
 };
 
 %apply (const char *str, size_t len) {
