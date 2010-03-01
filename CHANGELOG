@@ -1,4 +1,6 @@
 
+v0.18.1. Support dynamic setting of the namespace (mhat).
+
 v0.18.0. Make Memcached::Rails compatible with Rails 2.3.2 (Ian Fung).
 
 v0.17.7. Disable dependency tracking.
