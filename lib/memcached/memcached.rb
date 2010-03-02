@@ -16,10 +16,10 @@ class Memcached
     :tcp_nodelay => false,
     :show_backtraces => false,
     :retry_timeout => 30,
-    :timeout => 0.25,
+    :timeout => 4,
     :rcv_timeout => nil,
     :poll_timeout => nil,
-    :connect_timeout => 2,
+    :connect_timeout => 4,
     :prefix_key => nil,
     :prefix_delimiter => '',
     :hash_with_prefix_key => true,
@@ -27,10 +27,11 @@ class Memcached
     :default_weight => 8,
     :sort_hosts => false,
     :auto_eject_hosts => true,
-    :server_failure_limit => 2,
+    :server_failure_limit => 4,
     :verify_key => true,
     :use_udp => false,
-    :binary_protocol => false
+    :binary_protocol => false,
+    :credentials => nil
   }
 
 #:stopdoc:
@@ -79,14 +80,41 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
 =end
 
-  def initialize(servers = "localhost:11211", opts = {})
+  # Track structs so we can free them
+  @@structs = {}
+
+  def self.finalize(id)
+    # Don't leak clients!
+    struct = @@structs[id]
+    @@structs.delete(id)
+    # Don't leak authentication data either. This will silently fail if it's not set.
+    Lib.memcached_destroy_sasl_auth_data(struct)
+    Lib.memcached_free(struct)
+  end
+
+  def initialize(servers = nil, opts = {})
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
+    @@structs[object_id] = @struct
 
     # Merge option defaults and discard meaningless keys
     @options = DEFAULTS.merge(opts)
     @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
     @default_ttl = options[:default_ttl]
+
+    if servers == nil
+      if ENV.key?("MEMCACHE_SERVERS")
+        servers = ENV["MEMCACHE_SERVERS"].split(",").map do | s | s.strip end
+      else
+        servers = "127.0.0.1:11211"
+      end
+    end
+
+    if options[:credentials] == nil && ENV.key?("MEMCACHE_USERNAME") && ENV.key?("MEMCACHE_PASSWORD")
+      options[:credentials] = [ENV["MEMCACHE_USERNAME"], ENV["MEMCACHE_PASSWORD"]]
+    end
+
+    options[:binary_protocol] = true if options[:credentials] != nil
 
     # Force :buffer_requests to use :no_block
     # XXX Deleting the :no_block key should also work, but libmemcached doesn't seem to set it
@@ -105,11 +133,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     options[:rcv_timeout] ||= options[:timeout] || 0
     options[:poll_timeout] ||= options[:timeout] || 0
 
-    # Set the behaviors on the struct
-    set_behaviors
-
     # Set the prefix key. Support the legacy name.
     set_prefix_key(options.delete(:prefix_key) || options.delete(:namespace))
+
+    # Set the behaviors and credentials on the struct
+    set_behaviors
+    set_credentials
 
     # Freeze the hash
     options.freeze
@@ -120,10 +149,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     # Not found exceptions
     unless options[:show_backtraces]
       @not_found = NotFound.new
-      @not_found.no_backtrace = true      
+      @not_found.no_backtrace = true
       @not_stored = NotStored.new
-      @not_stored.no_backtrace = true      
+      @not_stored.no_backtrace = true
     end
+
+    ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
+
   end
 
   # Set the server list.
@@ -137,7 +169,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       # Network
       elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
         host, port, weight = server.split(":")
-        args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]                
+        args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]
         if options[:use_udp] #
           check_return_code(Lib.memcached_server_add_udp_with_weight(*args))
         else
@@ -188,17 +220,24 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     # struct = Lib.memcached_clone(nil, @struct)
     # memcached.instance_variable_set('@struct', struct)
     # memcached
-    self.class.new(servers, options)
+    self.class.new(servers, options.merge(:prefix_key => prefix_key)
   end
 
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
   def reset(current_servers = nil, with_prefix_key = true)
+    # Store state and teardown
     current_servers ||= servers
     prev_prefix_key = prefix_key
+    self.class.finalize(object_id)
+    
+    # Create
+    # FIXME Duplicates logic with initialize()
     @struct = Lib::MemcachedSt.new
     Lib.memcached_create(@struct)
+    @@structs[object_id] = @struct
     set_prefix_key(prev_prefix_key) if with_prefix_key
     set_behaviors
+    set_credentials
     set_servers(current_servers)
   end
 
@@ -266,7 +305,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       key
     )
   rescue ClientError
-    # FIXME Memcached 1.2.8 occasionally rejects valid sets 
+    # FIXME Memcached 1.2.8 occasionally rejects valid sets
     tried = 1 and retry unless defined?(tried)
     raise
   end
@@ -422,10 +461,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   end
 
   # Return a Hash of statistics responses from the set of servers. Each value is an array with one entry for each server, in the same order the servers were defined.
-  def stats
+  def stats(subcommand=nil)
     stats = Hash.new([])
 
-    stat_struct, ret = Lib.memcached_stat(@struct, "")
+    stat_struct, ret = Lib.memcached_stat(@struct, subcommand)
     check_return_code(ret)
 
     keys, ret = Lib.memcached_stat_get_keys(@struct, stat_struct)
@@ -512,6 +551,14 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     set_behavior(:hash, options[:hash])
   end
 
+  # Set the SASL credentials from the current options. If credentials aren't 
+  # provided, try to get them from the environment.
+  def set_credentials
+    if options[:credentials]      
+      check_return_code(Lib.memcached_set_sasl_auth_data(@struct, *options[:credentials]))
+    end
+  end
+  
   def is_unix_socket?(server)
     server.type == Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
   end
@@ -520,7 +567,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   def inspect_server(server)
     strings = [server.hostname]
     if !is_unix_socket?(server)
-      strings << ":#{server.port}"      
+      strings << ":#{server.port}"
       strings << ":#{server.weight}" if options[:ketama_weighted]
     end
     strings.join

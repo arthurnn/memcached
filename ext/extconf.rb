@@ -18,6 +18,7 @@ end
 
 if !ENV["EXTERNAL_LIB"]
   $includes = " -I#{HERE}/include"
+  $defines = " -DLIBMEMCACHED_WITH_SASL_SUPPORT"
   $libraries = " -L#{HERE}/lib"
   $CFLAGS = "#{$includes} #{$libraries} #{$CFLAGS}"
   $LDFLAGS = "#{$libraries} #{$LDFLAGS}"
@@ -31,17 +32,18 @@ if !ENV["EXTERNAL_LIB"]
       puts "Building libmemcached."
       puts(cmd = "tar xzf #{BUNDLE} 2>&1")
       raise "'#{cmd}' failed" unless system(cmd)
-      
-      puts "Patching libmemcached."
-      puts(cmd = "patch -p1 < libmemcached.patch")
+
+      puts "Patching libmemcached source."
+      puts(cmd = "patch -p1 -d #{BUNDLE_PATH} < libmemcached.patch")
       raise "'#{cmd}' failed" unless system(cmd)
 
       Dir.chdir(BUNDLE_PATH) do        
         puts(cmd = "env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1")
-        
         raise "'#{cmd}' failed" unless system(cmd)
+
         puts(cmd = "make CXXFLAGS='#{$CXXFLAGS}' || true 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
+        
         puts(cmd = "make install || true 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
       end
@@ -55,12 +57,12 @@ if !ENV["EXTERNAL_LIB"]
     system("cp -f libmemcached.a libmemcached_gem.a") 
     system("cp -f libmemcached.la libmemcached_gem.la") 
   end
-  $LIBS << " -lmemcached_gem"
+  $LIBS << " -lmemcached_gem -lsasl2"
 end
 
 if ENV['SWIG']
   puts "Running SWIG."
-  puts(cmd = "swig #{$includes} -ruby -autorename rlibmemcached.i")
+  puts(cmd = "swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i")
   raise "'#{cmd}' failed" unless system(cmd)
 end
 

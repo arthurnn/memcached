@@ -1,4 +1,6 @@
 
+v0.19. Update libemcached to 0.38 and support SASL (seanlynch).
+
 v0.18.1. Support dynamic setting of the namespace (mhat).
 
 v0.18.0. Make Memcached::Rails compatible with Rails 2.3.2 (Ian Fung).
