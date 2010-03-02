@@ -80,20 +80,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
 =end
 
-  # Track structs so we can free them
-  @@structs = {}
-
-  def self.finalize(id)
-    # Don't leak clients!
-    if struct = @@structs.delete(id)    
-      Lib.memcached_destroy_sasl_auth_data(struct)
-      Lib.memcached_free(struct)
-    end
-  end
-
   def initialize(servers = nil, opts = {})
-    @struct = Lib.memcached_create(@struct)
-    @@structs[object_id] = @struct
+    @struct = Lib.memcached_create(nil)
 
     # Merge option defaults and discard meaningless keys
     @options = DEFAULTS.merge(opts)
@@ -151,9 +139,6 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       @not_stored = NotStored.new
       @not_stored.no_backtrace = true
     end
-
-    ObjectSpace.define_finalizer(self, self.class.method(:finalize).to_proc)
-
   end
 
   # Set the server list.
@@ -230,12 +215,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     # Store state and teardown
     current_servers ||= servers
     prev_prefix_key = prefix_key
-    self.class.finalize(object_id)
-    
+
     # Create
     # FIXME Duplicates logic with initialize()
-    @struct = Lib.memcached_create(@struct)
-    @@structs[object_id] = @struct
+    @struct = Lib.memcached_create(nil)
     set_prefix_key(prev_prefix_key) if with_prefix_key
     set_behaviors
     set_credentials
@@ -381,7 +364,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
     value, flags, ret = Lib.memcached_get_rvalue(@struct, key)
     check_return_code(ret, key)
-    cas = @struct.result.cas
+    cas = @struct.result.item_cas
 
     value = Marshal.load(value) if marshal
     value = yield value

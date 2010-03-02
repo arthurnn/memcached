@@ -4576,11 +4576,6 @@ fail:
 }
 
 
-SWIGINTERN void
-free_memcached_st(struct memcached_st *arg1) {
-    free((char *) arg1);
-}
-
 swig_class SwigClassMemcachedStOptions;
 
 SWIGINTERN VALUE
@@ -16996,7 +16991,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_method(SwigClassMemcachedSt.klass, "flags", _wrap_MemcachedSt_flags_get, -1);
   rb_define_method(SwigClassMemcachedSt.klass, "state", _wrap_MemcachedSt_state_get, -1);
   SwigClassMemcachedSt.mark = 0;
-  SwigClassMemcachedSt.destroy = (void (*)(void *)) free_memcached_st;
+  SwigClassMemcachedSt.destroy = (void (*)(void *)) memcached_free;
   SwigClassMemcachedSt.trackObjects = 0;
   
   SwigClassMemcachedStOptions.klass = rb_define_class_under(mRlibmemcached, "MemcachedStOptions", rb_cObject);

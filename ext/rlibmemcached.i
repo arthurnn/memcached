@@ -13,8 +13,9 @@
 %include "typemaps.i"
 %include "libmemcached/visibility.h"
 
-// Register libmemcached's struct free function to prevent memory leaks
-// %freefunc memcached_st "memcached_free";
+// Register libmemcached's struct free functions to prevent memory leaks
+// memcached_free() automatically calls memcached_destroy_sasl_auth_data()
+%freefunc memcached_st "memcached_free";
 %freefunc memcached_server_st "memcached_server_free";
 
 // %trackobjects; // Doesn't fix any interesting leaks
@@ -164,8 +165,6 @@
 %include "libmemcached/string.h"
 %include "libmemcached/verbosity.h"
 %include "libmemcached/version.h"
-
-//// Custom C functions
 
 //// Manual wrappers
 
