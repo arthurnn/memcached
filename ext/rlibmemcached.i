@@ -139,12 +139,12 @@
 
 %include "libmemcached/visibility.h"
 %include "libmemcached/memcached.h"
-%include "libmemcached/memcached_constants.h"
-%include "libmemcached/memcached_get.h"
-%include "libmemcached/memcached_storage.h"
-%include "libmemcached/memcached_result.h"
-%include "libmemcached/memcached_server.h"
-%include "libmemcached/memcached_sasl.h"
+%include "libmemcached/constants.h"
+%include "libmemcached/get.h"
+%include "libmemcached/storage.h"
+%include "libmemcached/result.h"
+%include "libmemcached/server.h"
+%include "libmemcached/sasl.h"
 
 //// Custom C functions
 
