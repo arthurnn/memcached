@@ -76,8 +76,8 @@ class Memcached
     end
 
     # Wraps Memcached#delete so that it doesn't raise.
-    def delete(key)
-      super
+    def delete(key, expiry=0)
+      super(key)
     rescue NotFound
     end
 
