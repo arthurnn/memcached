@@ -18,7 +18,6 @@ end
 
 if !ENV["EXTERNAL_LIB"]
   $includes = " -I#{HERE}/include"
-  $defines = " -DLIBMEMCACHED_WITH_SASL_SUPPORT"
   $libraries = " -L#{HERE}/lib"
   $CFLAGS = "#{$includes} #{$libraries} #{$CFLAGS}"
   $LDFLAGS = "#{$libraries} #{$LDFLAGS}"
@@ -62,7 +61,7 @@ end
 
 if ENV['SWIG']
   puts "Running SWIG."
-  puts(cmd = "swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i")
+  puts(cmd = "swig #{$includes} -ruby -autorename rlibmemcached.i")
   raise "'#{cmd}' failed" unless system(cmd)
 end
 

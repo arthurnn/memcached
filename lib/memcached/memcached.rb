@@ -85,16 +85,14 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   def self.finalize(id)
     # Don't leak clients!
-    struct = @@structs[id]
-    @@structs.delete(id)
-    # Don't leak authentication data either. This will silently fail if it's not set.
-    Lib.memcached_destroy_sasl_auth_data(struct)
-    Lib.memcached_free(struct)
+    if struct = @@structs.delete(id)    
+      Lib.memcached_destroy_sasl_auth_data(struct)
+      Lib.memcached_free(struct)
+    end
   end
 
   def initialize(servers = nil, opts = {})
-    @struct = Lib::MemcachedSt.new
-    Lib.memcached_create(@struct)
+    @struct = Lib.memcached_create(@struct)
     @@structs[object_id] = @struct
 
     # Merge option defaults and discard meaningless keys
@@ -236,8 +234,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     
     # Create
     # FIXME Duplicates logic with initialize()
-    @struct = Lib::MemcachedSt.new
-    Lib.memcached_create(@struct)
+    @struct = Lib.memcached_create(@struct)
     @@structs[object_id] = @struct
     set_prefix_key(prev_prefix_key) if with_prefix_key
     set_behaviors
@@ -280,8 +277,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Return an array of raw <tt>memcached_host_st</tt> structs for this instance.
   def server_structs
     array = []
-    if @struct.hosts
-      @struct.hosts.count.times do |i|
+    if @struct.servers
+      @struct.number_of_hosts.times do |i|
         array << Lib.memcached_select_server_at(@struct, i)
       end
     end

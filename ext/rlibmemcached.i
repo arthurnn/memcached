@@ -1,7 +1,6 @@
 %module rlibmemcached
 %{
 #include <sasl/sasl.h>
-#include <libmemcached/visibility.h>
 #include <libmemcached/memcached.h>
 %}
 
@@ -15,7 +14,7 @@
 %include "libmemcached/visibility.h"
 
 // Register libmemcached's struct free function to prevent memory leaks
-%freefunc memcached_st "memcached_free";
+// %freefunc memcached_st "memcached_free";
 %freefunc memcached_server_st "memcached_server_free";
 
 // %trackobjects; // Doesn't fix any interesting leaks
@@ -23,7 +22,7 @@
 //// Input maps
 
 %apply unsigned short { uint8_t };
-%apply unsigned int { uint16_t };
+%apply unsigned int { uint16_t,  in_port_t };
 %apply unsigned long { uint32_t flags, uint32_t offset, uint32_t weight };
 %apply unsigned long long { uint64_t data, uint64_t cas };
 
@@ -137,14 +136,34 @@
 
 //// SWIG includes, for functions, constants, and structs
 
+%include "libmemcached/configure.h"
+%include "libmemcached/types.h"
 %include "libmemcached/visibility.h"
 %include "libmemcached/memcached.h"
+%include "libmemcached/allocators.h"
+%include "libmemcached/analyze.h"
+%include "libmemcached/auto.h"
+%include "libmemcached/behavior.h"
+%include "libmemcached/callback.h"
 %include "libmemcached/constants.h"
+%include "libmemcached/delete.h"
+%include "libmemcached/dump.h"
+%include "libmemcached/fetch.h"
+%include "libmemcached/flush.h"
 %include "libmemcached/get.h"
-%include "libmemcached/storage.h"
+%include "libmemcached/hash.h"
+%include "libmemcached/parse.h"
+%include "libmemcached/quit.h"
 %include "libmemcached/result.h"
-%include "libmemcached/server.h"
 %include "libmemcached/sasl.h"
+%include "libmemcached/server.h"
+%include "libmemcached/server_list.h"
+%include "libmemcached/stats.h"
+%include "libmemcached/storage.h"
+%include "libmemcached/strerror.h"
+%include "libmemcached/string.h"
+%include "libmemcached/verbosity.h"
+%include "libmemcached/version.h"
 
 //// Custom C functions
 
@@ -201,7 +220,7 @@ VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char
 memcached_server_st *memcached_select_server_at(memcached_st *in_ptr, int index);
 %{
 memcached_server_st *memcached_select_server_at(memcached_st *in_ptr, int index) {
-  return &(in_ptr->hosts[index]);
+  return &(in_ptr->servers[index]);
 };
 %}
 
