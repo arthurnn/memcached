@@ -20,7 +20,7 @@ class Memcached
     :rcv_timeout => nil,
     :poll_timeout => nil,
     :connect_timeout => 4,
-    :prefix_key => nil,
+    :prefix_key => '',
     :prefix_delimiter => '',
     :hash_with_prefix_key => true,
     :default_ttl => 604800,
@@ -53,7 +53,7 @@ Weights only affect Ketama hashing.  If you use Ketama hashing and don't specify
 
 Valid option parameters are:
 
-<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 127. Defaults to nil (do not prefix).
+<tt>:prefix_key</tt>:: A string to prepend to every key, for namespacing. Max length is 127. Defaults to the empty string.
 <tt>:prefix_delimiter</tt>:: A character to postpend to the prefix key. Defaults to the empty string.
 <tt>:hash</tt>:: The name of a hash function to use. Possible values are: <tt>:crc</tt>, <tt>:default</tt>, <tt>:fnv1_32</tt>, <tt>:fnv1_64</tt>, <tt>:fnv1a_32</tt>, <tt>:fnv1a_64</tt>, <tt>:hsieh</tt>, <tt>:md5</tt>, and <tt>:murmur</tt>. <tt>:fnv1_32</tt> is fast and well known, and is the default. Use <tt>:md5</tt> for compatibility with other ketama clients.
 <tt>:distribution</tt>:: Either <tt>:modula</tt>, <tt>:consistent_ketama</tt>, <tt>:consistent_wheel</tt>, or <tt>:ketama</tt>. Defaults to <tt>:ketama</tt>.
@@ -163,21 +163,23 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   def set_servers(servers)
     Array(servers).each_with_index do |server, index|
       # Socket
-      if server.is_a?(String) and File.socket?(server)
-        args = [@struct, server, options[:default_weight].to_i]
-        check_return_code(Lib.memcached_server_add_unix_socket_with_weight(*args))
-      # Network
-      elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
-        host, port, weight = server.split(":")
-        args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]
-        if options[:use_udp] #
-          check_return_code(Lib.memcached_server_add_udp_with_weight(*args))
+      check_return_code(
+        if server.is_a?(String) and File.socket?(server)
+          args = [@struct, server, options[:default_weight].to_i]
+          Lib.memcached_server_add_unix_socket_with_weight(*args)
+        # Network
+        elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
+          host, port, weight = server.split(":")
+          args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]
+          if options[:use_udp]
+            Lib.memcached_server_add_udp_with_weight(*args)
+          else
+            Lib.memcached_server_add_with_weight(*args)
+          end
         else
-          check_return_code(Lib.memcached_server_add_with_weight(*args))
+          raise ArgumentError, "Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or  'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached)."
         end
-      else
-        raise ArgumentError, "Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or  'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached)."
-      end
+      )
     end
     # For inspect
     @servers = send(:servers)
@@ -192,14 +194,16 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   
   # Set the prefix key.
   def set_prefix_key(key)    
-    if key
-      key += options[:prefix_delimiter]
-      raise ArgumentError, "Max prefix key + prefix delimiter size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}" unless 
-        key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
-      check_return_code(Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, key))
-    else
-      check_return_code(Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, ""))
-    end
+    check_return_code(
+      if key
+        key += options[:prefix_delimiter]
+        raise ArgumentError, "Max prefix key + prefix delimiter size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}" unless 
+          key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
+        Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, key)
+      else
+        Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, "")
+      end
+    )
   end
   alias :set_namespace :set_prefix_key
 
@@ -220,7 +224,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     # struct = Lib.memcached_clone(nil, @struct)
     # memcached.instance_variable_set('@struct', struct)
     # memcached
-    self.class.new(servers, options.merge(:prefix_key => prefix_key)
+    self.class.new(servers, options.merge(:prefix_key => prefix_key))
   end
 
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
@@ -256,11 +260,9 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     unless key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
       raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
     end
-    ret = Lib.memcached_callback_set(@struct, 
-      Lib::MEMCACHED_CALLBACK_PREFIX_KEY, 
-      "#{key}#{options[:prefix_delimiter]}")
-      
-    check_return_code(ret)
+    check_return_code(
+      Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, "#{key}#{options[:prefix_delimiter]}")
+    )
   end
   alias namespace= prefix_key=
 
@@ -388,7 +390,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     value = yield value
     value = Marshal.dump(value) if marshal
 
-    check_return_code(Lib.memcached_cas(@struct, key, value, ttl, flags, cas), key)
+    check_return_code(
+      Lib.memcached_cas(@struct, key, value, ttl, flags, cas), 
+      key
+    )
   end
 
   alias :compare_and_swap :cas
@@ -461,7 +466,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   end
 
   # Return a Hash of statistics responses from the set of servers. Each value is an array with one entry for each server, in the same order the servers were defined.
-  def stats(subcommand=nil)
+  def stats(subcommand = nil)
     stats = Hash.new([])
 
     stat_struct, ret = Lib.memcached_stat(@struct, subcommand)
@@ -551,11 +556,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     set_behavior(:hash, options[:hash])
   end
 
-  # Set the SASL credentials from the current options. If credentials aren't 
-  # provided, try to get them from the environment.
+  # Set the SASL credentials from the current options. If credentials aren't provided, try to get them from the environment.
   def set_credentials
     if options[:credentials]      
-      check_return_code(Lib.memcached_set_sasl_auth_data(@struct, *options[:credentials]))
+      check_return_code(
+        Lib.memcached_set_sasl_auth_data(@struct, *options[:credentials])
+      )
     end
   end
   
