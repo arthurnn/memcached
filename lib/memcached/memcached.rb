@@ -174,13 +174,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       inspect_server(server)
     end
   end
-  
+
   # Set the prefix key.
-  def set_prefix_key(key)    
+  def set_prefix_key(key)
     check_return_code(
       if key
         key += options[:prefix_delimiter]
-        raise ArgumentError, "Max prefix key + prefix delimiter size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}" unless 
+        raise ArgumentError, "Max prefix key + prefix delimiter size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}" unless
           key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
         Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, key)
       else
@@ -193,7 +193,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Return the current prefix key.
   def prefix_key
     @struct.prefix_key[0..-1 - options[:prefix_delimiter].size] if @struct.prefix_key.size > 0
-  end  
+  end
   alias :namespace :prefix_key
 
   # Safely copy this instance. Returns a Memcached instance.
@@ -371,7 +371,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     value = Marshal.dump(value) if marshal
 
     check_return_code(
-      Lib.memcached_cas(@struct, key, value, ttl, flags, cas), 
+      Lib.memcached_cas(@struct, key, value, ttl, flags, cas),
       key
     )
   end
@@ -434,12 +434,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Return the server used by a particular key.
   def server_by_key(key)
-    ret = Lib.memcached_server_by_key(@struct, key)    
+    ret = Lib.memcached_server_by_key(@struct, key)
     if ret.is_a?(Array)
       check_return_code(ret.last)
-      string = inspect_server(ret.first)
-      Rlibmemcached.memcached_server_free(ret.first)
-      string
+      inspect_server(ret.first)
     else
       check_return_code(ret)
     end
@@ -538,13 +536,13 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Set the SASL credentials from the current options. If credentials aren't provided, try to get them from the environment.
   def set_credentials
-    if options[:credentials]      
+    if options[:credentials]
       check_return_code(
         Lib.memcached_set_sasl_auth_data(@struct, *options[:credentials])
       )
     end
   end
-  
+
   def is_unix_socket?(server)
     server.type == Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
   end
