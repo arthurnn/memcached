@@ -7,7 +7,7 @@ BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 
 $CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "")
 $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".gsub("$(ldflags)", "")
-$CXXFLAGS = " -std=gnu++98"
+$CXXFLAGS = " -std=gnu++98 #{$CFLAGS}"
 $CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
 
 if ENV['DEBUG']
