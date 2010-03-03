@@ -33,7 +33,7 @@
   Check_Type($input, T_ARRAY);
   $3 = (unsigned int) RARRAY_LEN($input);
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
-  $1 = (char **) malloc(($3+1)*sizeof(char *)); 
+  $1 = (char **) malloc(($3+1)*sizeof(char *));
   for(i = 0; i < $3; i ++) {
     Check_Type(RARRAY_PTR($input)[i], T_STRING);
     $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
@@ -45,7 +45,7 @@
   Check_Type($input, T_ARRAY);
   $3 = (unsigned int) RARRAY_LEN($input);
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
-  $1 = (char **) malloc(($3+1)*sizeof(char *)); 
+  $1 = (char **) malloc(($3+1)*sizeof(char *));
   for(i = 0; i < $3; i ++) {
     Check_Type(RARRAY_PTR($input)[i], T_STRING);
     $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
@@ -73,8 +73,8 @@
 };
 
 %apply (const char *str, size_t len) {
-  (const char *namespace, size_t namespace_length), 
-  (const char *key, size_t key_length), 
+  (const char *namespace, size_t namespace_length),
+  (const char *key, size_t key_length),
   (const char *value, size_t value_length)
 };
 
@@ -88,7 +88,7 @@
 
 //// Output maps
 
-%apply unsigned short *OUTPUT {memcached_return *error}
+%apply unsigned short *OUTPUT {memcached_return_t *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
@@ -115,16 +115,16 @@
   size_t length = 0;
   $1 = string;
   $2 = &length;
-}; 
+};
 %typemap(argout) (char *key, size_t *key_length) {
   // Pushes an empty string when *key_length == 0
-  rb_ary_push($result, rb_str_new($1, *$2)); 
-}
+  rb_ary_push($result, rb_str_new($1, *$2));
+};
 
 // Array of strings
 
 %typemap(out) (char **) {
-  int i;  
+  int i;
   VALUE ary = rb_ary_new();
   $result = rb_ary_new();
 
@@ -168,12 +168,12 @@
 
 //// Manual wrappers
 
-// Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because 
-// of the retval/argout split, so it truncates return values with \0 in them. 
-VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
+// Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because
+// of the retval/argout split, so it truncates return values with \0 in them.
+VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return_t *error);
 %{
-VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
-  VALUE ret;  
+VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return_t *error) {
+  VALUE ret;
   size_t value_length;
   char *value = memcached_get(ptr, key, key_length, &value_length, flags, error);
   ret = rb_str_new(value, value_length);
@@ -183,12 +183,12 @@ VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length
 %}
 
 // Multi get
-VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
+VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return_t *error);
 %{
-VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
+VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return_t *error) {
   size_t value_length;
   VALUE result = rb_ary_new();
-  
+
   char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
   if (value == NULL) {
     rb_ary_push(result, Qnil);
@@ -203,9 +203,9 @@ VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, u
 
 // We need to wrap this so it doesn't leak memory. SWIG doesn't want to automatically free. We could
 // maybe use a 'ret' %typemap, but this is ok.
-VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error);
+VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return_t *error);
 %{
-VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error) {
+VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return_t *error) {
   char *str;
   VALUE ret;
   str = memcached_stat_get_value(ptr, stat, key, error);
@@ -235,7 +235,7 @@ memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat
 // Uint32
 VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length, memcached_hash hash_algorithm);
 %{
-VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {  
+VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {
   return UINT2NUM(memcached_generate_hash_value(key, key_length, hash_algorithm));
 };
 %}
