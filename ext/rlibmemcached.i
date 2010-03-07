@@ -1,6 +1,5 @@
 %module rlibmemcached
 %{
-#include <sasl/sasl.h>
 #include <libmemcached/visibility.h>
 #include <libmemcached/memcached.h>
 %}
@@ -28,7 +27,7 @@
 %apply unsigned long long { uint64_t data, uint64_t cas };
 
 // Array of strings map for multiget
-%typemap(in) (const char * const *keys, const size_t *key_length, size_t number_of_keys) {
+%typemap(in) (const char **keys, size_t *key_length, size_t number_of_keys) {
   int i;
   Check_Type($input, T_ARRAY);
   $3 = (unsigned int) RARRAY_LEN($input);
@@ -65,7 +64,11 @@
 
 // Void type strings without lengths for prefix_key callback
 %typemap(in) (void *data) {
- $1 = STR2CSTR($input);
+  if ( (size_t) RSTRING_LEN($input) == 0) {
+    $1 = NULL;
+  } else {
+    $1 = STR2CSTR($input);
+  }
 };
 
 %apply (const char *str, size_t len) {
@@ -97,6 +100,12 @@
 // Uint32
 %typemap(out) (uint32_t) {
  $result = UINT2NUM($1);
+};
+
+// Void type strings without lengths for prefix_key callback
+// Currently not used by the gem
+%typemap(out) (void *) {
+ $result = rb_str_new2($1);
 };
 
 // String for memcached_fetch
@@ -134,7 +143,6 @@
 %include "libmemcached/memcached_storage.h"
 %include "libmemcached/memcached_result.h"
 %include "libmemcached/memcached_server.h"
-%include "libmemcached/memcached_sasl.h"
 
 //// Custom C functions
 
@@ -210,12 +218,5 @@ VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length, memcach
 VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {  
   return UINT2NUM(memcached_generate_hash_value(key, key_length, hash_algorithm));
 };
-%}
-
-// Initialization for SASL
-%init %{
-  if (sasl_client_init(NULL) != SASL_OK) {
-    fprintf(stderr, "Failed to initialized SASL.\n");
-  }
 %}
 

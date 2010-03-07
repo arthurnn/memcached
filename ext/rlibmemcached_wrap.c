@@ -1530,37 +1530,35 @@ SWIG_Ruby_SetModule(swig_module_info *pointer)
 #define SWIGTYPE_p_memcached_analysis_st swig_types[3]
 #define SWIGTYPE_p_memcached_behavior swig_types[4]
 #define SWIGTYPE_p_memcached_callback swig_types[5]
-#define SWIGTYPE_p_memcached_callback_st swig_types[6]
-#define SWIGTYPE_p_memcached_calloc_function swig_types[7]
-#define SWIGTYPE_p_memcached_cleanup_func swig_types[8]
-#define SWIGTYPE_p_memcached_clone_func swig_types[9]
-#define SWIGTYPE_p_memcached_connection swig_types[10]
-#define SWIGTYPE_p_memcached_continuum_item_st swig_types[11]
-#define SWIGTYPE_p_memcached_dump_func swig_types[12]
-#define SWIGTYPE_p_memcached_execute_function swig_types[13]
-#define SWIGTYPE_p_memcached_free_function swig_types[14]
-#define SWIGTYPE_p_memcached_hash swig_types[15]
-#define SWIGTYPE_p_memcached_malloc_function swig_types[16]
-#define SWIGTYPE_p_memcached_realloc_function swig_types[17]
-#define SWIGTYPE_p_memcached_result_st swig_types[18]
-#define SWIGTYPE_p_memcached_return swig_types[19]
-#define SWIGTYPE_p_memcached_server_distribution swig_types[20]
-#define SWIGTYPE_p_memcached_server_function swig_types[21]
-#define SWIGTYPE_p_memcached_server_st swig_types[22]
-#define SWIGTYPE_p_memcached_st swig_types[23]
-#define SWIGTYPE_p_memcached_stat_st swig_types[24]
-#define SWIGTYPE_p_memcached_string_st swig_types[25]
-#define SWIGTYPE_p_memcached_trigger_delete_key swig_types[26]
-#define SWIGTYPE_p_memcached_trigger_key swig_types[27]
-#define SWIGTYPE_p_p_char swig_types[28]
-#define SWIGTYPE_p_sasl_callback_t swig_types[29]
-#define SWIGTYPE_p_size_t swig_types[30]
-#define SWIGTYPE_p_time_t swig_types[31]
-#define SWIGTYPE_p_uint32_t swig_types[32]
-#define SWIGTYPE_p_uint64_t swig_types[33]
-#define SWIGTYPE_p_void swig_types[34]
-static swig_type_info *swig_types[36];
-static swig_module_info swig_module = {swig_types, 35, 0, 0, 0, 0};
+#define SWIGTYPE_p_memcached_calloc_function swig_types[6]
+#define SWIGTYPE_p_memcached_cleanup_func swig_types[7]
+#define SWIGTYPE_p_memcached_clone_func swig_types[8]
+#define SWIGTYPE_p_memcached_connection swig_types[9]
+#define SWIGTYPE_p_memcached_continuum_item_st swig_types[10]
+#define SWIGTYPE_p_memcached_dump_func swig_types[11]
+#define SWIGTYPE_p_memcached_execute_function swig_types[12]
+#define SWIGTYPE_p_memcached_free_function swig_types[13]
+#define SWIGTYPE_p_memcached_hash swig_types[14]
+#define SWIGTYPE_p_memcached_malloc_function swig_types[15]
+#define SWIGTYPE_p_memcached_realloc_function swig_types[16]
+#define SWIGTYPE_p_memcached_result_st swig_types[17]
+#define SWIGTYPE_p_memcached_return swig_types[18]
+#define SWIGTYPE_p_memcached_server_distribution swig_types[19]
+#define SWIGTYPE_p_memcached_server_function swig_types[20]
+#define SWIGTYPE_p_memcached_server_st swig_types[21]
+#define SWIGTYPE_p_memcached_st swig_types[22]
+#define SWIGTYPE_p_memcached_stat_st swig_types[23]
+#define SWIGTYPE_p_memcached_string_st swig_types[24]
+#define SWIGTYPE_p_memcached_trigger_delete_key swig_types[25]
+#define SWIGTYPE_p_memcached_trigger_key swig_types[26]
+#define SWIGTYPE_p_p_char swig_types[27]
+#define SWIGTYPE_p_sasl_callback_t swig_types[28]
+#define SWIGTYPE_p_size_t swig_types[29]
+#define SWIGTYPE_p_time_t swig_types[30]
+#define SWIGTYPE_p_uint32_t swig_types[31]
+#define SWIGTYPE_p_uint64_t swig_types[32]
+static swig_type_info *swig_types[34];
+static swig_module_info swig_module = {swig_types, 33, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -1579,7 +1577,6 @@ static VALUE mRlibmemcached;
 #define SWIG_as_voidptrptr(a) ((void)SWIG_as_voidptr(*a),(void**)(a)) 
 
 
-#include <sasl/sasl.h>
 #include <libmemcached/visibility.h>
 #include <libmemcached/memcached.h>
 
@@ -4419,60 +4416,6 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_MemcachedSt_last_disconnected_server_set(int argc, VALUE *argv, VALUE self) {
-  struct memcached_st *arg1 = (struct memcached_st *) 0 ;
-  memcached_server_st *arg2 = (memcached_server_st *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "last_disconnected_server" "', argument " "1"" of type '" "struct memcached_st *""'"); 
-  }
-  arg1 = (struct memcached_st *)(argp1);
-  res2 = SWIG_ConvertPtr(argv[0], &argp2,SWIGTYPE_p_memcached_server_st, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "last_disconnected_server" "', argument " "2"" of type '" "memcached_server_st *""'"); 
-  }
-  arg2 = (memcached_server_st *)(argp2);
-  if (arg1) (arg1)->last_disconnected_server = arg2;
-  
-  return Qnil;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_MemcachedSt_last_disconnected_server_get(int argc, VALUE *argv, VALUE self) {
-  struct memcached_st *arg1 = (struct memcached_st *) 0 ;
-  memcached_server_st *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 0) || (argc > 0)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "last_disconnected_server" "', argument " "1"" of type '" "struct memcached_st *""'"); 
-  }
-  arg1 = (struct memcached_st *)(argp1);
-  result = (memcached_server_st *) ((arg1)->last_disconnected_server);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_server_st, 0 |  0 );
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
 _wrap_MemcachedSt_snd_timeout_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   int32_t arg2 ;
@@ -5467,7 +5410,9 @@ _wrap_MemcachedSt_user_data_get(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (struct memcached_st *)(argp1);
   result = (void *) ((arg1)->user_data);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  {
+    vresult = rb_str_new2(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6354,9 +6299,71 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_MemcachedSt_callbacks_set(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_number_of_live_hosts_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
-  memcached_callback_st *arg2 = (memcached_callback_st *) 0 ;
+  uint32_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "number_of_live_hosts" "', argument " "1"" of type '" "struct memcached_st *""'"); 
+  }
+  arg1 = (struct memcached_st *)(argp1);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "number_of_live_hosts" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "number_of_live_hosts" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
+  if (arg1) (arg1)->number_of_live_hosts = arg2;
+  
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_MemcachedSt_number_of_live_hosts_get(int argc, VALUE *argv, VALUE self) {
+  struct memcached_st *arg1 = (struct memcached_st *) 0 ;
+  uint32_t result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "number_of_live_hosts" "', argument " "1"" of type '" "struct memcached_st *""'"); 
+  }
+  arg1 = (struct memcached_st *)(argp1);
+  result =  ((arg1)->number_of_live_hosts);
+  {
+    vresult = UINT2NUM(result);
+  }
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_MemcachedSt_live_host_indices_set(int argc, VALUE *argv, VALUE self) {
+  struct memcached_st *arg1 = (struct memcached_st *) 0 ;
+  uint32_t *arg2 = (uint32_t *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -6367,15 +6374,15 @@ _wrap_MemcachedSt_callbacks_set(int argc, VALUE *argv, VALUE self) {
   }
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "callbacks" "', argument " "1"" of type '" "struct memcached_st *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "live_host_indices" "', argument " "1"" of type '" "struct memcached_st *""'"); 
   }
   arg1 = (struct memcached_st *)(argp1);
-  res2 = SWIG_ConvertPtr(argv[0], &argp2,SWIGTYPE_p_memcached_callback_st, SWIG_POINTER_DISOWN |  0 );
+  res2 = SWIG_ConvertPtr(argv[0], &argp2,SWIGTYPE_p_uint32_t, SWIG_POINTER_DISOWN |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "callbacks" "', argument " "2"" of type '" "memcached_callback_st *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "live_host_indices" "', argument " "2"" of type '" "uint32_t *""'"); 
   }
-  arg2 = (memcached_callback_st *)(argp2);
-  if (arg1) (arg1)->callbacks = arg2;
+  arg2 = (uint32_t *)(argp2);
+  if (arg1) (arg1)->live_host_indices = arg2;
   
   return Qnil;
 fail:
@@ -6384,9 +6391,9 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_MemcachedSt_callbacks_get(int argc, VALUE *argv, VALUE self) {
+_wrap_MemcachedSt_live_host_indices_get(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
-  memcached_callback_st *result = 0 ;
+  uint32_t *result = 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   VALUE vresult = Qnil;
@@ -6396,11 +6403,73 @@ _wrap_MemcachedSt_callbacks_get(int argc, VALUE *argv, VALUE self) {
   }
   res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "callbacks" "', argument " "1"" of type '" "struct memcached_st *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "live_host_indices" "', argument " "1"" of type '" "struct memcached_st *""'"); 
   }
   arg1 = (struct memcached_st *)(argp1);
-  result = (memcached_callback_st *) ((arg1)->callbacks);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_callback_st, 0 |  0 );
+  result = (uint32_t *) ((arg1)->live_host_indices);
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_uint32_t, 0 |  0 );
+  return vresult;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_MemcachedSt_live_host_indices_size_set(int argc, VALUE *argv, VALUE self) {
+  struct memcached_st *arg1 = (struct memcached_st *) 0 ;
+  uint32_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  void *argp2 ;
+  int res2 = 0 ;
+  
+  if ((argc < 1) || (argc > 1)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "live_host_indices_size" "', argument " "1"" of type '" "struct memcached_st *""'"); 
+  }
+  arg1 = (struct memcached_st *)(argp1);
+  {
+    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
+    if (!SWIG_IsOK(res2)) {
+      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "live_host_indices_size" "', argument " "2"" of type '" "uint32_t""'"); 
+    }  
+    if (!argp2) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "live_host_indices_size" "', argument " "2"" of type '" "uint32_t""'");
+    } else {
+      arg2 = *((uint32_t *)(argp2));
+    }
+  }
+  if (arg1) (arg1)->live_host_indices_size = arg2;
+  
+  return Qnil;
+fail:
+  return Qnil;
+}
+
+
+SWIGINTERN VALUE
+_wrap_MemcachedSt_live_host_indices_size_get(int argc, VALUE *argv, VALUE self) {
+  struct memcached_st *arg1 = (struct memcached_st *) 0 ;
+  uint32_t result;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  VALUE vresult = Qnil;
+  
+  if ((argc < 0) || (argc > 0)) {
+    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
+  }
+  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "live_host_indices_size" "', argument " "1"" of type '" "struct memcached_st *""'"); 
+  }
+  arg1 = (struct memcached_st *)(argp1);
+  result =  ((arg1)->live_host_indices_size);
+  {
+    vresult = UINT2NUM(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -6749,118 +6818,6 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_increment_by_key(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  char *arg2 = (char *) 0 ;
-  size_t arg3 ;
-  char *arg4 = (char *) 0 ;
-  size_t arg5 ;
-  uint64_t arg6 ;
-  uint64_t *arg7 = (uint64_t *) 0 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp6 ;
-  int res6 = 0 ;
-  uint64_t temp7 ;
-  int res7 = SWIG_TMPOBJ ;
-  VALUE vresult = Qnil;
-  
-  arg7 = &temp7;
-  if ((argc < 3) || (argc > 3)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_increment_by_key" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  {
-    arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
-  }
-  {
-    res6 = SWIG_ConvertPtr(argv[2], &argp6, SWIGTYPE_p_uint64_t,  0 );
-    if (!SWIG_IsOK(res6)) {
-      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "memcached_increment_by_key" "', argument " "6"" of type '" "uint64_t""'"); 
-    }  
-    if (!argp6) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_increment_by_key" "', argument " "6"" of type '" "uint64_t""'");
-    } else {
-      arg6 = *((uint64_t *)(argp6));
-    }
-  }
-  result = (memcached_return)memcached_increment_by_key(arg1,(char const *)arg2,arg3,(char const *)arg4,arg5,arg6,arg7);
-  vresult = SWIG_From_int((int)(result));
-  if (SWIG_IsTmpObj(res7)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_long_SS_long((*arg7)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res7) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg7), SWIGTYPE_p_uint64_t, new_flags));
-  }
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_decrement_by_key(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  char *arg2 = (char *) 0 ;
-  size_t arg3 ;
-  char *arg4 = (char *) 0 ;
-  size_t arg5 ;
-  uint64_t arg6 ;
-  uint64_t *arg7 = (uint64_t *) 0 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp6 ;
-  int res6 = 0 ;
-  uint64_t temp7 ;
-  int res7 = SWIG_TMPOBJ ;
-  VALUE vresult = Qnil;
-  
-  arg7 = &temp7;
-  if ((argc < 3) || (argc > 3)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_decrement_by_key" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  {
-    arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
-  }
-  {
-    res6 = SWIG_ConvertPtr(argv[2], &argp6, SWIGTYPE_p_uint64_t,  0 );
-    if (!SWIG_IsOK(res6)) {
-      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "memcached_decrement_by_key" "', argument " "6"" of type '" "uint64_t""'"); 
-    }  
-    if (!argp6) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_decrement_by_key" "', argument " "6"" of type '" "uint64_t""'");
-    } else {
-      arg6 = *((uint64_t *)(argp6));
-    }
-  }
-  result = (memcached_return)memcached_decrement_by_key(arg1,(char const *)arg2,arg3,(char const *)arg4,arg5,arg6,arg7);
-  vresult = SWIG_From_int((int)(result));
-  if (SWIG_IsTmpObj(res7)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_long_SS_long((*arg7)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res7) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg7), SWIGTYPE_p_uint64_t, new_flags));
-  }
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
 _wrap_memcached_increment_with_initial(int argc, VALUE *argv, VALUE self) {
   memcached_st *arg1 = (memcached_st *) 0 ;
   char *arg2 = (char *) 0 ;
@@ -7003,160 +6960,6 @@ _wrap_memcached_decrement_with_initial(int argc, VALUE *argv, VALUE self) {
   } else {
     int new_flags = SWIG_IsNewObj(res7) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg7), SWIGTYPE_p_uint64_t, new_flags));
-  }
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_increment_with_initial_by_key(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  char *arg2 = (char *) 0 ;
-  size_t arg3 ;
-  char *arg4 = (char *) 0 ;
-  size_t arg5 ;
-  uint64_t arg6 ;
-  uint64_t arg7 ;
-  time_t arg8 ;
-  uint64_t *arg9 = (uint64_t *) 0 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp6 ;
-  int res6 = 0 ;
-  void *argp7 ;
-  int res7 = 0 ;
-  uint64_t temp9 ;
-  int res9 = SWIG_TMPOBJ ;
-  VALUE vresult = Qnil;
-  
-  arg9 = &temp9;
-  if ((argc < 5) || (argc > 5)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 5)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_increment_with_initial_by_key" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  {
-    arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
-  }
-  {
-    res6 = SWIG_ConvertPtr(argv[2], &argp6, SWIGTYPE_p_uint64_t,  0 );
-    if (!SWIG_IsOK(res6)) {
-      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "memcached_increment_with_initial_by_key" "', argument " "6"" of type '" "uint64_t""'"); 
-    }  
-    if (!argp6) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_increment_with_initial_by_key" "', argument " "6"" of type '" "uint64_t""'");
-    } else {
-      arg6 = *((uint64_t *)(argp6));
-    }
-  }
-  {
-    res7 = SWIG_ConvertPtr(argv[3], &argp7, SWIGTYPE_p_uint64_t,  0 );
-    if (!SWIG_IsOK(res7)) {
-      SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "memcached_increment_with_initial_by_key" "', argument " "7"" of type '" "uint64_t""'"); 
-    }  
-    if (!argp7) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_increment_with_initial_by_key" "', argument " "7"" of type '" "uint64_t""'");
-    } else {
-      arg7 = *((uint64_t *)(argp7));
-    }
-  }
-  {
-    if (NIL_P(argv[4]))
-    arg8 = (time_t)-1;
-    else
-    arg8 = NUM2LONG(rb_funcall(argv[4], rb_intern("tv_sec"), 0));
-  }
-  result = (memcached_return)memcached_increment_with_initial_by_key(arg1,(char const *)arg2,arg3,(char const *)arg4,arg5,arg6,arg7,arg8,arg9);
-  vresult = SWIG_From_int((int)(result));
-  if (SWIG_IsTmpObj(res9)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_long_SS_long((*arg9)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res9) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg9), SWIGTYPE_p_uint64_t, new_flags));
-  }
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_decrement_with_initial_by_key(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  char *arg2 = (char *) 0 ;
-  size_t arg3 ;
-  char *arg4 = (char *) 0 ;
-  size_t arg5 ;
-  uint64_t arg6 ;
-  uint64_t arg7 ;
-  time_t arg8 ;
-  uint64_t *arg9 = (uint64_t *) 0 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp6 ;
-  int res6 = 0 ;
-  void *argp7 ;
-  int res7 = 0 ;
-  uint64_t temp9 ;
-  int res9 = SWIG_TMPOBJ ;
-  VALUE vresult = Qnil;
-  
-  arg9 = &temp9;
-  if ((argc < 5) || (argc > 5)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 5)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_decrement_with_initial_by_key" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  {
-    arg4 = arg2 = STR2CSTR(argv[1]);
-    arg5 = arg3 = (size_t) RSTRING_LEN(argv[1]);
-  }
-  {
-    res6 = SWIG_ConvertPtr(argv[2], &argp6, SWIGTYPE_p_uint64_t,  0 );
-    if (!SWIG_IsOK(res6)) {
-      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "memcached_decrement_with_initial_by_key" "', argument " "6"" of type '" "uint64_t""'"); 
-    }  
-    if (!argp6) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_decrement_with_initial_by_key" "', argument " "6"" of type '" "uint64_t""'");
-    } else {
-      arg6 = *((uint64_t *)(argp6));
-    }
-  }
-  {
-    res7 = SWIG_ConvertPtr(argv[3], &argp7, SWIGTYPE_p_uint64_t,  0 );
-    if (!SWIG_IsOK(res7)) {
-      SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "memcached_decrement_with_initial_by_key" "', argument " "7"" of type '" "uint64_t""'"); 
-    }  
-    if (!argp7) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "memcached_decrement_with_initial_by_key" "', argument " "7"" of type '" "uint64_t""'");
-    } else {
-      arg7 = *((uint64_t *)(argp7));
-    }
-  }
-  {
-    if (NIL_P(argv[4]))
-    arg8 = (time_t)-1;
-    else
-    arg8 = NUM2LONG(rb_funcall(argv[4], rb_intern("tv_sec"), 0));
-  }
-  result = (memcached_return)memcached_decrement_with_initial_by_key(arg1,(char const *)arg2,arg3,(char const *)arg4,arg5,arg6,arg7,arg8,arg9);
-  vresult = SWIG_From_int((int)(result));
-  if (SWIG_IsTmpObj(res9)) {
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_long_SS_long((*arg9)));
-  } else {
-    int new_flags = SWIG_IsNewObj(res9) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
-    vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg9), SWIGTYPE_p_uint64_t, new_flags));
   }
   return vresult;
 fail:
@@ -8270,7 +8073,11 @@ _wrap_memcached_callback_set(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (memcached_callback)(val2);
   {
-    arg3 = STR2CSTR(argv[2]);
+    if ( (size_t) RSTRING_LEN(argv[2]) == 0) {
+      arg3 = NULL;
+    } else {
+      arg3 = STR2CSTR(argv[2]);
+    }
   }
   result = (memcached_return)memcached_callback_set(arg1,arg2,arg3);
   vresult = SWIG_From_int((int)(result));
@@ -8309,7 +8116,9 @@ _wrap_memcached_callback_get(int argc, VALUE *argv, VALUE self) {
   } 
   arg2 = (memcached_callback)(val2);
   result = (void *)memcached_callback_get(arg1,arg2,arg3);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  {
+    vresult = rb_str_new2(result);
+  }
   if (SWIG_IsTmpObj(res3)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_short((*arg3)));
   } else {
@@ -8524,7 +8333,9 @@ _wrap_memcached_get_user_data(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (memcached_st *)(argp1);
   result = (void *)memcached_get_user_data(arg1);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  {
+    vresult = rb_str_new2(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -8549,10 +8360,16 @@ _wrap_memcached_set_user_data(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (memcached_st *)(argp1);
   {
-    arg2 = STR2CSTR(argv[1]);
+    if ( (size_t) RSTRING_LEN(argv[1]) == 0) {
+      arg2 = NULL;
+    } else {
+      arg2 = STR2CSTR(argv[1]);
+    }
   }
   result = (void *)memcached_set_user_data(arg1,arg2);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_void, 0 |  0 );
+  {
+    vresult = rb_str_new2(result);
+  }
   return vresult;
 fail:
   return Qnil;
@@ -8674,7 +8491,7 @@ _wrap_memcached_mget(int argc, VALUE *argv, VALUE self) {
       arg2[i] = StringValuePtr(RARRAY_PTR(argv[1])[i]);
     }
   }
-  result = (memcached_return)memcached_mget(arg1,(char const *const *)arg2,(size_t const *)arg3,arg4);
+  result = (memcached_return)memcached_mget(arg1,(char const **)arg2,arg3,arg4);
   vresult = SWIG_From_int((int)(result));
   return vresult;
 fail:
@@ -8792,7 +8609,7 @@ _wrap_memcached_mget_by_key(int argc, VALUE *argv, VALUE self) {
       arg4[i] = StringValuePtr(RARRAY_PTR(argv[3])[i]);
     }
   }
-  result = (memcached_return)memcached_mget_by_key(arg1,(char const *)arg2,arg3,(char const *const *)arg4,(size_t const *)arg5,arg6);
+  result = (memcached_return)memcached_mget_by_key(arg1,(char const *)arg2,arg3,(char const **)arg4,arg5,arg6);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return vresult;
@@ -8906,147 +8723,6 @@ _wrap_memcached_fetch_result(int argc, VALUE *argv, VALUE self) {
   }
   return vresult;
 fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_mget_execute(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  char **arg2 = (char **) 0 ;
-  size_t *arg3 = (size_t *) 0 ;
-  size_t arg4 ;
-  memcached_execute_function *arg5 = (memcached_execute_function *) 0 ;
-  void *arg6 = (void *) 0 ;
-  unsigned int arg7 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp5 = 0 ;
-  int res5 = 0 ;
-  int res6 ;
-  unsigned int val7 ;
-  int ecode7 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 5) || (argc > 5)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 5)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_mget_execute" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  {
-    int i;
-    Check_Type(argv[1], T_ARRAY);
-    arg4 = (unsigned int) RARRAY_LEN(argv[1]);
-    arg3 = (size_t *) malloc((arg4+1)*sizeof(size_t));
-    arg2 = (char **) malloc((arg4+1)*sizeof(char *)); 
-    for(i = 0; i < arg4; i ++) {
-      Check_Type(RARRAY_PTR(argv[1])[i], T_STRING);
-      arg3[i] = RSTRING_LEN(RARRAY_PTR(argv[1])[i]);
-      arg2[i] = StringValuePtr(RARRAY_PTR(argv[1])[i]);
-    }
-  }
-  res5 = SWIG_ConvertPtr(argv[2], &argp5,SWIGTYPE_p_memcached_execute_function, 0 |  0 );
-  if (!SWIG_IsOK(res5)) {
-    SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "memcached_mget_execute" "', argument " "5"" of type '" "memcached_execute_function *""'"); 
-  }
-  arg5 = (memcached_execute_function *)(argp5);
-  res6 = SWIG_ConvertPtr(argv[3],SWIG_as_voidptrptr(&arg6), 0, 0);
-  if (!SWIG_IsOK(res6)) {
-    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "memcached_mget_execute" "', argument " "6"" of type '" "void *""'"); 
-  }
-  ecode7 = SWIG_AsVal_unsigned_SS_int(argv[4], &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "memcached_mget_execute" "', argument " "7"" of type '" "unsigned int""'");
-  } 
-  arg7 = (unsigned int)(val7);
-  result = (memcached_return)memcached_mget_execute(arg1,(char const *const *)arg2,(size_t const *)arg3,arg4,arg5,arg6,arg7);
-  vresult = SWIG_From_int((int)(result));
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_mget_execute_by_key(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  char *arg2 = (char *) 0 ;
-  size_t arg3 ;
-  char **arg4 = (char **) 0 ;
-  size_t *arg5 = (size_t *) 0 ;
-  size_t arg6 ;
-  memcached_execute_function *arg7 = (memcached_execute_function *) 0 ;
-  void *arg8 = (void *) 0 ;
-  unsigned int arg9 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  size_t val3 ;
-  int ecode3 = 0 ;
-  void *argp7 = 0 ;
-  int res7 = 0 ;
-  int res8 ;
-  unsigned int val9 ;
-  int ecode9 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 7) || (argc > 7)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 7)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_mget_execute_by_key" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(argv[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_mget_execute_by_key" "', argument " "2"" of type '" "char const *""'");
-  }
-  arg2 = (char *)(buf2);
-  ecode3 = SWIG_AsVal_size_t(argv[2], &val3);
-  if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "memcached_mget_execute_by_key" "', argument " "3"" of type '" "size_t""'");
-  } 
-  arg3 = (size_t)(val3);
-  {
-    int i;
-    Check_Type(argv[3], T_ARRAY);
-    arg6 = (unsigned int) RARRAY_LEN(argv[3]);
-    arg5 = (size_t *) malloc((arg6+1)*sizeof(size_t));
-    arg4 = (char **) malloc((arg6+1)*sizeof(char *)); 
-    for(i = 0; i < arg6; i ++) {
-      Check_Type(RARRAY_PTR(argv[3])[i], T_STRING);
-      arg5[i] = RSTRING_LEN(RARRAY_PTR(argv[3])[i]);
-      arg4[i] = StringValuePtr(RARRAY_PTR(argv[3])[i]);
-    }
-  }
-  res7 = SWIG_ConvertPtr(argv[4], &argp7,SWIGTYPE_p_memcached_execute_function, 0 |  0 );
-  if (!SWIG_IsOK(res7)) {
-    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "memcached_mget_execute_by_key" "', argument " "7"" of type '" "memcached_execute_function *""'"); 
-  }
-  arg7 = (memcached_execute_function *)(argp7);
-  res8 = SWIG_ConvertPtr(argv[5],SWIG_as_voidptrptr(&arg8), 0, 0);
-  if (!SWIG_IsOK(res8)) {
-    SWIG_exception_fail(SWIG_ArgError(res8), "in method '" "memcached_mget_execute_by_key" "', argument " "8"" of type '" "void *""'"); 
-  }
-  ecode9 = SWIG_AsVal_unsigned_SS_int(argv[6], &val9);
-  if (!SWIG_IsOK(ecode9)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "memcached_mget_execute_by_key" "', argument " "9"" of type '" "unsigned int""'");
-  } 
-  arg9 = (unsigned int)(val9);
-  result = (memcached_return)memcached_mget_execute_by_key(arg1,(char const *)arg2,arg3,(char const *const *)arg4,(size_t const *)arg5,arg6,arg7,arg8,arg9);
-  vresult = SWIG_From_int((int)(result));
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  return vresult;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
   return Qnil;
 }
 
@@ -12192,177 +11868,6 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_memcached_server_get_last_disconnect(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  memcached_server_st *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_server_get_last_disconnect" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  result = (memcached_server_st *)memcached_server_get_last_disconnect(arg1);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_server_st, 0 |  0 );
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_set_sasl_callbacks(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  sasl_callback_t *arg2 = (sasl_callback_t *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 = 0 ;
-  int res2 = 0 ;
-  
-  if ((argc < 2) || (argc > 2)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 2)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_set_sasl_callbacks" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  res2 = SWIG_ConvertPtr(argv[1], &argp2,SWIGTYPE_p_sasl_callback_t, 0 |  0 );
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_set_sasl_callbacks" "', argument " "2"" of type '" "sasl_callback_t const *""'"); 
-  }
-  arg2 = (sasl_callback_t *)(argp2);
-  memcached_set_sasl_callbacks(arg1,(sasl_callback_t const *)arg2);
-  return Qnil;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_set_sasl_auth_data(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  char *arg2 = (char *) 0 ;
-  char *arg3 = (char *) 0 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int res2 ;
-  char *buf2 = 0 ;
-  int alloc2 = 0 ;
-  int res3 ;
-  char *buf3 = 0 ;
-  int alloc3 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 3) || (argc > 3)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 3)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_set_sasl_auth_data" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  res2 = SWIG_AsCharPtrAndSize(argv[1], &buf2, NULL, &alloc2);
-  if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "memcached_set_sasl_auth_data" "', argument " "2"" of type '" "char const *""'");
-  }
-  arg2 = (char *)(buf2);
-  res3 = SWIG_AsCharPtrAndSize(argv[2], &buf3, NULL, &alloc3);
-  if (!SWIG_IsOK(res3)) {
-    SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "memcached_set_sasl_auth_data" "', argument " "3"" of type '" "char const *""'");
-  }
-  arg3 = (char *)(buf3);
-  result = (memcached_return)memcached_set_sasl_auth_data(arg1,(char const *)arg2,(char const *)arg3);
-  vresult = SWIG_From_int((int)(result));
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
-  return vresult;
-fail:
-  if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
-  if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_destroy_sasl_auth_data(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_destroy_sasl_auth_data" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  result = (memcached_return)memcached_destroy_sasl_auth_data(arg1);
-  vresult = SWIG_From_int((int)(result));
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_get_sasl_callbacks(int argc, VALUE *argv, VALUE self) {
-  memcached_st *arg1 = (memcached_st *) 0 ;
-  sasl_callback_t *result = 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_get_sasl_callbacks" "', argument " "1"" of type '" "memcached_st *""'"); 
-  }
-  arg1 = (memcached_st *)(argp1);
-  result = (sasl_callback_t *)memcached_get_sasl_callbacks(arg1);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_sasl_callback_t, 0 |  0 );
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_memcached_sasl_authenticate_connection(int argc, VALUE *argv, VALUE self) {
-  memcached_server_st *arg1 = (memcached_server_st *) 0 ;
-  memcached_return result;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(argv[0], &argp1,SWIGTYPE_p_memcached_server_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "memcached_sasl_authenticate_connection" "', argument " "1"" of type '" "memcached_server_st *""'"); 
-  }
-  arg1 = (memcached_server_st *)(argp1);
-  result = (memcached_return)memcached_sasl_authenticate_connection(arg1);
-  vresult = SWIG_From_int((int)(result));
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
 _wrap_memcached_get_rvalue(int argc, VALUE *argv, VALUE self) {
   memcached_st *arg1 = (memcached_st *) 0 ;
   char *arg2 = (char *) 0 ;
@@ -12632,7 +12137,6 @@ static swig_type_info _swigt__p_int32_t = {"_p_int32_t", "int32_t *", 0, 0, (voi
 static swig_type_info _swigt__p_memcached_analysis_st = {"_p_memcached_analysis_st", "memcached_analysis_st *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_memcached_behavior = {"_p_memcached_behavior", "enum memcached_behavior *|memcached_behavior *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_memcached_callback = {"_p_memcached_callback", "enum memcached_callback *|memcached_callback *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_memcached_callback_st = {"_p_memcached_callback_st", "memcached_callback_st *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_memcached_calloc_function = {"_p_memcached_calloc_function", "memcached_calloc_function *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_memcached_cleanup_func = {"_p_memcached_cleanup_func", "memcached_cleanup_func *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_memcached_clone_func = {"_p_memcached_clone_func", "memcached_clone_func *", 0, 0, (void*)0, 0};
@@ -12660,7 +12164,6 @@ static swig_type_info _swigt__p_size_t = {"_p_size_t", "size_t *", 0, 0, (void*)
 static swig_type_info _swigt__p_time_t = {"_p_time_t", "time_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_uint32_t = {"_p_uint32_t", "uint32_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_uint64_t = {"_p_uint64_t", "uint64_t *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_void = {"_p_void", "void *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_addrinfo,
@@ -12669,7 +12172,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_memcached_analysis_st,
   &_swigt__p_memcached_behavior,
   &_swigt__p_memcached_callback,
-  &_swigt__p_memcached_callback_st,
   &_swigt__p_memcached_calloc_function,
   &_swigt__p_memcached_cleanup_func,
   &_swigt__p_memcached_clone_func,
@@ -12697,7 +12199,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_time_t,
   &_swigt__p_uint32_t,
   &_swigt__p_uint64_t,
-  &_swigt__p_void,
 };
 
 static swig_cast_info _swigc__p_addrinfo[] = {  {&_swigt__p_addrinfo, 0, 0, 0},{0, 0, 0, 0}};
@@ -12706,7 +12207,6 @@ static swig_cast_info _swigc__p_int32_t[] = {  {&_swigt__p_int32_t, 0, 0, 0},{0,
 static swig_cast_info _swigc__p_memcached_analysis_st[] = {  {&_swigt__p_memcached_analysis_st, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_memcached_behavior[] = {  {&_swigt__p_memcached_behavior, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_memcached_callback[] = {  {&_swigt__p_memcached_callback, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_memcached_callback_st[] = {  {&_swigt__p_memcached_callback_st, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_memcached_calloc_function[] = {  {&_swigt__p_memcached_calloc_function, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_memcached_cleanup_func[] = {  {&_swigt__p_memcached_cleanup_func, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_memcached_clone_func[] = {  {&_swigt__p_memcached_clone_func, 0, 0, 0},{0, 0, 0, 0}};
@@ -12734,7 +12234,6 @@ static swig_cast_info _swigc__p_size_t[] = {  {&_swigt__p_size_t, 0, 0, 0},{0, 0
 static swig_cast_info _swigc__p_time_t[] = {  {&_swigt__p_time_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_uint32_t[] = {  {&_swigt__p_uint32_t, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_uint64_t[] = {  {&_swigt__p_uint64_t, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_void[] = {  {&_swigt__p_void, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_addrinfo,
@@ -12743,7 +12242,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_memcached_analysis_st,
   _swigc__p_memcached_behavior,
   _swigc__p_memcached_callback,
-  _swigc__p_memcached_callback_st,
   _swigc__p_memcached_calloc_function,
   _swigc__p_memcached_cleanup_func,
   _swigc__p_memcached_clone_func,
@@ -12771,7 +12269,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_time_t,
   _swigc__p_uint32_t,
   _swigc__p_uint64_t,
-  _swigc__p_void,
 };
 
 
@@ -13022,7 +12519,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   
   SWIG_RubyInitializeTrackings();
   rb_define_const(mRlibmemcached, "MEMCACHED_VERSION_STRING_LENGTH", SWIG_From_int((int)(24)));
-  rb_define_const(mRlibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.35"));
+  rb_define_const(mRlibmemcached, "LIBMEMCACHED_VERSION_STRING", SWIG_FromCharPtr("0.32"));
   
   cMemcachedAnalysisSt.klass = rb_define_class_under(mRlibmemcached, "MemcachedAnalysisSt", rb_cObject);
   SWIG_TypeClientData(SWIGTYPE_p_memcached_analysis_st, (void *) &cMemcachedAnalysisSt);
@@ -13120,8 +12617,6 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_method(cMemcachedSt.klass, "continuum_points_counter", _wrap_MemcachedSt_continuum_points_counter_get, -1);
   rb_define_method(cMemcachedSt.klass, "hosts=", _wrap_MemcachedSt_hosts_set, -1);
   rb_define_method(cMemcachedSt.klass, "hosts", _wrap_MemcachedSt_hosts_get, -1);
-  rb_define_method(cMemcachedSt.klass, "last_disconnected_server=", _wrap_MemcachedSt_last_disconnected_server_set, -1);
-  rb_define_method(cMemcachedSt.klass, "last_disconnected_server", _wrap_MemcachedSt_last_disconnected_server_get, -1);
   rb_define_method(cMemcachedSt.klass, "snd_timeout=", _wrap_MemcachedSt_snd_timeout_set, -1);
   rb_define_method(cMemcachedSt.klass, "snd_timeout", _wrap_MemcachedSt_snd_timeout_get, -1);
   rb_define_method(cMemcachedSt.klass, "rcv_timeout=", _wrap_MemcachedSt_rcv_timeout_set, -1);
@@ -13186,8 +12681,12 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_method(cMemcachedSt.klass, "prefix_key", _wrap_MemcachedSt_prefix_key_get, -1);
   rb_define_method(cMemcachedSt.klass, "number_of_replicas=", _wrap_MemcachedSt_number_of_replicas_set, -1);
   rb_define_method(cMemcachedSt.klass, "number_of_replicas", _wrap_MemcachedSt_number_of_replicas_get, -1);
-  rb_define_method(cMemcachedSt.klass, "callbacks=", _wrap_MemcachedSt_callbacks_set, -1);
-  rb_define_method(cMemcachedSt.klass, "callbacks", _wrap_MemcachedSt_callbacks_get, -1);
+  rb_define_method(cMemcachedSt.klass, "number_of_live_hosts=", _wrap_MemcachedSt_number_of_live_hosts_set, -1);
+  rb_define_method(cMemcachedSt.klass, "number_of_live_hosts", _wrap_MemcachedSt_number_of_live_hosts_get, -1);
+  rb_define_method(cMemcachedSt.klass, "live_host_indices=", _wrap_MemcachedSt_live_host_indices_set, -1);
+  rb_define_method(cMemcachedSt.klass, "live_host_indices", _wrap_MemcachedSt_live_host_indices_get, -1);
+  rb_define_method(cMemcachedSt.klass, "live_host_indices_size=", _wrap_MemcachedSt_live_host_indices_size_set, -1);
+  rb_define_method(cMemcachedSt.klass, "live_host_indices_size", _wrap_MemcachedSt_live_host_indices_size_get, -1);
   rb_define_method(cMemcachedSt.klass, "sasl_callbacks=", _wrap_MemcachedSt_sasl_callbacks_set, -1);
   rb_define_method(cMemcachedSt.klass, "sasl_callbacks", _wrap_MemcachedSt_sasl_callbacks_get, -1);
   cMemcachedSt.mark = 0;
@@ -13201,12 +12700,8 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_module_function(mRlibmemcached, "memcached_delete", _wrap_memcached_delete, -1);
   rb_define_module_function(mRlibmemcached, "memcached_increment", _wrap_memcached_increment, -1);
   rb_define_module_function(mRlibmemcached, "memcached_decrement", _wrap_memcached_decrement, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_increment_by_key", _wrap_memcached_increment_by_key, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_decrement_by_key", _wrap_memcached_decrement_by_key, -1);
   rb_define_module_function(mRlibmemcached, "memcached_increment_with_initial", _wrap_memcached_increment_with_initial, -1);
   rb_define_module_function(mRlibmemcached, "memcached_decrement_with_initial", _wrap_memcached_decrement_with_initial, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_increment_with_initial_by_key", _wrap_memcached_increment_with_initial_by_key, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_decrement_with_initial_by_key", _wrap_memcached_decrement_with_initial_by_key, -1);
   rb_define_module_function(mRlibmemcached, "memcached_stat_free", _wrap_memcached_stat_free, -1);
   rb_define_module_function(mRlibmemcached, "memcached_stat", _wrap_memcached_stat, -1);
   rb_define_module_function(mRlibmemcached, "memcached_stat_servername", _wrap_memcached_stat_servername, -1);
@@ -13293,8 +12788,6 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_INVALID_HOST_PROTOCOL", SWIG_From_int((int)(MEMCACHED_INVALID_HOST_PROTOCOL)));
   rb_define_const(mRlibmemcached, "MEMCACHED_SERVER_MARKED_DEAD", SWIG_From_int((int)(MEMCACHED_SERVER_MARKED_DEAD)));
   rb_define_const(mRlibmemcached, "MEMCACHED_UNKNOWN_STAT_KEY", SWIG_From_int((int)(MEMCACHED_UNKNOWN_STAT_KEY)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_E2BIG", SWIG_From_int((int)(MEMCACHED_E2BIG)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_INVALID_ARGUMENTS", SWIG_From_int((int)(MEMCACHED_INVALID_ARGUMENTS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_AUTH_PROBLEM", SWIG_From_int((int)(MEMCACHED_AUTH_PROBLEM)));
   rb_define_const(mRlibmemcached, "MEMCACHED_AUTH_FAILURE", SWIG_From_int((int)(MEMCACHED_AUTH_FAILURE)));
   rb_define_const(mRlibmemcached, "MEMCACHED_AUTH_CONTINUE", SWIG_From_int((int)(MEMCACHED_AUTH_CONTINUE)));
@@ -13303,7 +12796,6 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_DISTRIBUTION_CONSISTENT", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_CONSISTENT)));
   rb_define_const(mRlibmemcached, "MEMCACHED_DISTRIBUTION_CONSISTENT_KETAMA", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_CONSISTENT_KETAMA)));
   rb_define_const(mRlibmemcached, "MEMCACHED_DISTRIBUTION_RANDOM", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_RANDOM)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_DISTRIBUTION_CONSISTENT_KETAMA_SPY", SWIG_From_int((int)(MEMCACHED_DISTRIBUTION_CONSISTENT_KETAMA_SPY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_NO_BLOCK", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NO_BLOCK)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_TCP_NODELAY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_TCP_NODELAY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_HASH", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_HASH)));
@@ -13334,9 +12826,6 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_USE_UDP", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USE_UDP)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_NUMBER_OF_REPLICAS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NUMBER_OF_REPLICAS)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_KETAMA_COMPAT_MODE", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_KETAMA_COMPAT_MODE)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_KETAMA_COMPAT_LIBMEMCACHED", SWIG_From_int((int)(0)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_KETAMA_COMPAT_SPY", SWIG_From_int((int)(1)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_PREFIX_KEY", SWIG_From_int((int)(MEMCACHED_CALLBACK_PREFIX_KEY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_USER_DATA", SWIG_From_int((int)(MEMCACHED_CALLBACK_USER_DATA)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_CLEANUP_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLEANUP_FUNCTION)));
@@ -13363,8 +12852,6 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_module_function(mRlibmemcached, "memcached_mget_by_key", _wrap_memcached_mget_by_key, -1);
   rb_define_module_function(mRlibmemcached, "memcached_fetch", _wrap_memcached_fetch, -1);
   rb_define_module_function(mRlibmemcached, "memcached_fetch_result", _wrap_memcached_fetch_result, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_mget_execute", _wrap_memcached_mget_execute, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_mget_execute_by_key", _wrap_memcached_mget_execute_by_key, -1);
   rb_define_module_function(mRlibmemcached, "memcached_set", _wrap_memcached_set, -1);
   rb_define_module_function(mRlibmemcached, "memcached_add", _wrap_memcached_add, -1);
   rb_define_module_function(mRlibmemcached, "memcached_replace", _wrap_memcached_replace, -1);
@@ -13477,22 +12964,11 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_module_function(mRlibmemcached, "memcached_server_clone", _wrap_memcached_server_clone, -1);
   rb_define_module_function(mRlibmemcached, "memcached_analyze", _wrap_memcached_analyze, -1);
   rb_define_module_function(mRlibmemcached, "memcached_server_remove", _wrap_memcached_server_remove, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_server_get_last_disconnect", _wrap_memcached_server_get_last_disconnect, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_set_sasl_callbacks", _wrap_memcached_set_sasl_callbacks, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_set_sasl_auth_data", _wrap_memcached_set_sasl_auth_data, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_destroy_sasl_auth_data", _wrap_memcached_destroy_sasl_auth_data, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_get_sasl_callbacks", _wrap_memcached_get_sasl_callbacks, -1);
-  rb_define_module_function(mRlibmemcached, "memcached_sasl_authenticate_connection", _wrap_memcached_sasl_authenticate_connection, -1);
   rb_define_module_function(mRlibmemcached, "memcached_get_rvalue", _wrap_memcached_get_rvalue, -1);
   rb_define_module_function(mRlibmemcached, "memcached_fetch_rvalue", _wrap_memcached_fetch_rvalue, -1);
   rb_define_module_function(mRlibmemcached, "memcached_stat_get_rvalue", _wrap_memcached_stat_get_rvalue, -1);
   rb_define_module_function(mRlibmemcached, "memcached_select_server_at", _wrap_memcached_select_server_at, -1);
   rb_define_module_function(mRlibmemcached, "memcached_select_stat_at", _wrap_memcached_select_stat_at, -1);
   rb_define_module_function(mRlibmemcached, "memcached_generate_hash_rvalue", _wrap_memcached_generate_hash_rvalue, -1);
-  
-  if (sasl_client_init(NULL) != SASL_OK) {
-    fprintf(stderr, "Failed to initialized SASL.\n");
-  }
-  
 }
 

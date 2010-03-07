@@ -8,12 +8,12 @@ BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 if ENV['DEBUG']
   puts "Setting debug flags."
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
-  $EXTRA_CONF = " --enable-debug"
+  $EXTRA_CONF = " --with-debug"
 end
 
 $CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "")
 $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".gsub("$(ldflags)", "")
-$CXXFLAGS = " -std=gnu++98"
+$CXXFLAGS = " -std=gnu++98 #{$CFLAGS}"
 $CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
 
 if !ENV["EXTERNAL_LIB"]
@@ -32,7 +32,15 @@ if !ENV["EXTERNAL_LIB"]
       puts "Building libmemcached."
       puts(cmd = "tar xzf #{BUNDLE} 2>&1")
       raise "'#{cmd}' failed" unless system(cmd)
-      
+
+      puts "Patching libmemcached."
+      puts(cmd = "patch -p1 < libmemcached.patch")
+      raise "'#{cmd}' failed" unless system(cmd)
+
+      puts "Patching libmemcached with SASL support."
+      puts(cmd = "patch -p1 < sasl.patch")
+      raise "'#{cmd}' failed" unless system(cmd)
+
       Dir.chdir(BUNDLE_PATH) do        
         puts(cmd = "env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1")
         
