@@ -143,6 +143,7 @@
 %include "libmemcached/memcached_storage.h"
 %include "libmemcached/memcached_result.h"
 %include "libmemcached/memcached_server.h"
+%include "libmemcached/memcached_sasl.h"
 
 //// Custom C functions
 
@@ -218,5 +219,12 @@ VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length, memcach
 VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {  
   return UINT2NUM(memcached_generate_hash_value(key, key_length, hash_algorithm));
 };
+%}
+
+// Initialization for SASL
+%init %{
+  if (sasl_client_init(NULL) != SASL_OK) {
+    fprintf(stderr, "Failed to initialized SASL.\n");
+  }
 %}
 

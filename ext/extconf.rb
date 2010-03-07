@@ -8,7 +8,7 @@ BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 if ENV['DEBUG']
   puts "Setting debug flags."
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
-  $EXTRA_CONF = " --with-debug"
+  $EXTRA_CONF = ""
 end
 
 $CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "")
