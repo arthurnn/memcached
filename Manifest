@@ -6,9 +6,11 @@ README
 Rakefile
 TODO
 ext/extconf.rb
-ext/libmemcached-0.35+sasl.tar.gz
+ext/libmemcached-0.32.tar.gz
+ext/libmemcached.patch
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
+ext/sasl.patch
 lib/memcached.rb
 lib/memcached/auth.rb
 lib/memcached/behaviors.rb
