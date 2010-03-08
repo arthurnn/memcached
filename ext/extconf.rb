@@ -13,11 +13,12 @@ $CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
 if ENV['DEBUG']
   puts "Setting debug flags."
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
-  $EXTRA_CONF = " --enable-debug"
+  $EXTRA_CONF = ""
 end
 
 if !ENV["EXTERNAL_LIB"]
   $includes = " -I#{HERE}/include"
+  $defines = " -DLIBMEMCACHED_WITH_SASL_SUPPORT"
   $libraries = " -L#{HERE}/lib"
   $CFLAGS = "#{$includes} #{$libraries} #{$CFLAGS}"
   $LDFLAGS = "#{$libraries} #{$LDFLAGS}"
@@ -33,7 +34,11 @@ if !ENV["EXTERNAL_LIB"]
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Patching libmemcached source."
-      puts(cmd = "patch -p1 -d #{BUNDLE_PATH} < libmemcached.patch")
+      puts(cmd = "patch -p1 < libmemcached.patch")
+      raise "'#{cmd}' failed" unless system(cmd)
+
+      puts "Patching libmemcached with SASL support."
+      puts(cmd = "patch -p1 < sasl.patch")
       raise "'#{cmd}' failed" unless system(cmd)
 
       Dir.chdir(BUNDLE_PATH) do        
@@ -61,7 +66,7 @@ end
 
 if ENV['SWIG']
   puts "Running SWIG."
-  puts(cmd = "swig #{$includes} -ruby -autorename rlibmemcached.i")
+  puts(cmd = "swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i")
   raise "'#{cmd}' failed" unless system(cmd)
 end
 
