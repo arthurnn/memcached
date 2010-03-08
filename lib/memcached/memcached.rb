@@ -16,7 +16,7 @@ class Memcached
     :tcp_nodelay => false,
     :show_backtraces => false,
     :retry_timeout => 30,
-    :timeout => 4,
+    :timeout => 0.25,
     :rcv_timeout => nil,
     :poll_timeout => nil,
     :connect_timeout => 4,
@@ -27,7 +27,7 @@ class Memcached
     :default_weight => 8,
     :sort_hosts => false,
     :auto_eject_hosts => true,
-    :server_failure_limit => 4,
+    :server_failure_limit => 2,
     :verify_key => true,
     :use_udp => false,
     :binary_protocol => false,
@@ -260,8 +260,8 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Return an array of raw <tt>memcached_host_st</tt> structs for this instance.
   def server_structs
     array = []
-    if @struct.servers
-      @struct.number_of_hosts.times do |i|
+    if @struct.hosts
+      @struct.hosts.count.times do |i|
         array << Lib.memcached_select_server_at(@struct, i)
       end
     end
@@ -364,7 +364,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
     value, flags, ret = Lib.memcached_get_rvalue(@struct, key)
     check_return_code(ret, key)
-    cas = @struct.result.item_cas
+    cas = @struct.result.cas
 
     value = Marshal.load(value) if marshal
     value = yield value
