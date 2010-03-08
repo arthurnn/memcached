@@ -68,6 +68,8 @@ if ENV['SWIG']
   puts "Running SWIG."
   puts(cmd = "swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i")
   raise "'#{cmd}' failed" unless system(cmd)
+  puts(cmd = "sed -i '' 's/STR2CSTR/StringValuePtr/' rlibmemcached_wrap.c")
+  raise "'#{cmd}' failed" unless system(cmd)
 end
 
 create_makefile 'rlibmemcached'
