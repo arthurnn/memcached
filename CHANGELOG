@@ -1,5 +1,5 @@
 
-v0.19.pre. Support dynamic setting of the namespace (mhat). Support SASL (seanlynch).
+v0.19. Support dynamic setting of the namespace (mhat). Support SASL (seanlynch).
 
 v0.18. Make Memcached::Rails compatible with Rails 2.3.2 (Ian Fung).
 
