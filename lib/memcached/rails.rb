@@ -65,6 +65,7 @@ class Memcached
     # options :raw and :ttl.
     def write(key, value, options = {})
       set(key, value, options[:ttl] || @default_ttl, options[:raw])
+      true
     end
 
     # Wraps Memcached#add so that it doesn't raise.
