@@ -1,4 +1,6 @@
 
+v0.19.2. Regenerate SWIG with better configuration options for Linux.
+
 v0.19.1. Return true in Memcached::Rails#write.
 
 v0.19. Support dynamic setting of the namespace (mhat). Support SASL (seanlynch).
