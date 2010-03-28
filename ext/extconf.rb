@@ -34,11 +34,11 @@ if !ENV["EXTERNAL_LIB"]
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Patching libmemcached source."
-      puts(cmd = "patch -p1 < libmemcached.patch")
+      puts(cmd = "patch -p1 -Z < libmemcached.patch")
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Patching libmemcached with SASL support."
-      puts(cmd = "patch -p1 < sasl.patch")
+      puts(cmd = "patch -p1 -Z < sasl.patch")
       raise "'#{cmd}' failed" unless system(cmd)
 
       Dir.chdir(BUNDLE_PATH) do        
