@@ -31,7 +31,21 @@ class Memcached
     :verify_key => true,
     :use_udp => false,
     :binary_protocol => false,
-    :credentials => nil
+    :credentials => nil,
+    :retries_on_exceptions => 5,
+    :exceptions_to_retry => [
+        Memcached::ServerIsMarkedDead,
+        Memcached::ATimeoutOccurred,
+        Memcached::ConnectionBindFailure,
+        Memcached::ConnectionFailure,
+        Memcached::ConnectionSocketCreateFailure,
+        Memcached::Failure,
+        Memcached::MemoryAllocationFailure,
+        Memcached::ReadFailure,
+        Memcached::ServerError,
+        Memcached::SystemError,
+        Memcached::UnknownReadFailure,
+        Memcached::WriteFailure]
   }
 
 #:stopdoc:
@@ -75,6 +89,8 @@ Valid option parameters are:
 <tt>:binary_protocol</tt>:: Use the binary protocol to reduce query processing overhead. Defaults to false.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
+<tt>:retries_on_exceptions</tt>:: Retry this many times before raising the exception if the exception is in <tt>:exceptions_to_retry</tt>.
+<tt>:exceptions_to_retry</tt>:: Exceptions listed here will be retried <tt>:retries_on_exceptions</tt> times before getting raised. 
 
 Please note that when pipelining is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
@@ -231,6 +247,12 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
     self
   end
 
+  # Should retry the exception
+  def should_retry(e)
+    options[:exceptions_to_retry].each {|ex_class| return true if e.instance_of?(ex_class)}
+    false
+  end
+
   #:stopdoc:
   alias :dup :clone #:nodoc:
   #:startdoc:
@@ -281,24 +303,38 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be set directly.
   #
   def set(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
+    tries ||= 0
     value = marshal ? Marshal.dump(value) : value.to_s
-    check_return_code(
-      Lib.memcached_set(@struct, key, value, ttl, flags),
-      key
-    )
-  rescue ClientError
-    # FIXME Memcached 1.2.8 occasionally rejects valid sets
-    tried = 1 and retry unless defined?(tried)
-    raise
+    begin
+      check_return_code(
+        Lib.memcached_set(@struct, key, value, ttl, flags),
+        key
+      )
+    rescue ClientError
+      # FIXME Memcached 1.2.8 occasionally rejects valid sets
+      tried = 1 and retry unless defined?(tried)
+      raise
+    rescue => e
+      raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+      tries += 1
+      retry 
+    end
   end
 
   # Add a key/value pair. Raises <b>Memcached::NotStored</b> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
   def add(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
+    tries ||= 0
     value = marshal ? Marshal.dump(value) : value.to_s
-    check_return_code(
-      Lib.memcached_add(@struct, key, value, ttl, flags),
-      key
-    )
+    begin
+      check_return_code(
+        Lib.memcached_add(@struct, key, value, ttl, flags),
+        key
+      )
+    rescue => e
+      raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+      tries += 1
+      retry 
+    end
   end
 
   # Increment a key's value. Accepts a String <tt>key</tt>. Raises <b>Memcached::NotFound</b> if the key does not exist.
@@ -307,16 +343,26 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   #
   # Note that the key must be initialized to an unmarshalled integer first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
   def increment(key, offset=1)
+    tries ||= 0
     ret, value = Lib.memcached_increment(@struct, key, offset)
     check_return_code(ret, key)
     value
+  rescue => e
+    raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+    tries += 1
+    retry 
   end
 
   # Decrement a key's value. The parameters and exception behavior are the same as <tt>increment</tt>.
   def decrement(key, offset=1)
+    tries ||= 0
     ret, value = Lib.memcached_decrement(@struct, key, offset)
     check_return_code(ret, key)
     value
+  rescue => e
+    raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+    tries += 1
+    retry 
   end
 
   #:stopdoc:
@@ -326,31 +372,48 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Replace a key/value pair. Raises <b>Memcached::NotFound</b> if the key does not exist on the server. The parameters are the same as <tt>set</tt>.
   def replace(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
+    tries ||= 0
     value = marshal ? Marshal.dump(value) : value.to_s
-    check_return_code(
-      Lib.memcached_replace(@struct, key, value, ttl, flags),
-      key
-    )
+    begin
+      check_return_code(
+         Lib.memcached_replace(@struct, key, value, ttl, flags),
+        key
+      )
+    rescue => e
+      raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+      tries += 1
+      retry 
+    end
   end
 
   # Appends a string to a key's value. Accepts a String <tt>key</tt> and a String <tt>value</tt>. Raises <b>Memcached::NotFound</b> if the key does not exist on the server.
   #
   # Note that the key must be initialized to an unmarshalled string first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
   def append(key, value)
+    tries ||= 0
     # Requires memcached 1.2.4
     check_return_code(
       Lib.memcached_append(@struct, key, value.to_s, IGNORED, IGNORED),
       key
     )
+  rescue => e
+    raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+    tries += 1
+    retry 
   end
 
   # Prepends a string to a key's value. The parameters and exception behavior are the same as <tt>append</tt>.
   def prepend(key, value)
+    tries ||= 0
     # Requires memcached 1.2.4
     check_return_code(
       Lib.memcached_prepend(@struct, key, value.to_s, IGNORED, IGNORED),
       key
     )
+  rescue => e
+    raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+    tries += 1
+    retry 
   end
 
   # Reads a key's value from the server and yields it to a block. Replaces the key's value with the result of the block as long as the key hasn't been updated in the meantime, otherwise raises <b>Memcached::NotStored</b>. Accepts a String <tt>key</tt> and a block.
@@ -358,7 +421,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Also accepts an optional <tt>ttl</tt> value.
   #
   # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
-  #
+  # :retry_on_exceptions does not apply to this method
   def cas(key, ttl=@default_ttl, marshal=true, flags=FLAGS)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
 
@@ -382,17 +445,27 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
 
   # Deletes a key/value pair from the server. Accepts a String <tt>key</tt>. Raises <b>Memcached::NotFound</b> if the key does not exist.
   def delete(key)
+    tries ||= 0
     check_return_code(
       Lib.memcached_delete(@struct, key, IGNORED),
       key
     )
+  rescue => e
+    raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+    tries += 1
+    retry 
   end
 
   # Flushes all key/value pairs from all the servers.
   def flush
+    tries ||= 0
     check_return_code(
       Lib.memcached_flush(@struct, IGNORED)
     )
+  rescue => e
+    raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+    tries += 1
+    retry 
   end
 
 ### Getters
@@ -408,6 +481,7 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
   # Note that when you rescue Memcached::NotFound exceptions, you should use a the block rescue syntax instead of the inline syntax. Block rescues are very fast, but inline rescues are very slow.
   #
   def get(keys, marshal=true)
+    tries ||= 0
     if keys.is_a? Array
       # Multi get
       ret = Lib.memcached_mget(@struct, keys);
@@ -428,6 +502,10 @@ Please note that when pipelining is enabled, setter and deleter methods do not r
       check_return_code(ret, keys)
       marshal ? Marshal.load(value) : value
     end
+  rescue => e
+    raise unless tries < options[:retries_on_exceptions] && should_retry(e)
+    tries += 1
+    retry 
   end
 
   ### Information methods
