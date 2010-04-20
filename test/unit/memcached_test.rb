@@ -264,21 +264,21 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_with_server_timeout
     socket = stub_server 43047
-    cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :retries_on_exceptions => 0)
+    cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :exception_retry_limit => 0)
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
-    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5, :retries_on_exceptions => 0)
+    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5, :exception_retry_limit => 0)
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
-    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25, :retries_on_exceptions => 0)
+    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25, :exception_retry_limit => 0)
     assert 0.51 > (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
@@ -290,14 +290,14 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_with_no_block_server_timeout
     socket = stub_server 43048
-    cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25, :retries_on_exceptions => 0)
+    cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25, :exception_retry_limit => 0)
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
-    cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001, :retries_on_exceptions => 0)
+    cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001, :exception_retry_limit => 0)
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
@@ -307,7 +307,7 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new("localhost:43048:1", :no_block => true,
       :poll_timeout => 0.001,
       :rcv_timeout => 0.25, # No affect in no-block mode
-      :retries_on_exceptions => 0
+      :exception_retry_limit => 0
     )
     assert 0.24 > (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
@@ -866,7 +866,7 @@ class MemcachedTest < Test::Unit::TestCase
       :retry_timeout => 1,
       :hash_with_prefix_key => false,
       :hash => :md5,
-      :retries_on_exceptions => 0
+      :exception_retry_limit => 0
     )
 
     # Hit second server up to the server_failure_limit
@@ -911,7 +911,7 @@ class MemcachedTest < Test::Unit::TestCase
       :retry_timeout => 1,
       :hash_with_prefix_key => false,
       :hash => :md5,
-      :retries_on_exceptions => 3
+      :exception_retry_limit => 3
     )
 
     key2 = 'test_missing_server'
@@ -946,7 +946,7 @@ class MemcachedTest < Test::Unit::TestCase
       :retry_timeout => 1,
       :hash_with_prefix_key => false,
       :hash => :md5,
-      :retries_on_exceptions => 3
+      :exception_retry_limit => 3
     )
 
     key2 = 'test_missing_server'
@@ -990,7 +990,7 @@ class MemcachedTest < Test::Unit::TestCase
       :retry_timeout => 1,
       :hash_with_prefix_key => false,
       :hash => :md5,
-      :retries_on_exceptions => 1
+      :exception_retry_limit => 1
     )
 
     key2 = 'test_missing_server'
@@ -1024,7 +1024,7 @@ class MemcachedTest < Test::Unit::TestCase
       :retry_timeout => 1,
       :hash_with_prefix_key => false,
       :hash => :md5,
-      :retries_on_exceptions => 0
+      :exception_retry_limit => 0
     )
 
     # Hit second server up to the server_failure_limit
@@ -1066,7 +1066,7 @@ class MemcachedTest < Test::Unit::TestCase
       :distribution => :random,
       :server_failure_limit => 1,
       :retry_timeout => 1,
-      :retries_on_exceptions => 0 
+      :exception_retry_limit => 0 
     )
 
     # Provoke the errors in 'failures'
