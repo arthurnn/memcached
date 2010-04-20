@@ -1,3 +1,4 @@
+v0.19.3. Add exception_retry_limit and exceptions_to_retry.
 
 v0.19.2. Regenerate SWIG with better configuration options for Linux.
 

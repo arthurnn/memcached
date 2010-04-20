@@ -23,6 +23,7 @@ class MemcachedTest < Test::Unit::TestCase
       :prefix_key => @prefix_key,
       :hash => :default,
       :distribution => :modula,
+      # binary_protocol does not work -- test_get, test_get, test_append, and test_missing_append will fail when it is set to true.
       :binary_protocol => true}
     @binary_protocol_cache = Memcached.new(@servers, @binary_protocol_options)
 
@@ -263,21 +264,21 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_with_server_timeout
     socket = stub_server 43047
-    cache = Memcached.new("localhost:43047:1", :timeout => 0.5)
+    cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :exception_retry_limit => 0)
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
-    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5)
+    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5, :exception_retry_limit => 0)
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
-    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25)
+    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25, :exception_retry_limit => 0)
     assert 0.51 > (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
@@ -289,14 +290,14 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_with_no_block_server_timeout
     socket = stub_server 43048
-    cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25)
+    cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25, :exception_retry_limit => 0)
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
       end
     end).real
 
-    cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001)
+    cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001, :exception_retry_limit => 0)
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
         result = cache.get key
@@ -305,7 +306,8 @@ class MemcachedTest < Test::Unit::TestCase
 
     cache = Memcached.new("localhost:43048:1", :no_block => true,
       :poll_timeout => 0.001,
-      :rcv_timeout => 0.25 # No affect in no-block mode
+      :rcv_timeout => 0.25, # No affect in no-block mode
+      :exception_retry_limit => 0
     )
     assert 0.24 > (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
@@ -863,7 +865,8 @@ class MemcachedTest < Test::Unit::TestCase
       :server_failure_limit => 2,
       :retry_timeout => 1,
       :hash_with_prefix_key => false,
-      :hash => :md5
+      :hash => :md5,
+      :exception_retry_limit => 0
     )
 
     # Hit second server up to the server_failure_limit
@@ -897,6 +900,121 @@ class MemcachedTest < Test::Unit::TestCase
     socket.close
   end
 
+  def test_unresponsive_server_retries_greater_than_server_failure_limit
+    socket = stub_server 43041
+
+    cache = Memcached.new(
+      [@servers.last, 'localhost:43041'],
+      :prefix_key => @prefix_key,
+      :auto_eject_hosts => true,
+      :server_failure_limit => 2,
+      :retry_timeout => 1,
+      :hash_with_prefix_key => false,
+      :hash => :md5,
+      :exception_retry_limit => 3
+    )
+
+    key2 = 'test_missing_server'
+    assert_nothing_raised do
+      cache.set(key2, @value)
+      assert_equal cache.get(key2), @value
+    end
+
+    assert_nothing_raised do
+      cache.set(key2, @value)
+      assert_equal cache.get(key2), @value
+    end
+
+    sleep(2)
+
+    assert_nothing_raised do
+      cache.set(key2, @value)
+      assert_equal cache.get(key2), @value
+    end
+
+    socket.close
+  end
+
+  def test_unresponsive_server_retries_equals_server_failure_limit
+    socket = stub_server 43041
+
+    cache = Memcached.new(
+      [@servers.last, 'localhost:43041'],
+      :prefix_key => @prefix_key,
+      :auto_eject_hosts => true,
+      :server_failure_limit => 2,
+      :retry_timeout => 1,
+      :hash_with_prefix_key => false,
+      :hash => :md5,
+      :exception_retry_limit => 3
+    )
+
+    key2 = 'test_missing_server'
+    begin
+      cache.get(key2)
+    rescue => e
+      assert_equal Memcached::ServerIsMarkedDead, e.class
+      assert_match /localhost:43041/, e.message
+    end
+
+    assert_nothing_raised do
+      cache.set(key2, @value)
+      assert_equal cache.get(key2), @value
+    end
+
+    sleep(2)
+
+    begin
+      cache.get(key2)
+    rescue => e
+      assert_equal Memcached::ServerIsMarkedDead, e.class
+      assert_match /localhost:43041/, e.message
+    end
+
+    assert_nothing_raised do
+      cache.set(key2, @value)
+      assert_equal cache.get(key2), @value
+    end
+
+    socket.close
+  end
+
+  def test_unresponsive_server_retries_less_than_server_failure_limit
+    socket = stub_server 43041
+
+    cache = Memcached.new(
+      [@servers.last, 'localhost:43041'],
+      :prefix_key => @prefix_key,
+      :auto_eject_hosts => true,
+      :server_failure_limit => 2,
+      :retry_timeout => 1,
+      :hash_with_prefix_key => false,
+      :hash => :md5,
+      :exception_retry_limit => 1
+    )
+
+    key2 = 'test_missing_server'
+    assert_raise(Memcached::ATimeoutOccurred) { cache.set(key2, @value) }
+    begin
+      cache.get(key2)
+    rescue => e
+      assert_equal Memcached::ServerIsMarkedDead, e.class
+      assert_match /localhost:43041/, e.message
+    end
+
+    sleep(2)
+
+    assert_raise(Memcached::ATimeoutOccurred) { cache.set(key2, @value) }
+    begin
+      cache.get(key2)
+    rescue => e
+      assert_equal Memcached::ServerIsMarkedDead, e.class
+      assert_match /localhost:43041/, e.message
+    end
+
+    socket.close
+  end
+
   def test_missing_server
     cache = Memcached.new(
       [@servers.last, 'localhost:43041'],
@@ -905,7 +1023,8 @@ class MemcachedTest < Test::Unit::TestCase
       :server_failure_limit => 2,
       :retry_timeout => 1,
       :hash_with_prefix_key => false,
-      :hash => :md5
+      :hash => :md5,
+      :exception_retry_limit => 0
     )
 
     # Hit second server up to the server_failure_limit
@@ -946,7 +1065,8 @@ class MemcachedTest < Test::Unit::TestCase
       :auto_eject_hosts => true,
       :distribution => :random,
       :server_failure_limit => 1,
-      :retry_timeout => 1
+      :retry_timeout => 1,
+      :exception_retry_limit => 0 
     )
 
     # Provoke the errors in 'failures'
