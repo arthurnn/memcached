@@ -74,12 +74,14 @@ Valid option parameters are:
 <tt>:server_failure_limit</tt>:: How many consecutive failures to allow before marking a host as dead. Has no effect unless <tt>:retry_timeout</tt> is also set.
 <tt>:retry_timeout</tt>:: How long to wait until retrying a dead server. Has no effect unless <tt>:server_failure_limit</tt> is non-zero. Defaults to <tt>30</tt>.
 <tt>:auto_eject_hosts</tt>:: Whether to temporarily eject dead hosts from the pool. Defaults to <tt>true</tt>. Note that in the event of an ejection, <tt>:auto_eject_hosts</tt> will remap the entire pool unless <tt>:distribution</tt> is set to <tt>:consistent</tt>.
+<tt>:exception_retry_limit</tt>:: How many times to retry before raising exceptions in <tt>:exceptions_to_retry</tt>. Defaults to <tt>5</tt>.
+<tt>:exceptions_to_retry</tt>:: Which exceptions to retry. Defaults to <b>ServerIsMarkedDead</b>, <b>ATimeoutOccurred</b>, <b>ConnectionBindFailure</b>, <b>ConnectionFailure</b>, <b>ConnectionSocketCreateFailure</b>, <b>Failure</b>, <b>MemoryAllocationFailure</b>, <b>ReadFailure</b>, <b>ServerError</b>, <b>SystemError</b>, <b>UnknownReadFailure</b>, and <b>WriteFailure</b>.
 <tt>:cache_lookups</tt>:: Whether to cache hostname lookups for the life of the instance. Defaults to <tt>true</tt>.
-<tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Defaults to <tt>false</tt> because it imposes a slight performance penalty. Note that your server must also support CAS or you will trigger <b>Memcached::ProtocolError</b> exceptions.
+<tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Defaults to <tt>false</tt> because it imposes a slight performance penalty. Note that your server must also support CAS or you will trigger <b>ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
 <tt>:no_block</tt>:: Whether to use pipelining for writes. Accepts <tt>true</tt> or <tt>false</tt>.
 <tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
-<tt>:show_backtraces</tt>:: Whether <b>Memcached::NotFound</b> and <b>Memcached::NotStored</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
+<tt>:show_backtraces</tt>:: Whether <b>NotFound</b> and <b>NotStored</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 <tt>:connect_timeout</tt>:: How long to wait for a connection to a server. Defaults to 2 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:timeout</tt>:: How long to wait for a response from the server. Defaults to 0.25 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:default_ttl</tt>:: The <tt>ttl</tt> to use on set if no <tt>ttl</tt> is specified, in seconds. Defaults to one week. Set to <tt>0</tt> if you want things to never expire.
@@ -89,10 +91,8 @@ Valid option parameters are:
 <tt>:binary_protocol</tt>:: Use the binary protocol to reduce query processing overhead. Defaults to false.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
-<tt>:exception_retry_limit</tt>:: Retry this many times before raising the exception if the exception is in <tt>:exceptions_to_retry</tt>.
-<tt>:exceptions_to_retry</tt>:: Exceptions listed here will be retried <tt>:exception_retry_limit</tt> times before getting raised. 
 
-Please note that when pipelining is enabled, setter and deleter methods do not raise on errors. For example, if you try to set an invalid key with <tt>:no_block => true</tt>, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
+Please note that when <tt>:no_block => true</tt>, update methods do not raise on errors. For example, if you try to <tt>set</tt> an invalid key, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
 =end
 
