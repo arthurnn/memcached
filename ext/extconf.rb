@@ -48,7 +48,8 @@ def check_libmemcached
     if File.exist?("lib")
       puts "Libmemcached already built; run 'rake clean' first if you need to rebuild."
     else
-      unless have_sasl
+      # have_sasl check may fail on OSX, skip it
+      unless RUBY_PLATFORM =~ /darwin/ or have_sasl
         puts "########################################################################"
         puts "ERROR: missing libsasl2 header files! Please install libsasl2-dev first."
         puts "########################################################################"
