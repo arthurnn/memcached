@@ -10,23 +10,6 @@ $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".gsub("$(ldflags)", "").g
 $CXXFLAGS = " -std=gnu++98 #{$CFLAGS}"
 $CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
 
-
-def have_sasl
-  checking_for('sasl >= 2.0.0') do
-    if try_run(<<-'End')
-      #include <sasl/sasl.h>
-      int main(void) {
-      int version = 0;
-        return ( SASL_VERSION_MAJOR >= 2 ? 0 : 1 );
-      }
-      End
-      true
-    else
-      false
-    end
-  end
-end
-
 if ENV['DEBUG']
   puts "Setting debug flags."
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
@@ -48,14 +31,9 @@ def check_libmemcached
     if File.exist?("lib")
       puts "Libmemcached already built; run 'rake clean' first if you need to rebuild."
     else
-      unless have_sasl
-        puts "########################################################################"
-        puts "ERROR: missing libsasl2 header files! Please install libsasl2-dev first."
-        puts "########################################################################"
-        puts
-        exit 1
-      end
-
+      have_library('sasl2') or
+        raise "SASL2 not found. You need the libsasl2-dev library, which should be provided through your system's package manager."
+              
       puts "Building libmemcached."
       puts(cmd = "tar xzf #{BUNDLE} 2>&1")
       raise "'#{cmd}' failed" unless system(cmd)
