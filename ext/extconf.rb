@@ -33,9 +33,9 @@ def check_libmemcached
     else
 
       # have_sasl check may fail on OSX, skip it
-      unless RUBY_PLATFORM =~ /darwin/ or have_library('sasl2')
-        raise "SASL2 not found. You need the libsasl2-dev library, which should be provided through your system's package manager."
-      end
+      # unless RUBY_PLATFORM =~ /darwin/ or have_library('sasl2')
+      #   raise "SASL2 not found. You need the libsasl2-dev library, which should be provided through your system's package manager."
+      # end
 
       puts "Building libmemcached."
       puts(cmd = "tar xzf #{BUNDLE} 2>&1")
@@ -47,6 +47,10 @@ def check_libmemcached
 
       puts "Patching libmemcached with SASL support."
       puts(cmd = "patch -p1 -Z < sasl.patch")
+      raise "'#{cmd}' failed" unless system(cmd)
+
+      puts "Touching aclocal.m4  in libmemcached."
+      puts(cmd = "touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4")
       raise "'#{cmd}' failed" unless system(cmd)
 
       Dir.chdir(BUNDLE_PATH) do

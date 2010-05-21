@@ -1,4 +1,5 @@
-v0.19.4. Better warnings when SASL2 is missing (e2).
+
+v0.19.5. Fix autoconf datestamps.
 
 v0.19.3. Add exception_retry_limit and exceptions_to_retry.
 
