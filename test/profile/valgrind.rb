@@ -5,6 +5,8 @@ $LOAD_PATH << "#{File.dirname(__FILE__)}/../../lib/"
 require 'memcached'
 require 'rubygems'
 
+GC.copy_on_write_friendly = true if GC.respond_to?("copy_on_write_friendly=")
+
 class Worker  
   def initialize(method_name, iterations)
     @method = method_name || 'mixed'
