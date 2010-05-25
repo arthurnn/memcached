@@ -46,7 +46,9 @@ class Memcached
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
     def cas(key, ttl=@default_ttl, raw=false, &block)
       super(key, ttl, !raw, &block)
+      true
     rescue NotFound
+      false
     end
 
     alias :compare_and_swap :cas
@@ -59,21 +61,23 @@ class Memcached
     # Wraps Memcached#set.
     def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
+      true
+    rescue NotStored
+      false
     end
 
     # Alternative to #set. Accepts a key, value, and an optional options hash supporting the 
     # options :raw and :ttl.
     def write(key, value, options = {})
       set(key, value, options[:ttl] || @default_ttl, options[:raw])
-      true
     end
 
     # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
-      true
+      "STORED\r\n" # This causes me physical pain.
     rescue NotStored
-      false
+      "NOT STORED\r\n"
     end
 
     # Wraps Memcached#delete so that it doesn't raise.
