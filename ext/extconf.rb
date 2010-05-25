@@ -5,7 +5,11 @@ HERE = File.expand_path(File.dirname(__FILE__))
 BUNDLE = Dir.glob("libmemcached-*.tar.gz").first
 BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 
+SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
+
 $CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "")
+$CFLAGS << " -std=gnu99" if SOLARIS_32
+$EXTRA_CONF = " --disable-64bit" if SOLARIS_32
 $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".gsub("$(ldflags)", "").gsub("-fno-common", "")
 $CXXFLAGS = " -std=gnu++98 #{$CFLAGS}"
 $CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
@@ -25,12 +29,14 @@ def check_libmemcached
   $CFLAGS = "#{$includes} #{$libraries} #{$CFLAGS}"
   $LDFLAGS = "#{$libraries} #{$LDFLAGS}"
   $LIBPATH = ["#{HERE}/lib"]
-  $DEFLIBPATH = []
+  $DEFLIBPATH = [] unless SOLARIS_32
 
   Dir.chdir(HERE) do
     if File.exist?("lib")
       puts "Libmemcached already built; run 'rake clean' first if you need to rebuild."
     else
+      tar = SOLARIS_32 ? 'gtar' : 'tar'
+      patch = SOLARIS_32 ? 'gpatch' : 'patch'
 
       # have_sasl check may fail on OSX, skip it
       # unless RUBY_PLATFORM =~ /darwin/ or have_library('sasl2')
@@ -38,15 +44,15 @@ def check_libmemcached
       # end
 
       puts "Building libmemcached."
-      puts(cmd = "tar xzf #{BUNDLE} 2>&1")
+      puts(cmd = "#{tar} xzf #{BUNDLE} 2>&1")
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Patching libmemcached source."
-      puts(cmd = "patch -p1 -Z < libmemcached.patch")
+      puts(cmd = "#{patch} -p1 -Z < libmemcached.patch")
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Patching libmemcached with SASL support."
-      puts(cmd = "patch -p1 -Z < sasl.patch")
+      puts(cmd = "#{patch} -p1 -Z < sasl.patch")
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Touching aclocal.m4  in libmemcached."

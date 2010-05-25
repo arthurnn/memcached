@@ -586,12 +586,14 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"
       if key.is_a?(String)
         if ret == Lib::MEMCACHED_ERRNO
-          server = Lib.memcached_server_by_key(@struct, key)
-          errno = server.first.cached_errno
-          message = "Errno #{errno}: #{ERRNO_HASH[errno].inspect}. #{message}"
+          if (server = Lib.memcached_server_by_key(@struct, key)).is_a?(Array)
+            errno = server.first.cached_errno
+            message = "Errno #{errno}: #{ERRNO_HASH[errno].inspect}. #{message}"
+          end
         elsif ret == Lib::MEMCACHED_SERVER_ERROR
-          server = Lib.memcached_server_by_key(@struct, key)
-          message = "\"#{server.first.cached_server_error}\". #{message}."
+          if (server = Lib.memcached_server_by_key(@struct, key)).is_a?(Array)
+            message = "\"#{server.first.cached_server_error}\". #{message}."
+          end
         end
       end
       raise EXCEPTIONS[ret], message
