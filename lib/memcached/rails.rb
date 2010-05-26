@@ -31,6 +31,12 @@ class Memcached
       super(servers, opts)
     end
 
+    def servers
+      server_structs.map do |server|
+        Server.new server
+      end
+    end
+
     def logger=(logger)
       @logger = logger
     end
@@ -129,5 +135,39 @@ class Memcached
     alias :"[]" :get
     alias :"[]=" :set
 
+  end
+
+  class Server
+    def initialize(struct)
+      @struct = struct
+    end
+
+    def host
+      @struct.hostname
+    end
+
+    def port
+      @struct.port
+    end
+
+    def weight
+      @struct.weight
+    end
+
+    def multithreaded
+      true
+    end
+
+    def status
+      alive? ? 'CONNECTED' : 'NOT CONNECTED'
+    end
+
+    def inspect
+      "<Memcached::Rails::Server: %s:%d [%d] (%s)>" % [host, port, weight, status]
+    end
+
+    def alive?
+      @struct.fd != -1 || @struct.next_retry <= Time.now
+    end
   end
 end
