@@ -502,9 +502,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       keys.each do
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
         break if ret == Lib::MEMCACHED_END
-        check_return_code(ret, key)
-        # Assign the value
-        hash[key] = (marshal ? Marshal.load(value) : value)
+        if ret != Lib::MEMCACHED_NOTFOUND
+          check_return_code(ret, key)
+          # Assign the value
+          hash[key] = (marshal ? Marshal.load(value) : value)
+        end
       end
       hash
     else
