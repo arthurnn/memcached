@@ -7,7 +7,10 @@ class Memcached
   # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
   class Rails < ::Memcached
 
-    DEFAULTS[:logger] = nil
+    DEFAULTS = {
+      :logger => nil,
+      :string_return_types => false
+    }
 
     attr_reader :logger
 
@@ -75,9 +78,10 @@ class Memcached
     # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
-      "STORED\r\n" # This causes me physical pain.
+      # This causes me physical pain.
+      opts[:string_return_types] ? "STORED\r\n" : true
     rescue NotStored
-      "NOT STORED\r\n"
+      opts[:string_return_types] ? "NOT STORED\r\n" : false
     end
 
     # Wraps Memcached#delete so that it doesn't raise.
