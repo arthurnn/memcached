@@ -4,7 +4,7 @@ require 'echoe'
 Echoe.new("memcached-northscale") do |p|
   p.author = "Sean Lynch"
   p.project = "northscale"
-  p.summary = "An interface to the libmemcached C client."
+  p.summary = "Test gem. Do not use unless you know what you're doing."
   p.rdoc_pattern = /README|TODO|LICENSE|CHANGELOG|BENCH|COMPAT|exceptions|experimental.rb|behaviors|rails.rb|memcached.rb/
   p.clean_pattern += ["ext/Makefile",
                       "ext/bin",
