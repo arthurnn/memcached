@@ -163,6 +163,18 @@ VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length
 };
 %}
 
+VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
+%{
+VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
+  VALUE ret;  
+  size_t value_length;
+  char *value = memcached_get_from_last(ptr, key, key_length, &value_length, flags, error);
+  ret = rb_str_new(value, value_length);
+  free(value);
+  return ret;
+};
+%}
+
 // Multi get
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
 %{

@@ -1,0 +1,116 @@
+diff -ru libmemcached-old/libmemcached/memcached.h libmemcached/libmemcached/memcached.h
+--- libmemcached-old/libmemcached/memcached.h	2010-06-12 15:37:29.000000000 -0700
++++ libmemcached/libmemcached/memcached.h	2010-06-12 15:54:37.000000000 -0700
+@@ -115,6 +115,7 @@
+   uint32_t number_of_live_hosts;
+   uint32_t *live_host_indices;
+   uint32_t live_host_indices_size;
++  int last_server_key;
+ };
+ 
+ LIBMEMCACHED_API
+diff -ru libmemcached-old/libmemcached/memcached_get.c libmemcached/libmemcached/memcached_get.c
+--- libmemcached-old/libmemcached/memcached_get.c	2010-06-12 15:37:29.000000000 -0700
++++ libmemcached/libmemcached/memcached_get.c	2010-06-12 16:11:00.000000000 -0700
+@@ -235,6 +235,8 @@
+       rc= MEMCACHED_SOME_ERRORS;
+       continue;
+     }
++    
++    ptr->last_server_key = server_key;
+   }
+ 
+   /*
+@@ -256,6 +258,74 @@
+   return rc;
+ }
+ 
++
++char *memcached_get_from_last(memcached_st *ptr,
++                              const char *key,
++                              size_t key_length,
++                              size_t *value_length, 
++                              uint32_t *flags,
++                              memcached_return *error)
++{
++  memcached_return rc = MEMCACHED_NOTFOUND;
++  char *value = NULL;
++
++  if (memcached_server_response_count(&ptr->hosts[ptr->last_server_key]) == 0) {
++    *error = memcached_connect(&ptr->hosts[ptr->last_server_key]);
++
++    if (*error != MEMCACHED_SUCCESS) {
++      return value;
++    }
++
++    if ((memcached_io_write(&ptr->hosts[ptr->last_server_key], "get ", 4, 0)) == -1) {
++      *error = MEMCACHED_SOME_ERRORS;
++      return value;
++    }
++    WATCHPOINT_ASSERT(ptr->hosts[ptr->last_server_key].cursor_active == 0);
++    memcached_server_response_increment(&ptr->hosts[ptr->last_server_key]);
++    WATCHPOINT_ASSERT(ptr->hosts[ptr->last_server_key].cursor_active == 1);
++  }
++
++  /* Only called when we have a prefix key */
++  if (ptr->prefix_key[0] != 0) {
++    if ((memcached_io_write(&ptr->hosts[ptr->last_server_key], ptr->prefix_key, ptr->prefix_key_length, 0)) == -1) {
++      memcached_server_response_reset(&ptr->hosts[ptr->last_server_key]);
++      *error = MEMCACHED_SOME_ERRORS;
++      return value;
++    }
++  }
++
++  if ((memcached_io_write(&ptr->hosts[ptr->last_server_key], key, key_length, 0)) == -1) {
++    memcached_server_response_reset(&ptr->hosts[ptr->last_server_key]);
++    *error = MEMCACHED_SOME_ERRORS;
++    return value;
++  }
++
++  if ((memcached_io_write(&ptr->hosts[ptr->last_server_key], "\r\n", 2, 1)) == -1) {
++    memcached_server_response_reset(&ptr->hosts[ptr->last_server_key]);
++    *error = MEMCACHED_SOME_ERRORS;
++    return value;
++  }
++
++  value = memcached_fetch(ptr, NULL, NULL, value_length, flags, error);
++
++  /* This is for historical reasons */
++  if (*error == MEMCACHED_END)
++    *error = MEMCACHED_NOTFOUND;
++
++  if (value != NULL) {
++    size_t dummy_length;
++    uint32_t dummy_flags;
++    memcached_return dummy_error;
++
++    (void)memcached_fetch(ptr, NULL, NULL, 
++                          &dummy_length, &dummy_flags, 
++                          &dummy_error);
++    WATCHPOINT_ASSERT(dummy_length == 0);
++  }
++
++  return value;
++}
++
+ static memcached_return simple_binary_mget(memcached_st *ptr,
+                                            unsigned int master_server_key,
+                                            bool is_master_key_set,
+diff -ru libmemcached-old/libmemcached/memcached_get.h libmemcached/libmemcached/memcached_get.h
+--- libmemcached-old/libmemcached/memcached_get.h	2010-06-12 15:37:29.000000000 -0700
++++ libmemcached/libmemcached/memcached_get.h	2010-06-12 16:10:31.000000000 -0700
+@@ -53,7 +53,13 @@
+                                             memcached_result_st *result,
+                                             memcached_return *error);
+ 
+-
++LIBMEMCACHED_API
++char *memcached_get_from_last(memcached_st *ptr,
++                              const char *key,
++                              size_t key_length,
++                              size_t *value_length, 
++                              uint32_t *flags,
++                              memcached_return *error);
+ 
+ #ifdef __cplusplus
+ }
