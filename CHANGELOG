@@ -1,4 +1,6 @@
 
+v0.19.6. Add get_from_last.
+
 v0.19.5. Fix autoconf datestamps.
 
 v0.19.3. Add exception_retry_limit and exceptions_to_retry.
