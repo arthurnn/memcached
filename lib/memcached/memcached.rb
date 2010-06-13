@@ -522,7 +522,9 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     retry 
   end
 
+  # Gets a key's value from the previous server. Only useful with random distribution.
   def get_from_last(key, marshal=true)
+    raise ArgumentError, "get_from_last() is not useful unless :random distribution is enabled." unless options[:distribution] == :random
     value, flags, ret = Lib.memcached_get_from_last_rvalue(@struct, key)
     check_return_code(ret, key)
     marshal ? Marshal.load(value) : value
