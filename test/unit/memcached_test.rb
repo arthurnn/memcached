@@ -256,10 +256,13 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_get_from_last
-    @cache.set key, "hello"
-    assert_equal "hello", @cache.get(key)
-    assert_equal "hello", @cache.get_from_last(key)
-    @cache.delete key
+    cache = Memcached.new(@servers, :distribution => :random)
+    10.times do |n|
+      cache.set key, n
+    end
+    10.times do
+      assert_equal cache.get(key), cache.get_from_last(key)
+    end
   end
 
   def test_get_missing
