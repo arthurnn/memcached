@@ -1,6 +1,6 @@
-diff -ru libmemcached-0.32/libmemcached/memcached.h libmemcached/libmemcached/memcached.h
---- libmemcached-0.32/libmemcached/memcached.h	2010-06-12 17:10:21.000000000 -0700
-+++ libmemcached/libmemcached/memcached.h	2010-06-12 17:11:32.000000000 -0700
+diff --git a/libmemcached-0.32/libmemcached/memcached.h libmemcached/libmemcached/memcached.h
+--- a/libmemcached-0.32/libmemcached/memcached.h
++++ b/libmemcached/libmemcached/memcached.h
 @@ -119,6 +119,7 @@
  #ifdef LIBMEMCACHED_WITH_SASL_SUPPORT
    const sasl_callback_t *sasl_callbacks;
@@ -9,11 +9,9 @@ diff -ru libmemcached-0.32/libmemcached/memcached.h libmemcached/libmemcached/me
  };
  
  LIBMEMCACHED_API
-Only in libmemcached/libmemcached: memcached.h.orig
-Only in libmemcached/libmemcached: memcached.h.rej
-diff -ru libmemcached-0.32/libmemcached/memcached_get.c libmemcached/libmemcached/memcached_get.c
---- libmemcached-0.32/libmemcached/memcached_get.c	2009-08-04 12:54:42.000000000 -0700
-+++ libmemcached/libmemcached/memcached_get.c	2010-06-12 17:11:03.000000000 -0700
+diff --git a/libmemcached-0.32/libmemcached/memcached_get.c libmemcached/libmemcached/memcached_get.c
+--- a/libmemcached-0.32/libmemcached/memcached_get.c
++++ b/libmemcached/libmemcached/memcached_get.c
 @@ -235,6 +235,8 @@
        rc= MEMCACHED_SOME_ERRORS;
        continue;
@@ -98,9 +96,9 @@ diff -ru libmemcached-0.32/libmemcached/memcached_get.c libmemcached/libmemcache
  static memcached_return simple_binary_mget(memcached_st *ptr,
                                             unsigned int master_server_key,
                                             bool is_master_key_set,
-diff -ru libmemcached-0.32/libmemcached/memcached_get.h libmemcached/libmemcached/memcached_get.h
---- libmemcached-0.32/libmemcached/memcached_get.h	2009-08-11 15:44:24.000000000 -0700
-+++ libmemcached/libmemcached/memcached_get.h	2010-06-12 17:11:03.000000000 -0700
+diff --git a/libmemcached-0.32/libmemcached/memcached_get.h libmemcached/libmemcached/memcached_get.h
+--- a/libmemcached-0.32/libmemcached/memcached_get.h
++++ b/libmemcached/libmemcached/memcached_get.h
 @@ -53,7 +53,13 @@
                                              memcached_result_st *result,
                                              memcached_return *error);

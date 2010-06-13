@@ -56,7 +56,7 @@ def check_libmemcached
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Patching libmemcached for get_from_last support."
-      puts(cmd = "#{patch} -p0 -Z < libmemcached-2.patch")
+      puts(cmd = "#{patch} -p1 -Z < libmemcached-2.patch")
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Touching aclocal.m4  in libmemcached."
