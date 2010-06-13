@@ -255,6 +255,13 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal nil, result
   end
 
+  def test_get_from_last
+    @cache.set key, "hello"
+    assert_equal "hello", @cache.get(key)
+    assert_equal "hello", @cache.get_from_last(key)
+    @cache.delete key
+  end
+
   def test_get_missing
     @cache.delete key rescue nil
     assert_raise(Memcached::NotFound) do
