@@ -8,6 +8,7 @@ TODO
 ext/extconf.rb
 ext/libmemcached-0.32.tar.gz
 ext/libmemcached-2.patch
+ext/libmemcached-3.patch
 ext/libmemcached.patch
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
