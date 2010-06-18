@@ -1,0 +1,8 @@
+diff --git a/libmemcached-0.32/libmemcached/memcached_storage.c libmemcached/libmemcached/memcached_storage.c
+--- a/libmemcached-0.32/libmemcached/memcached_storage.c
++++ b/libmemcached/libmemcached/memcached_storage.c
+149c149,150
+<   if ((ptr->flags & MEM_BUFFER_REQUESTS) && verb == SET_OP)
+---
+>   if ((ptr->flags & MEM_BUFFER_REQUESTS) &&
+>       (verb == SET_OP || verb == PREPEND_OP || verb == APPEND_OP))
