@@ -38,7 +38,8 @@ class MemcachedTest < Test::Unit::TestCase
       :prefix_key => @prefix_key,
       :no_block => true,
       :buffer_requests => true,
-      :hash => :default}
+      :hash => :default,
+      :distribution => :modula}
     @noblock_cache = Memcached.new(@servers, @noblock_options)
 
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
@@ -92,7 +93,7 @@ class MemcachedTest < Test::Unit::TestCase
   def test_options_are_set
     Memcached::DEFAULTS.merge(@noblock_options).each do |key, expected|
       value = @noblock_cache.options[key]
-      unless key == :rcv_timeout or key == :poll_timeout or key == :prefix_key
+      unless key == :rcv_timeout or key == :poll_timeout or key == :prefix_key or key == :ketama_weighted
         assert(expected == value, "#{key} should be #{expected} but was #{value}")
       end
     end
@@ -828,6 +829,16 @@ class MemcachedTest < Test::Unit::TestCase
       Memcached::FLAGS
     )
     assert_equal Rlibmemcached::MEMCACHED_BUFFERED, ret
+  end
+
+  def test_no_block_prepend
+    @cache.set key, "help", 0, false
+    @noblock_cache.prepend key, "help"
+    assert_equal "help",
+      @cache.get(key, false)
+    @noblock_cache.get "no_exist", false rescue nil
+    assert_equal "helphelp",
+      @cache.get(key, false)
   end
 
   def test_no_block_get

@@ -48,16 +48,20 @@ def check_libmemcached
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Patching libmemcached source."
-      puts(cmd = "#{patch} -p1 -Z < libmemcached.patch")
-      raise "'#{cmd}' failed" unless system(cmd)
+      puts(cmd = "#{patch} -p1 -Z < libmemcached.patch") 
+      raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
 
       puts "Patching libmemcached with SASL support."
       puts(cmd = "#{patch} -p1 -Z < sasl.patch")
-      raise "'#{cmd}' failed" unless system(cmd)
+      raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
 
       puts "Patching libmemcached for get_from_last support."
       puts(cmd = "#{patch} -p1 -Z < libmemcached-2.patch")
-      raise "'#{cmd}' failed" unless system(cmd)
+      raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
+
+      puts "Patching libmemcached for no block prepend and append support."
+      puts(cmd = "#{patch} -p1 -Z < libmemcached-3.patch")
+      raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
 
       puts "Touching aclocal.m4  in libmemcached."
       puts(cmd = "touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4")
