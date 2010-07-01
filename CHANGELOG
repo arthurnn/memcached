@@ -52,6 +52,8 @@ v0.19.7. Add no block prepend and append support for the ASCII protocol (rgbenso
 
 v0.19.6. Add get_from_last.
 
+v0.19.5.3. (northscale) Don't barf on Rails::add.
+
 v0.19.5.2. (northscale) Make wording scarier so people don't accidentally use this gem.
 
 v0.19.5.1. (northscale) Test Rails compatibility fixes.
