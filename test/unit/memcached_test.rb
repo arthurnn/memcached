@@ -37,6 +37,7 @@ class MemcachedTest < Test::Unit::TestCase
     @noblock_options = {
       :prefix_key => @prefix_key,
       :no_block => true,
+      :noreply => true,
       :buffer_requests => true,
       :hash => :default,
       :distribution => :modula}
@@ -861,16 +862,21 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_no_block_set_object_too_large
+    noblock_cache = Memcached.new(@servers, @noblock_options.merge(:noreply => false))
     assert_nothing_raised do
+      noblock_cache.set key, "I'm big" * 1000000
+    end
+    assert_raise( Memcached::ServerIsMarkedDead) do
       @noblock_cache.set key, "I'm big" * 1000000
     end
   end
 
   def test_no_block_existing_add
     # Should still raise
-    @noblock_cache.set key, @value
+    noblock_cache = Memcached.new(@servers, @noblock_options.merge(:noreply => false))
+    noblock_cache.set key, @value
     assert_raise(Memcached::NotStored) do
-      @noblock_cache.add key, @value
+      noblock_cache.add key, @value
     end
   end
 

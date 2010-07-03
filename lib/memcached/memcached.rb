@@ -8,6 +8,7 @@ class Memcached
   DEFAULTS = {
     :hash => :fnv1_32,
     :no_block => false,
+    :noreply => false,
     :distribution => :consistent_ketama,
     :ketama_weighted => true,
     :buffer_requests => false,
@@ -79,8 +80,9 @@ Valid option parameters are:
 <tt>:cache_lookups</tt>:: Whether to cache hostname lookups for the life of the instance. Defaults to <tt>true</tt>.
 <tt>:support_cas</tt>:: Flag CAS support in the client. Accepts <tt>true</tt> or <tt>false</tt>. Defaults to <tt>false</tt> because it imposes a slight performance penalty. Note that your server must also support CAS or you will trigger <b>ProtocolError</b> exceptions.
 <tt>:tcp_nodelay</tt>:: Turns on the no-delay feature for connecting sockets. Accepts <tt>true</tt> or <tt>false</tt>. Performance may or may not change, depending on your system.
-<tt>:no_block</tt>:: Whether to use pipelining for writes. Accepts <tt>true</tt> or <tt>false</tt>.
-<tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Note that <tt>:buffer_requests</tt> might not work well without <tt>:no_block</tt> also enabled.
+<tt>:no_block</tt>:: Whether to use pipelining for writes. Defaults to <tt>false</tt>.
+<tt>:buffer_requests</tt>:: Whether to use an internal write buffer. Accepts <tt>true</tt> or <tt>false</tt>. Calling <tt>get</tt> or closing the connection will force the buffer to flush. Client behavior is undefined unless <tt>:no_block</tt> is enabled. Defaults to <tt>false</tt>.
+<tt>:noreply</tt>:: Ask server not to reply for storage commands. Client behavior is undefined unless <tt>:no_block</tt> and <tt>:buffer_requests</tt> are enabled. Defaults to <tt>false</tt>.
 <tt>:show_backtraces</tt>:: Whether <b>NotFound</b> and <b>NotStored</b> exceptions should include backtraces. Generating backtraces is slow, so this is off by default. Turn it on to ease debugging.
 <tt>:connect_timeout</tt>:: How long to wait for a connection to a server. Defaults to 2 seconds. Set to <tt>0</tt> if you want to wait forever.
 <tt>:timeout</tt>:: How long to wait for a response from the server. Defaults to 0.25 seconds. Set to <tt>0</tt> if you want to wait forever.

@@ -1,4 +1,6 @@
 
+v0.19.8. Support :noreply behavior.
+
 v0.19.7. Add no block prepend and append support for the ASCII protocol (rgbenson).
 
 v0.19.6. Add get_from_last.
