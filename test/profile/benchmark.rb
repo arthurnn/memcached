@@ -87,7 +87,7 @@ class Bench
        "libm:noblock_binary" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
          :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true),
-       "ruby" => MemCache.new(['127.0.0.1:43042', '127.0.0.1:43043'], :namespace => "namespace"),
+       "ruby" => Memcache.new(:servers => ['127.0.0.1:43042', '127.0.0.1:43043'], :namespace => "namespace"),
        "stash" => Remix::Stash.new(:root)}
   end
   
