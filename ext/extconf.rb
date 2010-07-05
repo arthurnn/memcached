@@ -10,7 +10,7 @@ SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
 $CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "")
 $CFLAGS << " -std=gnu99" if SOLARIS_32
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
-$LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS}".gsub("$(ldflags)", "").gsub("-fno-common", "")
+$LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{RbConfig::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
 $CXXFLAGS = " -std=gnu++98 #{$CFLAGS}"
 $CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
 
