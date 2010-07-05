@@ -1,3 +1,4 @@
+v0.19.9. Fix Memcached::Rails#add.
 
 v0.19.8. Support :noreply behavior.
 

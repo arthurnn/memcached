@@ -25,6 +25,8 @@ class Memcached
 
       opts[:prefix_key] ||= opts[:namespace]
       @logger = opts[:logger]
+      @string_return_types = opts[:string_return_types]
+      
       logger.info { "memcached #{VERSION} #{servers.inspect}" } if logger
       super(servers, opts)
     end
@@ -78,10 +80,10 @@ class Memcached
     # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
-      # This causes me physical pain.
-      opts[:string_return_types] ? "STORED\r\n" : true
+      # This causes me  pain
+      @string_return_types ? "STORED\r\n" : true
     rescue NotStored
-      opts[:string_return_types] ? "NOT STORED\r\n" : false
+      @string_return_types? "NOT STORED\r\n" : false
     end
 
     # Wraps Memcached#delete so that it doesn't raise.
