@@ -1,0 +1,40 @@
+diff --git a/libmemcached-0.32/clients/utilities.c b/libmemcached-0.32/clients/utilities.c
+--- a/libmemcached-0.32/clients/utilities.c
++++ b/libmemcached-0.32/clients/utilities.c
+@@ -99,6 +99,8 @@ void process_hash_option(memcached_st *memc, char *opt_hash)
+     set= MEMCACHED_HASH_FNV1_32;
+   else if (!strcasecmp(opt_hash, "FNV1A_32"))
+     set= MEMCACHED_HASH_FNV1A_32;
++  else if (!strcasecmp(opt_hash, "NONE"))
++    set= MEMCACHED_HASH_NONE;
+   else
+   {
+     fprintf(stderr, "hash: type not recognized %s\n", opt_hash);
+diff --git a/libmemcached-0.32/libmemcached/memcached_constants.h b/libmemcached-0.32/libmemcached/memcached_constants.h
+--- a/libmemcached-0.32/libmemcached/memcached_constants.h
++++ b/libmemcached-0.32/libmemcached/memcached_constants.h
+@@ -132,7 +132,8 @@ typedef enum {
+   MEMCACHED_HASH_FNV1A_32,
+   MEMCACHED_HASH_HSIEH,
+   MEMCACHED_HASH_MURMUR,
+-  MEMCACHED_HASH_JENKINS
++  MEMCACHED_HASH_JENKINS,
++  MEMCACHED_HASH_NONE
+ } memcached_hash;
+ 
+ typedef enum {
+diff --git a/libmemcached-0.32/libmemcached/memcached_hash.c b/libmemcached-0.32/libmemcached/memcached_hash.c
+--- a/libmemcached-0.32/libmemcached/memcached_hash.c
++++ b/libmemcached-0.32/libmemcached/memcached_hash.c
+@@ -96,6 +96,11 @@ uint32_t memcached_generate_hash_value(const char *key, size_t key_length, memca
+       hash=jenkins_hash(key, key_length, 13);
+       break;
+     }
++    case MEMCACHED_HASH_NONE:
++    {
++      hash= 1;
++      break;
++    }
+     default:
+     {
+       WATCHPOINT_ASSERT(hash_algorithm);

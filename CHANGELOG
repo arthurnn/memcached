@@ -1,3 +1,6 @@
+v0.19.10. Add no-op hash (MEMCACHED_HASH_NONE) to skip hashing when there is one server (bierbaum).
+
+v0.19.9. Updated benchmark.
 
 v0.19.8. Support :noreply behavior.
 

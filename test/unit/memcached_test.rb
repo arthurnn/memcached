@@ -1168,6 +1168,13 @@ class MemcachedTest < Test::Unit::TestCase
       Rlibmemcached.memcached_generate_hash_rvalue("test", Rlibmemcached::MEMCACHED_HASH_FNV1_32)
   end
 
+  def test_noop_hash
+    %w[foo bar baz qux quux].each do |word|
+      assert_equal 1,
+        Rlibmemcached.memcached_generate_hash_rvalue(word, Rlibmemcached::MEMCACHED_HASH_NONE)
+    end
+  end
+
   # Memory cleanup
 
   def test_reset
