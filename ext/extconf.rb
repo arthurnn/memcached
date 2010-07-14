@@ -94,14 +94,14 @@ def check_libmemcached
   $LIBS << " -lmemcached_gem -lsasl2"
 end
 
+check_libmemcached
+
 if ENV['SWIG']
   puts "Running SWIG."
   puts(cmd = "swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i")
   raise "'#{cmd}' failed" unless system(cmd)
-  puts(cmd = "sed -i 's/STR2CSTR/StringValuePtr/' rlibmemcached_wrap.c")
+  puts(cmd = "sed -i '' 's/STR2CSTR/StringValuePtr/' rlibmemcached_wrap.c")
   raise "'#{cmd}' failed" unless system(cmd)
 end
-
-check_libmemcached
 
 create_makefile 'rlibmemcached'
