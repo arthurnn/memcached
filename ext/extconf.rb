@@ -67,6 +67,10 @@ def check_libmemcached
       puts(cmd = "#{patch} -p1 -Z < libmemcached-4.patch")
       raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
 
+      puts "Patching libmemcached for get_len command."
+      puts(cmd = "#{patch} -p1 -Z < libmemcached-5.patch")
+      raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
+
       puts "Touching aclocal.m4  in libmemcached."
       puts(cmd = "touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4")
       raise "'#{cmd}' failed" unless system(cmd)
