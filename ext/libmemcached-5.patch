@@ -169,16 +169,6 @@ diff --git a/libmemcached/memcached.hpp b/libmemcached/memcached.hpp
                                        &value_length, &flags, &rc);
      if (value)
      {
-diff --git a/libmemcached/memcached_constants.h b/libmemcached/memcached_constants.h
---- a/libmemcached-0.32/libmemcached/memcached_constants.h
-+++ b/libmemcached/libmemcached/memcached_constants.h
-@@ -65,6 +65,7 @@ typedef enum {
-   MEMCACHED_AUTH_PROBLEM,
-   MEMCACHED_AUTH_FAILURE,
-   MEMCACHED_AUTH_CONTINUE,
-+  MEMCACHED_BAD_GET_LEN_PROVIDED,
-   MEMCACHED_MAXIMUM_RETURN /* Always add new error code before */
- } memcached_return;
  
 diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
 --- a/libmemcached-0.32/libmemcached/memcached_get.c
@@ -287,7 +277,7 @@ diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
 +      return MEMCACHED_NOT_SUPPORTED;
 +
 +    if (!user_specified_length_is_valid(user_spec_len))
-+      return MEMCACHED_BAD_GET_LEN_PROVIDED;
++      return MEMCACHED_FAILURE;
 +  }
 +
    /* 
@@ -395,34 +385,9 @@ diff --git a/libmemcached/memcached_get.h b/libmemcached/memcached_get.h
  
  LIBMEMCACHED_API
  char *memcached_fetch(memcached_st *ptr, 
-diff --git a/libmemcached/memcached_strerror.c b/libmemcached/memcached_strerror.c
---- a/libmemcached-0.32/libmemcached/memcached_strerror.c
-+++ b/libmemcached/libmemcached/memcached_strerror.c
-@@ -84,6 +84,8 @@ const char *memcached_strerror(memcached_st *ptr __attribute__((unused)), memcac
-     return "AUTHENTICATION FAILURE";
-   case MEMCACHED_AUTH_CONTINUE:
-     return "CONTINUE AUTHENTICATION";
-+  case MEMCACHED_BAD_GET_LEN_PROVIDED:
-+    return "GET_LEN PARAMETER IS ILLEGAL";
-   case MEMCACHED_MAXIMUM_RETURN:
-     return "Gibberish returned!";
-   default:
 diff --git a/tests/function.c b/tests/function.c
 --- a/libmemcached-0.32/tests/function.c
 +++ b/libmemcached/tests/function.c
-@@ -291,9 +291,10 @@ static test_return  error_test(memcached_st *memc)
-                         334139633U, 2257084983U, 3088286104U, 13199785U, 2542027183U, 1097051614U, 199566778U, 2748246961U, 2465192557U, 
-                         1664094137U, 2405439045U, 1842224848U, 692413798U, 3479807801U, 919913813U, 4269430871U, 610793021U, 527273862U, 
-                         1437122909U, 2300930706U, 2943759320U, 674306647U, 2400528935U, 54481931U, 4186304426U, 1741088401U, 2979625118U, 
--                        4159057246U, 1769812374U, 2302537950U, 1110330676U };
-+                        4159057246U, 1769812374U, 2302537950U, 1110330676U, 2531548940U };
- 
--  assert(MEMCACHED_MAXIMUM_RETURN == 40); // You have updated the memcache_error messages but not updated docs/tests.
-+  // You have updated the memcache_error messages but not updated docs/tests.
-+  assert(MEMCACHED_SUCCESS == 0 && MEMCACHED_MAXIMUM_RETURN == 41);
-   for (rc= MEMCACHED_SUCCESS; rc < MEMCACHED_MAXIMUM_RETURN; rc++)
-   {
-     uint32_t hash_val;
 @@ -505,6 +506,170 @@ static test_return  cas_test(memcached_st *memc)
    return 0;
  }
