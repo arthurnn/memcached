@@ -440,15 +440,33 @@ class MemcachedTest < Test::Unit::TestCase
     assert_not_equal 4, hits
   end
 
-  # get_len # RGB TODO
+  # get_len
 
   def test_get_len
+    value = "Test that we can get the first 20 bytes of a string"
+    @cache.set key, value, 0, false
+    result = @cache.get_len 20, key, false
+    assert_equal result.size, 20
+    assert_equal result, value[0..19]
+  end
+
+  def test_get_len_packed
     value = [1, 2, 3, 4].pack("Q*")
     @cache.set key, value, 0, false
     result = @cache.get_len 8, key, false
     assert_equal [1], result.unpack("Q*")
   end
 
+  # get_len is not supported when using the binary protocol.
+  # Make sure the single get variant fails appropriately.
+  def test_get_len_binary
+    @binary_protocol_cache.set key, @value
+    assert_raises(Memcached::ActionNotSupported) do
+      result = @binary_protocol_cache.get_len 2, key
+    end
+  end
+
+  # Retrieve the first 64 bits of the values for multiple keys.
   def test_get_len_multi_packed
     key_1 = "get_len_1"
     value_1 = [1, 2, 3].pack("Q*")
@@ -462,6 +480,38 @@ class MemcachedTest < Test::Unit::TestCase
       {key_1=>value_1[0..7], key_3=>value_3[0..7]},
       @cache.get_len(8, keys, false)
     )
+  end
+
+  # Test that the entire value is passed back when the length specified
+  # is larger than any of the values (e.g., 32 in the case below).
+  def test_get_len_multi_packed_full
+    key_1 = "get_len_1"
+    value_1 = [1, 2, 3].pack("Q*")
+    key_2 = "get_len_missing"
+    key_3 = "get_len_2"
+    value_3 = [5, 6, 4].pack("Q*")
+    keys = [key_1, key_2, key_3]
+    @cache.set key_1, value_1, 0, false
+    @cache.set key_3, value_3, 0, false
+    assert_equal(
+      {key_1=>value_1, key_3=>value_3},
+      @cache.get_len(32, keys, false)
+    )
+  end
+
+  # get_len is not supported when using the binary protocol.
+  # Test that the multi get variant fails appropriately.
+  def test_get_len_multi_packed_binary
+    key_1 = "get_len_1"
+    value_1 = [1, 2, 3].pack("Q*")
+    key_2 = "get_len_2"
+    value_2 = [5, 6, 4].pack("Q*")
+    keys = [key_1, key_2]
+    @cache.set key_1, value_1, 0, false
+    @cache.set key_2, value_2, 0, false
+    assert_raises(Memcached::ActionNotSupported) do
+      result = @binary_protocol_cache.get_len 2, keys
+    end
   end
 
   def test_get_len_multi_completely_missing
@@ -718,6 +768,9 @@ class MemcachedTest < Test::Unit::TestCase
       "#{current}bar"
     end
     assert_equal "foobar", cache.get(key, false)
+
+    # Get the first three chars of the value back.
+    assert_equal "foo", cache.get_len(3, key, false) #RGB BROKEN
 
     # Missing set
     cache.delete key
