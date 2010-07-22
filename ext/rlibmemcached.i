@@ -23,6 +23,7 @@
 
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
+%apply unsigned int { uint32_t user_spec_len };
 %apply unsigned long { uint32_t flags, uint32_t offset, uint32_t weight };
 %apply unsigned long long { uint64_t data, uint64_t cas };
 
@@ -157,6 +158,18 @@ VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length
   VALUE ret;  
   size_t value_length;
   char *value = memcached_get(ptr, key, key_length, &value_length, flags, error);
+  ret = rb_str_new(value, value_length);
+  free(value);
+  return ret;
+};
+%}
+
+VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return *error);
+%{
+VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return *error) {
+  VALUE ret;  
+  size_t value_length;
+  char *value = memcached_get_len(ptr, key, key_length, user_spec_len, &value_length, flags, error);
   ret = rb_str_new(value, value_length);
   free(value);
   return ret;

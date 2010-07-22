@@ -440,6 +440,39 @@ class MemcachedTest < Test::Unit::TestCase
     assert_not_equal 4, hits
   end
 
+  # get_len # RGB TODO
+
+  def test_get_len
+    value = [1, 2, 3, 4].pack("Q*")
+    @cache.set key, value, 0, false
+    result = @cache.get_len 8, key, false
+    assert_equal [1], result.unpack("Q*")
+  end
+
+  def test_get_len_multi_packed
+    key_1 = "get_len_1"
+    value_1 = [1, 2, 3].pack("Q*")
+    key_2 = "get_len_missing"
+    key_3 = "get_len_2"
+    value_3 = [5, 6, 4].pack("Q*")
+    keys = [key_1, key_2, key_3]
+    @cache.set key_1, value_1, 0, false
+    @cache.set key_3, value_3, 0, false
+    assert_equal(
+      {key_1=>value_1[0..7], key_3=>value_3[0..7]},
+      @cache.get_len(8, keys, false)
+    )
+  end
+
+  def test_get_len_multi_completely_missing
+    @cache.delete "#{key}_1" rescue nil
+    @cache.delete "#{key}_2" rescue nil
+    assert_equal(
+      {},
+      @cache.get_len(1, ["#{key}_1", "#{key}_2"])
+     )
+  end
+
   # Set
 
   def test_set
