@@ -443,6 +443,39 @@ class MemcachedTest < Test::Unit::TestCase
   # get_len
 
   def test_get_len
+    value = "foobar"
+    @cache.set key, value, 0, false
+
+    result = @cache.get_len 1, key, false
+    assert_equal result.size, 1
+    assert_equal result, value[0..0]
+
+    result = @cache.get_len 2, key, false
+    assert_equal result.size, 2
+    assert_equal result, value[0..1]
+
+    result = @cache.get_len 5, key, false
+    assert_equal result.size, 5
+    assert_equal result, value[0..4]
+
+    result = @cache.get_len 6, key, false
+    assert_equal result.size, 6
+    assert_equal result, value
+
+    result = @cache.get_len 32, key, false
+    assert_equal result.size, 6
+    assert_equal result, value
+  end
+
+  def test_get_len_0_failure
+    value = "Test that we cannot get 0 bytes with a get_len call."
+    @cache.set key, value, 0, false
+    assert_raises(Memcached::Failure) do
+      result = @cache.get_len 0, key, false
+    end
+  end
+
+  def test_get_len_large
     value = "Test that we can get the first 20 bytes of a string"
     @cache.set key, value, 0, false
     result = @cache.get_len 20, key, false
@@ -770,7 +803,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal "foobar", cache.get(key, false)
 
     # Get the first three chars of the value back.
-    assert_equal "foo", cache.get_len(3, key, false) #RGB BROKEN
+    assert_equal "foo", cache.get_len(3, key, false)
 
     # Missing set
     cache.delete key
