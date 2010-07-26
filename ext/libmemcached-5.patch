@@ -1,6 +1,6 @@
 diff --git a/docs/memcached_get.pod b/docs/memcached_get.pod
 --- a/libmemcached-0.32/docs/memcached_get.pod
-+++ b/libmemcached/docs/memcached_get.pod
++++ b/docs/memcached_get.pod
 @@ -1,6 +1,6 @@
  =head1 NAME
  
@@ -165,11 +165,10 @@ diff --git a/libmemcached/memcached.hpp b/libmemcached/memcached.hpp
      char *value= memcached_get_by_key(&memc, 
                                        master_key.c_str(), master_key.length(), 
                                        key.c_str(), key.length(),
-+                                      NO_USER_SPEC_GET_LEN,
++                                      GET_LEN_ARG_UNSPECIFIED,
                                        &value_length, &flags, &rc);
      if (value)
      {
- 
 diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
 --- a/libmemcached-0.32/libmemcached/memcached_get.c
 +++ b/libmemcached/libmemcached/memcached_get.c
@@ -179,7 +178,7 @@ diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
  {
 -  return memcached_get_by_key(ptr, NULL, 0, key, key_length, value_length, 
 +  return memcached_get_by_key(ptr, NULL, 0, key, key_length,
-+                              NO_USER_SPEC_GET_LEN, value_length,
++                              GET_LEN_ARG_UNSPECIFIED, value_length,
                                flags, error);
  }
  
@@ -220,7 +219,7 @@ diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
  {
 -  return memcached_mget_by_key(ptr, NULL, 0, keys, key_length, number_of_keys);
 +  return memcached_mget_by_key(ptr, NULL, 0, keys, key_length, number_of_keys,
-+                               NO_USER_SPEC_GET_LEN);
++                               GET_LEN_ARG_UNSPECIFIED);
 +}
 +
 +memcached_return memcached_mget_len(memcached_st *ptr, 
@@ -232,18 +231,14 @@ diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
  }
  
  static memcached_return binary_mget_by_key(memcached_st *ptr,
-@@ -114,19 +139,32 @@ static memcached_return binary_mget_by_key(memcached_st *ptr,
+@@ -114,19 +139,28 @@ static memcached_return binary_mget_by_key(memcached_st *ptr,
                                             const char **keys, size_t *key_length,
                                             size_t number_of_keys);
  
 +static bool user_specified_length_is_valid(uint32_t user_spec_len)
 +{
-+  assert_on_compile(NO_USER_SPEC_GET_LEN == -1U);
-+  if (user_spec_len > 0 && user_spec_len < NO_USER_SPEC_GET_LEN) {
-+    return true;
-+  } else {
-+    return false;
-+  }
++  assert_on_compile(GET_LEN_ARG_UNSPECIFIED == -1U);
++  return (user_spec_len > 0 && user_spec_len < GET_LEN_ARG_UNSPECIFIED);
 +}
 +
  memcached_return memcached_mget_by_key(memcached_st *ptr, 
@@ -264,11 +259,11 @@ diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
    unsigned int master_server_key= (unsigned int)-1; /* 0 is a valid server id! */
    bool is_master_key_set= false;
 +  bool use_cas = (ptr->flags & MEM_SUPPORT_CAS);
-+  bool length_specified = (user_spec_len != NO_USER_SPEC_GET_LEN);
++  bool length_specified = (user_spec_len != GET_LEN_ARG_UNSPECIFIED);
  
     unlikely (ptr->flags & MEM_USE_UDP)
      return MEMCACHED_NOT_SUPPORTED;
-@@ -151,6 +189,14 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
+@@ -151,6 +185,14 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
      is_master_key_set= true;
    }
  
@@ -283,7 +278,7 @@ diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
    /* 
      Here is where we pay for the non-block API. We need to remove any data sitting
      in the queue before we start our get.
-@@ -175,10 +221,24 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
+@@ -175,10 +217,24 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
      return binary_mget_by_key(ptr, master_server_key, is_master_key_set, keys, 
                                key_length, number_of_keys);
  
@@ -312,14 +307,14 @@ diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
    }
  
    /* 
-@@ -206,6 +266,17 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
+@@ -206,6 +262,17 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
          rc= MEMCACHED_SOME_ERRORS;
          continue;
        }
 +
 +      if (length_specified) {
-+        char len[USER_SPEC_GET_SIZE];
-+        if (snprintf(len, USER_SPEC_GET_SIZE, "%d ", user_spec_len) < 0 ||
++        char len[GET_LEN_BUFSZ];
++        if (snprintf(len, GET_LEN_BUFSZ, "%d ", user_spec_len) < 0 ||
 +          (memcached_io_write(&ptr->hosts[server_key], len, strlen(len), 0) == -1))
 +        {
 +          rc= MEMCACHED_SOME_ERRORS;
@@ -337,8 +332,8 @@ diff --git a/libmemcached/memcached_get.h b/libmemcached/memcached_get.h
  extern "C" {
  #endif
  
-+#define NO_USER_SPEC_GET_LEN -1U
-+#define USER_SPEC_GET_SIZE 32
++#define GET_LEN_ARG_UNSPECIFIED -1U
++#define GET_LEN_BUFSZ 32
 +
  /* Public defines */
  LIBMEMCACHED_API
@@ -387,7 +382,20 @@ diff --git a/libmemcached/memcached_get.h b/libmemcached/memcached_get.h
  char *memcached_fetch(memcached_st *ptr, 
 diff --git a/tests/function.c b/tests/function.c
 --- a/libmemcached-0.32/tests/function.c
-+++ b/libmemcached/tests/function.c
++++ b/tests/function.c
+@@ -291,9 +291,10 @@ static test_return  error_test(memcached_st *memc)
+                         334139633U, 2257084983U, 3088286104U, 13199785U, 2542027183U, 1097051614U, 199566778U, 2748246961U, 2465192557U, 
+                         1664094137U, 2405439045U, 1842224848U, 692413798U, 3479807801U, 919913813U, 4269430871U, 610793021U, 527273862U, 
+                         1437122909U, 2300930706U, 2943759320U, 674306647U, 2400528935U, 54481931U, 4186304426U, 1741088401U, 2979625118U, 
+-                        4159057246U, 1769812374U, 2302537950U, 1110330676U };
++                        4159057246U, 1769812374U, 2302537950U, 1110330676U};
+ 
+-  assert(MEMCACHED_MAXIMUM_RETURN == 40); // You have updated the memcache_error messages but not updated docs/tests.
++  // You have updated the memcache_error messages but not updated docs/tests.
++  assert(MEMCACHED_SUCCESS == 0 && MEMCACHED_MAXIMUM_RETURN == 40);
+   for (rc= MEMCACHED_SUCCESS; rc < MEMCACHED_MAXIMUM_RETURN; rc++)
+   {
+     uint32_t hash_val;
 @@ -505,6 +506,170 @@ static test_return  cas_test(memcached_st *memc)
    return 0;
  }
@@ -565,7 +573,7 @@ diff --git a/tests/function.c b/tests/function.c
  
 -    rc= memcached_mget_by_key(memc_clone, "foo daddy", 9, keys, key_lengths, 1);
 +    rc= memcached_mget_by_key(memc_clone, "foo daddy", 9, keys, key_lengths,
-+                              1, NO_USER_SPEC_GET_LEN);
++                              1, GET_LEN_ARG_UNSPECIFIED);
      assert(rc == MEMCACHED_BAD_KEY_PROVIDED);
  
      max_keylen= 250;
@@ -674,7 +682,7 @@ diff --git a/tests/function.c b/tests/function.c
    assert(rc == MEMCACHED_SUCCESS);
  
    char *val= memcached_get_by_key(memc, keys[0], lengths[0], "yek", 3,
-+                                  NO_USER_SPEC_GET_LEN,
++                                  GET_LEN_ARG_UNSPECIFIED,
                                    &rlen, &flags, &rc);
    assert(val == NULL);
    assert(rc == MEMCACHED_NOTFOUND);
@@ -763,7 +771,7 @@ diff --git a/tests/function.c b/tests/function.c
      size_t len;
      uint32_t flags;
      char *val= memcached_get_by_key(memc_clone, key, 1, "bubba", 5, 
-+                                    NO_USER_SPEC_GET_LEN,
++                                    GET_LEN_ARG_UNSPECIFIED,
                                      &len, &flags, &rc);
      assert(rc == MEMCACHED_SUCCESS);
      assert(val != NULL);
@@ -771,7 +779,7 @@ diff --git a/tests/function.c b/tests/function.c
        size_t len;
        uint32_t flags;
        char *val= memcached_get_by_key(memc_clone, key, 1, "bubba", 5, 
-+                                      NO_USER_SPEC_GET_LEN,
++                                      GET_LEN_ARG_UNSPECIFIED,
                                        &len, &flags, &rc);
        assert(rc == MEMCACHED_SUCCESS);
        assert(val != NULL);
@@ -781,7 +789,7 @@ diff --git a/tests/function.c b/tests/function.c
  
 -      rc= memcached_mget_by_key(new_clone, key, 1, keys, len, 4);
 +      rc= memcached_mget_by_key(new_clone, key, 1, keys, len,
-+                                4, NO_USER_SPEC_GET_LEN);
++                                4, GET_LEN_ARG_UNSPECIFIED);
        assert(rc == MEMCACHED_SUCCESS);
  
        memcached_result_st *results= memcached_result_create(new_clone, &result_obj);
@@ -791,7 +799,7 @@ diff --git a/tests/function.c b/tests/function.c
  
 -      rc= memcached_mget_by_key(memc_clone, key, 1, keys, len, 4);
 +      rc= memcached_mget_by_key(memc_clone, key, 1, keys, len,
-+                                4, NO_USER_SPEC_GET_LEN);
++                                4, GET_LEN_ARG_UNSPECIFIED);
        assert(rc == MEMCACHED_SUCCESS);
  
        memcached_result_st *results= memcached_result_create(memc_clone, &result_obj);
