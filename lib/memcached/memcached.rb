@@ -521,7 +521,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     tries ||= 0
     raise unless tries < options[:exception_retry_limit] && should_retry(e)
     tries += 1
-    retry 
+    retry
   end
 
   def get_len(user_spec_len, keys, marshal=true)
@@ -551,7 +551,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     tries ||= 0
     raise unless tries < options[:exception_retry_limit] && should_retry(e)
     tries += 1
-    retry 
+    retry
   end
 
   # Gets a key's value from the previous server. Only useful with random distribution.

@@ -150,8 +150,8 @@
 
 //// Manual wrappers
 
-// Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because 
-// of the retval/argout split, so it truncates return values with \0 in them. 
+// Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because
+// of the retval/argout split, so it truncates return values with \0 in them.
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
