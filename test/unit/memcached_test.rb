@@ -19,13 +19,6 @@ class MemcachedTest < Test::Unit::TestCase
       :distribution => :modula}
     @cache = Memcached.new(@servers, @options)
 
-    @experimental_options = {
-      :prefix_key => @prefix_key,
-      :hash => :default,
-      :distribution => :modula,
-      :experimental_features => true}
-    @experimental_cache = Memcached.new(@servers, @experimental_options)
-
     @binary_protocol_options = {
       :prefix_key => @prefix_key,
       :hash => :default,
@@ -33,15 +26,6 @@ class MemcachedTest < Test::Unit::TestCase
       # binary_protocol does not work -- test_get, test_get, test_append, and test_missing_append will fail when it is set to true.
       :binary_protocol => true}
     @binary_protocol_cache = Memcached.new(@servers, @binary_protocol_options)
-
-    @binary_protocol_experimental_options = {
-      :prefix_key => @prefix_key,
-      :hash => :default,
-      :distribution => :modula,
-      :experimental_features => true,
-      # binary_protocol does not work -- test_get, test_get, test_append, and test_missing_append will fail when it is set to true.
-      :binary_protocol => true}
-    @binary_protocol_experimental_cache = Memcached.new(@servers, @binary_protocol_experimental_options)
 
     @udp_options = {
       :prefix_key => @prefix_key,
@@ -456,129 +440,6 @@ class MemcachedTest < Test::Unit::TestCase
     assert_not_equal 4, hits
   end
 
-  # get_len
-
-  def test_get_len
-    value = "foobar"
-    @experimental_cache.set key, value, 0, false
-
-    result = @experimental_cache.get_len 1, key
-    assert_equal result.size, 1
-    assert_equal result, value[0..0]
-
-    result = @experimental_cache.get_len 2, key
-    assert_equal result.size, 2
-    assert_equal result, value[0..1]
-
-    result = @experimental_cache.get_len 5, key
-    assert_equal result.size, 5
-    assert_equal result, value[0..4]
-
-    result = @experimental_cache.get_len 6, key
-    assert_equal result.size, 6
-    assert_equal result, value
-
-    result = @experimental_cache.get_len 32, key
-    assert_equal result.size, 6
-    assert_equal result, value
-  end
-
-  def test_get_len_0_failure
-    value = "Test that we cannot get 0 bytes with a get_len call."
-    @experimental_cache.set key, value, 0, false
-    assert_raises(Memcached::Failure) do
-      result = @experimental_cache.get_len 0, key
-    end
-  end
-
-  def test_get_len_large
-    value = "Test that we can get the first 20 bytes of a string"
-    @experimental_cache.set key, value, 0, false
-    result = @experimental_cache.get_len 20, key
-    assert_equal result.size, 20
-    assert_equal result, value[0..19]
-  end
-
-  def test_get_len_packed
-    value = [1, 2, 3, 4].pack("Q*")
-    @experimental_cache.set key, value, 0, false
-    result = @experimental_cache.get_len 8, key
-    assert_equal [1], result.unpack("Q*")
-  end
-
-  # get_len is not supported when using the binary protocol.
-  # Make sure the single get variant fails appropriately.
-  def test_get_len_binary
-    @binary_protocol_experimental_cache.set key, @value
-    assert_raises(Memcached::ActionNotSupported) do
-      result = @binary_protocol_experimental_cache.get_len 2, key
-    end
-  end
-
-  # Retrieve the first 64 bits of the values for multiple keys.
-  def test_get_len_multi_packed
-    key_1 = "get_len_1"
-    value_1 = [1, 2, 3].pack("Q*")
-    key_2 = "get_len_missing"
-    key_3 = "get_len_2"
-    value_3 = [5, 6, 4].pack("Q*")
-    keys = [key_1, key_2, key_3]
-    @experimental_cache.set key_1, value_1, 0, false
-    @experimental_cache.set key_3, value_3, 0, false
-    assert_equal(
-      {key_1=>value_1[0..7], key_3=>value_3[0..7]},
-      @experimental_cache.get_len(8, keys)
-    )
-  end
-
-  # Test that the entire value is passed back when the length specified
-  # is larger than any of the values (e.g., 32 in the case below).
-  def test_get_len_multi_packed_full
-    key_1 = "get_len_1"
-    value_1 = [1, 2, 3].pack("Q*")
-    key_2 = "get_len_missing"
-    key_3 = "get_len_2"
-    value_3 = [5, 6, 4].pack("Q*")
-    keys = [key_1, key_2, key_3]
-    @experimental_cache.set key_1, value_1, 0, false
-    @experimental_cache.set key_3, value_3, 0, false
-    assert_equal(
-      {key_1=>value_1, key_3=>value_3},
-      @experimental_cache.get_len(32, keys)
-    )
-  end
-
-  # get_len is not supported when using the binary protocol.
-  # Test that the multi get variant fails appropriately.
-  def test_get_len_multi_packed_binary
-    key_1 = "get_len_1"
-    value_1 = [1, 2, 3].pack("Q*")
-    key_2 = "get_len_2"
-    value_2 = [5, 6, 4].pack("Q*")
-    keys = [key_1, key_2]
-    @binary_protocol_experimental_cache.set key_1, value_1, 0, false
-    @binary_protocol_experimental_cache.set key_2, value_2, 0, false
-    assert_raises(Memcached::ActionNotSupported) do
-      result = @binary_protocol_experimental_cache.get_len 2, keys
-    end
-  end
-
-  def test_get_len_multi_completely_missing
-    @experimental_cache.delete "#{key}_1" rescue nil
-    @experimental_cache.delete "#{key}_2" rescue nil
-    assert_equal(
-      {},
-      @experimental_cache.get_len(1, ["#{key}_1", "#{key}_2"])
-     )
-  end
-
-  def test_get_len_failure
-    value = "Test that we cannot use get_len without setting the :experimental_features config."
-    assert_raises(NoMethodError) do
-      result = @cache.get_len 10, key
-    end
-  end
-
   # Set
 
   def test_set
@@ -808,12 +669,6 @@ class MemcachedTest < Test::Unit::TestCase
       :prefix_key => @prefix_key,
       :support_cas => true
     )
-    experimental_cache = Memcached.new(
-      @servers,
-      :prefix_key => @prefix_key,
-      :support_cas => true,
-      :experimental_features => true
-    )
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
 
     # Existing set
@@ -830,9 +685,6 @@ class MemcachedTest < Test::Unit::TestCase
       "#{current}bar"
     end
     assert_equal "foobar", cache.get(key, false)
-
-    # Get the first three chars of the value back.
-    assert_equal "foo", experimental_cache.get_len(3, key)
 
     # Missing set
     cache.delete key
