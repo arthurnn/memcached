@@ -1,0 +1,186 @@
+
+require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
+require 'socket'
+require 'mocha'
+require 'benchmark'
+
+class MemcachedExperimentalTest < Test::Unit::TestCase
+
+  def setup
+    @servers = ['localhost:43042', 'localhost:43043', "#{UNIX_SOCKET_NAME}0"]
+
+    # Maximum allowed prefix key size for :hash_with_prefix_key_key => false
+    @prefix_key = 'prefix_key_'
+
+    @options = {
+      :prefix_key => @prefix_key,
+      :hash => :default,
+      :distribution => :modula}
+    @cache = Memcached.new(@servers, @options)
+
+    @experimental_options = {
+      :prefix_key => @prefix_key,
+      :hash => :default,
+      :distribution => :modula,
+      :experimental_features => true}
+    @experimental_cache = Memcached.new(@servers, @experimental_options)
+
+    @experimental_cas_options = {
+      :prefix_key => @prefix_key,
+      :support_cas => true,
+      :experimental_features => true}
+    @experimental_cas_cache = Memcached.new(@servers, @experimental_cas_options)
+
+    @binary_protocol_experimental_options = {
+      :prefix_key => @prefix_key,
+      :hash => :default,
+      :distribution => :modula,
+      :experimental_features => true,
+      # binary_protocol does not work -- test_get, test_get, test_append, and test_missing_append will fail when it is set to true.
+      :binary_protocol => true}
+    @binary_protocol_experimental_cache = Memcached.new(@servers, @binary_protocol_experimental_options)
+  end
+
+  def test_get_len
+    value = "foobar"
+    @cache.set key, value, 0, false
+
+    begin
+       @experimental_cache.get_len(1, key)
+    rescue Memcached::ProtocolError
+       # Skipping tests of the experimental get_len command because the server does not support this feature.
+      return
+    end
+
+    result = @experimental_cache.get_len 1, key
+    assert_equal result.size, 1
+    assert_equal result, value[0..0]
+
+    result = @experimental_cache.get_len 2, key
+    assert_equal result.size, 2
+    assert_equal result, value[0..1]
+
+    result = @experimental_cache.get_len 5, key
+    assert_equal result.size, 5
+    assert_equal result, value[0..4]
+
+    result = @experimental_cache.get_len 6, key
+    assert_equal result.size, 6
+    assert_equal result, value
+
+    result = @experimental_cache.get_len 32, key
+    assert_equal result.size, 6
+    assert_equal result, value
+
+    value = "Test that we cannot get 0 bytes with a get_len call."
+    @experimental_cache.set key, value, 0, false
+    assert_raises(Memcached::Failure) do
+      result = @experimental_cache.get_len 0, key
+    end
+
+    value = "Test that we can get the first 20 bytes of a string"
+    @experimental_cache.set key, value, 0, false
+    result = @experimental_cache.get_len 20, key
+    assert_equal result.size, 20
+    assert_equal result, value[0..19]
+
+    value = [1, 2, 3, 4].pack("Q*")
+    @experimental_cache.set key, value, 0, false
+    result = @experimental_cache.get_len 8, key
+    assert_equal [1], result.unpack("Q*")
+
+    # get_len is not supported when using the binary protocol.
+    # Make sure the single get variant fails appropriately.
+    @binary_protocol_experimental_cache.set key, @value
+    assert_raises(Memcached::ActionNotSupported) do
+      result = @binary_protocol_experimental_cache.get_len 2, key
+    end
+
+    # Retrieve the first 64 bits of the values for multiple keys.
+    key_1 = "get_len_1"
+    value_1 = [1, 2, 3].pack("Q*")
+    key_2 = "get_len_missing"
+    key_3 = "get_len_2"
+    value_3 = [5, 6, 4].pack("Q*")
+    keys = [key_1, key_2, key_3]
+    @experimental_cache.set key_1, value_1, 0, false
+    @experimental_cache.set key_3, value_3, 0, false
+    assert_equal(
+      {key_1=>value_1[0..7], key_3=>value_3[0..7]},
+      @experimental_cache.get_len(8, keys)
+    )
+
+    # Test that the entire value is passed back when the length specified
+    # is larger than any of the values (e.g., 32 in the case below).
+    key_1 = "get_len_1"
+    value_1 = [1, 2, 3].pack("Q*")
+    key_2 = "get_len_missing"
+    key_3 = "get_len_2"
+    value_3 = [5, 6, 4].pack("Q*")
+    keys = [key_1, key_2, key_3]
+    @experimental_cache.set key_1, value_1, 0, false
+    @experimental_cache.set key_3, value_3, 0, false
+    assert_equal(
+      {key_1=>value_1, key_3=>value_3},
+      @experimental_cache.get_len(32, keys)
+    )
+
+    # get_len is not supported when using the binary protocol.
+    # Test that the multi get variant fails appropriately.
+    key_1 = "get_len_1"
+    value_1 = [1, 2, 3].pack("Q*")
+    key_2 = "get_len_2"
+    value_2 = [5, 6, 4].pack("Q*")
+    keys = [key_1, key_2]
+    @binary_protocol_experimental_cache.set key_1, value_1, 0, false
+    @binary_protocol_experimental_cache.set key_2, value_2, 0, false
+    assert_raises(Memcached::ActionNotSupported) do
+      result = @binary_protocol_experimental_cache.get_len 2, keys
+    end
+
+    # test_get_len_multi_completely_missing
+    @experimental_cache.delete "#{key}_1" rescue nil
+    @experimental_cache.delete "#{key}_2" rescue nil
+    assert_equal(
+      {},
+      @experimental_cache.get_len(1, ["#{key}_1", "#{key}_2"])
+     )
+
+    value = "Test that we cannot use get_len without setting the :experimental_features config."
+    assert_raises(NoMethodError) do
+      result = @cache.get_len 10, key
+    end
+
+    # test_cas
+    @experimental_cas_cache.set(key, "foo_bar", 0, false)
+    assert_equal "foo", @experimental_cas_cache.get_len(3, key)
+    assert_equal "foo_bar", @experimental_cas_cache.get_len(7, key)
+
+    print "P" #Print a single character to indicate that all get_len tests passed.
+  end
+
+  # Memory cleanup
+
+  def test_reset
+    original_struct = @cache.instance_variable_get("@struct")
+    assert_nothing_raised do
+      @cache.reset
+    end
+    assert_not_equal original_struct,
+      @cache.instance_variable_get("@struct")
+  end
+
+  private
+
+  def key
+    caller.first[/.*[` ](.*)'/, 1] # '
+  end
+
+  def stub_server(port)
+    socket = TCPServer.new('127.0.0.1', port)
+    Thread.new { socket.accept }
+    socket
+  end
+
+end
+
