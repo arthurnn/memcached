@@ -10,6 +10,7 @@ ext/libmemcached-0.32.tar.gz
 ext/libmemcached-2.patch
 ext/libmemcached-3.patch
 ext/libmemcached-4.patch
+ext/libmemcached-5.patch
 ext/libmemcached.patch
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
@@ -18,6 +19,7 @@ lib/memcached.rb
 lib/memcached/auth.rb
 lib/memcached/behaviors.rb
 lib/memcached/exceptions.rb
+lib/memcached/experimental_memcached.rb
 lib/memcached/integer.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
