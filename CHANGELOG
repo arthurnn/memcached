@@ -1,5 +1,7 @@
 
-v0.20.0. Add experimental module, with get_len() operator.
+v0.20.1. Better module naming. Oops.
+
+v0.20.0. Add experimental module, with get_len() operator (rgbenson).
 
 v0.19.10. Add no-op hash (MEMCACHED_HASH_NONE) to skip hashing when there is one server (bierbaum). Updated benchmark.
 

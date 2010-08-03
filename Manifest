@@ -19,7 +19,7 @@ lib/memcached.rb
 lib/memcached/auth.rb
 lib/memcached/behaviors.rb
 lib/memcached/exceptions.rb
-lib/memcached/experimental_memcached.rb
+lib/memcached/experimental.rb
 lib/memcached/integer.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb

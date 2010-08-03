@@ -119,10 +119,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       options[:credentials] = [ENV["MEMCACHE_USERNAME"], ENV["MEMCACHE_PASSWORD"]]
     end
 
-    if options[:experimental_features]
-       instance_eval { send(:extend, ::ExperimentalMemcached) }
-    end
-
+    instance_eval { send(:extend, Experimental) } if options[:experimental_features]
+ 
     options[:binary_protocol] = true if options[:credentials] != nil
 
     # Force :buffer_requests to use :no_block
