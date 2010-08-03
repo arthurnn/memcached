@@ -33,6 +33,7 @@ class Memcached
     :use_udp => false,
     :binary_protocol => false,
     :credentials => nil,
+    :experimental_features => false,
     :exception_retry_limit => 5,
     :exceptions_to_retry => [
         Memcached::ServerIsMarkedDead,
@@ -116,6 +117,10 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
     if options[:credentials] == nil && ENV.key?("MEMCACHE_USERNAME") && ENV.key?("MEMCACHE_PASSWORD")
       options[:credentials] = [ENV["MEMCACHE_USERNAME"], ENV["MEMCACHE_PASSWORD"]]
+    end
+
+    if options[:experimental_features]
+       instance_eval { send(:extend, ::ExperimentalMemcached) }
     end
 
     options[:binary_protocol] = true if options[:credentials] != nil
@@ -514,36 +519,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     else
       # Single get
       value, flags, ret = Lib.memcached_get_rvalue(@struct, keys)
-      check_return_code(ret, keys)
-      marshal ? Marshal.load(value) : value
-    end
-  rescue => e
-    tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
-    tries += 1
-    retry
-  end
-
-  def get_len(user_spec_len, keys, marshal=true)
-    if keys.is_a? Array
-      # Multi get
-      ret = Lib.memcached_mget_len(@struct, keys, user_spec_len);
-      check_return_code(ret, keys)
-
-      hash = {}
-      keys.each do
-        value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
-        break if ret == Lib::MEMCACHED_END
-        if ret != Lib::MEMCACHED_NOTFOUND
-          check_return_code(ret, key)
-          # Assign the value
-          hash[key] = (marshal ? Marshal.load(value) : value)
-        end
-      end
-      hash
-    else
-      # Single get_len
-      value, flags, ret = Lib.memcached_get_len_rvalue(@struct, keys, user_spec_len)
       check_return_code(ret, keys)
       marshal ? Marshal.load(value) : value
     end
