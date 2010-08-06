@@ -26,7 +26,7 @@ class Memcached
       opts[:prefix_key] ||= opts[:namespace]
       @logger = opts[:logger]
       @string_return_types = opts[:string_return_types]
-      
+
       logger.info { "memcached #{VERSION} #{servers.inspect}" } if logger
       super(servers, opts)
     end
@@ -46,6 +46,14 @@ class Memcached
     # :raw.
     def read(key, options = {})
       get(key, options[:raw])
+    end
+
+    # Returns whether the key exists, even if the value is nil.
+    def exist?(key, options = {})
+      get_orig(key, options)
+      true
+    rescue NotFound
+      false
     end
 
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
@@ -71,7 +79,7 @@ class Memcached
       false
     end
 
-    # Alternative to #set. Accepts a key, value, and an optional options hash supporting the 
+    # Alternative to #set. Accepts a key, value, and an optional options hash supporting the
     # options :raw and :ttl.
     def write(key, value, options = {})
       set(key, value, options[:ttl] || @default_ttl, options[:raw])

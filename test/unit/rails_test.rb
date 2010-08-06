@@ -16,21 +16,29 @@ class RailsTest < Test::Unit::TestCase
     result = @cache.get key
     assert_equal @value, result
   end
-  
+
+  def test_exist
+    assert !@cache.exist?(key)
+    @cache.set key, nil
+    assert @cache.exist?(key)
+    @cache.set key, @value
+    assert @cache.exist?(key)
+  end
+
   def test_get_multi
     @cache.set key, @value
     assert_equal(
-      {key => @value}, 
+      {key => @value},
       @cache.get_multi([key]))
   end
 
   def test_get_multi_empty_string
     @cache.set key, "", 0, true
     assert_equal(
-      {key => ""}, 
+      {key => ""},
       @cache.get_multi([key], true))
   end
-   
+
   def test_delete
     @cache.set key, @value
     assert_nothing_raised do
@@ -38,7 +46,7 @@ class RailsTest < Test::Unit::TestCase
     end
     assert_nil(@cache.get(key))
   end
-  
+
   def test_delete_missing
     assert_nothing_raised do
       @cache.delete key
@@ -58,7 +66,7 @@ class RailsTest < Test::Unit::TestCase
     result = @cache[key]
     assert_equal @value, result
   end
-  
+
   def test_cas
     cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
@@ -87,28 +95,28 @@ class RailsTest < Test::Unit::TestCase
         current
       end
     end
-  end  
-  
+  end
+
   def test_get_missing
     @cache.delete key rescue nil
     result = @cache.get key
     assert_equal nil, result
-  end    
-  
+  end
+
   def test_get_nil
     @cache.set key, nil, 0
     result = @cache.get key
     assert_equal nil, result
-  end  
-  
+  end
+
   def test_namespace
     assert_equal @namespace, @cache.namespace
   end
 
   private
-  
+
   def key
     caller.first[/.*[` ](.*)'/, 1] # '
   end
-  
+
 end
