@@ -126,6 +126,7 @@ class Bench
         # reset_clients
       end
     end
+    puts
   end
   
   def benchmark_hashes(hashes, test_name)

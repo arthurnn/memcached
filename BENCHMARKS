@@ -29,6 +29,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   set: libm:bin:buffered                0.140000   0.110000   0.250000 (  0.850164)
   set: mclient:ascii                    5.700000   2.900000   8.600000 ( 12.593552)
   set: stash:bin                        2.590000   1.130000   3.720000 (  6.895667)
+  
   get: dalli:bin                        6.140000   1.640000   7.780000 (  8.120870)
   get: libm:ascii                       0.680000   1.060000   1.740000 (  3.953136)
   get: libm:ascii:pipelined             0.790000   1.330000   2.120000 (  4.250141)
@@ -37,12 +38,14 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   get: libm:bin:buffered                0.660000   1.340000   2.000000 (  4.056436)
   get: mclient:ascii                    8.900000   3.470000  12.370000 ( 12.624638)
   get: stash:bin                        2.380000   1.320000   3.700000 (  5.831569)
+  
   get-multi: dalli:bin                  7.810000   2.850000  10.660000 ( 12.396192)
   get-multi: libm:ascii                 0.780000   0.650000   1.430000 (  2.609915)
   get-multi: libm:ascii:pipelined       0.800000   0.660000   1.460000 (  2.546374)
   get-multi: libm:ascii:udp             0.730000   0.480000   1.210000 (  1.781971)
   get-multi: libm:bin                   0.800000   0.990000   1.790000 (  3.987702)
   get-multi: libm:bin:buffered          0.820000   1.010000   1.830000 (  3.508872)
+  
   append: dalli:bin                     5.770000   1.780000   7.550000 ( 11.354010)
   append: libm:ascii                    0.610000   1.050000   1.660000 (  6.385280)
   append: libm:ascii:pipelined          0.200000   0.040000   0.240000 ( 10.522379)
@@ -50,6 +53,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   append: libm:bin                      0.530000   1.040000   1.570000 ( 12.662797)
   append: libm:bin:buffered             0.790000   1.460000   2.250000 ( 20.260717)
   append: mclient:ascii                 7.520000   3.470000  10.990000 ( 16.817814)
+  
   prepend: dalli:bin                    7.810000   1.950000   9.760000 ( 14.211460)
   prepend: libm:ascii                   0.830000   1.160000   1.990000 ( 21.648508)
   prepend: libm:ascii:pipelined         0.170000   0.010000   0.180000 (  0.215234)
@@ -57,6 +61,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   prepend: libm:bin                     1.160000   1.050000   2.210000 (  5.397475)
   prepend: libm:bin:buffered            1.250000   1.400000   2.650000 (  5.678642)
   prepend: mclient:ascii                7.810000   3.400000  11.210000 ( 11.534738)
+  
   delete: dalli:bin                     5.900000   1.750000   7.650000 (  7.850826)
   delete: libm:ascii                    1.140000   1.060000   2.200000 (  4.545686)
   delete: libm:ascii:pipelined          0.290000   0.350000   0.640000 (  0.700919)
@@ -64,6 +69,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   delete: libm:bin                      1.080000   1.050000   2.130000 (  4.469016)
   delete: libm:bin:buffered             0.240000   0.350000   0.590000 (  1.101547)
   delete: mclient:ascii                 7.570000   3.330000  10.900000 ( 11.203959)
+  
   get-missing: dalli:bin                6.020000   1.730000   7.750000 (  7.932838)
   get-missing: libm:ascii               1.190000   1.060000   2.250000 (  4.481875)
   get-missing: libm:ascii:pipelined     1.300000   1.420000   2.720000 (  4.783374)
@@ -72,6 +78,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   get-missing: libm:bin:buffered        1.280000   1.410000   2.690000 (  4.840153)
   get-missing: mclient:ascii            7.710000   3.360000  11.070000 ( 11.335351)
   get-missing: stash:bin                2.330000   1.340000   3.670000 (  5.780944)
+  
   append-missing: dalli:bin             8.450000   1.910000  10.360000 ( 10.694941)
   append-missing: libm:ascii            1.240000   1.060000   2.300000 (  5.372614)
   append-missing: libm:ascii:pipelined  0.180000   0.020000   0.200000 (  0.237714)
@@ -79,6 +86,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   append-missing: libm:bin              1.140000   1.050000   2.190000 (  4.750704)
   append-missing: libm:bin:buffered     1.250000   1.420000   2.670000 (  5.056463)
   append-missing: mclient:ascii         7.770000   3.370000  11.140000 ( 11.456574)
+  
   prepend-missing: dalli:bin            8.500000   1.920000  10.420000 ( 10.667994)
   prepend-missing: libm:ascii           1.240000   1.060000   2.300000 (  5.388784)
   prepend-missing: libm:ascii:pipelined  0.170000   0.010000   0.180000 (  0.193518)
@@ -86,6 +94,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   prepend-missing: libm:bin             1.140000   1.050000   2.190000 (  4.765375)
   prepend-missing: libm:bin:buffered    1.230000   1.310000   2.540000 (  5.346074)
   prepend-missing: mclient:ascii        7.070000   3.260000  10.330000 ( 12.632320)
+  
   set-large: dalli:bin                  5.420000   1.520000   6.940000 (  8.705231)
   set-large: libm:ascii                 0.620000   1.110000   1.730000 (  4.927162)
   set-large: libm:ascii:pipelined       0.350000   0.330000   0.680000 (  1.809109)
@@ -94,6 +103,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   set-large: libm:bin:buffered          0.320000   0.500000   0.820000 (  2.163353)
   set-large: mclient:ascii              7.920000   3.560000  11.480000 ( 13.464264)
   set-large: stash:bin                  3.920000   1.260000   5.180000 (  8.726858)
+  
   get-large: dalli:bin                  6.180000   1.980000   8.160000 ( 10.655348)
   get-large: libm:ascii                 0.940000   1.170000   2.110000 (  4.999261)
   get-large: libm:ascii:pipelined       1.010000   1.450000   2.460000 (  5.911924)
@@ -102,6 +112,7 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   get-large: libm:bin:buffered          0.880000   1.360000   2.240000 (  5.646692)
   get-large: mclient:ascii             10.120000   4.100000  14.220000 ( 16.000877)
   get-large: stash:bin                  2.620000   1.540000   4.160000 (  6.244804)
+  
   hash:default                          0.070000   0.000000   0.070000 (  0.081779)
   hash:md5                              0.150000   0.000000   0.150000 (  0.161684)
   hash:crc                              0.090000   0.000000   0.090000 (  0.089427)
