@@ -96,7 +96,7 @@ class Bench
        "libm:ascii" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
          :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-       "libm:ascii:pipelined" => Memcached::Rails.new(
+       "libm:ascii:pipeline" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
          :no_block => true, :buffer_requests => true, :noreply => true, :namespace => "namespace"),
        "libm:ascii:udp" => Memcached::Rails.new(
@@ -105,7 +105,7 @@ class Bench
        "libm:bin" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
          :buffer_requests => false, :no_block => false, :namespace => "namespace", :binary_protocol => true),
-       "libm:bin:buffered" => Memcached::Rails.new(
+       "libm:bin:buffer" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
          :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true),
        "mclient:ascii" => MemCache.new(['127.0.0.1:43042', '127.0.0.1:43043']),
