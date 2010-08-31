@@ -13,9 +13,10 @@ puts `uname -a`
 puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
 
 [ ["memcached", "memcached"], 
-  ["binary42-remix-stash", "remix/stash"], 
+  ["remix-stash", "remix/stash"], 
   # ["astro-remcached", "remcached"], # Clobbers the "Memcached" constant
-  ["memcache-client", "memcache"]].each do |gem_name, requirement|
+  ["memcache-client", "memcache"],
+  ["dalli","dalli"]].each do |gem_name, requirement|
   require requirement
   gem gem_name
   puts "Loaded #{gem_name} #{Gem.loaded_specs[gem_name].version.to_s rescue nil}"
@@ -24,6 +25,26 @@ end
 class Remix::Stash
   # Remix::Stash API doesn't let you set servers
   @@clusters = {:default => Remix::Stash::Cluster.new(['127.0.0.1:43042', '127.0.0.1:43043'])}
+end
+
+class Dalli::ClientCompat < Dalli::Client
+  def set(*args)
+    super(*args[0..2])
+  end
+  def get(*args)
+    super(args.first)
+  end
+  def get_multi(*args)
+    super(args.first)
+  end
+  def append(*args)
+    super
+  rescue Dalli::DalliError
+  end
+  def prepend(*args)
+    super
+  rescue Dalli::DalliError
+  end  
 end
 
 class Bench
@@ -72,23 +93,24 @@ class Bench
   
   def reset_clients
     @clients = {
-       "libm" => Memcached::Rails.new(
+       "libm:ascii" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
          :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-       "libm:noblock" => Memcached::Rails.new(
+       "libm:ascii:pipelined" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
-         :no_block => true, :buffer_requests => true, :namespace => "namespace"),
-       "libm:udp" => Memcached::Rails.new(
+         :no_block => true, :buffer_requests => true, :noreply => true, :namespace => "namespace"),
+       "libm:ascii:udp" => Memcached::Rails.new(
          ["#{UNIX_SOCKET_NAME}0", "#{UNIX_SOCKET_NAME}1"],
          :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-       "libm:binary" => Memcached::Rails.new(
+       "libm:bin" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
          :buffer_requests => false, :no_block => false, :namespace => "namespace", :binary_protocol => true),
-       "libm:noblock_binary" => Memcached::Rails.new(
+       "libm:bin:buffered" => Memcached::Rails.new(
          ['127.0.0.1:43042', '127.0.0.1:43043'],
          :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true),
-       "ruby" => Memcache.new(:servers => ['127.0.0.1:43042', '127.0.0.1:43043'], :namespace => "namespace"),
-       "stash" => Remix::Stash.new(:root)}
+       "mclient:ascii" => MemCache.new(['127.0.0.1:43042', '127.0.0.1:43043']),
+       "stash:bin" => Remix::Stash.new(:root),
+       "dalli:bin" => Dalli::ClientCompat.new(['127.0.0.1:43042', '127.0.0.1:43043'], :marshal => false)}
   end
   
   
@@ -98,9 +120,9 @@ class Bench
       client = clients[client_name]
       begin
         yield client
-        @benchmark.report("#{test_name}:#{client_name}") { @loops.times { yield client } }
+        @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
       rescue => e
-        # puts "#{test_name}:#{client_name} => #{e.class}"
+        # puts "#{test_name}:#{client_name} => #{e.inspect}"
         # reset_clients
       end
     end
@@ -137,7 +159,13 @@ class Bench
       c.append @k2, @m_value
       c.append @k3, @m_value
     end    
-    
+
+    benchmark_clients("prepend") do |c|
+      c.prepend @k1, @m_value
+      c.prepend @k2, @m_value
+      c.prepend @k3, @m_value
+    end       
+  
     benchmark_clients("delete") do |c|    
       c.delete @k1
       c.delete @k2
@@ -156,6 +184,12 @@ class Bench
       c.append @k3, @m_value
     end
 
+    benchmark_clients("prepend-missing") do |c|
+      c.prepend @k1, @m_value
+      c.prepend @k2, @m_value
+      c.prepend @k3, @m_value
+    end
+    
     benchmark_clients("set-large") do |c|
       c.set @k1, @m_large_value, 0, true
       c.set @k2, @m_large_value, 0, true
@@ -166,30 +200,6 @@ class Bench
       c.get @k1, true
       c.get @k2, true
       c.get @k3, true
-    end
-
-    benchmark_clients("set-ruby") do |c|
-      c.set @k1, @value
-      c.set @k2, @value
-      c.set @k3, @value
-    end
-
-    benchmark_clients("get-ruby") do |c|
-      c.get @k1
-      c.get @k2
-      c.get @k3
-    end
-
-    benchmark_clients("set-ruby-large") do |c|
-      c.set @k1, @large_value
-      c.set @k2, @large_value
-      c.set @k3, @large_value
-    end
-
-    benchmark_clients("get-ruby-large") do |c|
-      c.get @k1
-      c.get @k2
-      c.get @k3
     end
      
     benchmark_hashes(Memcached::HASH_VALUES, "hash") do |i|
