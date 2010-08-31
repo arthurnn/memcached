@@ -110,7 +110,7 @@ class Bench
          :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true),
        "mclient:ascii" => MemCache.new(['127.0.0.1:43042', '127.0.0.1:43043']),
        "stash:bin" => Remix::Stash.new(:root),
-       "dalli:bin" => Dalli::ClientCompat.new(['127.0.0.1:43042', '127.0.0.1:43043'], :marshal => false)}
+       "dalli:bin" => Dalli::ClientCompat.new(['127.0.0.1:43042', '127.0.0.1:43043'], :marshal => false, :threadsafe => false)}
   end
   
   
@@ -133,7 +133,7 @@ class Bench
     hashes.each do |hash_name, int|
       @m = Memcached::Rails.new(:hash => hash_name)
       @benchmark.report("#{test_name}:#{hash_name}") do
-        @loops.times { yield int }
+        (@loops * 5).times { yield int }
       end
     end  
   end

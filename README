@@ -16,13 +16,13 @@ If you use this software, please {make a donation}[http://blog.evanweaver.com/do
 * clean API
 * robust access to all memcached features
 * multiple hashing modes, including consistent hashing
-* ludicrous speed, including optional non-blocking IO
+* ludicrous speed, including optional pipelined IO with no_reply
 
 The <b>memcached</b> library wraps the pure-C libmemcached client via SWIG.
 
 == Installation
 
-You need Ruby 1.8.7 or Ruby 1.9.1. Other versions may work, but are not guaranteed. You also need the libsasl2-dev library, which should be provided through your system's package manager.
+You need Ruby 1.8.7 or Ruby 1.9.2. Other versions may work, but are not guaranteed. You also need the libsasl2-dev library, which should be provided through your system's package manager.
 
 Install the gem:
   sudo gem install memcached --no-rdoc --no-ri
@@ -97,7 +97,7 @@ There is a compatibility wrapper for legacy applications called Memcached::Rails
   
 == Benchmarks
 
-<b>memcached</b> is up to 10x faster than <b>memcache-client</b>. See BENCHMARKS[link:files/BENCHMARKS.html] for details.
+<b>memcached</b> is up to 40x faster than <b>memcache-client</b> or <b>dalli</b>. See BENCHMARKS[link:files/BENCHMARKS.html] for details.
 
 == Reporting problems
 
