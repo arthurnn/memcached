@@ -19,13 +19,18 @@ class RailsTest < Test::Unit::TestCase
   
   def test_get_multi
     @cache.set key, @value
-    result = @cache.get_multi([key])
     assert_equal(
       {key => @value}, 
-      result
-    )
+      @cache.get_multi([key]))
   end
-  
+
+  def test_get_multi_empty_string
+    @cache.set key, "", 0, true
+    assert_equal(
+      {key => ""}, 
+      @cache.get_multi([key], true))
+  end
+   
   def test_delete
     @cache.set key, @value
     assert_nothing_raised do

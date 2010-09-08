@@ -196,13 +196,9 @@ VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, u
   VALUE result = rb_ary_new();
   
   char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
-  if (value == NULL) {
-    rb_ary_push(result, Qnil);
-  } else {
-    VALUE ret = rb_str_new(value, value_length);
-    rb_ary_push(result, ret);
-    free(value);
-  }
+  VALUE ret = rb_str_new(value, value_length);
+  rb_ary_push(result, ret);
+  free(value);
   return result;
 };
 %}

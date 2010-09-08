@@ -1,4 +1,6 @@
 
+v1. Fix empty string return value bug in multiget.
+
 v0.20.1. Better module naming. Oops.
 
 v0.20.0. Add experimental module, with get_len() operator (rgbenson).

@@ -259,9 +259,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_from_last
     cache = Memcached.new(@servers, :distribution => :random)
-    10.times do |n|
-      cache.set key, n
-    end
+    10.times { |n| cache.set key, n }
     10.times do
       assert_equal cache.get(key), cache.get_from_last(key)
     end
@@ -389,6 +387,12 @@ class MemcachedTest < Test::Unit::TestCase
       {},
       @cache.get(["#{key}_1", "#{key}_2"])
      )
+  end
+  
+  def test_get_multi_empty_string
+    @cache.set "#{key}_1", "", 0, false
+    assert_equal({"#{key}_1" => ""},
+      @cache.get(["#{key}_1"], false))
   end
 
   def test_get_multi_checks_types
