@@ -37,7 +37,7 @@ def check_libmemcached
     else
       tar = SOLARIS_32 ? 'gtar' : 'tar'
       patch = SOLARIS_32 ? 'gpatch' : 'patch'
-
+      patch = RbConfig::CONFIG['build_os'] =~ /^freebsd|^openbsd/ ? 'gpatch' : 'patch'
       # have_sasl check may fail on OSX, skip it
       # unless RUBY_PLATFORM =~ /darwin/ or have_library('sasl2')
       #   raise "SASL2 not found. You need the libsasl2-dev library, which should be provided through your system's package manager."
