@@ -6,7 +6,7 @@ BUNDLE = Dir.glob("libmemcached-*.tar.gz").first
 BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 
 SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
-
+BSD = RbConfig::CONFIG['build_os'] =~ /^freebsd|^openbsd/
 $CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "")
 $CFLAGS << " -std=gnu99" if SOLARIS_32
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
@@ -31,13 +31,19 @@ def check_libmemcached
   $LIBPATH = ["#{HERE}/lib"]
   $DEFLIBPATH = [] unless SOLARIS_32
 
-  Dir.chdir(HERE) do
+  #Added to try to remove the nesting issues with the blocks.
+  #1
+  one_path = Dir.pwd
+  
+  #Where block one used to be? #1
+  Dir.chdir(HERE)
+  
     if File.exist?("lib")
       puts "Libmemcached already built; run 'rake clean' first if you need to rebuild."
     else
       tar = SOLARIS_32 ? 'gtar' : 'tar'
       patch = SOLARIS_32 ? 'gpatch' : 'patch'
-      patch = RbConfig::CONFIG['build_os'] =~ /^freebsd|^openbsd/ ? 'gpatch' : 'patch'
+      patch = BSD ? 'gpatch' : 'patch'
       # have_sasl check may fail on OSX, skip it
       # unless RUBY_PLATFORM =~ /darwin/ or have_library('sasl2')
       #   raise "SASL2 not found. You need the libsasl2-dev library, which should be provided through your system's package manager."
@@ -75,21 +81,24 @@ def check_libmemcached
       puts(cmd = "touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4")
       raise "'#{cmd}' failed" unless system(cmd)
 
-      Dir.chdir(BUNDLE_PATH) do
+      #2
+      two_path = Dir.pwd
+      
+      Dir.chdir(BUNDLE_PATH)
+      
         puts(cmd = "env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
 
-        puts(cmd = "make CXXFLAGS='#{$CXXFLAGS}' || true 2>&1")
-        raise "'#{cmd}' failed" unless system(cmd)
-
-        puts(cmd = "make install || true 2>&1")
-        raise "'#{cmd}' failed" unless system(cmd)
-      end
+        #This could be Gem.ruby or something, but loading it in caused problems..
+        system("CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb")
+      
+      Dir.chdir(two_path)
 
       system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
     end
-  end
 
+  #Back to #1
+  Dir.chdir(one_path)
   # Absolutely prevent the linker from picking up any other libmemcached
   Dir.chdir("#{HERE}/lib") do
     system("cp -f libmemcached.a libmemcached_gem.a")

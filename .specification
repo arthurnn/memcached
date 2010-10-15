@@ -1,0 +1,115 @@
+--- !ruby/object:Gem::Specification 
+name: mckinnsb-memcached
+version: !ruby/object:Gem::Version 
+  hash: 1
+  prerelease: false
+  segments: 
+  - 1
+  version: "1"
+platform: ruby
+authors: []
+
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2010-10-13 00:00:00 -04:00
+default_executable: 
+dependencies: []
+
+description: 
+email: 
+executables: []
+
+extensions: 
+- ext/extconf.rb
+extra_rdoc_files: 
+- BENCHMARKS
+- CHANGELOG
+- LICENSE
+- README
+- TODO
+- lib/memcached.rb
+- lib/memcached/behaviors.rb
+- lib/memcached/exceptions.rb
+- lib/memcached/experimental.rb
+- lib/memcached/memcached.rb
+- lib/memcached/rails.rb
+files: 
+- BENCHMARKS
+- CHANGELOG
+- LICENSE
+- Manifest
+- README
+- Rakefile
+- TODO
+- ext/extconf.rb
+- ext/libmemcached-0.32.tar.gz
+- ext/libmemcached-2.patch
+- ext/libmemcached-3.patch
+- ext/libmemcached-4.patch
+- ext/libmemcached-5.patch
+- ext/libmemcached.patch
+- ext/rlibmemcached.i
+- ext/rlibmemcached_wrap.c
+- ext/sasl.patch
+- lib/memcached.rb
+- lib/memcached/auth.rb
+- lib/memcached/behaviors.rb
+- lib/memcached/exceptions.rb
+- lib/memcached/experimental.rb
+- lib/memcached/integer.rb
+- lib/memcached/memcached.rb
+- lib/memcached/rails.rb
+- test/profile/benchmark.rb
+- test/profile/profile.rb
+- test/profile/valgrind.rb
+- test/setup.rb
+- test/teardown.rb
+- test/test_helper.rb
+- test/unit/binding_test.rb
+- test/unit/memcached_experimental_test.rb
+- test/unit/memcached_test.rb
+- test/unit/rails_test.rb
+
+has_rdoc: true
+homepage: 
+licenses: []
+
+post_install_message: 
+rdoc_options: []
+
+require_paths: 
+- lib
+- ext
+required_ruby_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  none: false
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      hash: 3
+      segments: 
+      - 0
+      version: "0"
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.7
+signing_key: 
+specification_version: 3
+summary: 
+test_files: 
+- test/test_helper.rb
+- test/unit/binding_test.rb
+- test/unit/memcached_experimental_test.rb
+- test/unit/memcached_test.rb
+- test/unit/rails_test.rb
