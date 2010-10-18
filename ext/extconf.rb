@@ -31,13 +31,8 @@ def check_libmemcached
   $LDFLAGS = "#{$libraries} #{$LDFLAGS}"
   $LIBPATH = ["#{HERE}/lib"]
   $DEFLIBPATH = [] unless SOLARIS_32
-
-  #Added to try to remove the nesting issues with the blocks.
-  #1
-  one_path = Dir.pwd
   
-  #Where block one used to be? #1
-  Dir.chdir(HERE)
+  Dir.chdir(HERE) do
   
     if File.exist?("lib")
       puts "Libmemcached already built; run 'rake clean' first if you need to rebuild."
@@ -81,11 +76,8 @@ def check_libmemcached
       puts "Touching aclocal.m4  in libmemcached."
       puts(cmd = "touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4")
       raise "'#{cmd}' failed" unless system(cmd)
-
-      #2
-      two_path = Dir.pwd
       
-      Dir.chdir(BUNDLE_PATH)
+      Dir.chdir(BUNDLE_PATH) do
       
         puts(cmd = "env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
@@ -93,13 +85,12 @@ def check_libmemcached
         #This could be Gem.ruby or something, but loading it in caused problems..
         system("CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb")
       
-      Dir.chdir(two_path)
+      end
 
       system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
     end
-
-  #Back to #1
-  Dir.chdir(one_path)
+  end
+  
   # Absolutely prevent the linker from picking up any other libmemcached
   Dir.chdir("#{HERE}/lib") do
     system("cp -f libmemcached.a libmemcached_gem.a")
