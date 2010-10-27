@@ -27,7 +27,7 @@ def check_libmemcached
   $defines = " -DLIBMEMCACHED_WITH_SASL_SUPPORT"
   $libraries = " -L#{HERE}/lib"
   $CFLAGS = "#{$includes} #{$libraries} #{$CFLAGS}"
-  $LDFLAGS = "#{$libraries} #{$LDFLAGS}"
+  $LDFLAGS = "-lsasl2 -lm #{$libraries} #{$LDFLAGS}"
   $LIBPATH = ["#{HERE}/lib"]
   $DEFLIBPATH = [] unless SOLARIS_32
 
