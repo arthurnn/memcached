@@ -108,4 +108,5 @@ if ENV['SWIG']
   raise "'#{cmd}' failed" unless system(cmd)
 end
 
+$CFLAGS << " -Os"
 create_makefile 'rlibmemcached'

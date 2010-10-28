@@ -1,4 +1,6 @@
 
+v1.0.2. Don't allow compilation with -O3.
+
 v1.0.1. SASL compilation fix (tnzk); Rubinious fix (evanphx); re-SWIG.
 
 v1. Fix empty string return value bug in multiget.
