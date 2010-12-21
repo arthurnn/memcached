@@ -16,6 +16,7 @@ puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
   ["remix-stash", "remix/stash"], 
   # ["astro-remcached", "remcached"], # Clobbers the "Memcached" constant
   ["memcache-client", "memcache"],
+  ["kgio", "kgio"],
   ["dalli","dalli"]].each do |gem_name, requirement|
   require requirement
   gem gem_name

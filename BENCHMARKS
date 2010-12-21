@@ -7,7 +7,7 @@ You can easily run your own benchmarks, as long as you have memcached itself on 
 
 == x86-64 OS X
 
-These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
+These benchmarks were run on an OS X 10.6 Core 2 Duo machine:
 
   Darwin amber.local 9.8.0 Darwin Kernel Version 9.8.0: Wed Jul 15 16:55:01 PDT 
   2009; root:xnu-1228.15.4~1/RELEASE_I386 i386
@@ -125,3 +125,4 @@ These benchmarks were run on an OS X 10.5 Core 2 Duo machine:
   hash:murmur                           0.210000   0.000000   0.210000 (  0.203083)
   hash:jenkins                          0.240000   0.000000   0.240000 (  0.245728)
   hash:none                             0.120000   0.000000   0.120000 (  0.121219)
+
