@@ -10,6 +10,8 @@ require 'ruby-debug' if ENV['DEBUG']
 begin; require 'memory'; rescue LoadError; end
 
 puts `uname -a`
+puts `ruby -v`
+puts `env | egrep '^RUBY'`
 puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
 
 [ ["memcached", "memcached"], 
@@ -122,9 +124,9 @@ class Bench
       begin
         yield client
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
-      rescue => e
-        # puts "#{test_name}:#{client_name} => #{e.inspect}"
-        # reset_clients
+      rescue Exception => e
+        puts "#{test_name}:#{client_name} => #{e.inspect}"
+        reset_clients
       end
     end
     puts
