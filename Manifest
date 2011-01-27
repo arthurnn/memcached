@@ -11,6 +11,7 @@ ext/libmemcached-2.patch
 ext/libmemcached-3.patch
 ext/libmemcached-4.patch
 ext/libmemcached-5.patch
+ext/libmemcached-6.patch
 ext/libmemcached.patch
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
@@ -23,6 +24,7 @@ lib/memcached/experimental.rb
 lib/memcached/integer.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
+memcached.gemspec
 test/profile/benchmark.rb
 test/profile/profile.rb
 test/profile/valgrind.rb
