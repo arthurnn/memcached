@@ -23,6 +23,7 @@
 
 %apply unsigned short { uint8_t };
 %apply unsigned int { uint16_t };
+%apply unsigned int { uint32_t server_failure_counter };
 %apply unsigned int { uint32_t user_spec_len };
 %apply unsigned long { uint32_t flags, uint32_t offset, uint32_t weight };
 %apply unsigned long long { uint64_t data, uint64_t cas };
