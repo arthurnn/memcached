@@ -1046,6 +1046,30 @@ class MemcachedTest < Test::Unit::TestCase
     socket.close
   end
 
+  def test_wrong_failure_counter
+    cache = Memcached.new(
+      [@servers.last],
+      :prefix_key => @prefix_key,
+      :auto_eject_hosts => true,
+      :server_failure_limit => 1,
+      :retry_timeout => 1,
+      :hash_with_prefix_key => false,
+      :hash => :md5,
+      :exception_retry_limit => 0
+                          )
+
+    # This is an abuse of knowledge, but it's necessary to verify that
+    # the library is handling the counter properly.
+    struct = cache.instance_variable_get(:@struct)
+    server = Memcached::Lib.memcached_server_by_key(struct, "marmotte").first
+
+    # set to ensure connectivity
+    cache.set("marmotte", "milk")
+    server.server_failure_counter = 0
+    cache.quit
+    assert_equal 0, server.server_failure_counter
+  end
+
   def test_missing_server
     cache = Memcached.new(
       [@servers.last, 'localhost:43041'],
