@@ -43,12 +43,14 @@ def check_libmemcached
       #   raise "SASL2 not found. You need the libsasl2-dev library, which should be provided through your system's package manager."
       # end
 
+      system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
+
       puts "Building libmemcached."
       puts(cmd = "#{tar} xzf #{BUNDLE} 2>&1")
       raise "'#{cmd}' failed" unless system(cmd)
 
       puts "Patching libmemcached source."
-      puts(cmd = "#{patch} -p1 -Z < libmemcached.patch") 
+      puts(cmd = "#{patch} -p1 -Z < libmemcached.patch")
       raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
 
       puts "Patching libmemcached with SASL support."
