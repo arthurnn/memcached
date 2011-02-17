@@ -72,11 +72,8 @@ def check_libmemcached
         puts(cmd = "env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1")
         raise "'#{cmd}' failed" unless system(cmd)
 
-        puts(cmd = "#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' || true 2>&1")
-        raise "'#{cmd}' failed" unless system(cmd)
-
-        puts(cmd = "#{GMAKE_CMD} install || true 2>&1")
-        raise "'#{cmd}' failed" unless system(cmd)
+        #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
+        system("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb")
       end
 
       system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
