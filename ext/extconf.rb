@@ -25,8 +25,13 @@ if ENV['DEBUG']
 end
 
 def patch(prefix, reason)
-  puts "Patching libmemcached source for #{reason}."
-  puts(cmd = "#{PATCH_CMD} -p1 -f < #{prefix}.patch")
+  cmd = "#{PATCH_CMD} -p1 -f < #{prefix}.patch"
+  run(cmd, "Patching libmemcached source for #{reason}.")
+end
+
+def run(cmd, reason)
+  puts reason
+  puts cmd
   raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
 end
 
@@ -51,10 +56,7 @@ def check_libmemcached
       # end
 
       system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
-
-      puts "Building libmemcached."
-      puts(cmd = "#{TAR_CMD} xzf #{BUNDLE} 2>&1")
-      raise "'#{cmd}' failed" unless system(cmd)
+      run("#{TAR_CMD} xzf #{BUNDLE} 2>&1", "Building libmemcached.")
 
       patch("libmemcached", "mark-dead behavior")
       patch("sasl", "SASL")
@@ -64,16 +66,13 @@ def check_libmemcached
       patch("libmemcached-5", "get_len method")
       patch("libmemcached-6", "failure count bug")
 
-      puts "Touching aclocal.m4  in libmemcached."
-      puts(cmd = "touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4")
-      raise "'#{cmd}' failed" unless system(cmd)
+      run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
 
       Dir.chdir(BUNDLE_PATH) do
-        puts(cmd = "env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1")
-        raise "'#{cmd}' failed" unless system(cmd)
+        run("env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
 
         #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
-        system("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb")
+        run("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb", "Making libmemcached.")
       end
 
       system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
@@ -91,11 +90,13 @@ end
 check_libmemcached
 
 if ENV['SWIG']
-  puts "Running SWIG."
-  puts(cmd = "swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i")
-  raise "'#{cmd}' failed" unless system(cmd)
-  puts(cmd = "sed -i '' 's/STR2CSTR/StringValuePtr/' rlibmemcached_wrap.c")
-  raise "'#{cmd}' failed" unless system(cmd)
+  if (`swig -version`=~ /2.0.1/)
+    run("swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i", "Running SWIG.")
+    run("sed -i '' 's/STR2CSTR/StringValuePtr/' rlibmemcached_wrap.c", "Patching SWIG output for Ruby 1.9.")
+    run("sed -i '' 's/\"swig_runtime_data\"/\"SwigRuntimeData\"/' rlibmemcached_wrap.c", "Patching SWIG output for Ruby 1.9.")
+  else
+    raise "Swig 2.0.1 not found. Newer versions may not work."
+  end
 end
 
 $CFLAGS << " -Os"

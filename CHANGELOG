@@ -1,3 +1,5 @@
+v1.0.7. Fix build on BSD (Stew Mckinney). Fix build on Rubinius (brixen).
+
 v1.0.6. Make build step repeatable in the event of failure.
 
 v1.0.5. Fix Manifest.

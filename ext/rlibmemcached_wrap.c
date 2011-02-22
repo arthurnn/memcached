@@ -1734,7 +1734,7 @@ SWIGRUNTIME void
 SWIG_Ruby_SetModule(swig_module_info *pointer)
 {
   /* register a new class */
-  VALUE cl = rb_define_class("swig_runtime_data", rb_cObject);
+  VALUE cl = rb_define_class("SwigRuntimeData", rb_cObject);
   /* create and store the structure pointer to a global variable */
   swig_runtime_data_type_pointer = Data_Wrap_Struct(cl, 0, 0, pointer);
   rb_define_readonly_variable("$swig_runtime_data_type_pointer" SWIG_RUNTIME_VERSION SWIG_TYPE_TABLE_NAME, &swig_runtime_data_type_pointer);
@@ -2286,7 +2286,7 @@ VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t 
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
   size_t value_length;
   VALUE result = rb_ary_new();
-  
+
   char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
   VALUE ret = rb_str_new(value, value_length);
   rb_ary_push(result, ret);
@@ -2315,7 +2315,7 @@ memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat
 };
 
 
-VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {  
+VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {
   return UINT2NUM(memcached_generate_hash_value(key, key_length, hash_algorithm));
 };
 
@@ -8224,7 +8224,7 @@ _wrap_memcached_stat_get_keys(int argc, VALUE *argv, VALUE self) {
   arg2 = (memcached_stat_st *)(argp2);
   result = (char **)memcached_stat_get_keys(arg1,arg2,arg3);
   {
-    int i;  
+    int i;
     VALUE ary = rb_ary_new();
     vresult = rb_ary_new();
     
@@ -8836,7 +8836,7 @@ _wrap_memcached_mget(int argc, VALUE *argv, VALUE self) {
     Check_Type(argv[1], T_ARRAY);
     arg4 = (unsigned int) RARRAY_LEN(argv[1]);
     arg3 = (size_t *) malloc((arg4+1)*sizeof(size_t));
-    arg2 = (char **) malloc((arg4+1)*sizeof(char *)); 
+    arg2 = (char **) malloc((arg4+1)*sizeof(char *));
     for(i = 0; i < arg4; i ++) {
       Check_Type(RARRAY_PTR(argv[1])[i], T_STRING);
       arg3[i] = RSTRING_LEN(RARRAY_PTR(argv[1])[i]);
@@ -8878,7 +8878,7 @@ _wrap_memcached_mget_len(int argc, VALUE *argv, VALUE self) {
     Check_Type(argv[1], T_ARRAY);
     arg4 = (unsigned int) RARRAY_LEN(argv[1]);
     arg3 = (size_t *) malloc((arg4+1)*sizeof(size_t));
-    arg2 = (char **) malloc((arg4+1)*sizeof(char *)); 
+    arg2 = (char **) malloc((arg4+1)*sizeof(char *));
     for(i = 0; i < arg4; i ++) {
       Check_Type(RARRAY_PTR(argv[1])[i], T_STRING);
       arg3[i] = RSTRING_LEN(RARRAY_PTR(argv[1])[i]);
@@ -9012,7 +9012,7 @@ _wrap_memcached_mget_by_key(int argc, VALUE *argv, VALUE self) {
     Check_Type(argv[3], T_ARRAY);
     arg6 = (unsigned int) RARRAY_LEN(argv[3]);
     arg5 = (size_t *) malloc((arg6+1)*sizeof(size_t));
-    arg4 = (char **) malloc((arg6+1)*sizeof(char *)); 
+    arg4 = (char **) malloc((arg6+1)*sizeof(char *));
     for(i = 0; i < arg6; i ++) {
       Check_Type(RARRAY_PTR(argv[3])[i], T_STRING);
       arg5[i] = RSTRING_LEN(RARRAY_PTR(argv[3])[i]);
@@ -9074,7 +9074,7 @@ _wrap_memcached_fetch(int argc, VALUE *argv, VALUE self) {
   vresult = SWIG_FromCharPtr((const char *)result);
   {
     // Pushes an empty string when *key_length == 0
-    rb_ary_push(vresult, rb_str_new(arg2, *arg3)); 
+    rb_ary_push(vresult, rb_str_new(arg2, *arg3));
   }
   if (SWIG_IsTmpObj(res4)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_size_t((*arg4)));
@@ -12642,7 +12642,7 @@ _wrap_memcached_fetch_rvalue(int argc, VALUE *argv, VALUE self) {
   vresult = result;
   {
     // Pushes an empty string when *key_length == 0
-    rb_ary_push(vresult, rb_str_new(arg2, *arg3)); 
+    rb_ary_push(vresult, rb_str_new(arg2, *arg3));
   }
   if (SWIG_IsTmpObj(res4)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_int((*arg4)));

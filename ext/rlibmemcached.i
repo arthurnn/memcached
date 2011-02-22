@@ -34,7 +34,7 @@
   Check_Type($input, T_ARRAY);
   $3 = (unsigned int) RARRAY_LEN($input);
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
-  $1 = (char **) malloc(($3+1)*sizeof(char *)); 
+  $1 = (char **) malloc(($3+1)*sizeof(char *));
   for(i = 0; i < $3; i ++) {
     Check_Type(RARRAY_PTR($input)[i], T_STRING);
     $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
@@ -46,7 +46,7 @@
   Check_Type($input, T_ARRAY);
   $3 = (unsigned int) RARRAY_LEN($input);
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
-  $1 = (char **) malloc(($3+1)*sizeof(char *)); 
+  $1 = (char **) malloc(($3+1)*sizeof(char *));
   for(i = 0; i < $3; i ++) {
     Check_Type(RARRAY_PTR($input)[i], T_STRING);
     $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
@@ -74,8 +74,8 @@
 };
 
 %apply (const char *str, size_t len) {
-  (const char *namespace, size_t namespace_length), 
-  (const char *key, size_t key_length), 
+  (const char *namespace, size_t namespace_length),
+  (const char *key, size_t key_length),
   (const char *value, size_t value_length)
 };
 
@@ -116,16 +116,16 @@
   size_t length = 0;
   $1 = string;
   $2 = &length;
-}; 
+};
 %typemap(argout) (char *key, size_t *key_length) {
   // Pushes an empty string when *key_length == 0
-  rb_ary_push($result, rb_str_new($1, *$2)); 
+  rb_ary_push($result, rb_str_new($1, *$2));
 }
 
 // Array of strings
 
 %typemap(out) (char **) {
-  int i;  
+  int i;
   VALUE ary = rb_ary_new();
   $result = rb_ary_new();
 
@@ -195,7 +195,7 @@ VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, u
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
   size_t value_length;
   VALUE result = rb_ary_new();
-  
+
   char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
   VALUE ret = rb_str_new(value, value_length);
   rb_ary_push(result, ret);
@@ -238,7 +238,7 @@ memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat
 // Uint32
 VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length, memcached_hash hash_algorithm);
 %{
-VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {  
+VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcached_hash hash_algorithm) {
   return UINT2NUM(memcached_generate_hash_value(key, key_length, hash_algorithm));
 };
 %}
