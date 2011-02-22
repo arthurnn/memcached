@@ -144,7 +144,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_set_prefix_key_to_empty_string
     cache = Memcached.new @servers, :prefix_key => "foo"
-    cache.prefix_key = "" 
+    cache.prefix_key = ""
     assert_equal "", cache.prefix_key
   end
 
@@ -388,7 +388,7 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(["#{key}_1", "#{key}_2"])
      )
   end
-  
+
   def test_get_multi_empty_string
     @cache.set "#{key}_1", "", 0, false
     assert_equal({"#{key}_1" => ""},
@@ -468,6 +468,10 @@ class MemcachedTest < Test::Unit::TestCase
     sleep(2)
     assert_raise(Memcached::NotFound) do
       @cache.get key
+    end
+
+    assert_raise(TypeError) do
+      @cache.set key, @value, Time.now
     end
   end
 
@@ -1121,7 +1125,7 @@ class MemcachedTest < Test::Unit::TestCase
       :distribution => :random,
       :server_failure_limit => 1,
       :retry_timeout => 1,
-      :exception_retry_limit => 0 
+      :exception_retry_limit => 0
     )
 
     # Provoke the errors in 'failures'

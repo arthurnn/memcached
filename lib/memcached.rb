@@ -24,7 +24,6 @@ class Memcached
   VERSION = File.read("#{File.dirname(__FILE__)}/../CHANGELOG")[/v([\d\.]+)\./, 1]
 end
 
-require 'memcached/integer'
 require 'memcached/exceptions'
 require 'memcached/behaviors'
 require 'memcached/auth'
