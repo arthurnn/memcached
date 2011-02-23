@@ -4,8 +4,11 @@ require "#{File.dirname(__FILE__)}/../setup"
 $LOAD_PATH << "#{File.dirname(__FILE__)}/../../lib/"
 require 'memcached'
 require 'rubygems'
+require 'ostruct'
 
 GC.copy_on_write_friendly = true if GC.respond_to?("copy_on_write_friendly=")
+
+Struct
 
 class Worker
   def initialize(method_name, iterations, with_memory = 'false')
@@ -19,7 +22,9 @@ class Worker
     @key2 = "key2--------------------------------"
     @key3 = "key3--------------------------------"
 
-    @value = []
+    @value = OpenStruct.new(
+      :a => 1, :b => 2, "array" => [1, 2, 3], "hash" => {:badger => 1}
+    )
     @marshalled = Marshal.dump(@value)
 
     @opts = [
