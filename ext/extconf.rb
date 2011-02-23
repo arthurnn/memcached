@@ -90,13 +90,10 @@ end
 check_libmemcached
 
 if ENV['SWIG']
-  if (`swig -version`=~ /2.0.1/)
-    run("swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i", "Running SWIG.")
-    run("sed -i '' 's/STR2CSTR/StringValuePtr/' rlibmemcached_wrap.c", "Patching SWIG output for Ruby 1.9.")
-    run("sed -i '' 's/\"swig_runtime_data\"/\"SwigRuntimeData\"/' rlibmemcached_wrap.c", "Patching SWIG output for Ruby 1.9.")
-  else
-    raise "Swig 2.0.1 not found. Newer versions may not work."
-  end
+  puts "WARNING: Swig 2.0.2 not found. Other versions may not work." if (`swig -version`!~ /2.0.2/)
+  run("swig #{$defines} #{$includes} -ruby -autorename rlibmemcached.i", "Running SWIG.")
+  run("sed -i '' 's/STR2CSTR/StringValuePtr/' rlibmemcached_wrap.c", "Patching SWIG output for Ruby 1.9.")
+  run("sed -i '' 's/\"swig_runtime_data\"/\"SwigRuntimeData\"/' rlibmemcached_wrap.c", "Patching SWIG output for Ruby 1.9.")
 end
 
 $CFLAGS << " -Os"

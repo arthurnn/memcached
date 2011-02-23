@@ -120,7 +120,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     end
 
     instance_eval { send(:extend, Experimental) } if options[:experimental_features]
- 
+
     options[:binary_protocol] = true if options[:credentials] != nil
 
     # Force :buffer_requests to use :no_block
@@ -303,7 +303,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Set a key/value pair. Accepts a String <tt>key</tt> and an arbitrary Ruby object. Overwrites any existing value on the server.
   #
-  # Accepts an optional <tt>ttl</tt> value to specify the maximum lifetime of the key on the server. <tt>ttl</tt> can be either an integer number of seconds, or a Time elapsed time object. <tt>0</tt> means no ttl. Note that there is no guarantee that the key will persist as long as the <tt>ttl</tt>, but it will not persist longer.
+  # Accepts an optional <tt>ttl</tt> value to specify the maximum lifetime of the key on the server, in seconds. <tt>ttl</tt> must be a <tt>FixNum</tt>. <tt>0</tt> means no ttl. Note that there is no guarantee that the key will persist as long as the <tt>ttl</tt>, but it will not persist longer.
   #
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be set directly.
   #
@@ -319,7 +319,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       retry if e.instance_of?(ClientError) && !tries
       raise unless tries < options[:exception_retry_limit] && should_retry(e)
       tries += 1
-      retry 
+      retry
     end
   end
 
@@ -335,7 +335,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       tries ||= 0
       raise unless tries < options[:exception_retry_limit] && should_retry(e)
       tries += 1
-      retry 
+      retry
     end
   end
 
@@ -352,7 +352,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     tries ||= 0
     raise unless tries < options[:exception_retry_limit] && should_retry(e)
     tries += 1
-    retry 
+    retry
   end
 
   # Decrement a key's value. The parameters and exception behavior are the same as <tt>increment</tt>.
@@ -364,7 +364,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     tries ||= 0
     raise unless tries < options[:exception_retry_limit] && should_retry(e)
     tries += 1
-    retry 
+    retry
   end
 
   #:stopdoc:
@@ -384,7 +384,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       tries ||= 0
       raise unless tries < options[:exception_retry_limit] && should_retry(e)
       tries += 1
-      retry 
+      retry
     end
   end
 
@@ -401,7 +401,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     tries ||= 0
     raise unless tries < options[:exception_retry_limit] && should_retry(e)
     tries += 1
-    retry 
+    retry
   end
 
   # Prepends a string to a key's value. The parameters and exception behavior are the same as <tt>append</tt>.
@@ -415,7 +415,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     tries ||= 0
     raise unless tries < options[:exception_retry_limit] && should_retry(e)
     tries += 1
-    retry 
+    retry
   end
 
   # Reads a key's value from the server and yields it to a block. Replaces the key's value with the result of the block as long as the key hasn't been updated in the meantime, otherwise raises <b>Memcached::NotStored</b>. Accepts a String <tt>key</tt> and a block.
@@ -434,9 +434,9 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       tries_for_get ||= 0
       raise unless tries_for_get < options[:exception_retry_limit] && should_retry(e)
       tries_for_get += 1
-      retry 
+      retry
     end
-    
+
     cas = @struct.result.cas
 
     value = Marshal.load(value) if marshal
@@ -452,7 +452,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       tries_for_cas ||= 0
       raise unless tries_for_cas < options[:exception_retry_limit] && should_retry(e)
       tries_for_cas += 1
-      retry 
+      retry
     end
   end
 
@@ -470,7 +470,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     tries ||= 0
     raise unless tries < options[:exception_retry_limit] && should_retry(e)
     tries += 1
-    retry 
+    retry
   end
 
   # Flushes all key/value pairs from all the servers.
@@ -482,7 +482,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     tries ||= 0
     raise unless tries < options[:exception_retry_limit] && should_retry(e)
     tries += 1
-    retry 
+    retry
   end
 
 ### Getters

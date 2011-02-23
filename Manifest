@@ -5,6 +5,7 @@ Manifest
 README
 Rakefile
 TODO
+ext/extconf-make.rb
 ext/extconf.rb
 ext/libmemcached-0.32.tar.gz
 ext/libmemcached-2.patch
@@ -21,10 +22,8 @@ lib/memcached/auth.rb
 lib/memcached/behaviors.rb
 lib/memcached/exceptions.rb
 lib/memcached/experimental.rb
-lib/memcached/integer.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
-memcached.gemspec
 test/profile/benchmark.rb
 test/profile/profile.rb
 test/profile/valgrind.rb

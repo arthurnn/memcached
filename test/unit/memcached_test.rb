@@ -1,8 +1,5 @@
 
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
-require 'socket'
-require 'mocha'
-require 'benchmark'
 
 class MemcachedTest < Test::Unit::TestCase
 
