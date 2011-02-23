@@ -4,8 +4,6 @@ Echoe.new("memcached") do |p|
   p.author = "Evan Weaver"
   p.project = "fauna"
   p.summary = "An interface to the libmemcached C client."
-  p.url = "http://blog.evanweaver.com/files/doc/fauna/memcached/"
-  p.docs_host = "blog.evanweaver.com:~/www/bax/public/files/doc/"
   p.rdoc_pattern = /README|TODO|LICENSE|CHANGELOG|BENCH|COMPAT|exceptions|experimental.rb|behaviors|rails.rb|memcached.rb/
   p.clean_pattern += ["ext/lib", "ext/include", "ext/share", "ext/libmemcached-?.??", "ext/bin", "ext/conftest.dSYM"]
 end
