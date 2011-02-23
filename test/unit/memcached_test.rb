@@ -429,12 +429,15 @@ class MemcachedTest < Test::Unit::TestCase
     cache.flush
     20.times { |i| cache.set "#{key}#{i}", @value }
 
-    cache, hits = Memcached.new(@servers.first), 0
-    20.times do |i|
-      begin
-        cache.get "#{key}#{i}"
-        hits += 1
-      rescue Memcached::NotFound
+    cache, hits = Memcached.new(@servers.first), 4
+    while hits == 4 do
+      hits = 0
+      20.times do |i|
+        begin
+          cache.get "#{key}#{i}"
+          hits += 1
+        rescue Memcached::NotFound
+        end
       end
     end
 
