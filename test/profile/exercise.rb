@@ -8,24 +8,26 @@ require 'rubygems'
 GC.copy_on_write_friendly = true if GC.respond_to?("copy_on_write_friendly=")
 
 class Worker
-  def initialize(method_name = 'mixed', iterations = 10000, ignore_memory = false)
-    @method = method_name
-    @i = iterations.to_i
-    @ignore_memory = ignore_memory
+  def initialize(method_name, iterations, with_memory = 'false')
+    @method = method_name || 'mixed'
+    @i = (iterations || 10000).to_i
+    @with_memory = with_memory
 
     puts "*** Running #{@method.inspect} test for #{@i} loops. ***"
 
-    @key1 = "key1-"*8
-    @key2 = "key2-"*8
+    @key1 = "key1--------------------------------"
+    @key2 = "key2--------------------------------"
+    @key3 = "key3--------------------------------"
 
     @value = []
     @marshalled = Marshal.dump(@value)
 
     @opts = [
-      ["#{UNIX_SOCKET_NAME}0", "#{UNIX_SOCKET_NAME}1"],
+      ['localhost:43042', 'localhost:43043', 'localhost:43044'],
       {
-        :buffer_requests => false,
-        :no_block => false,
+        :buffer_requests => true,
+        :no_block => true,
+        :noreply => true,
         :namespace => "namespace"
       }
     ]
@@ -81,7 +83,14 @@ class Worker
       when "mixed"
         @i.times do
           @cache.set @key1, @value
+          @cache.set @key2, @value
           @cache.get @key1
+          @cache.get @key3
+          @cache.get [@key1, @key2, @key3]
+          @cache.prepend @key1, @marshalled
+          @cache.prepend @key2, @marshalled
+          @cache.delete @key1
+          @cache.delete @key2
         end
       when "stats"
         @i.times do
@@ -111,7 +120,7 @@ class Worker
         raise "No such method"
     end
 
-    unless @ignore_memory
+    if @with_memory == "true"
       puts "*** Garbage collect. ***"
       10.times do
         GC.start

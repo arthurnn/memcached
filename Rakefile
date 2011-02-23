@@ -20,14 +20,18 @@ task :exceptions do
   end
 end
 
-task :valgrind do
- exec("ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
-end
-
 task :benchmark do
  exec("ruby #{File.dirname(__FILE__)}/test/profile/benchmark.rb")
 end
 
-task :profile do
- exec("ruby #{File.dirname(__FILE__)}/test/profile/profile.rb")
+task :rb_profile do
+ exec("ruby #{File.dirname(__FILE__)}/test/profile/rb_profiler.rb")
+end
+
+task :c_profile do
+ exec("ruby #{File.dirname(__FILE__)}/test/profile/c_profiler.rb")
+end
+
+task :valgrind do
+ exec("ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
 end
