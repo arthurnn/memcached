@@ -21,7 +21,11 @@ task :exceptions do
 end
 
 task :valgrind do
-  exec("valgrind  --tool=memcheck --leak-check=full --show-reachable=no --num-callers=15 --track-fds=yes --workaround-gcc296-bugs=yes --max-stackframe=7304328 --dsymutil=yes --track-origins=yes ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
+ exec("ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
+end
+
+task :benchmark do
+ exec("ruby #{File.dirname(__FILE__)}/test/profile/benchmark.rb")
 end
 
 task :profile do
