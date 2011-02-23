@@ -19,7 +19,8 @@ puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
   # ["astro-remcached", "remcached"], # Clobbers the "Memcached" constant
   ["memcache-client", "memcache"],
   ["kgio", "kgio"],
-  ["dalli","dalli"]].each do |gem_name, requirement|
+  ["dalli","dalli"]
+  ].each do |gem_name, requirement|
   require requirement
   gem gem_name
   puts "Loaded #{gem_name} #{Gem.loaded_specs[gem_name].version.to_s rescue nil}"
@@ -56,6 +57,7 @@ class Bench
     @loops = (loops || 20000).to_i
     @stack_depth = (stack_depth || 0).to_i
 
+    puts "PID is #{Process.pid}"
     puts "Loops is #{@loops}"
     puts "Stack depth is #{@stack_depth}"
 
@@ -113,19 +115,28 @@ class Bench
          :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true),
        "mclient:ascii" => MemCache.new(['127.0.0.1:43042', '127.0.0.1:43043']),
        "stash:bin" => Remix::Stash.new(:root),
-       "dalli:bin" => Dalli::ClientCompat.new(['127.0.0.1:43042', '127.0.0.1:43043'], :marshal => false, :threadsafe => false)}
+       "dalli:bin" => Dalli::ClientCompat.new(['127.0.0.1:43042', '127.0.0.1:43043'], :marshal => false, :threadsafe => false)
+       }
   end
 
-
-  def benchmark_clients(test_name, clients = @clients)
-    clients.keys.sort.each do |client_name|
+  def benchmark_clients(test_name, populate_keys = true)
+    @clients.keys.sort.each do |client_name|
       next if client_name == "stash" and test_name == "set-large" # Don't let stash break the world
-      client = clients[client_name]
+      client = @clients[client_name]
       begin
+        if populate_keys
+          client.set @k1, @m_value, 0, true
+          client.set @k2, @m_value, 0, true
+          client.set @k3, @m_value, 0, true
+        else
+          client.delete @k1
+          client.delete @k2
+          client.delete @k3
+        end
         yield client
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
       rescue Exception => e
-        puts "#{test_name}: #{client_name} => #{e.inspect}"
+        puts "#{test_name}: #{client_name} => #{e.inspect}" if ENV["DEBUG"]
         reset_clients
       end
     end
@@ -176,19 +187,19 @@ class Bench
       c.delete @k3
     end
 
-    benchmark_clients("get-missing") do |c|
+    benchmark_clients("get-missing", false) do |c|
       c.get @k1
       c.get @k2
       c.get @k3
     end
 
-    benchmark_clients("append-missing") do |c|
+    benchmark_clients("append-missing", false) do |c|
       c.append @k1, @m_value
       c.append @k2, @m_value
       c.append @k3, @m_value
     end
 
-    benchmark_clients("prepend-missing") do |c|
+    benchmark_clients("prepend-missing", false) do |c|
       c.prepend @k1, @m_value
       c.prepend @k2, @m_value
       c.prepend @k3, @m_value
