@@ -591,10 +591,12 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code and an optional key, for exception messages.
   def check_return_code(ret, key = nil) #:doc:
-    case ret
-    when 0, 32 # Lib::MEMCACHED_SUCCESS, Lib::MEMCACHED_BUFFERED
-    when 16 then raise @not_found # Lib::MEMCACHED_NOTFOUND
-    when 14 then raise @not_stored # Lib::MEMCACHED_NOTSTORED
+    if ret == 0 # Lib::MEMCACHED_SUCCESS
+    elsif ret == 32 # Lib::MEMCACHED_BUFFERED
+    elsif ret == 16
+      raise @not_found # Lib::MEMCACHED_NOTFOUND
+    elsif ret == 14
+      raise @not_stored # Lib::MEMCACHED_NOTSTORED
     else
       reraise(key, ret)
     end
