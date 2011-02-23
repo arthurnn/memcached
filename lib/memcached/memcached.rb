@@ -591,28 +591,32 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code and an optional key, for exception messages.
   def check_return_code(ret, key = nil) #:doc:
-    if ret == 0 # Memcached::Success
-    elsif ret == 32 # Lib::MEMCACHED_BUFFERED # Memcached::ActionQueued
-    elsif ret == 16 # Lib::MEMCACHED_NOTFOUND and @not_found
-      raise @not_found
-    elsif ret == 14 # Lib::MEMCACHED_NOTSTORED and @not_stored
-      raise @not_stored
+    case ret
+    when 0, 32 # Lib::MEMCACHED_SUCCESS, Lib::MEMCACHED_BUFFERED
+    when 16 then raise @not_found # Lib::MEMCACHED_NOTFOUND
+    when 14 then raise @not_stored # Lib::MEMCACHED_NOTSTORED
     else
-      message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"
-      if key.is_a?(String)
-        if ret == Lib::MEMCACHED_ERRNO
-          if (server = Lib.memcached_server_by_key(@struct, key)).is_a?(Array)
-            errno = server.first.cached_errno
-            message = "Errno #{errno}: #{ERRNO_HASH[errno].inspect}. #{message}"
-          end
-        elsif ret == Lib::MEMCACHED_SERVER_ERROR
-          if (server = Lib.memcached_server_by_key(@struct, key)).is_a?(Array)
-            message = "\"#{server.first.cached_server_error}\". #{message}."
-          end
+      reraise(key, ret)
+    end
+  rescue TypeError
+    reraise(key, ret)
+  end
+
+  def reraise(key, ret)
+    message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"
+    if key.is_a?(String)
+      if ret == Lib::MEMCACHED_ERRNO
+        if (server = Lib.memcached_server_by_key(@struct, key)).is_a?(Array)
+          errno = server.first.cached_errno
+          message = "Errno #{errno}: #{ERRNO_HASH[errno].inspect}. #{message}"
+        end
+      elsif ret == Lib::MEMCACHED_SERVER_ERROR
+        if (server = Lib.memcached_server_by_key(@struct, key)).is_a?(Array)
+          message = "\"#{server.first.cached_server_error}\". #{message}."
         end
       end
-      raise EXCEPTIONS[ret], message
     end
+    raise EXCEPTIONS[ret], message
   end
 
   # Turn an array of keys into a hash of keys to servers.

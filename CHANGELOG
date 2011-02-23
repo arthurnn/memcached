@@ -1,3 +1,5 @@
+v1.1.1. Speed up multiget. Don't cast types on unmarshalled set.
+
 v1.1. TTL interface requires Fixnums.
 
 v1.0.7. Fix build on BSD (Stew Mckinney). Fix build on Rubinius (brixen).
