@@ -308,7 +308,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be set directly.
   #
   def set(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value.to_s
+    value = marshal ? Marshal.dump(value) : value
     begin
       check_return_code(
         Lib.memcached_set(@struct, key, value, ttl, flags),
@@ -325,7 +325,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Add a key/value pair. Raises <b>Memcached::NotStored</b> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
   def add(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value.to_s
+    value = marshal ? Marshal.dump(value) : value
     begin
       check_return_code(
         Lib.memcached_add(@struct, key, value, ttl, flags),
@@ -374,7 +374,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Replace a key/value pair. Raises <b>Memcached::NotFound</b> if the key does not exist on the server. The parameters are the same as <tt>set</tt>.
   def replace(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value.to_s
+    value = marshal ? Marshal.dump(value) : value
     begin
       check_return_code(
          Lib.memcached_replace(@struct, key, value, ttl, flags),
@@ -504,14 +504,14 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       check_return_code(ret, keys)
 
       hash = {}
-      keys.each do
-        value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
-        break if ret == Lib::MEMCACHED_END
-        if ret != Lib::MEMCACHED_NOTFOUND
-          check_return_code(ret, key)
-          # Assign the value
+      value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
+      while ret != 21 do # Lib::MEMCACHED_END
+        if ret == 0 # Lib::MEMCACHED_SUCCESS
           hash[key] = (marshal ? Marshal.load(value) : value)
+        elsif ret != 16 # Lib::MEMCACHED_NOTFOUND
+          check_return_code(ret, key)
         end
+        value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
       end
       hash
     else
@@ -592,10 +592,10 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   # Checks the return code from Rlibmemcached against the exception list. Raises the corresponding exception if the return code is not Memcached::Success or Memcached::ActionQueued. Accepts an integer return code and an optional key, for exception messages.
   def check_return_code(ret, key = nil) #:doc:
     if ret == 0 # Memcached::Success
-    elsif ret == Lib::MEMCACHED_BUFFERED # Memcached::ActionQueued
-    elsif ret == Lib::MEMCACHED_NOTFOUND and @not_found
+    elsif ret == 32 # Lib::MEMCACHED_BUFFERED # Memcached::ActionQueued
+    elsif ret == 16 # Lib::MEMCACHED_NOTFOUND and @not_found
       raise @not_found
-    elsif ret == Lib::MEMCACHED_NOTSTORED and @not_stored
+    elsif ret == 14 # Lib::MEMCACHED_NOTSTORED and @not_stored
       raise @not_stored
     else
       message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"

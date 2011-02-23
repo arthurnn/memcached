@@ -177,9 +177,8 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_initialize_with_backtraces
-    cache = Memcached.new @servers,
-      :show_backtraces => true
-    cache.delete key rescue
+    cache = Memcached.new @servers, :show_backtraces => true
+    cache.delete key rescue nil
     begin
       cache.get key
     rescue Memcached::NotFound => e
@@ -404,9 +403,21 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal @marshalled_value, result
   end
 
+  def test_set_unmarshalled_and_get_unmarshalled
+    @cache.set key, @marshalled_value, 0, false
+    result = @cache.get key, false
+    assert_equal @marshalled_value, result
+  end
+
+  def test_set_unmarshalled_error
+    assert_raises(TypeError) do
+      @cache.set key, @value, 0, false
+    end
+  end
+
   def test_get_multi_unmarshalled
-    @cache.set "#{key}_1", 1, 0, false
-    @cache.set "#{key}_2", 2, 0, false
+    @cache.set "#{key}_1", "1", 0, false
+    @cache.set "#{key}_2", "2", 0, false
     assert_equal(
       {"#{key}_1" => "1", "#{key}_2" => "2"},
       @cache.get(["#{key}_1", "#{key}_2"], false)
@@ -415,7 +426,7 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_multi_mixed_marshalling
     @cache.set "#{key}_1", 1
-    @cache.set "#{key}_2", 2, 0, false
+    @cache.set "#{key}_2", "2", 0, false
     assert_nothing_raised do
       @cache.get(["#{key}_1", "#{key}_2"], false)
     end
@@ -566,12 +577,12 @@ class MemcachedTest < Test::Unit::TestCase
   # Increment and decrement
 
   def test_increment
-    @cache.set key, 10, 0, false
+    @cache.set key, "10", 0, false
     assert_equal 11, @cache.increment(key)
   end
 
   def test_increment_offset
-    @cache.set key, 10, 0, false
+    @cache.set key, "10", 0, false
     assert_equal 15, @cache.increment(key, 5)
   end
 
@@ -583,12 +594,12 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_decrement
-    @cache.set key, 10, 0, false
+    @cache.set key, "10", 0, false
     assert_equal 9, @cache.decrement(key)
   end
 
   def test_decrement_offset
-    @cache.set key, 10, 0, false
+    @cache.set key, "10", 0, false
     assert_equal 5, @cache.decrement(key, 5)
   end
 

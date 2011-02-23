@@ -120,8 +120,12 @@ class Bench
   end
 
   def benchmark_clients(test_name, populate_keys = true)
+    return if ENV["TEST"] and !test_name.include?(ENV["TEST"])
+
     @clients.keys.sort.each do |client_name|
+      next if ENV["CLIENT"] and !client_name.include?(ENV["CLIENT"])
       next if client_name == "stash" and test_name == "set-large" # Don't let stash break the world
+
       client = @clients[client_name]
       begin
         if populate_keys
