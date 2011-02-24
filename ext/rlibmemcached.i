@@ -41,19 +41,8 @@
     $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
   }
 }
-%typemap(in) (char **keys, size_t *key_length, unsigned int number_of_keys) {
-  int i;
-  Check_Type($input, T_ARRAY);
-  $3 = (unsigned int) RARRAY_LEN($input);
-  $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
-  $1 = (char **) malloc(($3+1)*sizeof(char *));
-  for(i = 0; i < $3; i ++) {
-    Check_Type(RARRAY_PTR($input)[i], T_STRING);
-    $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
-    $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
-  }
-}
-%typemap(freearg) (char **keys, size_t *key_length, size_t number_of_keys) {
+
+%typemap(freearg) (const char **keys, size_t *key_length, size_t number_of_keys) {
    free($1);
    free($2);
 }

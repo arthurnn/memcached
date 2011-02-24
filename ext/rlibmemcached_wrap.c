@@ -8849,8 +8849,16 @@ _wrap_memcached_mget(int argc, VALUE *argv, VALUE self) {
   }
   result = (memcached_return)memcached_mget(arg1,(char const **)arg2,arg3,arg4);
   vresult = SWIG_From_int((int)(result));
+  {
+    free(arg2);
+    free(arg3);
+  }
   return vresult;
 fail:
+  {
+    free(arg2);
+    free(arg3);
+  }
   return Qnil;
 }
 
@@ -8896,8 +8904,16 @@ _wrap_memcached_mget_len(int argc, VALUE *argv, VALUE self) {
   arg5 = (uint32_t)(val5);
   result = (memcached_return)memcached_mget_len(arg1,(char const **)arg2,arg3,arg4,arg5);
   vresult = SWIG_From_int((int)(result));
+  {
+    free(arg2);
+    free(arg3);
+  }
   return vresult;
 fail:
+  {
+    free(arg2);
+    free(arg3);
+  }
   return Qnil;
 }
 
@@ -9031,9 +9047,17 @@ _wrap_memcached_mget_by_key(int argc, VALUE *argv, VALUE self) {
   result = (memcached_return)memcached_mget_by_key(arg1,(char const *)arg2,arg3,(char const **)arg4,arg5,arg6,arg7);
   vresult = SWIG_From_int((int)(result));
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
+  {
+    free(arg4);
+    free(arg5);
+  }
   return vresult;
 fail:
   if (alloc2 == SWIG_NEWOBJ) free((char*)buf2);
+  {
+    free(arg4);
+    free(arg5);
+  }
   return Qnil;
 }
 

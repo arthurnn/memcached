@@ -103,7 +103,7 @@ class Worker
         end
       when "multiget"
         @i.times do
-          @cache.get([@key1, @key2])
+          @cache.get([@key1, @key2, @key3])
         end
       when "clone"
         @i.times do
