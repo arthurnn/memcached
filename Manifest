@@ -24,9 +24,12 @@ lib/memcached/exceptions.rb
 lib/memcached/experimental.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
+lib/rlibmemcached.bundle.dSYM/Contents/Info.plist
 test/profile/benchmark.rb
+test/profile/c_profiler.rb
 test/profile/exercise.rb
-test/profile/profile.rb
+test/profile/rb_profiler.rb
+test/profile/valgrind.rb
 test/setup.rb
 test/teardown.rb
 test/test_helper.rb
