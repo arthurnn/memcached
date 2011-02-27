@@ -223,12 +223,10 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   # object.
   #
   def clone
-    # FIXME Memory leak
-    # memcached = super
-    # struct = Lib.memcached_clone(nil, @struct)
-    # memcached.instance_variable_set('@struct', struct)
-    # memcached
-    self.class.new(servers, options.merge(:prefix_key => prefix_key))
+    memcached = super
+    struct = Lib.memcached_clone(nil, @struct)
+    memcached.instance_variable_set('@struct', struct)
+    memcached
   end
 
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
