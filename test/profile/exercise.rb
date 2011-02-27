@@ -97,6 +97,14 @@ class Worker
           @cache.delete @key1
           @cache.delete @key2
         end
+      when "mixed-dead"
+        @cache.get [@key1, @key2, @key3]
+        system("killall -9 memcached")
+        @i.times do
+          @cache.set @key1, @value rescue nil
+          @cache.get @key3 rescue nil
+          @cache.delete @key2 rescue nil
+        end
       when "stats"
         @i.times do
           @cache.stats
@@ -136,9 +144,9 @@ class Worker
       ObjectSpace.each_object(Memcached) { clients += 1 }
       ObjectSpace.each_object(Rlibmemcached::MemcachedSt) { sts += 1 }
       ObjectSpace.each_object(Rlibmemcached::MemcachedServerSt) { server_sts += 1 }
-      puts "*** Structs: #{sts} ***"
-      puts "*** Server structs: #{server_sts} ***"
-      puts "*** Clients: #{clients} ***"
+      puts "*** memcached_st structs: #{sts} ***"
+      puts "*** memcached_server_st structs: #{server_sts} ***"
+      puts "*** Memcached instances: #{clients} ***"
 
       begin;
         require 'memory'

@@ -17,6 +17,10 @@
 %freefunc memcached_st "memcached_free";
 %freefunc memcached_server_st "memcached_server_free";
 
+// Register which functions generate new objects
+%newobject memcached_server_by_key;
+%newobject memcached_server_st;
+
 // %trackobjects; // Doesn't fix any interesting leaks
 
 //// Input maps

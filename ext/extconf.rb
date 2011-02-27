@@ -48,7 +48,7 @@ def check_libmemcached
 
   Dir.chdir(HERE) do
     if File.exist?("lib")
-      puts "Libmemcached already built; run 'rake clean' first if you need to rebuild."
+      puts "Libmemcached already configured; run 'rake clean' first if you need to reconfigure."
     else
       # have_sasl check may fail on OSX, skip it
       # unless RUBY_PLATFORM =~ /darwin/ or have_library('sasl2')
@@ -70,12 +70,12 @@ def check_libmemcached
 
       Dir.chdir(BUNDLE_PATH) do
         run("env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
-
-        #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
-        run("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb", "Making libmemcached.")
       end
+    end
 
-      system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
+    Dir.chdir(BUNDLE_PATH) do
+      #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
+      run("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb", "Making libmemcached.")
     end
   end
 
