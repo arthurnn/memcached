@@ -7,7 +7,7 @@ An interface to the libmemcached C client.
 
 Copyright 2009 Cloudburst, LLC. Licensed under the AFL 3. See the included LICENSE file. Portions copyright 2007-2009 TangentOrg, Brian Aker, licensed under the BSD license, and used with permission.
 
-The public certificate for this gem is here[http://blog.evanweaver.com/files/evan_weaver-original-public_cert.pem]. 
+The public certificate for this gem is here[http://blog.evanweaver.com/files/evan_weaver-original-public_cert.pem].
 
 If you use this software, please {make a donation}[http://blog.evanweaver.com/donate/], or {recommend Evan}[http://www.workingwithrails.com/person/7739-evan-weaver] at Working with Rails.
 
@@ -26,7 +26,7 @@ You need Ruby 1.8.7 or Ruby 1.9.2. Other versions may work, but are not guarante
 
 Install the gem:
   sudo gem install memcached --no-rdoc --no-ri
-  
+
 == Usage
 
 Start a local networked memcached server:
@@ -36,9 +36,9 @@ Now, in Ruby, require the library and instantiate a Memcached object at a global
 
   require 'memcached'
   $cache = Memcached.new("localhost:11211")
-  
+
 Now you can set things and get things:
- 
+
   value = 'hello'
   $cache.set 'test', value
   $cache.get 'test' #=> "hello"
@@ -55,9 +55,9 @@ You can get multiple values at once:
   value = 'hello'
   $cache.set 'test', value
   $cache.set 'test2', value
-  $cache.get ['test', 'test2', 'missing'] 
+  $cache.get ['test', 'test2', 'missing']
     #=> {"test" => "hello", "test2" => "hello"}
-  
+
 You can set a counter and increment it:
 
   start = 1
@@ -69,7 +69,7 @@ You can set a counter and increment it:
 You can get some server stats:
 
   $cache.stats #=> {..., :bytes_written=>[62], :version=>["1.2.4"] ...}
-  
+
 Note that the API is not the same as that of <b>Ruby-MemCache</b> or <b>memcache-client</b>. In particular, <tt>nil</tt> is a valid record value. Memcached#get does not return <tt>nil</tt> on failure, rather it raises <b>Memcached::NotFound</b>. This is consistent with the behavior of memcached itself. For example:
 
   $cache.set 'test', nil
@@ -79,7 +79,7 @@ Note that the API is not the same as that of <b>Ruby-MemCache</b> or <b>memcache
 
 == Legacy applications
 
-There is a compatibility wrapper for legacy applications called Memcached::Rails. 
+There is a compatibility wrapper for legacy applications called Memcached::Rails.
 
 == Threading
 
@@ -90,14 +90,14 @@ There is a compatibility wrapper for legacy applications called Memcached::Rails
     # Perform operations on cache, not $cache
     cache.set 'example', 1
     cache.get 'example'
-  end  
+  end
 
   # Join the thread so that exceptions don't get lost
   thread.join
-  
+
 == Benchmarks
 
-<b>memcached</b>, correctly configured, is up to 60x faster than <b>memcache-client</b> or <b>dalli</b>. See BENCHMARKS[link:files/BENCHMARKS.html] for details.
+<b>memcached</b>, correctly configured, is between 5x and 60x faster than <b>memcache-client</b> and <b>dalli</b>. See BENCHMARKS[link:files/BENCHMARKS.html] for details.
 
 == Reporting problems
 
