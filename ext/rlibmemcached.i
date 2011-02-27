@@ -19,7 +19,8 @@
 
 // Register which functions generate new objects
 %newobject memcached_server_by_key;
-%newobject memcached_server_st;
+%newobject memcached_create;
+%newobject memcached_clone;
 
 // %trackobjects; // Doesn't fix any interesting leaks
 

@@ -6907,7 +6907,7 @@ _wrap_memcached_create(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (memcached_st *)(argp1);
   result = (memcached_st *)memcached_create(arg1);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_st, 0 |  0 );
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_st, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
@@ -6960,7 +6960,7 @@ _wrap_memcached_clone(int argc, VALUE *argv, VALUE self) {
   }
   arg2 = (memcached_st *)(argp2);
   result = (memcached_st *)memcached_clone(arg1,arg2);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_st, 0 |  0 );
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_st, SWIG_POINTER_OWN |  0 );
   return vresult;
 fail:
   return Qnil;
