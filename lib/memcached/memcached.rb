@@ -271,12 +271,14 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   # Return an array of raw <tt>memcached_host_st</tt> structs for this instance.
   def server_structs
     array = []
-    if @struct.hosts
-      @struct.hosts.count.times do |i|
+    if @struct.servers
+      @struct.number_of_hosts.times do |i|
         array << Lib.memcached_select_server_at(@struct, i)
       end
     end
     array
+  rescue
+    []
   end
 
 ###### Operations
@@ -646,6 +648,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Stringify an opaque server struct
   def inspect_server(server)
+    return "[a server]"
     strings = [server.hostname]
     if !is_unix_socket?(server)
       strings << ":#{server.port}"

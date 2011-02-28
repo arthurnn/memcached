@@ -6,6 +6,7 @@
 
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_st;
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_server_st;
+%warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_server_instance_st;
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_stat_st;
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_string_st;
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_result_st;
@@ -29,7 +30,7 @@
 
 //// Input maps
 
-%apply unsigned short { uint8_t };
+%apply unsigned short { uint8_t, in_port_t };
 %apply unsigned int { uint16_t };
 %apply unsigned int { uint32_t server_failure_counter };
 %apply unsigned int { uint32_t user_spec_len };
@@ -86,7 +87,7 @@
 
 //// Output maps
 
-%apply unsigned short *OUTPUT {memcached_return *error}
+%apply unsigned short *OUTPUT {memcached_return_t *error}
 %apply unsigned int *OUTPUT {uint32_t *flags}
 %apply size_t *OUTPUT {size_t *value_length}
 %apply unsigned long long *OUTPUT {uint64_t *value}
@@ -137,12 +138,19 @@
 
 %include "libmemcached/visibility.h"
 %include "libmemcached/memcached.h"
-%include "libmemcached/memcached_constants.h"
-%include "libmemcached/memcached_get.h"
-%include "libmemcached/memcached_storage.h"
-%include "libmemcached/memcached_result.h"
-%include "libmemcached/memcached_server.h"
-%include "libmemcached/memcached_sasl.h"
+%include "libmemcached/types.h"
+%include "libmemcached/constants.h"
+%include "libmemcached/get.h"
+%include "libmemcached/storage.h"
+%include "libmemcached/result.h"
+%include "libmemcached/server.h"
+%include "libmemcached/server_list.h"
+%include "libmemcached/sasl.h"
+%include "libmemcached/version.h"
+%include "libmemcached/strerror.h"
+%include "libmemcached/callback.h"
+%include "libmemcached/behavior.h"
+%include "libmemcached/platform.h"
 
 //// Custom C functions
 
@@ -151,9 +159,9 @@
 // Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because
 // of the retval/argout split, so it truncates return values with \0 in them. There is probably a better
 // way to do this.
-VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
+VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return_t *error);
 %{
-VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
+VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return_t *error) {
   VALUE ret;
   size_t value_length;
   char *value = memcached_get(ptr, key, key_length, &value_length, flags, error);
@@ -163,9 +171,9 @@ VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length
 };
 %}
 
-VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return *error);
+VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return_t *error);
 %{
-VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return *error) {
+VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return_t *error) {
   VALUE ret;
   size_t value_length;
   char *value = memcached_get_len(ptr, key, key_length, user_spec_len, &value_length, flags, error);
@@ -175,9 +183,9 @@ VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_le
 };
 %}
 
-VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
+VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return_t *error);
 %{
-VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
+VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return_t *error) {
   VALUE ret;
   size_t value_length;
   char *value = memcached_get_from_last(ptr, key, key_length, &value_length, flags, error);
@@ -188,9 +196,9 @@ VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t 
 %}
 
 // Multi get
-VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
+VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return_t *error);
 %{
-VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
+VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return_t *error) {
   size_t value_length;
   VALUE result = rb_ary_new();
 
@@ -202,13 +210,13 @@ VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, u
 };
 %}
 
-// Ruby isn't aware that the pointer is an array... there is probably a better way to do this
+/* Ruby isn't aware that the pointer is an array... there is probably a better way to do this
 memcached_server_st *memcached_select_server_at(memcached_st *in_ptr, int index);
 %{
 memcached_server_st *memcached_select_server_at(memcached_st *in_ptr, int index) {
   return &(in_ptr->hosts[index]);
 };
-%}
+%} */
 
 // Same, but for stats
 memcached_stat_st *memcached_select_stat_at(memcached_st *in_ptr, memcached_stat_st *stat_ptr, int index);
