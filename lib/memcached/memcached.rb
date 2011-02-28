@@ -559,7 +559,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     keys.each do |key|
        server_structs.size.times do |index|
 
-         value, ret = Lib.memcached_stat_get_rvalue(
+         value, ret = Lib.memcached_stat_get_value(
            @struct,
            Lib.memcached_select_stat_at(@struct, stat_struct, index),
            key)

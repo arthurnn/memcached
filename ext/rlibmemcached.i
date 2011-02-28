@@ -13,6 +13,8 @@
 %include "typemaps.i"
 %include "libmemcached/visibility.h"
 
+//// Memory management
+
 // Register libmemcached's struct free function to prevent memory leaks
 %freefunc memcached_st "memcached_free";
 %freefunc memcached_server_st "memcached_server_free";
@@ -21,6 +23,7 @@
 %newobject memcached_server_by_key;
 %newobject memcached_create;
 %newobject memcached_clone;
+%newobject memcached_stat_get_value;
 
 // %trackobjects; // Doesn't fix any interesting leaks
 
@@ -111,13 +114,13 @@
   $1 = string;
   $2 = &length;
 };
+
+// Strings with lengths
 %typemap(argout) (char *key, size_t *key_length) {
-  // Pushes an empty string when *key_length == 0
   rb_ary_push($result, rb_str_new($1, *$2));
 }
 
 // Array of strings
-
 %typemap(out) (char **) {
   int i;
   VALUE ary = rb_ary_new();
@@ -146,7 +149,8 @@
 //// Manual wrappers
 
 // Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because
-// of the retval/argout split, so it truncates return values with \0 in them.
+// of the retval/argout split, so it truncates return values with \0 in them. There is probably a better
+// way to do this.
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
@@ -195,20 +199,6 @@ VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, u
   rb_ary_push(result, ret);
   free(value);
   return result;
-};
-%}
-
-// We need to wrap this so it doesn't leak memory. SWIG doesn't want to automatically free. We could
-// maybe use a 'ret' %typemap, but this is ok.
-VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error);
-%{
-VALUE memcached_stat_get_rvalue(memcached_st *ptr, memcached_stat_st *stat, char *key, memcached_return *error) {
-  char *str;
-  VALUE ret;
-  str = memcached_stat_get_value(ptr, stat, key, error);
-  ret = rb_str_new2(str);
-  free(str);
-  return ret;
 };
 %}
 

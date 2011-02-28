@@ -106,9 +106,7 @@ class Worker
           @cache.delete @key2 rescue nil
         end
       when "stats"
-        @i.times do
-          @cache.stats
-        end
+        @cache.stats
       when "multiget"
         @i.times do
           @cache.get([@key1, @key2, @key3])
