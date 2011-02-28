@@ -1,7 +1,7 @@
-diff --git a/libmemcached-0.32/libmemcached/memcached_quit.c b/libmemcached-0.32/libmemcached/memcached_quit.c
+diff --git a/libmemcached-0.47/libmemcached/memcached_quit.c b/libmemcached-0.47/libmemcached/memcached_quit.c
 index 9a200a1..80a03bc 100644
---- a/libmemcached-0.32/libmemcached/memcached_quit.c
-+++ b/libmemcached-0.32/libmemcached/memcached_quit.c
+--- a/libmemcached-0.47/libmemcached/memcached_quit.c
++++ b/libmemcached-0.47/libmemcached/memcached_quit.c
 @@ -49,7 +49,14 @@ void memcached_quit_server(memcached_server_st *ptr, uint8_t io_death)
      memcached_server_response_reset(ptr);
    }

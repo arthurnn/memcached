@@ -1,5 +1,5 @@
 diff --git a/docs/memcached_get.pod b/docs/memcached_get.pod
---- a/libmemcached-0.32/docs/memcached_get.pod
+--- a/libmemcached-0.47/docs/memcached_get.pod
 +++ b/docs/memcached_get.pod
 @@ -1,6 +1,6 @@
  =head1 NAME
@@ -140,7 +140,7 @@ diff --git a/docs/memcached_get.pod b/docs/memcached_get.pod
  =head1 HOME
  
 diff --git a/libmemcached/common.h b/libmemcached/common.h
---- a/libmemcached-0.32/libmemcached/common.h
+--- a/libmemcached-0.47/libmemcached/common.h
 +++ b/libmemcached/libmemcached/common.h
 @@ -34,6 +34,15 @@
  # endif
@@ -159,7 +159,7 @@ diff --git a/libmemcached/common.h b/libmemcached/common.h
   * building libmemcached.
   */
 diff --git a/libmemcached/memcached.hpp b/libmemcached/memcached.hpp
---- a/libmemcached-0.32/libmemcached/memcached.hpp
+--- a/libmemcached-0.47/libmemcached/memcached.hpp
 +++ b/libmemcached/libmemcached/memcached.hpp
 @@ -175,6 +175,7 @@ public:
      char *value= memcached_get_by_key(&memc, 
@@ -170,7 +170,7 @@ diff --git a/libmemcached/memcached.hpp b/libmemcached/memcached.hpp
      if (value)
      {
 diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
---- a/libmemcached-0.32/libmemcached/memcached_get.c
+--- a/libmemcached-0.47/libmemcached/memcached_get.c
 +++ b/libmemcached/libmemcached/memcached_get.c
 @@ -10,14 +10,29 @@ char *memcached_get(memcached_st *ptr, const char *key,
                      uint32_t *flags,
@@ -326,7 +326,7 @@ diff --git a/libmemcached/memcached_get.c b/libmemcached/memcached_get.c
        memcached_server_response_increment(&ptr->hosts[server_key]);
        WATCHPOINT_ASSERT(ptr->hosts[server_key].cursor_active == 1);
 diff --git a/libmemcached/memcached_get.h b/libmemcached/memcached_get.h
---- a/libmemcached-0.32/libmemcached/memcached_get.h
+--- a/libmemcached-0.47/libmemcached/memcached_get.h
 +++ b/libmemcached/libmemcached/memcached_get.h
 @@ -13,6 +13,9 @@
  extern "C" {
@@ -381,7 +381,7 @@ diff --git a/libmemcached/memcached_get.h b/libmemcached/memcached_get.h
  LIBMEMCACHED_API
  char *memcached_fetch(memcached_st *ptr, 
 diff --git a/tests/function.c b/tests/function.c
---- a/libmemcached-0.32/tests/function.c
+--- a/libmemcached-0.47/tests/function.c
 +++ b/tests/function.c
 @@ -291,9 +291,10 @@ static test_return  error_test(memcached_st *memc)
                          334139633U, 2257084983U, 3088286104U, 13199785U, 2542027183U, 1097051614U, 199566778U, 2748246961U, 2465192557U, 

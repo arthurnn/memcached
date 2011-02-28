@@ -1,6 +1,6 @@
-diff -rcN a/libmemcached-0.32/aclocal.m4 b/libmemcached-0.32/aclocal.m4
-*** a/libmemcached-0.32/aclocal.m4	2009-09-15 15:49:59.000000000 -0700
---- b/libmemcached-0.32/aclocal.m4	2010-03-07 13:32:49.807322479 -0800
+diff -rcN a/libmemcached-0.47/aclocal.m4 b/libmemcached-0.47/aclocal.m4
+*** a/libmemcached-0.47/aclocal.m4	2009-09-15 15:49:59.000000000 -0700
+--- b/libmemcached-0.47/aclocal.m4	2010-03-07 13:32:49.807322479 -0800
 ***************
 *** 13,24 ****
   
@@ -859,9 +859,9 @@ diff -rcN a/libmemcached-0.32/aclocal.m4 b/libmemcached-0.32/aclocal.m4
   m4_include([m4/pandora_header_assert.m4])
   m4_include([m4/pandora_libtool.m4])
   m4_include([m4/pandora_optimize.m4])
-diff -rcN a/libmemcached-0.32/clients/client_options.h b/libmemcached-0.32/clients/client_options.h
-*** a/libmemcached-0.32/clients/client_options.h	2009-05-20 11:08:20.000000000 -0700
---- b/libmemcached-0.32/clients/client_options.h	2010-03-07 13:32:50.000089786 -0800
+diff -rcN a/libmemcached-0.47/clients/client_options.h b/libmemcached-0.47/clients/client_options.h
+*** a/libmemcached-0.47/clients/client_options.h	2009-05-20 11:08:20.000000000 -0700
+--- b/libmemcached-0.47/clients/client_options.h	2010-03-07 13:32:50.000089786 -0800
 ***************
 *** 24,30 ****
     OPT_FLUSH,
@@ -881,9 +881,9 @@ diff -rcN a/libmemcached-0.32/clients/client_options.h b/libmemcached-0.32/clien
   } memcached_options;
   
   #endif /* CLIENT_OPTIONS */
-diff -rcN a/libmemcached-0.32/clients/Makefile.am b/libmemcached-0.32/clients/Makefile.am
-*** a/libmemcached-0.32/clients/Makefile.am	2009-09-15 13:20:16.000000000 -0700
---- b/libmemcached-0.32/clients/Makefile.am	2010-03-07 13:32:50.003916530 -0800
+diff -rcN a/libmemcached-0.47/clients/Makefile.am b/libmemcached-0.47/clients/Makefile.am
+*** a/libmemcached-0.47/clients/Makefile.am	2009-09-15 13:20:16.000000000 -0700
+--- b/libmemcached-0.47/clients/Makefile.am	2010-03-07 13:32:50.003916530 -0800
 ***************
 *** 1,11 ****
   LDADDS = libutilities.la $(top_builddir)/libmemcached/libmemcached.la
@@ -930,9 +930,9 @@ diff -rcN a/libmemcached-0.32/clients/Makefile.am b/libmemcached-0.32/clients/Ma
   memslap_LDFLAGS = $(AM_LDFLAGS) -rpath $(pkglibdir)
   
   test-start-server:
-diff -rcN a/libmemcached-0.32/clients/Makefile.in b/libmemcached-0.32/clients/Makefile.in
-*** a/libmemcached-0.32/clients/Makefile.in	2009-09-15 15:50:01.000000000 -0700
---- b/libmemcached-0.32/clients/Makefile.in	2010-03-07 13:32:50.003916530 -0800
+diff -rcN a/libmemcached-0.47/clients/Makefile.in b/libmemcached-0.47/clients/Makefile.in
+*** a/libmemcached-0.47/clients/Makefile.in	2009-09-15 15:50:01.000000000 -0700
+--- b/libmemcached-0.47/clients/Makefile.in	2010-03-07 13:32:50.003916530 -0800
 ***************
 *** 37,42 ****
 --- 37,43 ----
@@ -1147,9 +1147,9 @@ diff -rcN a/libmemcached-0.32/clients/Makefile.in b/libmemcached-0.32/clients/Ma
   memslap_LDFLAGS = $(AM_LDFLAGS) -rpath $(pkglibdir)
   all: all-am
   
-diff -rcN a/libmemcached-0.32/clients/memcat.c b/libmemcached-0.32/clients/memcat.c
-*** a/libmemcached-0.32/clients/memcat.c	2009-08-11 15:44:44.000000000 -0700
---- b/libmemcached-0.32/clients/memcat.c	2010-03-07 13:32:50.003916530 -0800
+diff -rcN a/libmemcached-0.47/clients/memcat.c b/libmemcached-0.47/clients/memcat.c
+*** a/libmemcached-0.47/clients/memcat.c	2009-08-11 15:44:44.000000000 -0700
+--- b/libmemcached-0.47/clients/memcat.c	2010-03-07 13:32:50.003916530 -0800
 ***************
 *** 20,25 ****
 --- 20,27 ----
@@ -1213,9 +1213,9 @@ diff -rcN a/libmemcached-0.32/clients/memcat.c b/libmemcached-0.32/clients/memca
       case '?':
         /* getopt_long already printed an error message. */
         exit(1);
-diff -rcN a/libmemcached-0.32/clients/memcp.c b/libmemcached-0.32/clients/memcp.c
-*** a/libmemcached-0.32/clients/memcp.c	2009-08-11 15:44:44.000000000 -0700
---- b/libmemcached-0.32/clients/memcp.c	2010-03-07 13:32:50.003916530 -0800
+diff -rcN a/libmemcached-0.47/clients/memcp.c b/libmemcached-0.47/clients/memcp.c
+*** a/libmemcached-0.47/clients/memcp.c	2009-08-11 15:44:44.000000000 -0700
+--- b/libmemcached-0.47/clients/memcp.c	2010-03-07 13:32:50.003916530 -0800
 ***************
 *** 30,35 ****
 --- 30,37 ----
@@ -1277,9 +1277,9 @@ diff -rcN a/libmemcached-0.32/clients/memcp.c b/libmemcached-0.32/clients/memcp.
       case '?':
         /* getopt_long already printed an error message. */
         exit(1);
-diff -rcN a/libmemcached-0.32/clients/memdump.c b/libmemcached-0.32/clients/memdump.c
-*** a/libmemcached-0.32/clients/memdump.c	2009-08-11 15:44:44.000000000 -0700
---- b/libmemcached-0.32/clients/memdump.c	2010-03-07 13:32:50.003916530 -0800
+diff -rcN a/libmemcached-0.47/clients/memdump.c b/libmemcached-0.47/clients/memdump.c
+*** a/libmemcached-0.47/clients/memdump.c	2009-08-11 15:44:44.000000000 -0700
+--- b/libmemcached-0.47/clients/memdump.c	2010-03-07 13:32:50.003916530 -0800
 ***************
 *** 27,32 ****
 --- 27,34 ----
@@ -1342,9 +1342,9 @@ diff -rcN a/libmemcached-0.32/clients/memdump.c b/libmemcached-0.32/clients/memd
       case '?':
         /* getopt_long already printed an error message. */
         exit(1);
-diff -rcN a/libmemcached-0.32/clients/memflush.c b/libmemcached-0.32/clients/memflush.c
-*** a/libmemcached-0.32/clients/memflush.c	2009-08-11 15:44:44.000000000 -0700
---- b/libmemcached-0.32/clients/memflush.c	2010-03-07 13:32:50.007383173 -0800
+diff -rcN a/libmemcached-0.47/clients/memflush.c b/libmemcached-0.47/clients/memflush.c
+*** a/libmemcached-0.47/clients/memflush.c	2009-08-11 15:44:44.000000000 -0700
+--- b/libmemcached-0.47/clients/memflush.c	2010-03-07 13:32:50.007383173 -0800
 ***************
 *** 11,16 ****
 --- 11,18 ----
@@ -1408,9 +1408,9 @@ diff -rcN a/libmemcached-0.32/clients/memflush.c b/libmemcached-0.32/clients/mem
       case '?':
         /* getopt_long already printed an error message. */
         exit(1);
-diff -rcN a/libmemcached-0.32/clients/memrm.c b/libmemcached-0.32/clients/memrm.c
-*** a/libmemcached-0.32/clients/memrm.c	2009-08-11 15:44:44.000000000 -0700
---- b/libmemcached-0.32/clients/memrm.c	2010-03-07 13:32:50.007383173 -0800
+diff -rcN a/libmemcached-0.47/clients/memrm.c b/libmemcached-0.47/clients/memrm.c
+*** a/libmemcached-0.47/clients/memrm.c	2009-08-11 15:44:44.000000000 -0700
+--- b/libmemcached-0.47/clients/memrm.c	2010-03-07 13:32:50.007383173 -0800
 ***************
 *** 12,17 ****
 --- 12,19 ----
@@ -1474,9 +1474,9 @@ diff -rcN a/libmemcached-0.32/clients/memrm.c b/libmemcached-0.32/clients/memrm.
       case '?':
         /* getopt_long already printed an error message. */
         exit(1);
-diff -rcN a/libmemcached-0.32/clients/memslap.c b/libmemcached-0.32/clients/memslap.c
-*** a/libmemcached-0.32/clients/memslap.c	2009-08-11 15:44:44.000000000 -0700
---- b/libmemcached-0.32/clients/memslap.c	2010-03-07 13:32:50.007383173 -0800
+diff -rcN a/libmemcached-0.47/clients/memslap.c b/libmemcached-0.47/clients/memslap.c
+*** a/libmemcached-0.47/clients/memslap.c	2009-08-11 15:44:44.000000000 -0700
+--- b/libmemcached-0.47/clients/memslap.c	2010-03-07 13:32:50.007383173 -0800
 ***************
 *** 65,71 ****
   void options_parse(int argc, char *argv[]);
@@ -1661,9 +1661,9 @@ diff -rcN a/libmemcached-0.32/clients/memslap.c b/libmemcached-0.32/clients/mems
                              unsigned int *actual_loaded)
   {
     memcached_st *memc_clone;
-diff -rcN a/libmemcached-0.32/clients/utilities.c b/libmemcached-0.32/clients/utilities.c
-*** a/libmemcached-0.32/clients/utilities.c	2009-07-15 03:34:17.000000000 -0700
---- b/libmemcached-0.32/clients/utilities.c	2010-03-07 13:32:50.007383173 -0800
+diff -rcN a/libmemcached-0.47/clients/utilities.c b/libmemcached-0.47/clients/utilities.c
+*** a/libmemcached-0.47/clients/utilities.c	2009-07-15 03:34:17.000000000 -0700
+--- b/libmemcached-0.47/clients/utilities.c	2010-03-07 13:32:50.007383173 -0800
 ***************
 *** 47,52 ****
 --- 47,54 ----
@@ -1771,9 +1771,9 @@ diff -rcN a/libmemcached-0.32/clients/utilities.c b/libmemcached-0.32/clients/ut
 +     sasl_done();
 + #endif
 + }
-diff -rcN a/libmemcached-0.32/clients/utilities.h b/libmemcached-0.32/clients/utilities.h
-*** a/libmemcached-0.32/clients/utilities.h	2009-08-11 15:44:44.000000000 -0700
---- b/libmemcached-0.32/clients/utilities.h	2010-03-07 13:32:50.007383173 -0800
+diff -rcN a/libmemcached-0.47/clients/utilities.h b/libmemcached-0.47/clients/utilities.h
+*** a/libmemcached-0.47/clients/utilities.h	2009-08-11 15:44:44.000000000 -0700
+--- b/libmemcached-0.47/clients/utilities.h	2010-03-07 13:32:50.007383173 -0800
 ***************
 *** 37,39 ****
 --- 37,41 ----
@@ -1782,9 +1782,9 @@ diff -rcN a/libmemcached-0.32/clients/utilities.h b/libmemcached-0.32/clients/ut
   void process_hash_option(memcached_st *memc, char *opt_hash);
 + bool initialize_sasl(memcached_st *memc, char *user, char *password);
 + void shutdown_sasl(void);
-diff -rcN a/libmemcached-0.32/config/config.rpath b/libmemcached-0.32/config/config.rpath
-*** a/libmemcached-0.32/config/config.rpath	1969-12-31 16:00:00.000000000 -0800
---- b/libmemcached-0.32/config/config.rpath	2010-03-07 13:32:50.007383173 -0800
+diff -rcN a/libmemcached-0.47/config/config.rpath b/libmemcached-0.47/config/config.rpath
+*** a/libmemcached-0.47/config/config.rpath	1969-12-31 16:00:00.000000000 -0800
+--- b/libmemcached-0.47/config/config.rpath	2010-03-07 13:32:50.007383173 -0800
 ***************
 *** 0 ****
 --- 1,666 ----
@@ -2454,9 +2454,9 @@ diff -rcN a/libmemcached-0.32/config/config.rpath b/libmemcached-0.32/config/con
 + hardcode_minus_L="$hardcode_minus_L"
 + 
 + EOF
-diff -rcN a/libmemcached-0.32/config.h.in b/libmemcached-0.32/config.h.in
-*** a/libmemcached-0.32/config.h.in	2009-09-15 15:50:17.000000000 -0700
---- b/libmemcached-0.32/config.h.in	2010-03-07 13:32:50.007383173 -0800
+diff -rcN a/libmemcached-0.47/config.h.in b/libmemcached-0.47/config.h.in
+*** a/libmemcached-0.47/config.h.in	2009-09-15 15:50:17.000000000 -0700
+--- b/libmemcached-0.47/config.h.in	2010-03-07 13:32:50.007383173 -0800
 ***************
 *** 39,44 ****
 --- 39,50 ----
@@ -2514,14 +2514,14 @@ diff -rcN a/libmemcached-0.32/config.h.in b/libmemcached-0.32/config.h.in
   #endif
   
   /* Define to `unsigned int' if <sys/types.h> does not define. */
-diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
-*** a/libmemcached-0.32/configure	2009-09-15 15:50:03.000000000 -0700
---- b/libmemcached-0.32/configure	2010-03-07 13:32:50.091328503 -0800
+diff -rcN a/libmemcached-0.47/configure b/libmemcached-0.47/configure
+*** a/libmemcached-0.47/configure	2009-09-15 15:50:03.000000000 -0700
+--- b/libmemcached-0.47/configure	2010-03-07 13:32:50.091328503 -0800
 ***************
 *** 1,20 ****
   #! /bin/sh
   # Guess values for system-dependent variables and create Makefiles.
-! # Generated by GNU Autoconf 2.63 for libmemcached 0.32.
+! # Generated by GNU Autoconf 2.63 for libmemcached 0.47.
   #
   # Report bugs to <http://tangent.org/552/libmemcached.html>.
   #
@@ -2542,7 +2542,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
 --- 1,22 ----
   #! /bin/sh
   # Guess values for system-dependent variables and create Makefiles.
-! # Generated by GNU Autoconf 2.64 for libmemcached 0.32.
+! # Generated by GNU Autoconf 2.64 for libmemcached 0.47.
   #
   # Report bugs to <http://tangent.org/552/libmemcached.html>.
   #
@@ -3487,8 +3487,8 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
 ***************
 *** 748,753 ****
 --- 701,707 ----
-  PACKAGE_VERSION='0.32'
-  PACKAGE_STRING='libmemcached 0.32'
+  PACKAGE_VERSION='0.47'
+  PACKAGE_STRING='libmemcached 0.47'
   PACKAGE_BUGREPORT='http://tangent.org/552/libmemcached.html'
 + PACKAGE_URL=''
   
@@ -3778,7 +3778,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
 *** 1731,1922 ****
   if $ac_init_version; then
     cat <<\_ACEOF
-  libmemcached configure 0.32
+  libmemcached configure 0.47
 ! generated by GNU Autoconf 2.63
   
 ! Copyright (C) 1992, 1993, 1994, 1995, 1996, 1998, 1999, 2000, 2001,
@@ -3792,7 +3792,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
 - This file contains any messages produced by compilers while
 - running configure, to aid debugging if configure makes a mistake.
 - 
-- It was created by libmemcached $as_me 0.32, which was
+- It was created by libmemcached $as_me 0.47, which was
 - generated by GNU Autoconf 2.63.  Invocation command line was
 - 
 -   $ $0 $@
@@ -3971,7 +3971,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
 --- 1701,2556 ----
   if $ac_init_version; then
     cat <<\_ACEOF
-  libmemcached configure 0.32
+  libmemcached configure 0.47
 ! generated by GNU Autoconf 2.64
   
 ! Copyright (C) 2009 Free Software Foundation, Inc.
@@ -4649,7 +4649,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
 ! This file contains any messages produced by compilers while
 ! running configure, to aid debugging if configure makes a mistake.
 ! 
-! It was created by libmemcached $as_me 0.32, which was
+! It was created by libmemcached $as_me 0.47, which was
 ! generated by GNU Autoconf 2.64.  Invocation command line was
 ! 
 !   $ $0 $@
@@ -26409,7 +26409,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
   # report actual input values of CONFIG_FILES etc. instead of their
   # values after options handling.
   ac_log="
-  This file was extended by libmemcached $as_me 0.32, which was
+  This file was extended by libmemcached $as_me 0.47, which was
 ! generated by GNU Autoconf 2.63.  Invocation command line was
   
     CONFIG_FILES    = $CONFIG_FILES
@@ -26429,7 +26429,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
   # report actual input values of CONFIG_FILES etc. instead of their
   # values after options handling.
   ac_log="
-  This file was extended by libmemcached $as_me 0.32, which was
+  This file was extended by libmemcached $as_me 0.47, which was
 ! generated by GNU Autoconf 2.64.  Invocation command line was
   
     CONFIG_FILES    = $CONFIG_FILES
@@ -26468,7 +26468,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
   _ACEOF
   cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
   ac_cs_version="\\
-  libmemcached config.status 0.32
+  libmemcached config.status 0.47
 ! configured by $0, generated by GNU Autoconf 2.63,
     with options \\"`$as_echo "$ac_configure_args" | sed 's/^ //; s/[\\""\`\$]/\\\\&/g'`\\"
   
@@ -26485,7 +26485,7 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
   _ACEOF
   cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
   ac_cs_version="\\
-  libmemcached config.status 0.32
+  libmemcached config.status 0.47
 ! configured by $0, generated by GNU Autoconf 2.64,
     with options \\"`$as_echo "$ac_configure_args" | sed 's/^ //; s/[\\""\`\$]/\\\\&/g'`\\"
   
@@ -27177,9 +27177,9 @@ diff -rcN a/libmemcached-0.32/configure b/libmemcached-0.32/configure
   echo ""
   echo "---"
   
-diff -rcN a/libmemcached-0.32/configure.ac b/libmemcached-0.32/configure.ac
-*** a/libmemcached-0.32/configure.ac	2009-09-15 15:49:23.000000000 -0700
---- b/libmemcached-0.32/configure.ac	2010-03-07 13:32:50.107416865 -0800
+diff -rcN a/libmemcached-0.47/configure.ac b/libmemcached-0.47/configure.ac
+*** a/libmemcached-0.47/configure.ac	2009-09-15 15:49:23.000000000 -0700
+--- b/libmemcached-0.47/configure.ac	2010-03-07 13:32:50.107416865 -0800
 ***************
 *** 1,4 ****
 ! # libmemcached 
@@ -27237,9 +27237,9 @@ diff -rcN a/libmemcached-0.32/configure.ac b/libmemcached-0.32/configure.ac
   echo ""
   echo "---"
   
-diff -rcN a/libmemcached-0.32/docs/Makefile.am b/libmemcached-0.32/docs/Makefile.am
-*** a/libmemcached-0.32/docs/Makefile.am	2009-07-08 12:09:50.000000000 -0700
---- b/libmemcached-0.32/docs/Makefile.am	2010-03-07 13:32:50.107416865 -0800
+diff -rcN a/libmemcached-0.47/docs/Makefile.am b/libmemcached-0.47/docs/Makefile.am
+*** a/libmemcached-0.47/docs/Makefile.am	2009-07-08 12:09:50.000000000 -0700
+--- b/libmemcached-0.47/docs/Makefile.am	2010-03-07 13:32:50.107416865 -0800
 ***************
 *** 33,39 ****
           memcached_analyze.pod\
@@ -27294,9 +27294,9 @@ diff -rcN a/libmemcached-0.32/docs/Makefile.am b/libmemcached-0.32/docs/Makefile
   memcached_get_user_data.3: memcached_user_data.pod
   	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_user_data.pod > memcached_get_user_data.3
   
-diff -rcN a/libmemcached-0.32/docs/Makefile.in b/libmemcached-0.32/docs/Makefile.in
-*** a/libmemcached-0.32/docs/Makefile.in	2009-09-15 15:50:01.000000000 -0700
---- b/libmemcached-0.32/docs/Makefile.in	2010-03-07 13:32:50.107416865 -0800
+diff -rcN a/libmemcached-0.47/docs/Makefile.in b/libmemcached-0.47/docs/Makefile.in
+*** a/libmemcached-0.47/docs/Makefile.in	2009-09-15 15:50:01.000000000 -0700
+--- b/libmemcached-0.47/docs/Makefile.in	2010-03-07 13:32:50.107416865 -0800
 ***************
 *** 40,45 ****
 --- 40,50 ----
@@ -27420,9 +27420,9 @@ diff -rcN a/libmemcached-0.32/docs/Makefile.in b/libmemcached-0.32/docs/Makefile
   memcached_get_user_data.3: memcached_user_data.pod
   	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_user_data.pod > memcached_get_user_data.3
   
-diff -rcN a/libmemcached-0.32/docs/memcached_sasl.pod b/libmemcached-0.32/docs/memcached_sasl.pod
-*** a/libmemcached-0.32/docs/memcached_sasl.pod	1969-12-31 16:00:00.000000000 -0800
---- b/libmemcached-0.32/docs/memcached_sasl.pod	2010-03-07 13:32:50.107416865 -0800
+diff -rcN a/libmemcached-0.47/docs/memcached_sasl.pod b/libmemcached-0.47/docs/memcached_sasl.pod
+*** a/libmemcached-0.47/docs/memcached_sasl.pod	1969-12-31 16:00:00.000000000 -0800
+--- b/libmemcached-0.47/docs/memcached_sasl.pod	2010-03-07 13:32:50.107416865 -0800
 ***************
 *** 0 ****
 --- 1,63 ----
@@ -27489,9 +27489,9 @@ diff -rcN a/libmemcached-0.32/docs/memcached_sasl.pod b/libmemcached-0.32/docs/m
 + memcached(1) libmemcached(3)
 + 
 + =cut
-diff -rcN a/libmemcached-0.32/libmemcached/Makefile.am b/libmemcached-0.32/libmemcached/Makefile.am
-*** a/libmemcached-0.32/libmemcached/Makefile.am	2009-08-11 15:44:24.000000000 -0700
---- b/libmemcached-0.32/libmemcached/Makefile.am	2010-03-07 13:32:50.107416865 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/Makefile.am b/libmemcached-0.47/libmemcached/Makefile.am
+*** a/libmemcached-0.47/libmemcached/Makefile.am	2009-08-11 15:44:24.000000000 -0700
+--- b/libmemcached-0.47/libmemcached/Makefile.am	2010-03-07 13:32:50.107416865 -0800
 ***************
 *** 16,21 ****
 --- 16,22 ----
@@ -27516,9 +27516,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/Makefile.am b/libmemcached-0.32/libme
   if HAVE_DTRACE
   BUILT_SOURCES+= dtrace_probes.h
   libmemcached_la_SOURCES += libmemcached_probes.d
-diff -rcN a/libmemcached-0.32/libmemcached/Makefile.in b/libmemcached-0.32/libmemcached/Makefile.in
-*** a/libmemcached-0.32/libmemcached/Makefile.in	2009-09-15 15:50:02.000000000 -0700
---- b/libmemcached-0.32/libmemcached/Makefile.in	2010-03-07 13:32:50.107416865 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/Makefile.in b/libmemcached-0.47/libmemcached/Makefile.in
+*** a/libmemcached-0.47/libmemcached/Makefile.in	2009-09-15 15:50:02.000000000 -0700
+--- b/libmemcached-0.47/libmemcached/Makefile.in	2010-03-07 13:32:50.107416865 -0800
 ***************
 *** 39,47 ****
   @BUILD_LIBMEMCACHEDUTIL_TRUE@am__append_1 = memcached_util.h memcached_pool.h
@@ -27750,9 +27750,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/Makefile.in b/libmemcached-0.32/libme
   libmemcachedcallbacks_la-memcached_callback.lo: memcached_callback.c
   @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcachedcallbacks_la_CFLAGS) $(CFLAGS) -MT libmemcachedcallbacks_la-memcached_callback.lo -MD -MP -MF $(DEPDIR)/libmemcachedcallbacks_la-memcached_callback.Tpo -c -o libmemcachedcallbacks_la-memcached_callback.lo `test -f 'memcached_callback.c' || echo '$(srcdir)/'`memcached_callback.c
   @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmemcachedcallbacks_la-memcached_callback.Tpo $(DEPDIR)/libmemcachedcallbacks_la-memcached_callback.Plo
-diff -rcN a/libmemcached-0.32/libmemcached/memcached/protocol_binary.h b/libmemcached-0.32/libmemcached/memcached/protocol_binary.h
-*** a/libmemcached-0.32/libmemcached/memcached/protocol_binary.h	2009-07-08 12:09:21.000000000 -0700
---- b/libmemcached-0.32/libmemcached/memcached/protocol_binary.h	2010-03-07 13:32:50.111308143 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached/protocol_binary.h b/libmemcached-0.47/libmemcached/memcached/protocol_binary.h
+*** a/libmemcached-0.47/libmemcached/memcached/protocol_binary.h	2009-07-08 12:09:21.000000000 -0700
+--- b/libmemcached-0.47/libmemcached/memcached/protocol_binary.h	2010-03-07 13:32:50.111308143 -0800
 ***************
 *** 68,73 ****
 --- 68,75 ----
@@ -27784,9 +27784,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached/protocol_binary.h b/libmemc
     } protocol_binary_command;
   
     /**
-diff -rcN a/libmemcached-0.32/libmemcached/memcached_configure.h b/libmemcached-0.32/libmemcached/memcached_configure.h
-*** a/libmemcached-0.32/libmemcached/memcached_configure.h	2009-09-15 15:50:16.000000000 -0700
---- b/libmemcached-0.32/libmemcached/memcached_configure.h	1969-12-31 16:00:00.000000000 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached_configure.h b/libmemcached-0.47/libmemcached/memcached_configure.h
+*** a/libmemcached-0.47/libmemcached/memcached_configure.h	2009-09-15 15:50:16.000000000 -0700
+--- b/libmemcached-0.47/libmemcached/memcached_configure.h	1969-12-31 16:00:00.000000000 -0800
 ***************
 *** 1,22 ****
 - /*
@@ -27812,9 +27812,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached_configure.h b/libmemcached-
 - 
 - #endif /* MEMCACHED_CONFIGURE_H */
 --- 0 ----
-diff -rcN a/libmemcached-0.32/libmemcached/memcached_configure.h.in b/libmemcached-0.32/libmemcached/memcached_configure.h.in
-*** a/libmemcached-0.32/libmemcached/memcached_configure.h.in	2009-06-14 15:08:14.000000000 -0700
---- b/libmemcached-0.32/libmemcached/memcached_configure.h.in	2010-03-07 13:32:50.111308143 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached_configure.h.in b/libmemcached-0.47/libmemcached/memcached_configure.h.in
+*** a/libmemcached-0.47/libmemcached/memcached_configure.h.in	2009-06-14 15:08:14.000000000 -0700
+--- b/libmemcached-0.47/libmemcached/memcached_configure.h.in	2010-03-07 13:32:50.111308143 -0800
 ***************
 *** 14,19 ****
 --- 14,20 ----
@@ -27825,9 +27825,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached_configure.h.in b/libmemcach
   
   #ifdef __cplusplus
   }
-diff -rcN a/libmemcached-0.32/libmemcached/memcached_connect.c b/libmemcached-0.32/libmemcached/memcached_connect.c
-*** a/libmemcached-0.32/libmemcached/memcached_connect.c	2010-03-07 13:35:17.463394017 -0800
---- b/libmemcached-0.32/libmemcached/memcached_connect.c	2010-03-07 13:32:50.111308143 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached_connect.c b/libmemcached-0.47/libmemcached/memcached_connect.c
+*** a/libmemcached-0.47/libmemcached/memcached_connect.c	2010-03-07 13:35:17.463394017 -0800
+--- b/libmemcached-0.47/libmemcached/memcached_connect.c	2010-03-07 13:32:50.111308143 -0800
 ***************
 *** 266,271 ****
 --- 266,285 ----
@@ -27851,9 +27851,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached_connect.c b/libmemcached-0.
         if (ptr->fd != -1)
         {
           /* restore flags */ 
-diff -rcN a/libmemcached-0.32/libmemcached/memcached_constants.h b/libmemcached-0.32/libmemcached/memcached_constants.h
-*** a/libmemcached-0.32/libmemcached/memcached_constants.h	2009-08-11 15:44:24.000000000 -0700
---- b/libmemcached-0.32/libmemcached/memcached_constants.h	2010-03-07 13:32:50.111308143 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached_constants.h b/libmemcached-0.47/libmemcached/memcached_constants.h
+*** a/libmemcached-0.47/libmemcached/memcached_constants.h	2009-08-11 15:44:24.000000000 -0700
+--- b/libmemcached-0.47/libmemcached/memcached_constants.h	2010-03-07 13:32:50.111308143 -0800
 ***************
 *** 17,23 ****
   #define MEMCACHED_MAX_HOST_SORT_LENGTH 86 /* Used for Ketama */
@@ -27883,9 +27883,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached_constants.h b/libmemcached-
     MEMCACHED_MAXIMUM_RETURN /* Always add new error code before */
   } memcached_return;
   
-diff -rcN a/libmemcached-0.32/libmemcached/memcached.h b/libmemcached-0.32/libmemcached/memcached.h
-*** a/libmemcached-0.32/libmemcached/memcached.h	2010-03-07 13:35:17.463394017 -0800
---- b/libmemcached-0.32/libmemcached/memcached.h	2010-03-07 13:33:58.751409456 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached.h b/libmemcached-0.47/libmemcached/memcached.h
+*** a/libmemcached-0.47/libmemcached/memcached.h	2010-03-07 13:35:17.463394017 -0800
+--- b/libmemcached-0.47/libmemcached/memcached.h	2010-03-07 13:33:58.751409456 -0800
 ***************
 *** 7,14 ****
    * Author: Brian Aker
@@ -28133,9 +28133,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached.h b/libmemcached-0.32/libme
   
   
 ! #endif /* LIBMEMCACHED_MEMCACHED_H */
-diff -rcN a/libmemcached-0.32/libmemcached/memcached_response.c b/libmemcached-0.32/libmemcached/memcached_response.c
-*** a/libmemcached-0.32/libmemcached/memcached_response.c	2010-03-07 13:35:17.459311933 -0800
---- b/libmemcached-0.32/libmemcached/memcached_response.c	2010-03-07 13:32:50.111308143 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached_response.c b/libmemcached-0.47/libmemcached/memcached_response.c
+*** a/libmemcached-0.47/libmemcached/memcached_response.c	2010-03-07 13:35:17.459311933 -0800
+--- b/libmemcached-0.47/libmemcached/memcached_response.c	2010-03-07 13:32:50.111308143 -0800
 ***************
 *** 39,45 ****
     return rc;
@@ -28546,9 +28546,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached_response.c b/libmemcached-0
 ! 
     return rc;
   }
-diff -rcN a/libmemcached-0.32/libmemcached/memcached_sasl.c b/libmemcached-0.32/libmemcached/memcached_sasl.c
-*** a/libmemcached-0.32/libmemcached/memcached_sasl.c	1969-12-31 16:00:00.000000000 -0800
---- b/libmemcached-0.32/libmemcached/memcached_sasl.c	2010-03-07 13:32:50.127315212 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached_sasl.c b/libmemcached-0.47/libmemcached/memcached_sasl.c
+*** a/libmemcached-0.47/libmemcached/memcached_sasl.c	1969-12-31 16:00:00.000000000 -0800
+--- b/libmemcached-0.47/libmemcached/memcached_sasl.c	2010-03-07 13:32:50.127315212 -0800
 ***************
 *** 0 ****
 --- 1,225 ----
@@ -28777,9 +28777,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached_sasl.c b/libmemcached-0.32/
 + 
 +    return MEMCACHED_SUCCESS;
 + }
-diff -rcN a/libmemcached-0.32/libmemcached/memcached_sasl.h b/libmemcached-0.32/libmemcached/memcached_sasl.h
-*** a/libmemcached-0.32/libmemcached/memcached_sasl.h	1969-12-31 16:00:00.000000000 -0800
---- b/libmemcached-0.32/libmemcached/memcached_sasl.h	2010-03-07 13:32:50.127315212 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached_sasl.h b/libmemcached-0.47/libmemcached/memcached_sasl.h
+*** a/libmemcached-0.47/libmemcached/memcached_sasl.h	1969-12-31 16:00:00.000000000 -0800
+--- b/libmemcached-0.47/libmemcached/memcached_sasl.h	2010-03-07 13:32:50.127315212 -0800
 ***************
 *** 0 ****
 --- 1,44 ----
@@ -28827,9 +28827,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached_sasl.h b/libmemcached-0.32/
 + #endif /* LIBMEMCACHED_WITH_SASL_SUPPORT */
 + 
 + #endif /* LIBMEMCACHED_MEMCACHED_SASL_H */
-diff -rcN a/libmemcached-0.32/libmemcached/memcached_strerror.c b/libmemcached-0.32/libmemcached/memcached_strerror.c
-*** a/libmemcached-0.32/libmemcached/memcached_strerror.c	2009-07-15 03:34:17.000000000 -0700
---- b/libmemcached-0.32/libmemcached/memcached_strerror.c	2010-03-07 13:32:50.127315212 -0800
+diff -rcN a/libmemcached-0.47/libmemcached/memcached_strerror.c b/libmemcached-0.47/libmemcached/memcached_strerror.c
+*** a/libmemcached-0.47/libmemcached/memcached_strerror.c	2009-07-15 03:34:17.000000000 -0700
+--- b/libmemcached-0.47/libmemcached/memcached_strerror.c	2010-03-07 13:32:50.127315212 -0800
 ***************
 *** 78,83 ****
 --- 78,89 ----
@@ -28845,9 +28845,9 @@ diff -rcN a/libmemcached-0.32/libmemcached/memcached_strerror.c b/libmemcached-0
     case MEMCACHED_MAXIMUM_RETURN:
       return "Gibberish returned!";
     default:
-diff -rcN a/libmemcached-0.32/libmemcachedutil/Makefile.in b/libmemcached-0.32/libmemcachedutil/Makefile.in
-*** a/libmemcached-0.32/libmemcachedutil/Makefile.in	2009-09-15 15:50:02.000000000 -0700
---- b/libmemcached-0.32/libmemcachedutil/Makefile.in	2010-03-07 13:32:50.127315212 -0800
+diff -rcN a/libmemcached-0.47/libmemcachedutil/Makefile.in b/libmemcached-0.47/libmemcachedutil/Makefile.in
+*** a/libmemcached-0.47/libmemcachedutil/Makefile.in	2009-09-15 15:50:02.000000000 -0700
+--- b/libmemcached-0.47/libmemcachedutil/Makefile.in	2010-03-07 13:32:50.127315212 -0800
 ***************
 *** 56,61 ****
 --- 56,62 ----
@@ -28901,9 +28901,9 @@ diff -rcN a/libmemcached-0.32/libmemcachedutil/Makefile.in b/libmemcached-0.32/l
   PACKAGE_VERSION = @PACKAGE_VERSION@
   PATH_SEPARATOR = @PATH_SEPARATOR@
   PERL = @PERL@
-diff -rcN a/libmemcached-0.32/m4/pandora_have_sasl.m4 b/libmemcached-0.32/m4/pandora_have_sasl.m4
-*** a/libmemcached-0.32/m4/pandora_have_sasl.m4	1969-12-31 16:00:00.000000000 -0800
---- b/libmemcached-0.32/m4/pandora_have_sasl.m4	2010-03-07 13:32:50.127315212 -0800
+diff -rcN a/libmemcached-0.47/m4/pandora_have_sasl.m4 b/libmemcached-0.47/m4/pandora_have_sasl.m4
+*** a/libmemcached-0.47/m4/pandora_have_sasl.m4	1969-12-31 16:00:00.000000000 -0800
+--- b/libmemcached-0.47/m4/pandora_have_sasl.m4	2010-03-07 13:32:50.127315212 -0800
 ***************
 *** 0 ****
 --- 1,133 ----
@@ -29040,9 +29040,9 @@ diff -rcN a/libmemcached-0.32/m4/pandora_have_sasl.m4 b/libmemcached-0.32/m4/pan
 +   AS_IF([test "x${ac_cv_libsasl2}" = "xno"],
 +     AC_MSG_ERROR([libsasl2 is required for ${PACKAGE}]))
 + ])
-diff -rcN a/libmemcached-0.32/Makefile.in b/libmemcached-0.32/Makefile.in
-*** a/libmemcached-0.32/Makefile.in	2009-09-15 15:50:02.000000000 -0700
---- b/libmemcached-0.32/Makefile.in	2010-03-07 13:32:50.127315212 -0800
+diff -rcN a/libmemcached-0.47/Makefile.in b/libmemcached-0.47/Makefile.in
+*** a/libmemcached-0.47/Makefile.in	2009-09-15 15:50:02.000000000 -0700
+--- b/libmemcached-0.47/Makefile.in	2010-03-07 13:32:50.127315212 -0800
 ***************
 *** 39,46 ****
   	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -29115,9 +29115,9 @@ diff -rcN a/libmemcached-0.32/Makefile.in b/libmemcached-0.32/Makefile.in
   PACKAGE_VERSION = @PACKAGE_VERSION@
   PATH_SEPARATOR = @PATH_SEPARATOR@
   PERL = @PERL@
-diff -rcN a/libmemcached-0.32/support/Makefile.in b/libmemcached-0.32/support/Makefile.in
-*** a/libmemcached-0.32/support/Makefile.in	2009-09-15 15:50:02.000000000 -0700
---- b/libmemcached-0.32/support/Makefile.in	2010-03-07 13:32:50.127315212 -0800
+diff -rcN a/libmemcached-0.47/support/Makefile.in b/libmemcached-0.47/support/Makefile.in
+*** a/libmemcached-0.47/support/Makefile.in	2009-09-15 15:50:02.000000000 -0700
+--- b/libmemcached-0.47/support/Makefile.in	2010-03-07 13:32:50.127315212 -0800
 ***************
 *** 57,62 ****
 --- 57,63 ----
@@ -29171,9 +29171,9 @@ diff -rcN a/libmemcached-0.32/support/Makefile.in b/libmemcached-0.32/support/Ma
   PACKAGE_VERSION = @PACKAGE_VERSION@
   PATH_SEPARATOR = @PATH_SEPARATOR@
   PERL = @PERL@
-diff -rcN a/libmemcached-0.32/tests/function.c b/libmemcached-0.32/tests/function.c
-*** a/libmemcached-0.32/tests/function.c	2009-09-15 12:07:03.000000000 -0700
---- b/libmemcached-0.32/tests/function.c	2010-03-07 13:32:50.127315212 -0800
+diff -rcN a/libmemcached-0.47/tests/function.c b/libmemcached-0.47/tests/function.c
+*** a/libmemcached-0.47/tests/function.c	2009-09-15 12:07:03.000000000 -0700
+--- b/libmemcached-0.47/tests/function.c	2010-03-07 13:32:50.127315212 -0800
 ***************
 *** 291,299 ****
                           334139633U, 2257084983U, 3088286104U, 13199785U, 2542027183U, 1097051614U, 199566778U, 2748246961U, 2465192557U, 
@@ -29212,9 +29212,9 @@ diff -rcN a/libmemcached-0.32/tests/function.c b/libmemcached-0.32/tests/functio
     {"add", 1, add_test },
     {"replace", 1, replace_test },
     {"delete", 1, delete_test },
-diff -rcN a/libmemcached-0.32/tests/Makefile.in b/libmemcached-0.32/tests/Makefile.in
-*** a/libmemcached-0.32/tests/Makefile.in	2009-09-15 15:50:02.000000000 -0700
---- b/libmemcached-0.32/tests/Makefile.in	2010-03-07 13:32:50.147319439 -0800
+diff -rcN a/libmemcached-0.47/tests/Makefile.in b/libmemcached-0.47/tests/Makefile.in
+*** a/libmemcached-0.47/tests/Makefile.in	2009-09-15 15:50:02.000000000 -0700
+--- b/libmemcached-0.47/tests/Makefile.in	2010-03-07 13:32:50.147319439 -0800
 ***************
 *** 61,66 ****
 --- 61,67 ----
@@ -29268,9 +29268,9 @@ diff -rcN a/libmemcached-0.32/tests/Makefile.in b/libmemcached-0.32/tests/Makefi
   PACKAGE_VERSION = @PACKAGE_VERSION@
   PATH_SEPARATOR = @PATH_SEPARATOR@
   PERL = @PERL@
-diff -rcN a/libmemcached-0.32/tests/output.cmp b/libmemcached-0.32/tests/output.cmp
-*** a/libmemcached-0.32/tests/output.cmp	1969-12-31 16:00:00.000000000 -0800
---- b/libmemcached-0.32/tests/output.cmp	2010-03-07 13:32:50.147319439 -0800
+diff -rcN a/libmemcached-0.47/tests/output.cmp b/libmemcached-0.47/tests/output.cmp
+*** a/libmemcached-0.47/tests/output.cmp	1969-12-31 16:00:00.000000000 -0800
+--- b/libmemcached-0.47/tests/output.cmp	2010-03-07 13:32:50.147319439 -0800
 ***************
 *** 0 ****
 --- 1,7 ----

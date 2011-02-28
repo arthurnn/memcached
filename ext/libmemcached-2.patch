@@ -1,5 +1,5 @@
-diff --git a/libmemcached-0.32/libmemcached/memcached.h libmemcached/libmemcached/memcached.h
---- a/libmemcached-0.32/libmemcached/memcached.h
+diff --git a/libmemcached-0.47/libmemcached/memcached.h libmemcached/libmemcached/memcached.h
+--- a/libmemcached-0.47/libmemcached/memcached.h
 +++ b/libmemcached/libmemcached/memcached.h
 @@ -119,6 +119,7 @@
  #ifdef LIBMEMCACHED_WITH_SASL_SUPPORT
@@ -9,8 +9,8 @@ diff --git a/libmemcached-0.32/libmemcached/memcached.h libmemcached/libmemcache
  };
  
  LIBMEMCACHED_API
-diff --git a/libmemcached-0.32/libmemcached/memcached_get.c libmemcached/libmemcached/memcached_get.c
---- a/libmemcached-0.32/libmemcached/memcached_get.c
+diff --git a/libmemcached-0.47/libmemcached/memcached_get.c libmemcached/libmemcached/memcached_get.c
+--- a/libmemcached-0.47/libmemcached/memcached_get.c
 +++ b/libmemcached/libmemcached/memcached_get.c
 @@ -235,6 +235,8 @@
        rc= MEMCACHED_SOME_ERRORS;
@@ -96,8 +96,8 @@ diff --git a/libmemcached-0.32/libmemcached/memcached_get.c libmemcached/libmemc
  static memcached_return simple_binary_mget(memcached_st *ptr,
                                             unsigned int master_server_key,
                                             bool is_master_key_set,
-diff --git a/libmemcached-0.32/libmemcached/memcached_get.h libmemcached/libmemcached/memcached_get.h
---- a/libmemcached-0.32/libmemcached/memcached_get.h
+diff --git a/libmemcached-0.47/libmemcached/memcached_get.h libmemcached/libmemcached/memcached_get.h
+--- a/libmemcached-0.47/libmemcached/memcached_get.h
 +++ b/libmemcached/libmemcached/memcached_get.h
 @@ -53,7 +53,13 @@
                                              memcached_result_st *result,
