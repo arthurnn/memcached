@@ -133,20 +133,20 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_set_prefix_key
     cache = Memcached.new @servers, :prefix_key => "foo"
-    cache.prefix_key = "bar"
+    cache.set_prefix_key("bar")
     assert_equal "bar", cache.prefix_key
   end
 
   def test_set_prefix_key_to_empty_string
     cache = Memcached.new @servers, :prefix_key => "foo"
-    cache.prefix_key = ""
+    cache.set_prefix_key("")
     assert_equal "", cache.prefix_key
   end
 
   def test_memcached_callback_set_with_empty_string_should_not_raise_exception
     cache = Memcached.new @servers, :prefix_key => "foo"
     assert_nothing_raised do
-      cache.prefix_key = ""
+      cache.set_prefix_key("")
     end
   end
 

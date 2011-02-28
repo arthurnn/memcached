@@ -213,7 +213,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Return the current prefix key.
   def prefix_key
-    @struct.prefix_key[0..-1 - options[:prefix_delimiter].size] if @struct.prefix_key.size > 0
+    if @struct.prefix_key.size > 0
+      @struct.prefix_key[0..-1 - options[:prefix_delimiter].size]
+    else
+      ""
+    end
   end
   alias :namespace :prefix_key
 
@@ -259,24 +263,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #:stopdoc:
   alias :dup :clone #:nodoc:
   #:startdoc:
-
-  # change the prefix_key after we're in motion
-  def prefix_key=(key)
-    unless key.size < Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE
-      raise ArgumentError, "Max prefix_key size is #{Lib::MEMCACHED_PREFIX_KEY_MAX_SIZE - 1}"
-    end
-    check_return_code(
-      Lib.memcached_callback_set(@struct, Lib::MEMCACHED_CALLBACK_PREFIX_KEY, "#{key}#{options[:prefix_delimiter]}")
-    )
-  end
-  alias namespace= prefix_key=
-
-  # report the prefix_key
-  def prefix_key
-    @struct.prefix_key[0..-1 - options[:prefix_delimiter].size]
-  end
-  alias namespace prefix_key
-
 
 ### Configuration helpers
 

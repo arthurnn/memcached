@@ -1,3 +1,5 @@
+v1.1.4. Apply prefix_key to binary protocol properly (tarrall). Clean up duplicated set_prefix_key API.
+
 v1.1.3. Register new objects to fix leaks around memcached_server_st and other rich structs (tobi).
 
 v1.1.2. Fix memory leak in memcached_mget().
