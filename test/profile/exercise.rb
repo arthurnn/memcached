@@ -97,8 +97,28 @@ class Worker
           @cache.delete @key1
           @cache.delete @key2
         end
-      when "mixed-dead"
-        @cache.get [@key1, @key2, @key3]
+      when "everything"
+        @i.times do
+          @cache.set @key1, @value
+          @cache.set @key2, @value
+          @cache.get @key1
+          @cache.get @key3
+          @cache.get [@key1, @key2, @key3]
+          @cache.prepend @key1, @marshalled
+          @cache.prepend @key2, @marshalled
+          @cache.delete @key1
+          @cache.delete @key2
+          @cache.prepend @key1, @marshalled
+          @cache.prepend @key2, @marshalled
+          @cache.get @key1
+          @cache.get @key3
+          cache = @cache.clone
+          servers = @cache.servers
+          server = @cache.server_by_key(@key1)
+        end
+        @i.times do
+          @cache.reset
+        end
         system("killall -9 memcached")
         @i.times do
           @cache.set @key1, @value rescue nil
