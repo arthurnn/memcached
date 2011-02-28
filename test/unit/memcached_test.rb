@@ -20,7 +20,6 @@ class MemcachedTest < Test::Unit::TestCase
       :prefix_key => @prefix_key,
       :hash => :default,
       :distribution => :modula,
-      # binary_protocol does not work -- test_get, test_get, test_append, and test_missing_append will fail when it is set to true.
       :binary_protocol => true}
     @binary_protocol_cache = Memcached.new(@servers, @binary_protocol_options)
 
