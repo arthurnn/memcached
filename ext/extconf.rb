@@ -65,7 +65,7 @@ def check_libmemcached
 #       patch("libmemcached-5", "get_len method")
 #       patch("libmemcached-6", "failure count bug")
 
-      run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
+      run("touch -r #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
 
       Dir.chdir(BUNDLE_PATH) do
         run("env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
