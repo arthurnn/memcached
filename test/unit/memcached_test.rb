@@ -128,7 +128,6 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_initialize_without_prefix_key
     cache = Memcached.new @servers
-    assert_equal nil, cache.options[:prefix_key]
     assert_equal 3, cache.send(:server_structs).size
   end
 
@@ -221,7 +220,6 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_initialize_single_server
     cache = Memcached.new 'localhost:43042'
-    assert_equal nil, cache.options[:prefix_key]
     assert_equal 1, cache.send(:server_structs).size
   end
 

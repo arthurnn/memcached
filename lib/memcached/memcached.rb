@@ -141,7 +141,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     options[:poll_timeout] ||= options[:timeout] || 0
 
     # Set the prefix key. Support the legacy name.
-    set_prefix_key(options.delete(:prefix_key) || options.delete(:namespace))
+    set_prefix_key(options[:prefix_key] || options[:namespace])
 
     # Set the behaviors and credentials on the struct
     set_behaviors
