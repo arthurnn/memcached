@@ -231,12 +231,8 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get
     @cache.set key, @value
-    result = @cache.get key
-    assert_equal @value, result
-
-    @binary_protocol_cache.set key, @value
-    result = @binary_protocol_cache.get key
-    assert_equal @value, result
+    assert_equal @value, @cache.get(key)
+    assert_equal @value, @binary_protocol_cache.get(key)
 
     @udp_cache.set(key, @value)
     assert_raises(Memcached::ActionNotSupported) do
