@@ -58,13 +58,12 @@ def check_libmemcached
       system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
       run("#{TAR_CMD} xzf #{BUNDLE} 2>&1", "Building libmemcached.")
 
-      patch("libmemcached", "mark-dead behavior")
-      patch("sasl", "SASL")
-      patch("libmemcached-2", "get_from_last method")
-      patch("libmemcached-3", "no block prepend and append")
-      patch("libmemcached-4", "noop hash")
-      patch("libmemcached-5", "get_len method")
-      patch("libmemcached-6", "failure count bug")
+#       patch("libmemcached", "mark-dead behavior")
+#       patch("libmemcached-2", "get_from_last method")
+#       patch("libmemcached-3", "no block prepend and append")
+#       patch("libmemcached-4", "noop hash")
+#       patch("libmemcached-5", "get_len method")
+#       patch("libmemcached-6", "failure count bug")
 
       run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
 

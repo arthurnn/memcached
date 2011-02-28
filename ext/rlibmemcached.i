@@ -21,7 +21,6 @@
 %freefunc memcached_server_st "memcached_server_free";
 
 // Register which functions generate new objects
-%newobject memcached_server_by_key;
 %newobject memcached_create;
 %newobject memcached_clone;
 %newobject memcached_stat_get_value;
@@ -141,6 +140,8 @@
 %include "libmemcached/types.h"
 %include "libmemcached/constants.h"
 %include "libmemcached/get.h"
+%include "libmemcached/delete.h"
+%include "libmemcached/auto.h"
 %include "libmemcached/storage.h"
 %include "libmemcached/result.h"
 %include "libmemcached/server.h"
@@ -151,6 +152,9 @@
 %include "libmemcached/callback.h"
 %include "libmemcached/behavior.h"
 %include "libmemcached/platform.h"
+%include "libmemcached/quit.h"
+%include "libmemcached/flush.h"
+%include "libmemcached/stats.h"
 
 //// Custom C functions
 
