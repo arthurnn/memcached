@@ -93,7 +93,7 @@ There is a compatibility wrapper for legacy applications called Memcached::Rails
 
 == Benchmarks
 
-<b>memcached</b>, correctly configured, is between 5x and 60x faster than <b>memcache-client</b> and <b>dalli</b>. See BENCHMARKS[link:files/BENCHMARKS.html] for details.
+<b>memcached</b>, correctly configured, is at least twice as fast as <b>memcache-client</b> and <b>dalli</b>. See BENCHMARKS[link:files/BENCHMARKS.html] for details.
 
 == Reporting problems
 
