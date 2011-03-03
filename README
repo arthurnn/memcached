@@ -75,7 +75,7 @@ Note that the API is not the same as that of <b>Ruby-MemCache</b> or <b>memcache
 
 == Pipelining
 
-Pipelining updates is extremely effective in <b>memcached</b>, leading to more than 25x the write throughput of the default settings. Set the following configuration settings:
+Pipelining updates is extremely effective in <b>memcached</b>, leading to more than 25x write throughput than the default settings. Use the following options to enable it:
 
   :no_block => true,
   :buffer_requests => true,
