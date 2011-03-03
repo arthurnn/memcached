@@ -149,6 +149,8 @@ class Worker
         raise "No such method"
     end
 
+    @cache = nil
+
     if @with_memory == "true"
       puts "*** Garbage collect. ***"
       10.times do
