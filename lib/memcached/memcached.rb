@@ -115,17 +115,16 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       end
     end
 
-    if options[:credentials] == nil && ENV.key?("MEMCACHE_USERNAME") && ENV.key?("MEMCACHE_PASSWORD")
+    if !options[:credentials] and ENV["MEMCACHE_USERNAME"] and ENV["MEMCACHE_PASSWORD"]
       options[:credentials] = [ENV["MEMCACHE_USERNAME"], ENV["MEMCACHE_PASSWORD"]]
     end
 
     instance_eval { send(:extend, Experimental) } if options[:experimental_features]
 
-    options[:binary_protocol] = true if options[:credentials] != nil
+    options[:binary_protocol] = true if options[:credentials]
 
     # Force :buffer_requests to use :no_block
-    # XXX Deleting the :no_block key should also work, but libmemcached doesn't seem to set it
-    # consistently
+    # FIXME This should all be wrapped up in a single :pipeline option.
     options[:no_block] = true if options[:buffer_requests]
 
     # Disallow weights without ketama
@@ -137,8 +136,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     end
 
     # Read timeouts
-    options[:rcv_timeout] ||= options[:timeout] || 0
-    options[:poll_timeout] ||= options[:timeout] || 0
+    options[:rcv_timeout] ||= options[:timeout]
+    options[:poll_timeout] ||= options[:timeout]
 
     # Set the prefix key. Support the legacy name.
     set_prefix_key(options[:prefix_key] || options[:namespace])
