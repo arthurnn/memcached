@@ -13,6 +13,7 @@ ext/libmemcached-3.patch
 ext/libmemcached-4.patch
 ext/libmemcached-5.patch
 ext/libmemcached-6.patch
+ext/libmemcached-7.patch
 ext/libmemcached.patch
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
@@ -24,7 +25,6 @@ lib/memcached/exceptions.rb
 lib/memcached/experimental.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
-lib/rlibmemcached.bundle.dSYM/Contents/Info.plist
 test/profile/benchmark.rb
 test/profile/c_profiler.rb
 test/profile/exercise.rb
