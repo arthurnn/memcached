@@ -289,7 +289,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #
   # Accepts an optional <tt>ttl</tt> value to specify the maximum lifetime of the key on the server, in seconds. <tt>ttl</tt> must be a <tt>FixNum</tt>. <tt>0</tt> means no ttl. Note that there is no guarantee that the key will persist as long as the <tt>ttl</tt>, but it will not persist longer.
   #
-  # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be set directly.
+  # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt>, and pass a String as the <tt>value</tt>, if you want to set a raw byte array.
   #
   def set(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
     value = marshal ? Marshal.dump(value) : value

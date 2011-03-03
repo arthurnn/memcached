@@ -54,10 +54,10 @@ You can get multiple values at once:
   $cache.get ['test', 'test2', 'missing']
     #=> {"test" => "hello", "test2" => "hello"}
 
-You can set a counter and increment it:
+You can set a counter and increment it. Note that you must initialize it with an integer, encoded as an unmarshalled ASCII string:
 
   start = 1
-  $cache.set 'counter', start, 0, false
+  $cache.set 'counter', start.to_s, 0, false
   $cache.increment 'counter' #=> 2
   $cache.increment 'counter' #=> 3
   $cache.get('counter', false).to_i #=> 3
