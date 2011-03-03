@@ -6467,67 +6467,6 @@ fail:
 
 
 SWIGINTERN VALUE
-_wrap_MemcachedSt_number_of_replicas_set(int argc, VALUE *argv, VALUE self) {
-  struct memcached_st *arg1 = (struct memcached_st *) 0 ;
-  uint32_t arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
-  
-  if ((argc < 1) || (argc > 1)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 1)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "struct memcached_st *","number_of_replicas", 1, self )); 
-  }
-  arg1 = (struct memcached_st *)(argp1);
-  {
-    res2 = SWIG_ConvertPtr(argv[0], &argp2, SWIGTYPE_p_uint32_t,  0 );
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), Ruby_Format_TypeError( "", "uint32_t","number_of_replicas", 2, argv[0] )); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, Ruby_Format_TypeError("invalid null reference ", "uint32_t","number_of_replicas", 2, argv[0]));
-    } else {
-      arg2 = *((uint32_t *)(argp2));
-    }
-  }
-  if (arg1) (arg1)->number_of_replicas = arg2;
-  return Qnil;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
-_wrap_MemcachedSt_number_of_replicas_get(int argc, VALUE *argv, VALUE self) {
-  struct memcached_st *arg1 = (struct memcached_st *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  uint32_t result;
-  VALUE vresult = Qnil;
-  
-  if ((argc < 0) || (argc > 0)) {
-    rb_raise(rb_eArgError, "wrong # of arguments(%d for 0)",argc); SWIG_fail;
-  }
-  res1 = SWIG_ConvertPtr(self, &argp1,SWIGTYPE_p_memcached_st, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), Ruby_Format_TypeError( "", "struct memcached_st *","number_of_replicas", 1, self )); 
-  }
-  arg1 = (struct memcached_st *)(argp1);
-  result =  ((arg1)->number_of_replicas);
-  {
-    vresult = UINT2NUM(result);
-  }
-  return vresult;
-fail:
-  return Qnil;
-}
-
-
-SWIGINTERN VALUE
 _wrap_MemcachedSt_number_of_live_hosts_set(int argc, VALUE *argv, VALUE self) {
   struct memcached_st *arg1 = (struct memcached_st *) 0 ;
   uint32_t arg2 ;
@@ -13350,8 +13289,6 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_method(SwigClassMemcachedSt.klass, "delete_trigger", _wrap_MemcachedSt_delete_trigger_get, -1);
   rb_define_method(SwigClassMemcachedSt.klass, "prefix_key=", _wrap_MemcachedSt_prefix_key_set, -1);
   rb_define_method(SwigClassMemcachedSt.klass, "prefix_key", _wrap_MemcachedSt_prefix_key_get, -1);
-  rb_define_method(SwigClassMemcachedSt.klass, "number_of_replicas=", _wrap_MemcachedSt_number_of_replicas_set, -1);
-  rb_define_method(SwigClassMemcachedSt.klass, "number_of_replicas", _wrap_MemcachedSt_number_of_replicas_get, -1);
   rb_define_method(SwigClassMemcachedSt.klass, "number_of_live_hosts=", _wrap_MemcachedSt_number_of_live_hosts_set, -1);
   rb_define_method(SwigClassMemcachedSt.klass, "number_of_live_hosts", _wrap_MemcachedSt_number_of_live_hosts_get, -1);
   rb_define_method(SwigClassMemcachedSt.klass, "live_host_indices=", _wrap_MemcachedSt_live_host_indices_set, -1);
@@ -13498,7 +13435,6 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_NOREPLY", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NOREPLY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_USE_UDP", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USE_UDP)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS)));
-  rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_NUMBER_OF_REPLICAS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_NUMBER_OF_REPLICAS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_PREFIX_KEY", SWIG_From_int((int)(MEMCACHED_CALLBACK_PREFIX_KEY)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_USER_DATA", SWIG_From_int((int)(MEMCACHED_CALLBACK_USER_DATA)));
   rb_define_const(mRlibmemcached, "MEMCACHED_CALLBACK_CLEANUP_FUNCTION", SWIG_From_int((int)(MEMCACHED_CALLBACK_CLEANUP_FUNCTION)));

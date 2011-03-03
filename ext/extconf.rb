@@ -32,7 +32,7 @@ end
 def run(cmd, reason)
   puts reason
   puts cmd
-  raise "'#{cmd}' failed" unless system(cmd) or ENV['DEV']
+  raise "'#{cmd}' failed" unless system(cmd)
 end
 
 def check_libmemcached
@@ -50,11 +50,6 @@ def check_libmemcached
     if File.exist?("lib")
       puts "Libmemcached already configured; run 'rake clean' first if you need to reconfigure."
     else
-      # have_sasl check may fail on OSX, skip it
-      # unless RUBY_PLATFORM =~ /darwin/ or have_library('sasl2')
-      #   raise "SASL2 not found. You need the libsasl2-dev library, which should be provided through your system's package manager."
-      # end
-
       system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
       run("#{TAR_CMD} xzf #{BUNDLE} 2>&1", "Building libmemcached.")
 
@@ -65,7 +60,7 @@ def check_libmemcached
       patch("libmemcached-4", "noop hash")
       patch("libmemcached-5", "get_len method")
       patch("libmemcached-6", "failure count bug")
-      patch("libmemcached-7", "pipelined delete")
+      patch("libmemcached-7", "pipelined delete and unused replica code")
 
       run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
 
@@ -78,7 +73,7 @@ def check_libmemcached
       #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
       run("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb", "Making libmemcached.")
     end
-  end
+ end
 
   # Absolutely prevent the linker from picking up any other libmemcached
   Dir.chdir("#{HERE}/lib") do

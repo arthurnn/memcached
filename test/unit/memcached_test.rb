@@ -13,21 +13,24 @@ class MemcachedTest < Test::Unit::TestCase
     @options = {
       :prefix_key => @prefix_key,
       :hash => :default,
-      :distribution => :modula}
+      :distribution => :modula,
+      :show_backtraces => true}
     @cache = Memcached.new(@servers, @options)
 
     @binary_protocol_options = {
       :prefix_key => @prefix_key,
       :hash => :default,
       :distribution => :modula,
-      :binary_protocol => true}
+      :binary_protocol => true,
+      :show_backtraces => true}
     @binary_protocol_cache = Memcached.new(@servers, @binary_protocol_options)
 
     @udp_options = {
       :prefix_key => @prefix_key,
       :hash => :default,
       :use_udp => true,
-      :distribution => :modula}
+      :distribution => :modula,
+      :show_backtraces => true}
     @udp_cache = Memcached.new(@udp_servers, @udp_options)
 
     @noblock_options = {
@@ -36,7 +39,8 @@ class MemcachedTest < Test::Unit::TestCase
       :noreply => true,
       :buffer_requests => true,
       :hash => :default,
-      :distribution => :modula}
+      :distribution => :modula,
+      :show_backtraces => true}
     @noblock_cache = Memcached.new(@servers, @noblock_options)
 
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
@@ -512,6 +516,12 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(Memcached::NotFound) do
       @cache.get key
     end
+
+    @binary_protocol_cache.set key, @value
+    @binary_protocol_cache.delete key
+    assert_raise(Memcached::NotFound) do
+      @binary_protocol_cache.get key
+    end
   end
 
   def test_missing_delete
@@ -812,7 +822,7 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  # Non-blocking IO
+  # Pipelined, non-blocking IO
 
   def test_buffered_requests_return_value
     cache = Memcached.new @servers,
@@ -861,8 +871,9 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_no_block_missing_delete
-    @noblock_cache.delete key rescue nil
+   @noblock_cache.delete key rescue nil
     assert_nothing_raised do
+      @noblock_cache.delete key
       @noblock_cache.delete key
     end
   end
