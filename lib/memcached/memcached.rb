@@ -233,15 +233,16 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   end
 
   # Reset the state of the libmemcached struct. This is useful for changing the server list at runtime.
-  def reset(current_servers = nil, with_prefix_key = true)
+  def reset(current_servers = nil)
     # Store state and teardown
     current_servers ||= servers
     prev_prefix_key = prefix_key
+    quit
 
     # Create
     # FIXME Duplicates logic with initialize()
     @struct = Lib.memcached_create(nil)
-    set_prefix_key(prev_prefix_key) if with_prefix_key
+    set_prefix_key(prev_prefix_key)
     set_behaviors
     set_credentials
     set_servers(current_servers)
