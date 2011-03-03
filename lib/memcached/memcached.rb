@@ -560,6 +560,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
          stats[key.to_sym] += [value]
        end
     end
+
+    Lib.memcached_stat_free(@struct, stat_struct)
     stats
   rescue Memcached::SomeErrorsWereReported => _
     e = _.class.new("Error getting stats")

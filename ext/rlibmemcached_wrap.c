@@ -7236,7 +7236,7 @@ _wrap_memcached_stat(int argc, VALUE *argv, VALUE self) {
   }
   arg2 = (char *)(buf2);
   result = (memcached_stat_st *)memcached_stat(arg1,arg2,arg3);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_stat_st, SWIG_POINTER_OWN |  0 );
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_stat_st, 0 |  0 );
   if (SWIG_IsTmpObj(res3)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_short((*arg3)));
   } else {
@@ -8114,7 +8114,6 @@ _wrap_memcached_stat_get_value(int argc, VALUE *argv, VALUE self) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg4), SWIGTYPE_p_memcached_return, new_flags));
   }
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
-  free((char*)result);
   return vresult;
 fail:
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
