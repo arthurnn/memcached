@@ -23,6 +23,7 @@
 // Register which functions generate new objects
 %newobject memcached_create;
 %newobject memcached_clone;
+%newobject memcached_stat_get_value;
 // %newobject memcached_stat;
 %newobject memcached_server_by_key;
 

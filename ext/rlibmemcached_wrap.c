@@ -8114,6 +8114,7 @@ _wrap_memcached_stat_get_value(int argc, VALUE *argv, VALUE self) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_NewPointerObj((void*)(arg4), SWIGTYPE_p_memcached_return, new_flags));
   }
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
+  free((char*)result);
   return vresult;
 fail:
   if (alloc3 == SWIG_NEWOBJ) free((char*)buf3);
