@@ -8,8 +8,6 @@ require 'ostruct'
 
 GC.copy_on_write_friendly = true if GC.respond_to?("copy_on_write_friendly=")
 
-Struct
-
 class Worker
   def initialize(method_name, iterations, with_memory = 'false')
     @method = method_name || 'mixed'

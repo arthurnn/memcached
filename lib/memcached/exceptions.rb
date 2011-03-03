@@ -3,7 +3,7 @@ class Memcached
 
 =begin rdoc
 
-Superclass for all Memcached runtime exceptions. 
+Superclass for all Memcached runtime exceptions.
 
 Subclasses correspond one-to-one with server response strings or libmemcached errors. For example, raising <b>Memcached::NotFound</b> means that the server returned <tt>"NOT_FOUND\r\n"</tt>.
 
@@ -48,15 +48,15 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
 =end
   class Error < RuntimeError
     attr_accessor :no_backtrace
-    
+
     def set_backtrace(*args)
       @no_backtrace ? [] : super
     end
-    
+
     def backtrace(*args)
       @no_backtrace ? [] : super
     end
-  end 
+  end
 
 #:stopdoc:
 
@@ -64,21 +64,21 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
     private
     def camelize(string)
       string.downcase.gsub('/', ' or ').split(' ').map {|s| s.capitalize}.join
-    end           
+    end
   end
-  
+
   ERRNO_HASH = Hash[*Errno.constants.grep(/^E/).map{ |c| [Errno.const_get(c)::Errno, Errno.const_get(c).new.message] }.flatten]
-  
+
   EXCEPTIONS = []
-  EMPTY_STRUCT = Rlibmemcached::MemcachedSt.new
-  Rlibmemcached.memcached_create(EMPTY_STRUCT)
-  
+  empty_struct = Rlibmemcached::MemcachedSt.new
+  Rlibmemcached.memcached_create(empty_struct)
+
   # Generate exception classes
   Rlibmemcached::MEMCACHED_MAXIMUM_RETURN.times do |index|
-    description = Rlibmemcached.memcached_strerror(EMPTY_STRUCT, index).gsub("!", "")
+    description = Rlibmemcached.memcached_strerror(empty_struct, index).gsub("!", "")
     exception_class = eval("class #{camelize(description)} < Error; self; end")
     EXCEPTIONS << exception_class
   end
-  
+
 #:startdoc:
 end
