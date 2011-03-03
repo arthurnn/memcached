@@ -30,7 +30,7 @@ class Worker
       {
         :buffer_requests => true,
         :no_block => true,
-        :noreply => true,
+        :noreply => false,
         :namespace => "namespace"
       }
     ]
@@ -110,9 +110,11 @@ class Worker
           @cache.prepend @key2, @marshalled
           @cache.get @key1
           @cache.get @key3
+          cache = Memcached::Rails.new(*@opts)
           cache = @cache.clone
           servers = @cache.servers
           server = @cache.server_by_key(@key1)
+          @cache.stats
         end
         @i.times do
           @cache.reset
