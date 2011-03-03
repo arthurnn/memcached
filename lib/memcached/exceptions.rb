@@ -70,12 +70,12 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
   ERRNO_HASH = Hash[*Errno.constants.grep(/^E/).map{ |c| [Errno.const_get(c)::Errno, Errno.const_get(c).new.message] }.flatten]
 
   EXCEPTIONS = []
-  empty_struct = Rlibmemcached::MemcachedSt.new
-  Rlibmemcached.memcached_create(empty_struct)
+  empty_struct = Lib.memcached_create(nil)
+  Lib.memcached_create(empty_struct)
 
   # Generate exception classes
-  Rlibmemcached::MEMCACHED_MAXIMUM_RETURN.times do |index|
-    description = Rlibmemcached.memcached_strerror(empty_struct, index).gsub("!", "")
+  Lib::MEMCACHED_MAXIMUM_RETURN.times do |index|
+    description = Lib.memcached_strerror(empty_struct, index).gsub("!", "")
     exception_class = eval("class #{camelize(description)} < Error; self; end")
     EXCEPTIONS << exception_class
   end

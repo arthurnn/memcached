@@ -17,13 +17,15 @@
 
 // Register libmemcached's struct free function to prevent memory leaks
 %freefunc memcached_st "memcached_free";
+%freefunc memcached_stat_st "memcached_stat_free";
 %freefunc memcached_server_st "memcached_server_free";
 
 // Register which functions generate new objects
-%newobject memcached_server_by_key;
 %newobject memcached_create;
 %newobject memcached_clone;
 %newobject memcached_stat_get_value;
+%newobject memcached_stat;
+%newobject memcached_server_by_key;
 
 // %trackobjects; // Doesn't fix any interesting leaks
 
