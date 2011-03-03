@@ -799,6 +799,18 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal 3, stats[:pid].size
     assert_instance_of Fixnum, stats[:pid].first
     assert_instance_of String, stats[:version].first
+
+    stats = @binary_protocol_cache.stats
+    assert_equal 3, stats[:pid].size
+    assert_instance_of Fixnum, stats[:pid].first
+    assert_instance_of String, stats[:version].first
+
+    assert_nothing_raised do
+      @noblock_cache.stats
+    end
+    assert_raises(TypeError) do
+      @udp_cache.stats
+    end
   end
 
   def test_missing_stats
