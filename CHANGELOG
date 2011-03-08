@@ -1,3 +1,5 @@
+v1.2.1. Fix large allocation on error bug.
+
 v1.2. Clean up duplicated set_prefix_key API. Pipeline deletes and remove dead replication code. Apply prefix_key to binary protocol properly (tarrall). Add Memcached::Rails#exist? (ssoroka).
 
 v1.1.3. Register new objects to fix leaks around memcached_server_st and other rich structs (tobi).

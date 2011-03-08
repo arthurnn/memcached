@@ -157,7 +157,7 @@ VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length
 %{
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
   VALUE ret;
-  size_t value_length;
+  size_t value_length = 0;
   char *value = memcached_get(ptr, key, key_length, &value_length, flags, error);
   ret = rb_str_new(value, value_length);
   free(value);
@@ -169,7 +169,7 @@ VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_le
 %{
 VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return *error) {
   VALUE ret;
-  size_t value_length;
+  size_t value_length = 0;
   char *value = memcached_get_len(ptr, key, key_length, user_spec_len, &value_length, flags, error);
   ret = rb_str_new(value, value_length);
   free(value);
@@ -181,7 +181,7 @@ VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t 
 %{
 VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
   VALUE ret;
-  size_t value_length;
+  size_t value_length = 0;
   char *value = memcached_get_from_last(ptr, key, key_length, &value_length, flags, error);
   ret = rb_str_new(value, value_length);
   free(value);
@@ -193,9 +193,8 @@ VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t 
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
-  size_t value_length;
+  size_t value_length = 0;
   VALUE result = rb_ary_new();
-
   char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
   VALUE ret = rb_str_new(value, value_length);
   rb_ary_push(result, ret);
