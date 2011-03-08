@@ -1,3 +1,5 @@
+v1.2.2. Work around tcmalloc bug on OS X (affects REE).
+
 v1.2.1. Fix large allocation on error bug.
 
 v1.2. Clean up duplicated set_prefix_key API. Pipeline deletes and remove dead replication code. Apply prefix_key to binary protocol properly (tarrall). Add Memcached::Rails#exist? (ssoroka).

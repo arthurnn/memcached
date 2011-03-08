@@ -47,8 +47,8 @@ def check_libmemcached
   $DEFLIBPATH = [] unless SOLARIS_32
 
   Dir.chdir(HERE) do
-    if File.exist?("lib")
-      puts "Libmemcached already configured; run 'rake clean' first if you need to reconfigure."
+    if File.exist?("libmemcached-0.32")
+      puts "Libmemcached already unpacked; run 'rake clean' first if you need to start from scratch."
     else
       system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
       run("#{TAR_CMD} xzf #{BUNDLE} 2>&1", "Building libmemcached.")
@@ -61,12 +61,13 @@ def check_libmemcached
       patch("libmemcached-5", "get_len method")
       patch("libmemcached-6", "failure count bug")
       patch("libmemcached-7", "pipelined delete and unused replica code")
+      patch("libmemcached-8", "avoid strdup() to work around tcmalloc on OS X bug")
 
       run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
+    end
 
-      Dir.chdir(BUNDLE_PATH) do
-        run("env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
-      end
+    Dir.chdir(BUNDLE_PATH) do
+      run("env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
     end
 
     Dir.chdir(BUNDLE_PATH) do

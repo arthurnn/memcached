@@ -147,6 +147,13 @@ class Worker
         @i.times do
           @cache.server_by_key(@key1)
         end
+      when "server_error"
+        @i.times do
+          begin
+            @cache.set @key1, "I'm big" * 1000000
+          rescue
+          end
+        end
       else
         raise "No such method"
     end
