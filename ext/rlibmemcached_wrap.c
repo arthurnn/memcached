@@ -11987,7 +11987,7 @@ _wrap_memcached_server_by_key(int argc, VALUE *argv, VALUE self) {
     arg3 = (size_t) RSTRING_LEN(argv[1]);
   }
   result = (memcached_server_st *)memcached_server_by_key(arg1,(char const *)arg2,arg3,arg4);
-  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_server_st, SWIG_POINTER_OWN |  0 );
+  vresult = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_memcached_server_st, 0 |  0 );
   if (SWIG_IsTmpObj(res4)) {
     vresult = SWIG_Ruby_AppendOutput(vresult, SWIG_From_unsigned_SS_short((*arg4)));
   } else {

@@ -1,4 +1,4 @@
-v1.2.2. Work around tcmalloc bug on OS X (affects REE).
+v1.2.2. Work around tcmalloc bug on OS X. Avoid circular reference in memcached_server_by_key().
 
 v1.2.1. Fix large allocation on error bug.
 

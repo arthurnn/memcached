@@ -1,0 +1,13 @@
+diff -uwr a/libmemcached-0.32/libmemcached/memcached_server.c b/libmemcached-0.32/libmemcached/memcached_server.c
+--- a/libmemcached-0.32/libmemcached/memcached_server.c	2011-03-13 11:49:57.000000000 -0700
++++ b/libmemcached-0.32/libmemcached/memcached_server.c	2011-03-13 21:35:17.000000000 -0700
+@@ -139,8 +139,7 @@
+ 
+   server_key= memcached_generate_hash(ptr, key, key_length);
+ 
+-  return memcached_server_clone(NULL, &ptr->hosts[server_key]);
+-
++  return &ptr->hosts[server_key];
+ }
+ 
+ const char *memcached_server_error(memcached_server_st *ptr)
