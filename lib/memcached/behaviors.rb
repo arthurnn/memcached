@@ -13,7 +13,7 @@ class Memcached
   BEHAVIORS = load_constants("MEMCACHED_BEHAVIOR_")
 
   BEHAVIOR_VALUES = {
-    false => 0, 
+    false => 0,
     true => 1
   }
 
@@ -66,13 +66,12 @@ class Memcached
         # Scoped values; still annoying
         when :hash then HASH_VALUES.invert[value]
         when :distribution then DISTRIBUTION_VALUES.invert[value]
-        when *DIRECT_VALUE_BEHAVIORS then value
         else
-          BEHAVIOR_VALUES.invert[value]
+          value
       end
     else
       value
     end
   end
-  
+
 end

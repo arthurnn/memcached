@@ -2,6 +2,7 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
 
 class MemcachedTest < Test::Unit::TestCase
+
   def setup
     @servers = ['localhost:43042', 'localhost:43043', "#{UNIX_SOCKET_NAME}0"]
     @udp_servers = ['localhost:43052', 'localhost:43053']

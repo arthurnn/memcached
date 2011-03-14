@@ -121,9 +121,13 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
     instance_eval { send(:extend, Experimental) } if options[:experimental_features]
 
+    # SASL requires binary protocol
     options[:binary_protocol] = true if options[:credentials]
 
-    # Force :buffer_requests to use :no_block
+    # UDP requires noreply
+    options[:noreply] = true if options[:use_udp]
+
+    # Buffering requires non-blocking
     # FIXME This should all be wrapped up in a single :pipeline option.
     options[:no_block] = true if options[:buffer_requests]
 
