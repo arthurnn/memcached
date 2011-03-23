@@ -188,8 +188,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
         end
       )
     end
-    # For inspect
-    @servers = send(:servers)
   end
 
   # Return the array of server strings used to configure this instance.
