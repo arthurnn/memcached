@@ -140,11 +140,13 @@ class Bench
           client.delete @k3
         end
         yield client
+        GC.disable
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
       rescue Exception => e
         puts "#{test_name}: #{client_name} => #{e.inspect}" if ENV["DEBUG"]
         reset_clients
       end
+      GC.enable
     end
     puts
   end
