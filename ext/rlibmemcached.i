@@ -102,12 +102,6 @@
  $result = UINT2NUM($1);
 };
 
-// Void type strings without lengths for prefix_key callback
-// Currently not used by the gem
-%typemap(out) (void *) {
- $result = rb_str_new2($1);
-};
-
 // String for memcached_fetch
 %typemap(in, numinputs=0) (char *key, size_t *key_length) {
   char string[256];
@@ -122,6 +116,7 @@
 }
 
 // Array of strings
+// Only used by memcached_stat_get_keys() and not performance-critical
 %typemap(out) (char **) {
   int i;
   VALUE ary = rb_ary_new();
@@ -147,6 +142,20 @@
 
 //// Custom C functions
 
+VALUE rb_str_new_by_ref(char *ptr, long len);
+%{
+VALUE rb_str_new_by_ref(char *ptr, long len)
+{
+    NEWOBJ(str, struct RString);
+    OBJSETUP(str, rb_cString, T_STRING);
+
+    str->ptr = ptr;
+    str->len = len;
+    str->aux.capa = 0;
+    return (VALUE)str;
+}
+%}
+
 //// Manual wrappers
 
 // Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because
@@ -155,36 +164,27 @@
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
-  VALUE ret;
   size_t value_length = 0;
   char *value = memcached_get(ptr, key, key_length, &value_length, flags, error);
-  ret = rb_str_new(value, value_length);
-  free(value);
-  return ret;
+  return rb_str_new_by_ref(value, value_length);
 };
 %}
 
 VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_len_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t user_spec_len, uint32_t *flags, memcached_return *error) {
-  VALUE ret;
   size_t value_length = 0;
   char *value = memcached_get_len(ptr, key, key_length, user_spec_len, &value_length, flags, error);
-  ret = rb_str_new(value, value_length);
-  free(value);
-  return ret;
+  return rb_str_new_by_ref(value, value_length);
 };
 %}
 
 VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
-  VALUE ret;
   size_t value_length = 0;
   char *value = memcached_get_from_last(ptr, key, key_length, &value_length, flags, error);
-  ret = rb_str_new(value, value_length);
-  free(value);
-  return ret;
+  return rb_str_new_by_ref(value, value_length);
 };
 %}
 
@@ -193,12 +193,11 @@ VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, u
 %{
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
   size_t value_length = 0;
-  VALUE result = rb_ary_new();
+  VALUE ary = rb_ary_new();
   char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
-  VALUE ret = rb_str_new(value, value_length);
-  rb_ary_push(result, ret);
-  free(value);
-  return result;
+  VALUE str = rb_str_new_by_ref(value, value_length);
+  rb_ary_push(ary, str);
+  return ary;
 };
 %}
 

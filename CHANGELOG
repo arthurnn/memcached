@@ -1,4 +1,4 @@
-v1.2.4.pre. Compile properly on JRuby.
+v1.2.4. Compile properly on JRuby (but doesn't run yet). Do zero-copy Ruby string allocations to improve performance.
 
 v1.2.3. Don't keep the server strings around forever.
 
