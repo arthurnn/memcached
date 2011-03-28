@@ -65,17 +65,17 @@ def check_libmemcached
       patch("libmemcached-9", "don't clone server_st by reference server_by_key()")
 
       run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
-    end
 
-    Dir.chdir(BUNDLE_PATH) do
-      run("env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
-    end
+      Dir.chdir(BUNDLE_PATH) do
+        run("env CFLAGS='-fPIC #{$CFLAGS}' LDFLAGS='-fPIC #{$LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
+      end
 
-    Dir.chdir(BUNDLE_PATH) do
-      #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
-      run("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb", "Making libmemcached.")
+      Dir.chdir(BUNDLE_PATH) do
+        #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
+        run("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb", "Making libmemcached.")
+      end
     end
- end
+  end
 
   # Absolutely prevent the linker from picking up any other libmemcached
   Dir.chdir("#{HERE}/lib") do
