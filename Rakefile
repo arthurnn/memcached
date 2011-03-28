@@ -5,7 +5,7 @@ Echoe.new("memcached") do |p|
   p.project = "fauna"
   p.summary = "An interface to the libmemcached C client."
   p.rdoc_pattern = /README|TODO|LICENSE|CHANGELOG|BENCH|COMPAT|exceptions|experimental.rb|behaviors|rails.rb|memcached.rb/
-  p.clean_pattern += ["ext/lib", "ext/include", "ext/share", "ext/libmemcached-?.??", "ext/bin", "ext/conftest.dSYM"]
+  p.clean_pattern += ["ext/lib", "ext/include", "ext/share", "ext/libmemcached-?.??", "ext/bin", "ext/conftest.dSYM", "lib/rlibmemcached.bundle.dSYM"]
 end
 
 task :exceptions do
