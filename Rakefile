@@ -20,6 +20,19 @@ task :exceptions do
   end
 end
 
+task :test_all do
+  if !system("rvm use ree-1.8.7-2010.02 && rake clean && rake")
+    puts "REE test failed"
+    exit(1)
+  end
+  if !system("rvm use ruby-1.9.2 && rake clean && rake")
+    puts "1.9 test failed"
+    exit(1)
+  end
+end
+
+task :release => [:test_all, :clean, :package]
+
 task :benchmark do
  exec("ruby #{File.dirname(__FILE__)}/test/profile/benchmark.rb")
 end

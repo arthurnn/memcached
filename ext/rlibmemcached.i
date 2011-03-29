@@ -39,7 +39,7 @@
 
 // Array of strings map for multiget
 %typemap(in) (const char **keys, size_t *key_length, size_t number_of_keys) {
-  int i;
+  unsigned int i;
   Check_Type($input, T_ARRAY);
   $3 = (unsigned int) RARRAY_LEN($input);
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
@@ -148,19 +148,26 @@ VALUE rb_str_new_by_ref(char *ptr, long len)
 {
     NEWOBJ(str, struct RString);
     OBJSETUP(str, rb_cString, T_STRING);
-
+#ifdef RSTRING_NOEMBED
+    /* Ruby 1.9 */
+    str->as.heap.ptr = ptr;
+    str->as.heap.len = len;
+    str->as.heap.aux.capa = len + 1;
+    // Set STR_NOEMBED
+    FL_SET(str, FL_USER1);
+#else
+    /* Ruby 1.8 */
     str->ptr = ptr;
     str->len = len;
     str->aux.capa = 0;
+#endif
     return (VALUE)str;
 }
 %}
 
 //// Manual wrappers
 
-// Single get. SWIG likes to use SWIG_FromCharPtr instead of SWIG_FromCharPtrAndSize because
-// of the retval/argout split, so it truncates return values with \0 in them. There is probably a better
-// way to do this.
+// Single get
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {

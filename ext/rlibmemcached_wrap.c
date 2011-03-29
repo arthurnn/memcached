@@ -2257,10 +2257,19 @@ VALUE rb_str_new_by_ref(char *ptr, long len)
 {
     NEWOBJ(str, struct RString);
     OBJSETUP(str, rb_cString, T_STRING);
-
+#ifdef RSTRING_NOEMBED
+    /* Ruby 1.9 */
+    str->as.heap.ptr = ptr;
+    str->as.heap.len = len;
+    str->as.heap.aux.capa = len + 1;
+    // Set STR_NOEMBED
+    FL_SET(str, FL_USER1);
+#else
+    /* Ruby 1.8 */
     str->ptr = ptr;
     str->len = len;
     str->aux.capa = 0;
+#endif
     return (VALUE)str;
 }
 
@@ -8755,7 +8764,7 @@ _wrap_memcached_mget(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (memcached_st *)(argp1);
   {
-    int i;
+    unsigned int i;
     Check_Type(argv[1], T_ARRAY);
     arg4 = (unsigned int) RARRAY_LEN(argv[1]);
     arg3 = (size_t *) malloc((arg4+1)*sizeof(size_t));
@@ -8805,7 +8814,7 @@ _wrap_memcached_mget_len(int argc, VALUE *argv, VALUE self) {
   }
   arg1 = (memcached_st *)(argp1);
   {
-    int i;
+    unsigned int i;
     Check_Type(argv[1], T_ARRAY);
     arg4 = (unsigned int) RARRAY_LEN(argv[1]);
     arg3 = (size_t *) malloc((arg4+1)*sizeof(size_t));
@@ -8947,7 +8956,7 @@ _wrap_memcached_mget_by_key(int argc, VALUE *argv, VALUE self) {
   } 
   arg3 = (size_t)(val3);
   {
-    int i;
+    unsigned int i;
     Check_Type(argv[3], T_ARRAY);
     arg6 = (unsigned int) RARRAY_LEN(argv[3]);
     arg5 = (size_t *) malloc((arg6+1)*sizeof(size_t));
