@@ -1,3 +1,4 @@
+gem 'echoe', '>= 4.5.6'
 require 'echoe'
 
 Echoe.new("memcached") do |p|
@@ -31,7 +32,7 @@ task :test_all do
   end
 end
 
-task :release => [:test_all, :clean, :package]
+task :prerelease => [:test_all]
 
 task :benchmark do
  exec("ruby #{File.dirname(__FILE__)}/test/profile/benchmark.rb")
