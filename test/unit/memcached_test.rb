@@ -373,6 +373,27 @@ class MemcachedTest < Test::Unit::TestCase
      )
   end
 
+  def test_get_multi_binary
+    @binary_protocol_cache.set "#{key}_1", 1
+    @binary_protocol_cache.delete "#{key}_2" rescue nil
+    @binary_protocol_cache.set "#{key}_3", 3
+    @binary_protocol_cache.delete "#{key}_4" rescue nil
+    assert_equal(
+      {"test_get_multi_missing_3"=>3, "test_get_multi_missing_1"=>1},
+      @binary_protocol_cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"])
+     )
+  end
+
+  def test_get_multi_binary_one_record_missing
+    @binary_protocol_cache.delete("magic_key") rescue nil
+    assert_equal({}, @binary_protocol_cache.get(["magic_key"]))
+  end
+
+  def test_get_multi_binary_one_record
+    @binary_protocol_cache.set("magic_key", 1)
+    assert_equal({"magic_key" => 1}, @binary_protocol_cache.get(["magic_key"]))
+  end
+
   def test_get_multi_completely_missing
     @cache.delete "#{key}_1" rescue nil
     @cache.delete "#{key}_2" rescue nil
@@ -588,6 +609,11 @@ class MemcachedTest < Test::Unit::TestCase
     assert_equal 11, @cache.increment(key)
   end
 
+  def test_increment_binary
+    @binary_protocol_cache.set key, "10", 0, false
+    assert_equal 11, @binary_protocol_cache.increment(key)
+  end
+
   def test_increment_offset
     @cache.set key, "10", 0, false
     assert_equal 15, @cache.increment(key, 5)
@@ -603,6 +629,11 @@ class MemcachedTest < Test::Unit::TestCase
   def test_decrement
     @cache.set key, "10", 0, false
     assert_equal 9, @cache.decrement(key)
+  end
+
+  def test_decrement_binary
+    @binary_protocol_cache.set key, "10", 0, false
+    assert_equal 9, @binary_protocol_cache.decrement(key)
   end
 
   def test_decrement_offset
