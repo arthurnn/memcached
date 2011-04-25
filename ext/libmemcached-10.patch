@@ -1,0 +1,12 @@
+diff -uwr a/libmemcached-0.32/libmemcached/memcached_connect.c b/libmemcached-0.32/libmemcached/memcached_connect.c
+--- a/libmemcached-0.32/libmemcached/memcached_connect.c	2011-04-25 11:14:16.000000000 -0700
++++ b/libmemcached-0.32/libmemcached/memcached_connect.c	2011-04-25 11:08:49.000000000 -0700
+@@ -242,6 +242,8 @@
+ 
+           if (error != 1 || fds[0].revents & POLLERR)
+           {
++            ptr->cached_errno = errno;
++
+             if (fds[0].revents & POLLERR)
+             {
+               int err;

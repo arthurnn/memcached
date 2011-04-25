@@ -69,6 +69,7 @@ def check_libmemcached
       patch("libmemcached-7", "pipelined delete and unused replica code")
       patch("libmemcached-8", "avoid strdup() to work around tcmalloc on OS X bug")
       patch("libmemcached-9", "don't clone server_st by reference server_by_key()")
+      patch("libmemcached-10", "set errno properly after poll() timeout on connect")
 
       run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
 
