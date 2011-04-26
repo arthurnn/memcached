@@ -496,6 +496,8 @@ static memcached_return binary_read_one_response(memcached_server_st *ptr,
     case PROTOCOL_BINARY_RESPONSE_E2BIG:
     case PROTOCOL_BINARY_RESPONSE_EINVAL:
     case PROTOCOL_BINARY_RESPONSE_NOT_STORED:
+      rc= MEMCACHED_NOTSTORED;
+      break;
     case PROTOCOL_BINARY_RESPONSE_UNKNOWN_COMMAND:
     case PROTOCOL_BINARY_RESPONSE_ENOMEM:
     default:

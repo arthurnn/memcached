@@ -273,7 +273,6 @@ static memcached_return network_connect(memcached_server_st *ptr)
           (void)fcntl(ptr->fd, F_SETFL, flags & ~O_NONBLOCK);
 
         WATCHPOINT_ASSERT(ptr->cursor_active == 0);
-        ptr->server_failure_counter= 0;
         return MEMCACHED_SUCCESS;
       }
       use = use->ai_next;
@@ -282,21 +281,13 @@ static memcached_return network_connect(memcached_server_st *ptr)
 
   if (ptr->fd == -1)
   {
-    /* Failed to connect. schedule next retry */
-    if (ptr->root->retry_timeout)
-    {
-      struct timeval next_time;
-
-      if (gettimeofday(&next_time, NULL) == 0)
-        ptr->next_retry= next_time.tv_sec + ptr->root->retry_timeout;
-    }
-    ptr->server_failure_counter+= 1;
+    ptr->server_failure_counter ++;
     if (ptr->cached_errno == 0)
       return MEMCACHED_TIMEOUT;
+      
     return MEMCACHED_ERRNO; /* The last error should be from connect() */
   }
 
-  ptr->server_failure_counter= 0;
   return MEMCACHED_SUCCESS; /* The last error should be from connect() */
 }
 
@@ -315,7 +306,7 @@ memcached_return memcached_connect(memcached_server_st *ptr)
     gettimeofday(&next_time, NULL);
 
     /* if we've had too many consecutive errors on this server, mark it dead. */
-    if (ptr->server_failure_counter > ptr->root->server_failure_limit)
+    if (ptr->server_failure_counter >= ptr->root->server_failure_limit)
     {
       ptr->next_retry= next_time.tv_sec + ptr->root->retry_timeout;
       ptr->server_failure_counter= 0;

@@ -50,6 +50,9 @@ void memcached_free(memcached_st *ptr)
   if (ptr->continuum)
     ptr->call_free(ptr, ptr->continuum);
 
+  if (ptr->live_host_indices)
+    ptr->call_free(ptr, ptr->live_host_indices);
+
   if (ptr->is_allocated)
     ptr->call_free(ptr, ptr);
   else

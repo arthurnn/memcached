@@ -53,7 +53,6 @@ def check_libmemcached
   $DEFLIBPATH = [] unless SOLARIS_32
 
   Dir.chdir(HERE) do
-    patch("libmemcached-1", "mark-dead behavior")
     patch("sasl", "SASL")
     patch("libmemcached-2", "get_from_last method")
     patch("libmemcached-3", "pipelined prepend and append")
@@ -70,7 +69,7 @@ def check_libmemcached
 
     Dir.chdir(BUNDLE_PATH) do
       run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
-      end
+    end
 
     Dir.chdir(BUNDLE_PATH) do
       #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+

@@ -11,6 +11,7 @@ static uint32_t FNV_32_PRIME= 16777619;
 /* Prototypes */
 static uint32_t internal_generate_hash(const char *key, size_t key_length);
 static uint32_t internal_generate_md5(const char *key, size_t key_length);
+uint32_t memcached_live_host_index(memcached_st *ptr, uint32_t num);
 
 uint32_t memcached_generate_hash_value(const char *key, size_t key_length, memcached_hash hash_algorithm)
 {
@@ -146,10 +147,10 @@ static uint32_t dispatch_host(memcached_st *ptr, uint32_t hash)
         right= begin;
       return right->index;
     } 
-  case MEMCACHED_DISTRIBUTION_MODULA:
-    return hash % ptr->number_of_hosts;
+  case MEMCACHED_DISTRIBUTION_MODULA:  
+    return memcached_live_host_index(ptr, hash);
   case MEMCACHED_DISTRIBUTION_RANDOM:
-    return (uint32_t) random() % ptr->number_of_hosts;
+    return memcached_live_host_index(ptr, (uint32_t) random());
   default:
     WATCHPOINT_ASSERT(0); /* We have added a distribution without extending the logic */
     return hash % ptr->number_of_hosts;
@@ -199,6 +200,19 @@ uint32_t memcached_generate_hash(memcached_st *ptr, const char *key, size_t key_
   }
 
   return dispatch_host(ptr, hash);
+}
+
+uint32_t memcached_live_host_index(memcached_st *ptr, uint32_t num)
+{
+  if (memcached_behavior_get(ptr, MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS)) {
+    if (ptr->number_of_live_hosts > 0) {
+      return ptr->live_host_indices[num % ptr->number_of_live_hosts];
+    } else {
+      return 0;  /* FIXME:  we should do something different if every server's dead, but I dunno what. */
+    }
+  } else {
+    return num % ptr->number_of_hosts;
+  }
 }
 
 static uint32_t internal_generate_hash(const char *key, size_t key_length)

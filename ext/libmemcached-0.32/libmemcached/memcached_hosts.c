@@ -7,6 +7,7 @@ static memcached_return server_add(memcached_st *ptr, const char *hostname,
                                    uint32_t weight,
                                    memcached_connection type);
 memcached_return update_continuum(memcached_st *ptr);
+memcached_return update_live_host_indices(memcached_st *ptr);
 
 static int compare_servers(const void *p1, const void *p2)
 {
@@ -44,8 +45,12 @@ memcached_return run_distribution(memcached_st *ptr)
   case MEMCACHED_DISTRIBUTION_MODULA:
     if (ptr->flags & MEM_USE_SORT_HOSTS)
       sort_hosts(ptr);
+    if (memcached_behavior_get(ptr, MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS))
+      update_live_host_indices(ptr);
     break;
   case MEMCACHED_DISTRIBUTION_RANDOM:
+    if (memcached_behavior_get(ptr, MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS))
+      update_live_host_indices(ptr);
     break;
   default:
     WATCHPOINT_ASSERT(0); /* We have added a distribution without extending the logic */
@@ -85,6 +90,46 @@ static uint32_t ketama_server_hash(const char *key, unsigned int key_length, int
     | (results[0 + alignment * 4] & 0xFF);
 }
 
+memcached_return update_live_host_indices(memcached_st *ptr)
+{
+  uint32_t host_index;
+  struct timeval now;
+  uint32_t i = 0;
+  memcached_server_st *list;
+
+  if (gettimeofday(&now, NULL) != 0)
+  {
+    ptr->cached_errno = errno;
+    return MEMCACHED_ERRNO;
+  }
+
+  if (ptr->live_host_indices == NULL) {
+    ptr->live_host_indices = (uint32_t *)ptr->call_malloc(ptr, sizeof(uint32_t) * ptr->number_of_hosts);
+    ptr->live_host_indices_size = ptr->number_of_live_hosts;
+  }
+
+  /* somehow we added some hosts.  Shouldn't get here much, if at all. */
+  if (ptr->live_host_indices_size < ptr->number_of_hosts ) {
+    ptr->live_host_indices = (uint32_t *)ptr->call_realloc(ptr, ptr->live_host_indices,  sizeof(uint32_t) * ptr->number_of_hosts);
+    ptr->live_host_indices_size = ptr->number_of_live_hosts;
+  }
+
+  if (ptr->live_host_indices == NULL)
+    return MEMCACHED_FAILURE;
+
+  list = ptr->hosts;
+  for (host_index= 0; host_index < ptr->number_of_hosts; ++host_index)
+    {
+      if (list[host_index].next_retry <= now.tv_sec) {
+        ptr->live_host_indices[i++] = host_index;
+      } else if (ptr->next_distribution_rebuild == 0 || list[host_index].next_retry < ptr->next_distribution_rebuild) {
+          ptr->next_distribution_rebuild= list[host_index].next_retry;
+      }
+    }
+  ptr->number_of_live_hosts = i;
+  return MEMCACHED_SUCCESS;
+}
+
 static int continuum_item_cmp(const void *t1, const void *t2)
 {
   memcached_continuum_item_st *ct1= (memcached_continuum_item_st *)t1;
@@ -111,8 +156,8 @@ memcached_return update_continuum(memcached_st *ptr)
   uint32_t pointer_per_server= MEMCACHED_POINTS_PER_SERVER;
   uint32_t pointer_per_hash= 1;
   uint64_t total_weight= 0;
-  uint64_t is_ketama_weighted= 0;
-  uint64_t is_auto_ejecting= 0;
+  uint32_t is_ketama_weighted= 0;
+  uint32_t is_auto_ejecting= 0;
   uint32_t points_per_server= 0;
   uint32_t live_servers= 0;
   struct timeval now;
