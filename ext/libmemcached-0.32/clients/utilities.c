@@ -99,6 +99,8 @@ void process_hash_option(memcached_st *memc, char *opt_hash)
     set= MEMCACHED_HASH_FNV1_32;
   else if (!strcasecmp(opt_hash, "FNV1A_32"))
     set= MEMCACHED_HASH_FNV1A_32;
+  else if (!strcasecmp(opt_hash, "NONE"))
+    set= MEMCACHED_HASH_NONE;
   else
   {
     fprintf(stderr, "hash: type not recognized %s\n", opt_hash);
