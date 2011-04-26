@@ -139,8 +139,7 @@ memcached_server_st *memcached_server_by_key(memcached_st *ptr,  const char *key
 
   server_key= memcached_generate_hash(ptr, key, key_length);
 
-  return memcached_server_clone(NULL, &ptr->hosts[server_key]);
-
+  return &ptr->hosts[server_key];
 }
 
 const char *memcached_server_error(memcached_server_st *ptr)
