@@ -175,6 +175,7 @@ public:
     char *value= memcached_get_by_key(&memc, 
                                       master_key.c_str(), master_key.length(), 
                                       key.c_str(), key.length(),
+                                      GET_LEN_ARG_UNSPECIFIED,
                                       &value_length, &flags, &rc);
     if (value)
     {

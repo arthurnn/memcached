@@ -10,14 +10,29 @@ char *memcached_get(memcached_st *ptr, const char *key,
                     uint32_t *flags,
                     memcached_return *error)
 {
-  return memcached_get_by_key(ptr, NULL, 0, key, key_length, value_length, 
+  return memcached_get_by_key(ptr, NULL, 0, key, key_length,
+                              GET_LEN_ARG_UNSPECIFIED, value_length,
                               flags, error);
+}
+
+char *memcached_get_len(memcached_st *ptr, 
+                        const char *key, size_t key_length,
+                        uint32_t user_spec_len,
+                        size_t *value_length, 
+                        uint32_t *flags,
+                        memcached_return *error)
+{
+  return memcached_get_by_key(ptr, NULL, 0, key, key_length,
+                              user_spec_len, value_length, 
+                              flags, error);
+
 }
 
 char *memcached_get_by_key(memcached_st *ptr, 
                            const char *master_key, 
                            size_t master_key_length, 
                            const char *key, size_t key_length,
+                           uint32_t user_spec_len,
                            size_t *value_length, 
                            uint32_t *flags,
                            memcached_return *error)
@@ -37,7 +52,8 @@ char *memcached_get_by_key(memcached_st *ptr,
   *error= memcached_mget_by_key(ptr, 
                                 master_key, 
                                 master_key_length, 
-                                (const char **)&key, &key_length, 1);
+                                (const char **)&key, &key_length, 1,
+                                user_spec_len);
 
   value= memcached_fetch(ptr, NULL, NULL, 
                          value_length, flags, error);
@@ -105,7 +121,16 @@ memcached_return memcached_mget(memcached_st *ptr,
                                 const char **keys, size_t *key_length, 
                                 size_t number_of_keys)
 {
-  return memcached_mget_by_key(ptr, NULL, 0, keys, key_length, number_of_keys);
+  return memcached_mget_by_key(ptr, NULL, 0, keys, key_length, number_of_keys,
+                               GET_LEN_ARG_UNSPECIFIED);
+}
+
+memcached_return memcached_mget_len(memcached_st *ptr, 
+                                    const char **keys, size_t *key_length, 
+                                    size_t number_of_keys, uint32_t user_spec_len)
+{
+  return memcached_mget_by_key(ptr, NULL, 0, keys, key_length, number_of_keys,
+                               user_spec_len);
 }
 
 static memcached_return binary_mget_by_key(memcached_st *ptr,
@@ -114,19 +139,28 @@ static memcached_return binary_mget_by_key(memcached_st *ptr,
                                            const char **keys, size_t *key_length,
                                            size_t number_of_keys);
 
+static bool user_specified_length_is_valid(uint32_t user_spec_len)
+{
+  assert_on_compile(GET_LEN_ARG_UNSPECIFIED == -1U);
+  return (user_spec_len > 0 && user_spec_len < GET_LEN_ARG_UNSPECIFIED);
+}
+
 memcached_return memcached_mget_by_key(memcached_st *ptr, 
                                        const char *master_key, 
                                        size_t master_key_length,
                                        const char **keys, 
                                        size_t *key_length, 
-                                       size_t number_of_keys)
+                                       size_t number_of_keys,
+                                       uint32_t user_spec_len)
 {
   unsigned int x;
+  const char *get_command;
+  uint8_t get_command_length;
   memcached_return rc= MEMCACHED_NOTFOUND;
-  const char *get_command= "get ";
-  uint8_t get_command_length= 4;
   unsigned int master_server_key= (unsigned int)-1; /* 0 is a valid server id! */
   bool is_master_key_set= false;
+  bool use_cas = (ptr->flags & MEM_SUPPORT_CAS);
+  bool length_specified = (user_spec_len != GET_LEN_ARG_UNSPECIFIED);
 
    unlikely (ptr->flags & MEM_USE_UDP)
     return MEMCACHED_NOT_SUPPORTED;
@@ -149,6 +183,14 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
       return MEMCACHED_BAD_KEY_PROVIDED;
     master_server_key= memcached_generate_hash(ptr, master_key, master_key_length);
     is_master_key_set= true;
+  }
+
+  if (length_specified) {
+    if (ptr->flags & MEM_BINARY_PROTOCOL)
+      return MEMCACHED_NOT_SUPPORTED;
+
+    if (!user_specified_length_is_valid(user_spec_len))
+      return MEMCACHED_FAILURE;
   }
 
   /* 
@@ -175,10 +217,24 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
     return binary_mget_by_key(ptr, master_server_key, is_master_key_set, keys, 
                               key_length, number_of_keys);
 
-  if (ptr->flags & MEM_SUPPORT_CAS)
-  {
-    get_command= "gets ";
-    get_command_length= 5;
+  if (length_specified) {
+    if (use_cas) 
+    {
+      get_command= "gets_len ";
+      get_command_length= 9;
+    } else {
+      get_command= "get_len ";
+      get_command_length= 8;
+    }
+  } else {
+    if (use_cas) 
+    {
+      get_command= "gets ";
+      get_command_length= 5;
+    } else {
+      get_command= "get ";
+      get_command_length= 4;
+    }
   }
 
   /* 
@@ -206,6 +262,17 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
         rc= MEMCACHED_SOME_ERRORS;
         continue;
       }
+
+      if (length_specified) {
+        char len[GET_LEN_BUFSZ];
+        if (snprintf(len, GET_LEN_BUFSZ, "%d ", user_spec_len) < 0 ||
+          (memcached_io_write(&ptr->hosts[server_key], len, strlen(len), 0) == -1))
+        {
+          rc= MEMCACHED_SOME_ERRORS;
+          continue;
+        }
+      }
+
       WATCHPOINT_ASSERT(ptr->hosts[server_key].cursor_active == 0);
       memcached_server_response_increment(&ptr->hosts[server_key]);
       WATCHPOINT_ASSERT(ptr->hosts[server_key].cursor_active == 1);

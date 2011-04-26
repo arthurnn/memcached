@@ -53,7 +53,6 @@ def check_libmemcached
   $DEFLIBPATH = [] unless SOLARIS_32
 
   Dir.chdir(HERE) do
-    patch("libmemcached-5", "get_len method")
     patch("libmemcached-6", "failure count bug")
     patch("libmemcached-7", "pipelined delete and unused replica code")
     patch("libmemcached-8", "avoid strdup() to work around tcmalloc on OS X bug")
