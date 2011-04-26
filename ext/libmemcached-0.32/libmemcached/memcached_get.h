@@ -53,7 +53,13 @@ memcached_result_st *memcached_fetch_result(memcached_st *ptr,
                                             memcached_result_st *result,
                                             memcached_return *error);
 
-
+LIBMEMCACHED_API
+char *memcached_get_from_last(memcached_st *ptr,
+                              const char *key,
+                              size_t key_length,
+                              size_t *value_length, 
+                              uint32_t *flags,
+                              memcached_return *error);
 
 #ifdef __cplusplus
 }

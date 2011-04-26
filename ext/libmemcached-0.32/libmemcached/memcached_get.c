@@ -235,6 +235,8 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
       rc= MEMCACHED_SOME_ERRORS;
       continue;
     }
+    
+    ptr->last_server_key = server_key;
   }
 
   /*
@@ -254,6 +256,74 @@ memcached_return memcached_mget_by_key(memcached_st *ptr,
 
   LIBMEMCACHED_MEMCACHED_MGET_END();
   return rc;
+}
+
+
+char *memcached_get_from_last(memcached_st *ptr,
+                              const char *key,
+                              size_t key_length,
+                              size_t *value_length, 
+                              uint32_t *flags,
+                              memcached_return *error)
+{
+  memcached_return rc = MEMCACHED_NOTFOUND;
+  char *value = NULL;
+
+  if (memcached_server_response_count(&ptr->hosts[ptr->last_server_key]) == 0) {
+    *error = memcached_connect(&ptr->hosts[ptr->last_server_key]);
+
+    if (*error != MEMCACHED_SUCCESS) {
+      return value;
+    }
+
+    if ((memcached_io_write(&ptr->hosts[ptr->last_server_key], "get ", 4, 0)) == -1) {
+      *error = MEMCACHED_SOME_ERRORS;
+      return value;
+    }
+    WATCHPOINT_ASSERT(ptr->hosts[ptr->last_server_key].cursor_active == 0);
+    memcached_server_response_increment(&ptr->hosts[ptr->last_server_key]);
+    WATCHPOINT_ASSERT(ptr->hosts[ptr->last_server_key].cursor_active == 1);
+  }
+
+  /* Only called when we have a prefix key */
+  if (ptr->prefix_key[0] != 0) {
+    if ((memcached_io_write(&ptr->hosts[ptr->last_server_key], ptr->prefix_key, ptr->prefix_key_length, 0)) == -1) {
+      memcached_server_response_reset(&ptr->hosts[ptr->last_server_key]);
+      *error = MEMCACHED_SOME_ERRORS;
+      return value;
+    }
+  }
+
+  if ((memcached_io_write(&ptr->hosts[ptr->last_server_key], key, key_length, 0)) == -1) {
+    memcached_server_response_reset(&ptr->hosts[ptr->last_server_key]);
+    *error = MEMCACHED_SOME_ERRORS;
+    return value;
+  }
+
+  if ((memcached_io_write(&ptr->hosts[ptr->last_server_key], "\r\n", 2, 1)) == -1) {
+    memcached_server_response_reset(&ptr->hosts[ptr->last_server_key]);
+    *error = MEMCACHED_SOME_ERRORS;
+    return value;
+  }
+
+  value = memcached_fetch(ptr, NULL, NULL, value_length, flags, error);
+
+  /* This is for historical reasons */
+  if (*error == MEMCACHED_END)
+    *error = MEMCACHED_NOTFOUND;
+
+  if (value != NULL) {
+    size_t dummy_length;
+    uint32_t dummy_flags;
+    memcached_return dummy_error;
+
+    (void)memcached_fetch(ptr, NULL, NULL, 
+                          &dummy_length, &dummy_flags, 
+                          &dummy_error);
+    WATCHPOINT_ASSERT(dummy_length == 0);
+  }
+
+  return value;
 }
 
 static memcached_return simple_binary_mget(memcached_st *ptr,
