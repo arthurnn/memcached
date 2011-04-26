@@ -53,35 +53,28 @@ def check_libmemcached
   $DEFLIBPATH = [] unless SOLARIS_32
 
   Dir.chdir(HERE) do
-    if File.exist?("libmemcached-0.32")
-      puts "Libmemcached already unpacked; run 'rake clean' first if you need to start from scratch."
-    else
-      system("rm -rf #{BUNDLE_PATH}") unless ENV['DEBUG'] or ENV['DEV']
-      run("#{TAR_CMD} xzf #{BUNDLE} 2>&1", "Building libmemcached.")
+    patch("libmemcached-1", "mark-dead behavior")
+    patch("sasl", "SASL")
+    patch("libmemcached-2", "get_from_last method")
+    patch("libmemcached-3", "pipelined prepend and append")
+    patch("libmemcached-4", "noop hash")
+    patch("libmemcached-5", "get_len method")
+    patch("libmemcached-6", "failure count bug")
+    patch("libmemcached-7", "pipelined delete and unused replica code")
+    patch("libmemcached-8", "avoid strdup() to work around tcmalloc on OS X bug")
+    patch("libmemcached-9", "don't clone server_st by reference server_by_key()")
+    patch("libmemcached-10", "set errno properly after poll() timeout on connect")
+    patch("libmemcached-11", "binary_incr_decr() respects prefix_key")
 
-      patch("libmemcached-1", "mark-dead behavior")
-      patch("sasl", "SASL")
-      patch("libmemcached-2", "get_from_last method")
-      patch("libmemcached-3", "pipelined prepend and append")
-      patch("libmemcached-4", "noop hash")
-      patch("libmemcached-5", "get_len method")
-      patch("libmemcached-6", "failure count bug")
-      patch("libmemcached-7", "pipelined delete and unused replica code")
-      patch("libmemcached-8", "avoid strdup() to work around tcmalloc on OS X bug")
-      patch("libmemcached-9", "don't clone server_st by reference server_by_key()")
-      patch("libmemcached-10", "set errno properly after poll() timeout on connect")
-      patch("libmemcached-11", "binary_incr_decr() respects prefix_key")
+    run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
 
-      run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
-
-      Dir.chdir(BUNDLE_PATH) do
-        run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
+    Dir.chdir(BUNDLE_PATH) do
+      run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
       end
 
-      Dir.chdir(BUNDLE_PATH) do
-        #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
-        run("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS} #{LIBM_CFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb", "Making libmemcached.")
-      end
+    Dir.chdir(BUNDLE_PATH) do
+      #Running the make command in another script invoked by another shell command solves the "cd ." issue on FreeBSD 6+
+      run("GMAKE_CMD='#{GMAKE_CMD}' CXXFLAGS='#{$CXXFLAGS} #{LIBM_CFLAGS}' SOURCE_DIR='#{BUNDLE_PATH}' HERE='#{HERE}' ruby ../extconf-make.rb", "Making libmemcached.")
     end
   end
 

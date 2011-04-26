@@ -1,5 +1,4 @@
 pkg/*
-ext/libmemcached-*/
 *.bundle
 *.o
 *.so
