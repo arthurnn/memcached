@@ -16,14 +16,14 @@ memcached_server_st *memcached_server_create(memcached_st *memc, memcached_serve
   }
   else
     memset(ptr, 0, sizeof(memcached_server_st));
-  
+
   ptr->root= memc;
 
   return ptr;
 }
 
-memcached_server_st *memcached_server_create_with(memcached_st *memc, memcached_server_st *host, 
-                                                  const char *hostname, unsigned int port, 
+memcached_server_st *memcached_server_create_with(memcached_st *memc, memcached_server_st *host,
+                                                  const char *hostname, unsigned int port,
                                                   uint32_t weight, memcached_connection type)
 {
   host= memcached_server_create(memc, host);
@@ -52,9 +52,7 @@ memcached_server_st *memcached_server_create_with(memcached_st *memc, memcached_
 void memcached_server_free(memcached_server_st *ptr)
 {
   memcached_quit_server(ptr, 0);
-
-  if (ptr->cached_server_error)
-    free(ptr->cached_server_error);
+  memcached_server_error_reset(ptr);
 
   if (ptr->address_info)
     freeaddrinfo(ptr->address_info);
@@ -76,21 +74,24 @@ memcached_server_st *memcached_server_clone(memcached_server_st *clone, memcache
   if (ptr == NULL)
     return NULL;
 
-  rv = memcached_server_create_with(ptr->root, clone, 
+  rv = memcached_server_create_with(ptr->root, clone,
                                     ptr->hostname, ptr->port, ptr->weight,
                                     ptr->type);
   if (rv != NULL)
   {
     rv->cached_errno= ptr->cached_errno;
-    if (ptr->cached_server_error)
-      rv->cached_server_error= strdup(ptr->cached_server_error);
+    if (ptr->cached_server_error) {
+      size_t err_len = strlen(ptr->cached_server_error) + 1;
+      rv->cached_server_error = malloc(err_len);
+      strncpy(rv->cached_server_error, ptr->cached_server_error, err_len);
+    }
   }
 
   return rv;
 
 }
 
-memcached_return memcached_server_cursor(memcached_st *ptr, 
+memcached_return memcached_server_cursor(memcached_st *ptr,
                                          memcached_server_function *callback,
                                          void *context,
                                          unsigned int number_of_callbacks)
@@ -119,7 +120,7 @@ memcached_server_st *memcached_server_by_key(memcached_st *ptr,  const char *key
 {
   uint32_t server_key;
 
-  *error= memcached_validate_key_length(key_length, 
+  *error= memcached_validate_key_length(key_length,
                                         ptr->flags & MEM_BINARY_PROTOCOL);
   unlikely (*error != MEMCACHED_SUCCESS)
     return NULL;
@@ -144,13 +145,16 @@ memcached_server_st *memcached_server_by_key(memcached_st *ptr,  const char *key
 
 const char *memcached_server_error(memcached_server_st *ptr)
 {
-  if (ptr)
+  if (ptr->cached_server_error)
     return ptr->cached_server_error;
-  else 
+  else
     return NULL;
 }
 
 void memcached_server_error_reset(memcached_server_st *ptr)
 {
-  ptr->cached_server_error[0]= 0;
+  if (ptr->cached_server_error) {
+    free(ptr->cached_server_error);
+    ptr->cached_server_error = 0;
+  }
 }

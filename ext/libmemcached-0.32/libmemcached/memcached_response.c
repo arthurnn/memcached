@@ -239,32 +239,19 @@ static memcached_return textual_read_one_response(memcached_server_st *ptr,
       }
       else if (buffer[1] == 'E') /* SERVER_ERROR */
 	{
-          char *rel_ptr;
+          memcached_server_error_reset(ptr);
+
 	  char *startptr= buffer + 13, *endptr= startptr;
+	  while (*endptr != '\r' && *endptr != '\n')
+	    endptr++;
+	  size_t err_len = (endptr - startptr + 1);
 
-	  while (*endptr != '\r' && *endptr != '\n') endptr++;
+	  ptr->cached_server_error = malloc(err_len);
+          if (ptr->cached_server_error == NULL)
+             return MEMCACHED_SERVER_ERROR;
 
-          /*
-            Yes, we could make this "efficent" but to do that we would need
-            to maintain more state for the size of the buffer. Why waste
-            memory in the struct, which is important, for something that
-            rarely should happen?
-          */
-	  rel_ptr= (char *)ptr->root->call_realloc(ptr->root,
-                                                   ptr->cached_server_error,
-                                                   (size_t) (endptr - startptr + 1));
-
-          if (rel_ptr == NULL)
-          {
-            /* If we happened to have some memory, we just null it since we don't know the size */
-            if (ptr->cached_server_error)
-              ptr->cached_server_error[0]= 0;
-            return MEMCACHED_SERVER_ERROR;
-          }
-	  ptr->cached_server_error= rel_ptr;
-
-	  memcpy(ptr->cached_server_error, startptr, (size_t) (endptr - startptr));
-	  ptr->cached_server_error[endptr - startptr]= 0;
+	  strncpy(ptr->cached_server_error, startptr, err_len);
+	  ptr->cached_server_error[err_len - 1]= 0;
 	  return MEMCACHED_SERVER_ERROR;
 	}
       else if (buffer[1] == 'T')
