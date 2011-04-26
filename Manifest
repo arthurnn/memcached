@@ -10,6 +10,7 @@ ext/extconf.rb
 ext/libmemcached-0.32.tar.gz
 ext/libmemcached-1.patch
 ext/libmemcached-10.patch
+ext/libmemcached-11.patch
 ext/libmemcached-2.patch
 ext/libmemcached-3.patch
 ext/libmemcached-4.patch
