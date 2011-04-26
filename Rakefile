@@ -6,7 +6,32 @@ Echoe.new("memcached") do |p|
   p.project = "fauna"
   p.summary = "An interface to the libmemcached C client."
   p.rdoc_pattern = /README|TODO|LICENSE|CHANGELOG|BENCH|COMPAT|exceptions|experimental.rb|behaviors|rails.rb|memcached.rb/
-  p.clean_pattern += ["ext/lib", "ext/include", "ext/share", "ext/libmemcached-?.??", "ext/bin", "ext/conftest.dSYM", "lib/rlibmemcached.bundle.dSYM"]
+  p.clean_pattern += ["ext/Makefile",
+                      "ext/bin",
+                      "ext/include",
+                      "ext/lib",
+                      "ext/share",
+                      "ext/**/Makefile",
+                      "ext/libmemcached-*/clients/memcat",
+                      "ext/libmemcached-*/clients/memcp",
+                      "ext/libmemcached-*/clients/memdump",
+                      "ext/libmemcached-*/clients/memerror",
+                      "ext/libmemcached-*/clients/memflush",
+                      "ext/libmemcached-*/clients/memrm",
+                      "ext/libmemcached-*/clients/memslap",
+                      "ext/libmemcached-*/clients/memstat",
+                      "ext/libmemcached-*/config.h",
+                      "ext/libmemcached-*/config.log",
+                      "ext/libmemcached-*/config.status",
+                      "ext/libmemcached-*/docs/*.[1,3]",
+                      "ext/libmemcached-*/libmemcached/memcached_configure.h",
+                      "ext/libmemcached-*/libtool",
+                      "ext/libmemcached-*/stamp*",
+                      "ext/libmemcached-*/support/libmemcached.pc",
+                      "ext/libmemcached-*/support/libmemcached-fc.spec",
+                      "ext/libmemcached-*/**/*.[sl]?[oa]",
+                      "ext/conftest.dSYM",
+                      "lib/rlibmemcached*"]
 end
 
 task :exceptions do

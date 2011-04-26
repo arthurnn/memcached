@@ -1,0 +1,1 @@
+libmemcachedutil_0 { global: *; };
