@@ -14,6 +14,7 @@ extern "C" {
 #endif
 
 @DEPRECATED@
+@LIBMEMCACHED_WITH_SASL_SUPPORT@
 
 #ifdef __cplusplus
 }

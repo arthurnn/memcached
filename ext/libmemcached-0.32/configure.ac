@@ -1,4 +1,4 @@
-# libmemcached 
+# libmemcached
 # Copyright (C) 2008 Brian Aker, Monty Taylor
 # All rights reserved.
 #
@@ -65,7 +65,7 @@ AC_LINK_IFELSE(
       float f= floorf((float) 1.0);
     ]],
     [LIBM="-lm"],[LIBM=""])])
-    
+
 AC_SUBST(LIBM)
 LIBS="$save_LIBS"
 
@@ -80,7 +80,12 @@ REQUIRE_POD2MAN
 PROTOCOL_BINARY_TEST
 WITH_MEMCACHED
 ENABLE_DEPRECATED
+PANDORA_HAVE_SASL
 
+dnl The sasl functions should only be visible if we build with sasl support
+AS_IF([test "x$ac_cv_sasl" = "xyes"],
+       [LIBMEMCACHED_WITH_SASL_SUPPORT="#define LIBMEMCACHED_WITH_SASL_SUPPORT 1"])
+AC_SUBST(LIBMEMCACHED_WITH_SASL_SUPPORT)
 
 AC_CONFIG_FILES([
   Makefile
@@ -107,6 +112,11 @@ echo "   * C Compiler:                $CC_VERSION"
 echo "   * Assertions enabled:        $ac_cv_assert"
 echo "   * Debug enabled:             $with_debug"
 echo "   * Warnings as failure:       $ac_cv_warnings_as_errors"
+AS_IF([ test "x${ac_cv_sasl}" = "xyes" ],[
+echo "   * With SASL support:         $LIBSASL"
+], [
+echo "   * Without SASL support"
+])
 echo ""
 echo "---"
 

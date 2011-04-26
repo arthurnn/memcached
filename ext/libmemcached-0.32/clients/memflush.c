@@ -11,6 +11,8 @@ static int opt_binary= 0;
 static int opt_verbose= 0;
 static time_t opt_expire= 0;
 static char *opt_servers= NULL;
+static char *opt_username;
+static char *opt_passwd;
 
 #define PROGRAM_NAME "memflush"
 #define PROGRAM_DESCRIPTION "Erase all data in a server of memcached servers."
@@ -47,6 +49,12 @@ int main(int argc, char *argv[])
   memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL,
                          (uint64_t) opt_binary);
   
+  if (!initialize_sasl(memc, opt_username, opt_passwd))
+  {
+    memcached_free(memc);
+    return 1;
+  }
+
   rc = memcached_flush(memc, opt_expire);
   if (rc != MEMCACHED_SUCCESS) 
   {
@@ -60,6 +68,8 @@ int main(int argc, char *argv[])
   memcached_free(memc);
 
   free(opt_servers);
+
+  shutdown_sasl();
 
   return 0;
 }
@@ -81,6 +91,8 @@ void options_parse(int argc, char *argv[])
     {(OPTIONSTRING)"servers", required_argument, NULL, OPT_SERVERS},
     {(OPTIONSTRING)"expire", required_argument, NULL, OPT_EXPIRE},
     {(OPTIONSTRING)"binary", no_argument, NULL, OPT_BINARY},
+    {(OPTIONSTRING)"username", required_argument, NULL, OPT_USERNAME},
+    {(OPTIONSTRING)"password", required_argument, NULL, OPT_PASSWD},
     {0, 0, 0, 0},
   };
   int option_index= 0;
@@ -114,6 +126,12 @@ void options_parse(int argc, char *argv[])
       break;
     case OPT_EXPIRE: /* --expire */
       opt_expire= (time_t)strtoll(optarg, (char **)NULL, 10);
+      break;
+    case OPT_USERNAME:
+      opt_username= optarg;
+      break;
+    case OPT_PASSWD:
+      opt_passwd= optarg;
       break;
     case '?':
       /* getopt_long already printed an error message. */

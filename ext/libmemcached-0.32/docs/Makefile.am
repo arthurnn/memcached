@@ -33,7 +33,8 @@ EXTRA_DIST = libmemcached.pod\
         memcached_analyze.pod\
         memcached_generate_hash_value.pod\
         memcached_memory_allocators.pod\
-        memcached_user_data.pod
+        memcached_user_data.pod\
+        memcached_sasl.pod
 
 man_MANS = libmemcached.3\
 	libmemcached_examples.3\
@@ -111,6 +112,12 @@ man_MANS+= libmemcachedutil.3 \
 	memcached_pool_pop.3
 endif
 
+if HAVE_SASL
+man_MANS+= memcached_destroy_sasl_auth_data.3 \
+           memcached_get_sasl_callbacks.3 \
+           memcached_set_sasl_auth_data.3 \
+           memcached_set_sasl_callbacks.3
+endif
 
 libmemcached.3: libmemcached.pod 
 	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/libmemcached.pod > libmemcached.3
@@ -318,6 +325,18 @@ memcached_get_memory_allocators.3: memcached_memory_allocators.pod
 
 memcached_set_memory_allocators.3: memcached_memory_allocators.pod
 	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_memory_allocators.pod > memcached_set_memory_allocators.3
+
+memcached_destroy_sasl_auth_data.3: memcached_sasl.pod
+	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_sasl.pod > memcached_destroy_sasl_auth_data.3
+
+memcached_get_sasl_callbacks.3: memcached_sasl.pod
+	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_sasl.pod > memcached_get_sasl_callbacks.3
+
+memcached_set_sasl_auth_data.3: memcached_sasl.pod
+	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_sasl.pod > memcached_set_sasl_auth_data.3
+
+memcached_set_sasl_callbacks.3: memcached_sasl.pod
+	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_sasl.pod > memcached_set_sasl_callbacks.3
 
 memcached_get_user_data.3: memcached_user_data.pod
 	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_user_data.pod > memcached_get_user_data.3

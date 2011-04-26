@@ -78,6 +78,12 @@ const char *memcached_strerror(memcached_st *ptr __attribute__((unused)), memcac
     return "SERVER IS MARKED DEAD";
   case MEMCACHED_UNKNOWN_STAT_KEY:
     return "ENCOUNTERED AN UNKNOWN STAT KEY";
+  case MEMCACHED_AUTH_PROBLEM:
+    return "FAILED TO SEND AUTHENTICATION TO SERVER";
+  case MEMCACHED_AUTH_FAILURE:
+    return "AUTHENTICATION FAILURE";
+  case MEMCACHED_AUTH_CONTINUE:
+    return "CONTINUE AUTHENTICATION";
   case MEMCACHED_MAXIMUM_RETURN:
     return "Gibberish returned!";
   default:

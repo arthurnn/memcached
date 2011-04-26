@@ -266,6 +266,20 @@ static memcached_return network_connect(memcached_server_st *ptr)
         } 
       }
 
+#ifdef LIBMEMCACHED_WITH_SASL_SUPPORT
+      if (ptr->fd != -1 && ptr->root->sasl_callbacks != NULL)
+      {
+        memcached_return rc= memcached_sasl_authenticate_connection(ptr);
+        if (rc != MEMCACHED_SUCCESS)
+        {
+          (void)close(ptr->fd);
+          ptr->fd= -1;
+          return rc;
+        }
+      }
+#endif
+
+
       if (ptr->fd != -1)
       {
         /* restore flags */ 

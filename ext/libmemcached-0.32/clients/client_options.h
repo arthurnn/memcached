@@ -24,7 +24,9 @@ typedef enum {
   OPT_FLUSH,
   OPT_HASH,
   OPT_BINARY,
-  OPT_UDP
+  OPT_UDP,
+  OPT_USERNAME,
+  OPT_PASSWD
 } memcached_options;
 
 #endif /* CLIENT_OPTIONS */

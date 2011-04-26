@@ -53,7 +53,6 @@ def check_libmemcached
   $DEFLIBPATH = [] unless SOLARIS_32
 
   Dir.chdir(HERE) do
-    patch("sasl", "SASL")
     patch("libmemcached-2", "get_from_last method")
     patch("libmemcached-3", "pipelined prepend and append")
     patch("libmemcached-4", "noop hash")

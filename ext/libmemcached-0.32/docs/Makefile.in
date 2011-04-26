@@ -40,6 +40,11 @@ target_triplet = @target@
 @BUILD_LIBMEMCACHEDUTIL_TRUE@	memcached_pool_push.3 \
 @BUILD_LIBMEMCACHEDUTIL_TRUE@	memcached_pool_pop.3
 
+@HAVE_SASL_TRUE@am__append_2 = memcached_destroy_sasl_auth_data.3 \
+@HAVE_SASL_TRUE@           memcached_get_sasl_callbacks.3 \
+@HAVE_SASL_TRUE@           memcached_set_sasl_auth_data.3 \
+@HAVE_SASL_TRUE@           memcached_set_sasl_callbacks.3
+
 subdir = docs
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -60,6 +65,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_compile_stdcxx_0x.m4 \
 	$(top_srcdir)/m4/pandora_enable_dtrace.m4 \
 	$(top_srcdir)/m4/pandora_ensure_gcc_version.m4 \
 	$(top_srcdir)/m4/pandora_have_better_malloc.m4 \
+	$(top_srcdir)/m4/pandora_have_sasl.m4 \
 	$(top_srcdir)/m4/pandora_header_assert.m4 \
 	$(top_srcdir)/m4/pandora_libtool.m4 \
 	$(top_srcdir)/m4/pandora_optimize.m4 \
@@ -144,6 +150,8 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+HAVE_LIBSASL = @HAVE_LIBSASL@
+HAVE_LIBSASL2 = @HAVE_LIBSASL2@
 HAVE_VISIBILITY = @HAVE_VISIBILITY@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -157,12 +165,19 @@ LD_UTIL_VERSION_SCRIPT = @LD_UTIL_VERSION_SCRIPT@
 LD_VERSION_SCRIPT = @LD_VERSION_SCRIPT@
 LIBC_P = @LIBC_P@
 LIBM = @LIBM@
+LIBMEMCACHED_WITH_SASL_SUPPORT = @LIBMEMCACHED_WITH_SASL_SUPPORT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSASL = @LIBSASL@
+LIBSASL2 = @LIBSASL2@
+LIBSASL2_PREFIX = @LIBSASL2_PREFIX@
+LIBSASL_PREFIX = @LIBSASL_PREFIX@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LTLIBSASL = @LTLIBSASL@
+LTLIBSASL2 = @LTLIBSASL2@
 MAKEINFO = @MAKEINFO@
 MEMCACHEDUTIL_LIBRARY_VERSION = @MEMCACHEDUTIL_LIBRARY_VERSION@
 MEMCACHED_LIBRARY_VERSION = @MEMCACHED_LIBRARY_VERSION@
@@ -184,6 +199,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
@@ -289,7 +305,8 @@ EXTRA_DIST = libmemcached.pod\
         memcached_analyze.pod\
         memcached_generate_hash_value.pod\
         memcached_memory_allocators.pod\
-        memcached_user_data.pod
+        memcached_user_data.pod\
+        memcached_sasl.pod
 
 man_MANS = libmemcached.3 libmemcached_examples.3 memcat.1 memcp.1 \
 	memerror.1 memflush.1 memdump.1 memrm.1 memslap.1 memstat.1 \
@@ -319,7 +336,7 @@ man_MANS = libmemcached.3 libmemcached_examples.3 memcat.1 memcp.1 \
 	memcached_generate_hash_value.3 \
 	memcached_set_memory_allocators.3 \
 	memcached_get_memory_allocators.3 memcached_set_user_data.3 \
-	memcached_get_user_data.3 $(am__append_1)
+	memcached_get_user_data.3 $(am__append_1) $(am__append_2)
 all: all-am
 
 .SUFFIXES:
@@ -808,6 +825,18 @@ memcached_get_memory_allocators.3: memcached_memory_allocators.pod
 
 memcached_set_memory_allocators.3: memcached_memory_allocators.pod
 	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_memory_allocators.pod > memcached_set_memory_allocators.3
+
+memcached_destroy_sasl_auth_data.3: memcached_sasl.pod
+	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_sasl.pod > memcached_destroy_sasl_auth_data.3
+
+memcached_get_sasl_callbacks.3: memcached_sasl.pod
+	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_sasl.pod > memcached_get_sasl_callbacks.3
+
+memcached_set_sasl_auth_data.3: memcached_sasl.pod
+	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_sasl.pod > memcached_set_sasl_auth_data.3
+
+memcached_set_sasl_callbacks.3: memcached_sasl.pod
+	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_sasl.pod > memcached_set_sasl_callbacks.3
 
 memcached_get_user_data.3: memcached_user_data.pod
 	${POD2MAN} -c "libmemcached" -r "" -s 3 ${top_srcdir}/docs/memcached_user_data.pod > memcached_get_user_data.3

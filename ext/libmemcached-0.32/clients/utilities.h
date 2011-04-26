@@ -37,3 +37,5 @@ void help_command(const char *command_name, const char *description,
                   const struct option *long_options,
                   memcached_programs_help_st *options);
 void process_hash_option(memcached_st *memc, char *opt_hash);
+bool initialize_sasl(memcached_st *memc, char *user, char *password);
+void shutdown_sasl(void);

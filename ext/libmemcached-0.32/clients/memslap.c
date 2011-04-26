@@ -65,7 +65,7 @@ struct conclusions_st {
 void options_parse(int argc, char *argv[]);
 void conclusions_print(conclusions_st *conclusion);
 void scheduler(memcached_server_st *servers, conclusions_st *conclusion);
-pairs_st *load_create_data(memcached_st *memc, unsigned int number_of, 
+pairs_st *load_create_data(memcached_st *memc, unsigned int number_of,
                            unsigned int *actual_loaded);
 void flush_all(memcached_st *memc);
 
@@ -80,6 +80,9 @@ static unsigned int opt_concurrency= 0;
 static int opt_displayflag= 0;
 static char *opt_servers= NULL;
 static int opt_udp_io= 0;
+static char *opt_username;
+static char *opt_passwd;
+
 test_type opt_test= SET_TEST;
 
 int main(int argc, char *argv[])
@@ -155,7 +158,12 @@ void scheduler(memcached_server_st *servers, conclusions_st *conclusion)
 
   memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL,
                          (uint64_t)opt_binary);
-  
+  if (!initialize_sasl(memc, opt_username, opt_passwd))
+  {
+    memcached_free(memc);
+    exit(1);
+  }
+
   if (opt_flush)
     flush_all(memc);
   if (opt_createial_load)
@@ -227,7 +235,9 @@ void scheduler(memcached_server_st *servers, conclusions_st *conclusion)
   conclusion->read_time= timedif(end_time, start_time);
   pairs_free(pairs);
   memcached_free(memc);
+  shutdown_sasl();
 }
+
 
 void options_parse(int argc, char *argv[])
 {
@@ -253,13 +263,15 @@ void options_parse(int argc, char *argv[])
       {(OPTIONSTRING)"version", no_argument, NULL, OPT_VERSION},
       {(OPTIONSTRING)"binary", no_argument, NULL, OPT_BINARY},
       {(OPTIONSTRING)"udp", no_argument, NULL, OPT_UDP},
+      {(OPTIONSTRING)"username", required_argument, NULL, OPT_USERNAME},
+      {(OPTIONSTRING)"password", required_argument, NULL, OPT_PASSWD},
       {0, 0, 0, 0},
     };
 
   int option_index= 0;
   int option_rv;
 
-  while (1) 
+  while (1)
   {
     option_rv= getopt_long(argc, argv, "Vhvds:", long_options, &option_index);
     if (option_rv == -1) break;
@@ -307,7 +319,7 @@ void options_parse(int argc, char *argv[])
       }
       else if (!strcmp(optarg, "set"))
         opt_test= SET_TEST;
-      else 
+      else
       {
         fprintf(stderr, "Your test, %s, is not a known test\n", optarg);
         exit(1);
@@ -321,6 +333,12 @@ void options_parse(int argc, char *argv[])
       break;
     case OPT_SLAP_INITIAL_LOAD:
       opt_createial_load= (unsigned int)strtoul(optarg, (char **)NULL, 10);
+      break;
+    case OPT_USERNAME:
+      opt_username= optarg;
+      break;
+    case OPT_PASSWD:
+      opt_passwd= optarg;
       break;
     case '?':
       /* getopt_long already printed an error message. */
@@ -348,10 +366,10 @@ void conclusions_print(conclusions_st *conclusion)
   printf("\tRead %u rows\n", conclusion->rows_read);
 #endif
   if (opt_test == SET_TEST)
-    printf("\tTook %ld.%03ld seconds to load data\n", conclusion->load_time / 1000, 
+    printf("\tTook %ld.%03ld seconds to load data\n", conclusion->load_time / 1000,
            conclusion->load_time % 1000);
   else
-    printf("\tTook %ld.%03ld seconds to read data\n", conclusion->read_time / 1000, 
+    printf("\tTook %ld.%03ld seconds to read data\n", conclusion->read_time / 1000,
            conclusion->read_time % 1000);
 }
 
@@ -366,7 +384,7 @@ void *run_task(void *p)
   while (master_wakeup)
   {
     pthread_cond_wait(&sleep_threshhold, &sleeper_mutex);
-  } 
+  }
   pthread_mutex_unlock(&sleeper_mutex);
 
   /* Do Stuff */
@@ -404,7 +422,7 @@ void flush_all(memcached_st *memc)
   memcached_flush(memc, 0);
 }
 
-pairs_st *load_create_data(memcached_st *memc, unsigned int number_of, 
+pairs_st *load_create_data(memcached_st *memc, unsigned int number_of,
                            unsigned int *actual_loaded)
 {
   memcached_st *memc_clone;

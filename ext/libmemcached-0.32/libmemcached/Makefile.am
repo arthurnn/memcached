@@ -16,6 +16,7 @@ pkginclude_HEADERS= memcached.h \
 		    memcached_constants.h \
 		    memcached_get.h \
 		    memcached_result.h \
+                    memcached_sasl.h \
 		    memcached_server.h \
 		    memcached_storage.h \
 		    memcached_string.h \
@@ -80,6 +81,11 @@ endif
 libmemcached_la_DEPENDENCIES= libmemcachedcallbacks.la
 libmemcached_la_LIBADD= $(LIBM) libmemcachedcallbacks.la
 libmemcached_la_LDFLAGS = -version-info $(MEMCACHED_LIBRARY_VERSION) $(LD_VERSION_SCRIPT) $(LIBM)
+
+if HAVE_SASL
+libmemcached_la_LDFLAGS+= $(LIBSASL)
+libmemcached_la_SOURCES += memcached_sasl.c
+endif
 
 if HAVE_DTRACE
 BUILT_SOURCES+= dtrace_probes.h

@@ -37,6 +37,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
+@HAVE_SASL_TRUE@am__append_1 = $(LIBSASL)
 bin_PROGRAMS = memcat$(EXEEXT) memdump$(EXEEXT) memcp$(EXEEXT) \
 	memstat$(EXEEXT) memrm$(EXEEXT) memflush$(EXEEXT) \
 	memslap$(EXEEXT) memerror$(EXEEXT)
@@ -61,6 +62,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/ac_cxx_compile_stdcxx_0x.m4 \
 	$(top_srcdir)/m4/pandora_enable_dtrace.m4 \
 	$(top_srcdir)/m4/pandora_ensure_gcc_version.m4 \
 	$(top_srcdir)/m4/pandora_have_better_malloc.m4 \
+	$(top_srcdir)/m4/pandora_have_sasl.m4 \
 	$(top_srcdir)/m4/pandora_header_assert.m4 \
 	$(top_srcdir)/m4/pandora_libtool.m4 \
 	$(top_srcdir)/m4/pandora_optimize.m4 \
@@ -88,50 +90,55 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_memcat_OBJECTS = memcat.$(OBJEXT)
 memcat_OBJECTS = $(am_memcat_OBJECTS)
-memcat_DEPENDENCIES = $(LDADDS)
+am__DEPENDENCIES_1 =
+@HAVE_SASL_TRUE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_3 = libutilities.la \
+	$(top_builddir)/libmemcached/libmemcached.la \
+	$(am__DEPENDENCIES_2)
+memcat_DEPENDENCIES = $(am__DEPENDENCIES_3)
 memcat_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(memcat_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_memcp_OBJECTS = memcp.$(OBJEXT)
 memcp_OBJECTS = $(am_memcp_OBJECTS)
-memcp_DEPENDENCIES = $(LDADDS)
+memcp_DEPENDENCIES = $(am__DEPENDENCIES_3)
 memcp_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(memcp_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_memdump_OBJECTS = memdump.$(OBJEXT)
 memdump_OBJECTS = $(am_memdump_OBJECTS)
-memdump_DEPENDENCIES = $(LDADDS)
+memdump_DEPENDENCIES = $(am__DEPENDENCIES_3)
 memdump_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(memdump_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_memerror_OBJECTS = memerror.$(OBJEXT)
 memerror_OBJECTS = $(am_memerror_OBJECTS)
-memerror_DEPENDENCIES = $(LDADDS)
+memerror_DEPENDENCIES = $(am__DEPENDENCIES_3)
 memerror_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(memerror_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_memflush_OBJECTS = memflush.$(OBJEXT)
 memflush_OBJECTS = $(am_memflush_OBJECTS)
-memflush_DEPENDENCIES = $(LDADDS)
+memflush_DEPENDENCIES = $(am__DEPENDENCIES_3)
 memflush_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(memflush_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_memrm_OBJECTS = memrm.$(OBJEXT)
 memrm_OBJECTS = $(am_memrm_OBJECTS)
-memrm_DEPENDENCIES = $(LDADDS)
+memrm_DEPENDENCIES = $(am__DEPENDENCIES_3)
 memrm_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(memrm_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_memslap_OBJECTS = memslap-memslap.$(OBJEXT)
 memslap_OBJECTS = $(am_memslap_OBJECTS)
-am__DEPENDENCIES_1 =
-memslap_DEPENDENCIES = $(am__DEPENDENCIES_1) libgenexec.la $(LDADDS)
+memslap_DEPENDENCIES = $(am__DEPENDENCIES_1) libgenexec.la \
+	$(am__DEPENDENCIES_3)
 memslap_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(memslap_CFLAGS) $(CFLAGS) \
 	$(memslap_LDFLAGS) $(LDFLAGS) -o $@
 am_memstat_OBJECTS = memstat.$(OBJEXT)
 memstat_OBJECTS = $(am_memstat_OBJECTS)
-memstat_DEPENDENCIES = $(LDADDS)
+memstat_DEPENDENCIES = $(am__DEPENDENCIES_3)
 memstat_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(memstat_LDFLAGS) \
 	$(LDFLAGS) -o $@
@@ -199,6 +206,8 @@ EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
 GREP = @GREP@
+HAVE_LIBSASL = @HAVE_LIBSASL@
+HAVE_LIBSASL2 = @HAVE_LIBSASL2@
 HAVE_VISIBILITY = @HAVE_VISIBILITY@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
@@ -212,12 +221,19 @@ LD_UTIL_VERSION_SCRIPT = @LD_UTIL_VERSION_SCRIPT@
 LD_VERSION_SCRIPT = @LD_VERSION_SCRIPT@
 LIBC_P = @LIBC_P@
 LIBM = @LIBM@
+LIBMEMCACHED_WITH_SASL_SUPPORT = @LIBMEMCACHED_WITH_SASL_SUPPORT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSASL = @LIBSASL@
+LIBSASL2 = @LIBSASL2@
+LIBSASL2_PREFIX = @LIBSASL2_PREFIX@
+LIBSASL_PREFIX = @LIBSASL_PREFIX@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+LTLIBSASL = @LTLIBSASL@
+LTLIBSASL2 = @LTLIBSASL2@
 MAKEINFO = @MAKEINFO@
 MEMCACHEDUTIL_LIBRARY_VERSION = @MEMCACHEDUTIL_LIBRARY_VERSION@
 MEMCACHED_LIBRARY_VERSION = @MEMCACHED_LIBRARY_VERSION@
@@ -239,6 +255,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PERL = @PERL@
@@ -311,11 +328,12 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-LDADDS = libutilities.la $(top_builddir)/libmemcached/libmemcached.la
+LDADDS = libutilities.la $(top_builddir)/libmemcached/libmemcached.la \
+	$(am__append_1)
 noinst_HEADERS = client_options.h \
 		utilities.h \
 		generator.h \
-		execute.h 
+		execute.h
 
 noinst_LTLIBRARIES = libutilities.la libgenexec.la
 libutilities_la_SOURCES = utilities.c
@@ -343,7 +361,7 @@ memerror_LDADD = $(LDADDS)
 memerror_LDFLAGS = -rpath $(pkglibdir)
 memslap_SOURCES = memslap.c
 memslap_CFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
-memslap_LDADD = $(PTHREAD_LIBS) libgenexec.la $(LDADDS) 
+memslap_LDADD = $(PTHREAD_LIBS) libgenexec.la $(LDADDS)
 memslap_LDFLAGS = $(AM_LDFLAGS) -rpath $(pkglibdir)
 all: all-am
 
