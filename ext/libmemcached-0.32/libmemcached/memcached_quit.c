@@ -49,7 +49,14 @@ void memcached_quit_server(memcached_server_st *ptr, uint8_t io_death)
     memcached_server_response_reset(ptr);
   }
 
-  ptr->server_failure_counter++;
+  if (io_death)
+  {
+    ptr->server_failure_counter++;
+  }
+  else
+  {
+    ptr->server_failure_counter = 0;
+  }
 }
 
 void memcached_quit(memcached_st *ptr)
