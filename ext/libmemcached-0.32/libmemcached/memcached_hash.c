@@ -32,13 +32,13 @@ uint32_t memcached_generate_hash_value(const char *key, size_t key_length, memca
       hash= 1;
     break;
     /* FNV hash'es lifted from Dustin Sallings work */
-  case MEMCACHED_HASH_FNV1_64: 
+  case MEMCACHED_HASH_FNV1_64:
     {
       /* Thanks to pierre@demartines.com for the pointer */
       uint64_t temp_hash;
 
       temp_hash= FNV_64_INIT;
-      for (x= 0; x < key_length; x++) 
+      for (x= 0; x < key_length; x++)
       {
         temp_hash *= FNV_64_PRIME;
         temp_hash ^= (uint64_t)key[x];
@@ -46,10 +46,10 @@ uint32_t memcached_generate_hash_value(const char *key, size_t key_length, memca
       hash= (uint32_t)temp_hash;
     }
     break;
-  case MEMCACHED_HASH_FNV1A_64: 
+  case MEMCACHED_HASH_FNV1A_64:
     {
       hash= (uint32_t) FNV_64_INIT;
-      for (x= 0; x < key_length; x++) 
+      for (x= 0; x < key_length; x++)
       {
         uint32_t val= (uint32_t)key[x];
         hash ^= val;
@@ -57,10 +57,10 @@ uint32_t memcached_generate_hash_value(const char *key, size_t key_length, memca
       }
     }
     break;
-  case MEMCACHED_HASH_FNV1_32: 
+  case MEMCACHED_HASH_FNV1_32:
     {
       hash= FNV_32_INIT;
-      for (x= 0; x < key_length; x++) 
+      for (x= 0; x < key_length; x++)
       {
         uint32_t val= (uint32_t)key[x];
         hash *= FNV_32_PRIME;
@@ -68,10 +68,10 @@ uint32_t memcached_generate_hash_value(const char *key, size_t key_length, memca
       }
     }
     break;
-  case MEMCACHED_HASH_FNV1A_32: 
+  case MEMCACHED_HASH_FNV1A_32:
     {
       hash= FNV_32_INIT;
-      for (x= 0; x < key_length; x++) 
+      for (x= 0; x < key_length; x++)
       {
         uint32_t val= (uint32_t)key[x];
         hash ^= val;
@@ -127,7 +127,7 @@ uint32_t generate_hash(memcached_st *ptr, const char *key, size_t key_length)
 
 static uint32_t dispatch_host(memcached_st *ptr, uint32_t hash)
 {
-  switch (ptr->distribution) 
+  switch (ptr->distribution)
   {
   case MEMCACHED_DISTRIBUTION_CONSISTENT:
   case MEMCACHED_DISTRIBUTION_CONSISTENT_KETAMA:
@@ -151,8 +151,8 @@ static uint32_t dispatch_host(memcached_st *ptr, uint32_t hash)
       if (right == end)
         right= begin;
       return right->index;
-    } 
-  case MEMCACHED_DISTRIBUTION_MODULA:  
+    }
+  case MEMCACHED_DISTRIBUTION_MODULA:
     return memcached_live_host_index(ptr, hash);
   case MEMCACHED_DISTRIBUTION_RANDOM:
     return memcached_live_host_index(ptr, (uint32_t) random());
@@ -164,8 +164,8 @@ static uint32_t dispatch_host(memcached_st *ptr, uint32_t hash)
   /* NOTREACHED */
 }
 
-/* 
-  One day make this public, and have it return the actual memcached_server_st 
+/*
+  One day make this public, and have it return the actual memcached_server_st
   to the calling application.
 */
 uint32_t memcached_generate_hash(memcached_st *ptr, const char *key, size_t key_length)
@@ -225,7 +225,7 @@ static uint32_t internal_generate_hash(const char *key, size_t key_length)
   const char *ptr= key;
   uint32_t value= 0;
 
-  while (key_length--) 
+  while (key_length--)
   {
     uint32_t val= (uint32_t) *ptr++;
     value += val;
@@ -234,7 +234,7 @@ static uint32_t internal_generate_hash(const char *key, size_t key_length)
   }
   value += (value << 3);
   value ^= (value >> 11);
-  value += (value << 15); 
+  value += (value << 15);
 
   return value == 0 ? 1 : (uint32_t) value;
 }

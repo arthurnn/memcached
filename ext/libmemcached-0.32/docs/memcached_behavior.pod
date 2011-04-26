@@ -32,7 +32,7 @@ that behavior is currently enabled in the client.
 
 memcached_behavior_set() changes the value of a particular option of the
 client. It takes both a flag (listed below) and a value. For simple on or
-off options you just need to pass in a value of 1. Calls to 
+off options you just need to pass in a value of 1. Calls to
 memcached_behavior_set() will flush and reset all connections.
 
 =over 4
@@ -40,7 +40,7 @@ memcached_behavior_set() will flush and reset all connections.
 =item MEMCACHED_BEHAVIOR_USE_UDP
 
 Causes libmemcached(3) to use the UDP transport when communicating
-with a memcached server. Not all I/O operations are supported 
+with a memcached server. Not all I/O operations are supported
 when this behavior is enababled. The following operations will return
 C<MEMCACHED_NOT_SUPPORTED> when executed with the MEMCACHED_BEHAVIOR_USE_UDP
 enabled: memcached_version(), memcached_stat(), memcached_get(),
@@ -50,7 +50,7 @@ memcached_fetch(), memcached_fetch_result(), memcached_value_fetch().
 All other operations are supported but are executed in a 'fire-and-forget'
 mode, in which once the client has executed the operation, no attempt
 will be made to ensure the operation has been received and acted on by the
-server. 
+server.
 
 libmemcached(3) does not allow TCP and UDP servers to be shared within
 the same libmemached(3) client 'instance'. An attempt to add a TCP server
@@ -82,19 +82,19 @@ environments).
 =item MEMCACHED_BEHAVIOR_HASH
 
 Makes the default hashing algorithm for keys use MD5. The value can be set
-to either MEMCACHED_HASH_DEFAULT, MEMCACHED_HASH_MD5, MEMCACHED_HASH_CRC, MEMCACHED_HASH_FNV1_64, MEMCACHED_HASH_FNV1A_64, MEMCACHED_HASH_FNV1_32, MEMCACHED_HASH_FNV1A_32, MEMCACHED_HASH_JENKINS, MEMCACHED_HASH_HSIEH, and MEMCACHED_HASH_MURMUR. 
+to either MEMCACHED_HASH_DEFAULT, MEMCACHED_HASH_MD5, MEMCACHED_HASH_CRC, MEMCACHED_HASH_FNV1_64, MEMCACHED_HASH_FNV1A_64, MEMCACHED_HASH_FNV1_32, MEMCACHED_HASH_FNV1A_32, MEMCACHED_HASH_JENKINS, MEMCACHED_HASH_HSIEH, and MEMCACHED_HASH_MURMUR.
 Each hash has it's advantages and it's weaknesses. If you dont know or dont care, just go with the default.
-Support for MEMCACHED_HASH_HSIEH is a compile time option that is disabled by default. To enable support for this hashing algorithm, configure and build libmemcached with the --enable-hash_hsieh. 
+Support for MEMCACHED_HASH_HSIEH is a compile time option that is disabled by default. To enable support for this hashing algorithm, configure and build libmemcached with the --enable-hash_hsieh.
 
 =item MEMCACHED_BEHAVIOR_DISTRIBUTION
 
 Using this you can enable different means of distributing values to servers.
 The default method is MEMCACHED_DISTRIBUTION_MODULA. You can enable
-consistent hashing by setting MEMCACHED_DISTRIBUTION_CONSISTENT. 
-Consistent hashing delivers better distribution and allows servers to be 
+consistent hashing by setting MEMCACHED_DISTRIBUTION_CONSISTENT.
+Consistent hashing delivers better distribution and allows servers to be
 added to the cluster with minimal cache losses. Currently
 MEMCACHED_DISTRIBUTION_CONSISTENT is an alias for the value
-MEMCACHED_DISTRIBUTION_CONSISTENT_KETAMA.  
+MEMCACHED_DISTRIBUTION_CONSISTENT_KETAMA.
 
 =item MEMCACHED_BEHAVIOR_CACHE_LOOKUPS
 
@@ -117,7 +117,7 @@ and the hash to MEMCACHED_HASH_MD5.
 =item MEMCACHED_BEHAVIOR_KETAMA_HASH
 
 Sets the hashing algorithm for host mapping on continuum. The value can be set
-to either MEMCACHED_HASH_DEFAULT, MEMCACHED_HASH_MD5, MEMCACHED_HASH_CRC, MEMCACHED_HASH_FNV1_64, MEMCACHED_HASH_FNV1A_64, MEMCACHED_HASH_FNV1_32, and MEMCACHED_HASH_FNV1A_32. 
+to either MEMCACHED_HASH_DEFAULT, MEMCACHED_HASH_MD5, MEMCACHED_HASH_CRC, MEMCACHED_HASH_FNV1_64, MEMCACHED_HASH_FNV1A_64, MEMCACHED_HASH_FNV1_32, and MEMCACHED_HASH_FNV1A_32.
 
 =item MEMCACHED_BEHAVIOR_POLL_TIMEOUT
 
@@ -136,16 +136,16 @@ of memcached_callback_set(3). This will be removed in 0.15.
 Enabling buffered IO causes commands to "buffer" instead of being sent. Any
 action that gets data causes this buffer to be be sent to the remote
 connection. Quiting the connection or closing down the connection will also
-cause the buffered data to be pushed to the remote connection. 
+cause the buffered data to be pushed to the remote connection.
 
 =item MEMCACHED_BEHAVIOR_VERIFY_KEY
 
-Enabling this will cause libmemcached(3) to test all keys to verify that they 
+Enabling this will cause libmemcached(3) to test all keys to verify that they
 are valid keys.
 
 =item MEMCACHED_BEHAVIOR_SORT_HOSTS
 
-Enabling this will cause hosts that are added to be placed in the host list in 
+Enabling this will cause hosts that are added to be placed in the host list in
 sorted order. This will defeat consisten hashing.
 
 =item MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT
@@ -165,7 +165,7 @@ times connection failure.
 
 =item MEMCACHED_BEHAVIOR_IO_MSG_WATERMARK
 
-Set this value to tune the number of messages that may be sent before 
+Set this value to tune the number of messages that may be sent before
 libmemcached should start to automatically drain the input queue. Setting
 this value to high, may cause libmemcached to deadlock (trying to send data,
 but the send will block because the input buffer in the kernel is full).
@@ -175,7 +175,7 @@ but the send will block because the input buffer in the kernel is full).
 Set this value to tune the number of bytes that may be sent before
 libmemcached should start to automatically drain the input queue (need
 at least 10 IO requests sent without reading the input buffer). Setting
-this value to high, may cause libmemcached to deadlock (trying to send 
+this value to high, may cause libmemcached to deadlock (trying to send
 data, but the send will block because the input buffer in the kernel is full).
 
 =item MEMCACHED_BEHAVIOR_IO_KEY_PREFETCH
@@ -192,15 +192,7 @@ sent to the server.
 =item MEMCACHED_BEHAVIOR_NOREPLY
 
 Set this value to specify that you really don't care about the result
-from your storage commands (set, add, replace, append, prepend). 
-
-=item MEMCACHED_BEHAVIOR_NUMBER_OF_REPLICAS
-
-If you just want "a poor mans HA", you may specify the numbers of
-replicas libmemcached should store of each item (on different servers).
-This replication does not dedicate certain memcached servers to store the
-replicas in, but instead it will store the replicas together with all of the
-other objects (on the 'n' next servers specified in your server list).
+from your storage commands (set, add, replace, append, prepend).
 
 =back
 
@@ -213,7 +205,7 @@ returns failure or success.
 =head1 NOTES
 
 memcached_behavior_set() in version .17 was changed from taking a pointer
-to data value, to taking a uin64_t. 
+to data value, to taking a uin64_t.
 
 =head1 HOME
 

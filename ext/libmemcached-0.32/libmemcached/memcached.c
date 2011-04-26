@@ -108,7 +108,6 @@ memcached_st *memcached_clone(memcached_st *clone, memcached_st *source)
   new_clone->io_msg_watermark= source->io_msg_watermark;
   new_clone->io_bytes_watermark= source->io_bytes_watermark;
   new_clone->io_key_prefetch= source->io_key_prefetch;
-  new_clone->number_of_replicas= source->number_of_replicas;
 
   if (source->hosts)
     rc= memcached_server_push(new_clone, source->hosts);

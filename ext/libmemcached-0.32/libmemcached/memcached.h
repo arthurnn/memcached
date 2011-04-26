@@ -112,7 +112,6 @@ struct memcached_st {
   memcached_trigger_key get_key_failure;
   memcached_trigger_delete_key delete_trigger;
   char prefix_key[MEMCACHED_PREFIX_KEY_MAX_SIZE];
-  uint32_t number_of_replicas;
   uint32_t number_of_live_hosts;
   uint32_t *live_host_indices;
   uint32_t live_host_indices_size;

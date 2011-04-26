@@ -16,6 +16,7 @@ typedef enum {
   PREPEND_OP,
   APPEND_OP,
   CAS_OP,
+  DELETE_OP,
 } memcached_storage_action;
 
 /* Inline this */
@@ -25,6 +26,8 @@ static const char *storage_op_string(memcached_storage_action verb)
   {
   case SET_OP:
     return "set ";
+  case DELETE_OP:
+    return "delete ";
   case REPLACE_OP:
     return "replace ";
   case ADD_OP:
@@ -43,21 +46,21 @@ static const char *storage_op_string(memcached_storage_action verb)
 }
 
 static memcached_return memcached_send_binary(memcached_st *ptr,
-                                              const char *master_key, 
+                                              const char *master_key,
                                               size_t master_key_length,
-                                              const char *key, 
-                                              size_t key_length, 
-                                              const char *value, 
-                                              size_t value_length, 
+                                              const char *key,
+                                              size_t key_length,
+                                              const char *value,
+                                              size_t value_length,
                                               time_t expiration,
                                               uint32_t flags,
                                               uint64_t cas,
                                               memcached_storage_action verb);
 
-static inline memcached_return memcached_send(memcached_st *ptr, 
-                                              const char *master_key, size_t master_key_length, 
-                                              const char *key, size_t key_length, 
-                                              const char *value, size_t value_length, 
+static inline memcached_return memcached_send(memcached_st *ptr,
+                                              const char *master_key, size_t master_key_length,
+                                              const char *key, size_t key_length,
+                                              const char *value, size_t value_length,
                                               time_t expiration,
                                               uint32_t flags,
                                               uint64_t cas,
@@ -75,7 +78,7 @@ static inline memcached_return memcached_send(memcached_st *ptr,
   rc= memcached_validate_key_length(key_length, ptr->flags & MEM_BINARY_PROTOCOL);
   unlikely (rc != MEMCACHED_SUCCESS)
     return rc;
-  
+
   unlikely (ptr->number_of_hosts == 0)
     return MEMCACHED_NO_SERVERS;
 
@@ -91,12 +94,12 @@ static inline memcached_return memcached_send(memcached_st *ptr,
   server_key= memcached_generate_hash(ptr, master_key, master_key_length);
 
   if (cas)
-    write_length= (size_t) snprintf(buffer, MEMCACHED_DEFAULT_COMMAND_SIZE, 
-                                    "%s %s%.*s %u %llu %zu %llu%s\r\n", 
+    write_length= (size_t) snprintf(buffer, MEMCACHED_DEFAULT_COMMAND_SIZE,
+                                    "%s %s%.*s %u %llu %zu %llu%s\r\n",
                                     storage_op_string(verb),
                                     ptr->prefix_key,
-                                    (int)key_length, key, flags, 
-                                    (unsigned long long)expiration, value_length, 
+                                    (int)key_length, key, flags,
+                                    (unsigned long long)expiration, value_length,
                                     (unsigned long long)cas,
                                     (ptr->flags & MEM_NOREPLY) ? " noreply" : "");
   else
@@ -111,18 +114,23 @@ static inline memcached_return memcached_send(memcached_st *ptr,
     buffer_ptr= memcpy(buffer_ptr + strlen(command) , ptr->prefix_key, strlen(ptr->prefix_key));
 
     /* Copy in the key, adjust point if a key prefix was used. */
-    buffer_ptr= memcpy(buffer_ptr + (ptr->prefix_key ? strlen(ptr->prefix_key) : 0), 
+    buffer_ptr= memcpy(buffer_ptr + (ptr->prefix_key ? strlen(ptr->prefix_key) : 0),
                        key, key_length);
     buffer_ptr+= key_length;
-    buffer_ptr[0]=  ' '; 
+    buffer_ptr[0]=  ' ';
     buffer_ptr++;
-
     write_length= (size_t)(buffer_ptr - buffer);
-    write_length+= (size_t) snprintf(buffer_ptr, MEMCACHED_DEFAULT_COMMAND_SIZE, 
-                                     "%u %llu %zu%s\r\n", 
-                                     flags, 
-                                     (unsigned long long)expiration, value_length,
-                                     (ptr->flags & MEM_NOREPLY) ? " noreply" : "");
+
+    if (verb == DELETE_OP) {
+      if (ptr->flags & MEM_NOREPLY)
+        write_length+= (size_t) snprintf(buffer_ptr, MEMCACHED_DEFAULT_COMMAND_SIZE, "noreply");
+    } else {
+      write_length+= (size_t) snprintf(buffer_ptr, MEMCACHED_DEFAULT_COMMAND_SIZE,
+                                       "%u %llu %zu%s\r\n",
+                                       flags,
+                                       (unsigned long long)expiration, value_length,
+                                       (ptr->flags & MEM_NOREPLY) ? " noreply" : "");
+    }
   }
 
   if (ptr->flags & MEM_USE_UDP && ptr->flags & MEM_BUFFER_REQUESTS)
@@ -147,7 +155,7 @@ static inline memcached_return memcached_send(memcached_st *ptr,
     return MEMCACHED_WRITE_FAILURE;
 
   if ((ptr->flags & MEM_BUFFER_REQUESTS) &&
-      (verb == SET_OP || verb == PREPEND_OP || verb == APPEND_OP))
+      (verb == SET_OP || verb == PREPEND_OP || verb == APPEND_OP || verb == DELETE_OP))
     to_write= 0;
   else
     to_write= 1;
@@ -162,183 +170,210 @@ static inline memcached_return memcached_send(memcached_st *ptr,
     return MEMCACHED_BUFFERED;
 
   rc= memcached_response(&ptr->hosts[server_key], buffer, MEMCACHED_DEFAULT_COMMAND_SIZE, NULL);
-  if (rc == MEMCACHED_STORED)
-    return MEMCACHED_SUCCESS;  
+  if (rc == MEMCACHED_STORED || rc == MEMCACHED_DELETED)
+    return MEMCACHED_SUCCESS;
+
   return rc;
 }
 
 
-memcached_return memcached_set(memcached_st *ptr, const char *key, size_t key_length, 
-                               const char *value, size_t value_length, 
+memcached_return memcached_set(memcached_st *ptr, const char *key, size_t key_length,
+                               const char *value, size_t value_length,
                                time_t expiration,
                                uint32_t flags)
 {
   memcached_return rc;
   LIBMEMCACHED_MEMCACHED_SET_START();
-  rc= memcached_send(ptr, key, key_length, 
+  rc= memcached_send(ptr, key, key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, SET_OP);
   LIBMEMCACHED_MEMCACHED_SET_END();
   return rc;
 }
 
-memcached_return memcached_add(memcached_st *ptr, 
+memcached_return memcached_delete(memcached_st *ptr, const char *key, size_t key_length,
+                                  time_t expiration)
+{
+  memcached_return rc;
+  LIBMEMCACHED_MEMCACHED_DELETE_START();
+  rc= memcached_send(ptr, key, key_length,
+                     key, key_length, "", 0,
+                     expiration, 0, 0, DELETE_OP);
+  LIBMEMCACHED_MEMCACHED_DELETE_END();
+  return rc;
+}
+
+memcached_return memcached_delete_by_key(memcached_st *ptr,
+                                         const char *master_key, size_t master_key_length,
+                                         const char *key, size_t key_length,
+                                         time_t expiration)
+{
+  memcached_return rc;
+  LIBMEMCACHED_MEMCACHED_DELETE_START();
+  rc= memcached_send(ptr, master_key, master_key_length,
+                     key, key_length, "", 0,
+                     expiration, 0, 0, DELETE_OP);
+  LIBMEMCACHED_MEMCACHED_DELETE_END();
+  return rc;
+}
+
+memcached_return memcached_add(memcached_st *ptr,
                                const char *key, size_t key_length,
-                               const char *value, size_t value_length, 
+                               const char *value, size_t value_length,
                                time_t expiration,
                                uint32_t flags)
 {
   memcached_return rc;
   LIBMEMCACHED_MEMCACHED_ADD_START();
-  rc= memcached_send(ptr, key, key_length, 
+  rc= memcached_send(ptr, key, key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, ADD_OP);
   LIBMEMCACHED_MEMCACHED_ADD_END();
   return rc;
 }
 
-memcached_return memcached_replace(memcached_st *ptr, 
+memcached_return memcached_replace(memcached_st *ptr,
                                    const char *key, size_t key_length,
-                                   const char *value, size_t value_length, 
+                                   const char *value, size_t value_length,
                                    time_t expiration,
                                    uint32_t flags)
 {
   memcached_return rc;
   LIBMEMCACHED_MEMCACHED_REPLACE_START();
-  rc= memcached_send(ptr, key, key_length, 
+  rc= memcached_send(ptr, key, key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, REPLACE_OP);
   LIBMEMCACHED_MEMCACHED_REPLACE_END();
   return rc;
 }
 
-memcached_return memcached_prepend(memcached_st *ptr, 
+memcached_return memcached_prepend(memcached_st *ptr,
                                    const char *key, size_t key_length,
-                                   const char *value, size_t value_length, 
+                                   const char *value, size_t value_length,
                                    time_t expiration,
                                    uint32_t flags)
 {
   memcached_return rc;
-  rc= memcached_send(ptr, key, key_length, 
+  rc= memcached_send(ptr, key, key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, PREPEND_OP);
   return rc;
 }
 
-memcached_return memcached_append(memcached_st *ptr, 
+memcached_return memcached_append(memcached_st *ptr,
                                   const char *key, size_t key_length,
-                                  const char *value, size_t value_length, 
+                                  const char *value, size_t value_length,
                                   time_t expiration,
                                   uint32_t flags)
 {
   memcached_return rc;
-  rc= memcached_send(ptr, key, key_length, 
+  rc= memcached_send(ptr, key, key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, APPEND_OP);
   return rc;
 }
 
-memcached_return memcached_cas(memcached_st *ptr, 
+memcached_return memcached_cas(memcached_st *ptr,
                                const char *key, size_t key_length,
-                               const char *value, size_t value_length, 
+                               const char *value, size_t value_length,
                                time_t expiration,
                                uint32_t flags,
                                uint64_t cas)
 {
   memcached_return rc;
-  rc= memcached_send(ptr, key, key_length, 
+  rc= memcached_send(ptr, key, key_length,
                      key, key_length, value, value_length,
                      expiration, flags, cas, CAS_OP);
   return rc;
 }
 
-memcached_return memcached_set_by_key(memcached_st *ptr, 
-                                      const char *master_key __attribute__((unused)), 
-                                      size_t master_key_length __attribute__((unused)), 
-                                      const char *key, size_t key_length, 
-                                      const char *value, size_t value_length, 
+memcached_return memcached_set_by_key(memcached_st *ptr,
+                                      const char *master_key __attribute__((unused)),
+                                      size_t master_key_length __attribute__((unused)),
+                                      const char *key, size_t key_length,
+                                      const char *value, size_t value_length,
                                       time_t expiration,
                                       uint32_t flags)
 {
   memcached_return rc;
   LIBMEMCACHED_MEMCACHED_SET_START();
-  rc= memcached_send(ptr, master_key, master_key_length, 
+  rc= memcached_send(ptr, master_key, master_key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, SET_OP);
   LIBMEMCACHED_MEMCACHED_SET_END();
   return rc;
 }
 
-memcached_return memcached_add_by_key(memcached_st *ptr, 
+memcached_return memcached_add_by_key(memcached_st *ptr,
                                       const char *master_key, size_t master_key_length,
                                       const char *key, size_t key_length,
-                                      const char *value, size_t value_length, 
+                                      const char *value, size_t value_length,
                                       time_t expiration,
                                       uint32_t flags)
 {
   memcached_return rc;
   LIBMEMCACHED_MEMCACHED_ADD_START();
-  rc= memcached_send(ptr, master_key, master_key_length, 
+  rc= memcached_send(ptr, master_key, master_key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, ADD_OP);
   LIBMEMCACHED_MEMCACHED_ADD_END();
   return rc;
 }
 
-memcached_return memcached_replace_by_key(memcached_st *ptr, 
+memcached_return memcached_replace_by_key(memcached_st *ptr,
                                           const char *master_key, size_t master_key_length,
                                           const char *key, size_t key_length,
-                                          const char *value, size_t value_length, 
+                                          const char *value, size_t value_length,
                                           time_t expiration,
                                           uint32_t flags)
 {
   memcached_return rc;
   LIBMEMCACHED_MEMCACHED_REPLACE_START();
-  rc= memcached_send(ptr, master_key, master_key_length, 
+  rc= memcached_send(ptr, master_key, master_key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, REPLACE_OP);
   LIBMEMCACHED_MEMCACHED_REPLACE_END();
   return rc;
 }
 
-memcached_return memcached_prepend_by_key(memcached_st *ptr, 
+memcached_return memcached_prepend_by_key(memcached_st *ptr,
                                           const char *master_key, size_t master_key_length,
                                           const char *key, size_t key_length,
-                                          const char *value, size_t value_length, 
+                                          const char *value, size_t value_length,
                                           time_t expiration,
                                           uint32_t flags)
 {
   memcached_return rc;
-  rc= memcached_send(ptr, master_key, master_key_length, 
+  rc= memcached_send(ptr, master_key, master_key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, PREPEND_OP);
   return rc;
 }
 
-memcached_return memcached_append_by_key(memcached_st *ptr, 
+memcached_return memcached_append_by_key(memcached_st *ptr,
                                          const char *master_key, size_t master_key_length,
                                          const char *key, size_t key_length,
-                                         const char *value, size_t value_length, 
+                                         const char *value, size_t value_length,
                                          time_t expiration,
                                          uint32_t flags)
 {
   memcached_return rc;
-  rc= memcached_send(ptr, master_key, master_key_length, 
+  rc= memcached_send(ptr, master_key, master_key_length,
                      key, key_length, value, value_length,
                      expiration, flags, 0, APPEND_OP);
   return rc;
 }
 
-memcached_return memcached_cas_by_key(memcached_st *ptr, 
+memcached_return memcached_cas_by_key(memcached_st *ptr,
                                       const char *master_key, size_t master_key_length,
                                       const char *key, size_t key_length,
-                                      const char *value, size_t value_length, 
+                                      const char *value, size_t value_length,
                                       time_t expiration,
                                       uint32_t flags,
                                       uint64_t cas)
 {
   memcached_return rc;
-  rc= memcached_send(ptr, master_key, master_key_length, 
+  rc= memcached_send(ptr, master_key, master_key_length,
                      key, key_length, value, value_length,
                      expiration, flags, cas, CAS_OP);
   return rc;
@@ -355,6 +390,9 @@ static inline uint8_t get_com_code(memcached_storage_action verb, bool noreply)
     {
     case SET_OP:
       ret=PROTOCOL_BINARY_CMD_SETQ;
+      break;
+    case DELETE_OP:
+      ret=PROTOCOL_BINARY_CMD_DELETEQ;
       break;
     case ADD_OP:
       ret=PROTOCOL_BINARY_CMD_ADDQ;
@@ -378,6 +416,9 @@ static inline uint8_t get_com_code(memcached_storage_action verb, bool noreply)
     {
     case SET_OP:
       ret=PROTOCOL_BINARY_CMD_SET;
+      break;
+    case DELETE_OP:
+      ret=PROTOCOL_BINARY_CMD_DELETE;
       break;
     case ADD_OP:
       ret=PROTOCOL_BINARY_CMD_ADD;
@@ -403,12 +444,12 @@ static inline uint8_t get_com_code(memcached_storage_action verb, bool noreply)
 
 
 static memcached_return memcached_send_binary(memcached_st *ptr,
-                                              const char *master_key, 
+                                              const char *master_key,
                                               size_t master_key_length,
                                               const char *key,
-                                              size_t key_length, 
-                                              const char *value, 
-                                              size_t value_length, 
+                                              size_t key_length,
+                                              const char *value,
+                                              size_t value_length,
                                               time_t expiration,
                                               uint32_t flags,
                                               uint64_t cas,
@@ -417,69 +458,49 @@ static memcached_return memcached_send_binary(memcached_st *ptr,
   uint8_t flush;
   protocol_binary_request_set request= {.bytes= {0}};
   size_t send_length= sizeof(request.bytes);
-  uint32_t server_key= memcached_generate_hash(ptr, master_key, 
+  uint32_t server_key= memcached_generate_hash(ptr, master_key,
                                                master_key_length);
   memcached_server_st *server= &ptr->hosts[server_key];
   bool noreply= server->root->flags & MEM_NOREPLY;
 
   request.message.header.request.magic= PROTOCOL_BINARY_REQ;
   request.message.header.request.opcode= get_com_code(verb, noreply);
-  request.message.header.request.keylen= htons((uint16_t)key_length);
+  request.message.header.request.keylen= htons((uint16_t)(ptr->prefix_key_length + key_length));
   request.message.header.request.datatype= PROTOCOL_BINARY_RAW_BYTES;
-  if (verb == APPEND_OP || verb == PREPEND_OP)
-    send_length -= 8; /* append & prepend does not contain extras! */
-  else 
+  if (verb == APPEND_OP || verb == PREPEND_OP || verb == DELETE_OP)
+    send_length -= 8; /* append, delete, and prepend do not contain extras! */
+  else
   {
     request.message.header.request.extlen= 8;
-    request.message.body.flags= htonl(flags);   
+    request.message.body.flags= htonl(flags);
     request.message.body.expiration= htonl((uint32_t)expiration);
   }
-  
-  request.message.header.request.bodylen= htonl((uint32_t) (key_length + value_length + 
+
+  request.message.header.request.bodylen= htonl((uint32_t) (ptr->prefix_key_length + key_length + value_length +
 						request.message.header.request.extlen));
-  
+
   if (cas)
     request.message.header.request.cas= htonll(cas);
-  
+
   flush= (uint8_t) (((server->root->flags & MEM_BUFFER_REQUESTS) && verb == SET_OP) ? 0 : 1);
 
   if ((server->root->flags & MEM_USE_UDP) && !flush)
   {
-    size_t cmd_size= send_length + key_length + value_length;
+    size_t cmd_size= send_length + ptr->prefix_key_length + key_length + value_length;
     if (cmd_size > MAX_UDP_DATAGRAM_LENGTH - UDP_DATAGRAM_HEADER_LENGTH)
       return MEMCACHED_WRITE_FAILURE;
     if (cmd_size + server->write_buffer_offset > MAX_UDP_DATAGRAM_LENGTH)
       memcached_io_write(server,NULL,0, 1);
   }
-  
+
   /* write the header */
   if ((memcached_do(server, (const char*)request.bytes, send_length, 0) != MEMCACHED_SUCCESS) ||
+      (memcached_io_write(server, ptr->prefix_key, ptr->prefix_key_length, 0) == -1) ||
       (memcached_io_write(server, key, key_length, 0) == -1) ||
-      (memcached_io_write(server, value, value_length, (char) flush) == -1)) 
+      (memcached_io_write(server, value, value_length, (char) flush) == -1))
   {
     memcached_io_reset(server);
     return MEMCACHED_WRITE_FAILURE;
-  }
-
-  unlikely (verb == SET_OP && ptr->number_of_replicas > 0) 
-  {
-    request.message.header.request.opcode= PROTOCOL_BINARY_CMD_SETQ;
-
-    for (uint32_t x= 0; x < ptr->number_of_replicas; x++)
-    {
-      ++server_key;
-      if (server_key == ptr->number_of_hosts)
-        server_key= 0;
-
-      memcached_server_st *srv= &ptr->hosts[server_key];
-      if ((memcached_do(srv, (const char*)request.bytes, 
-                        send_length, 0) != MEMCACHED_SUCCESS) ||
-          (memcached_io_write(srv, key, key_length, 0) == -1) ||
-          (memcached_io_write(srv, value, value_length, (char) flush) == -1))
-        memcached_io_reset(srv);
-      else
-        memcached_server_response_decrement(srv);
-    }
   }
 
   if (flush == 0)
@@ -488,6 +509,6 @@ static memcached_return memcached_send_binary(memcached_st *ptr,
   if (noreply)
     return MEMCACHED_SUCCESS;
 
-  return memcached_response(server, NULL, 0, NULL);   
+  return memcached_response(server, NULL, 0, NULL);
 }
 

@@ -35,7 +35,7 @@ recommended that you operate directly against the structure.
 Nearly all functions return a C<memcached_return> value.
 This value can be translated to a printable string with memcached_strerror(3).
 
-Partitioning based on keys is supported in the library. Using the key partioning 
+Partitioning based on keys is supported in the library. Using the key partioning
 functions it is possible to group sets of object onto servers.
 
 C<memcached_st> structures are thread-safe, but each thread must
@@ -44,13 +44,13 @@ threads you must provide your own locking). No global variables are
 used in this library.
 
 If you are working with GNU autotools you will want to add the following to
-your configure.ac to properly include libmemcached in your application. 
+your configure.ac to properly include libmemcached in your application.
 
 PKG_CHECK_MODULES(DEPS, libmemcached >= 0.8.0)
 AC_SUBST(DEPS_CFLAGS)
 AC_SUBST(DEPS_LIBS)
 
-Some features of the library must be enabled through memcached_behavior_set(). 
+Some features of the library must be enabled through memcached_behavior_set().
 
 Hope you enjoy it!
 
@@ -73,10 +73,6 @@ have no limit, this only applies to keys used for storage.
 
 Default size of key (which includes the null pointer).
 
-=item MEMCACHED_STRIDE
-
-This is the "stride" used in the consistent hash used between replicas.
-
 =item MEMCACHED_MAX_HOST_LENGTH
 
 Maximum allowed size of the hostname.
@@ -87,15 +83,15 @@ String value of libmemcached version such as "1.23.4"
 
 =item MEMCACHED_MAJOR_VERSION
 
-Major version value. Such as 1.23.4, would be 1 
+Major version value. Such as 1.23.4, would be 1
 
 =item MEMCACHED_MINOR_VERSION
 
-Major version value. Such as 1.23.4, would be 23 
+Major version value. Such as 1.23.4, would be 23
 
 =item MEMCACHED_MICRO_VERSION
 
-Major version value. Such as 1.23.4, would be 4 
+Major version value. Such as 1.23.4, would be 4
 
 
 =back
