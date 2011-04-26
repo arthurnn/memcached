@@ -2,8 +2,7 @@ require 'mkmf'
 require 'rbconfig'
 
 HERE = File.expand_path(File.dirname(__FILE__))
-BUNDLE = Dir.glob("libmemcached-*.tar.gz").first
-BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
+BUNDLE_PATH = Dir.glob("libmemcached-*").first
 
 SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
 BSD = Config::CONFIG['host_os'].downcase =~ /bsd/
@@ -28,11 +27,6 @@ if ENV['DEBUG']
   puts "Setting debug flags."
   $CFLAGS << " -O0 -ggdb -DHAVE_DEBUG"
   $EXTRA_CONF = ""
-end
-
-def patch(prefix, reason)
-  cmd = "#{PATCH_CMD} -p1 -f < #{prefix}.patch"
-  run(cmd, "Patching libmemcached source for #{reason}.")
 end
 
 def run(cmd, reason)
