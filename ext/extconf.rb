@@ -53,7 +53,6 @@ def check_libmemcached
   $DEFLIBPATH = [] unless SOLARIS_32
 
   Dir.chdir(HERE) do
-    patch("libmemcached-10", "set errno properly after poll() timeout on connect")
     patch("libmemcached-11", "binary_incr_decr() respects prefix_key")
 
     run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")

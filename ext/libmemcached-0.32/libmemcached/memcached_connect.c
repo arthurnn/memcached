@@ -242,6 +242,8 @@ static memcached_return network_connect(memcached_server_st *ptr)
 
           if (error != 1 || fds[0].revents & POLLERR)
           {
+            ptr->cached_errno = 0;
+
             if (fds[0].revents & POLLERR)
             {
               int err;
