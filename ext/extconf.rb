@@ -6,9 +6,11 @@ BUNDLE = Dir.glob("libmemcached-*.tar.gz").first
 BUNDLE_PATH = BUNDLE.sub(".tar.gz", "")
 
 SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
+BSD = Config::CONFIG['host_os'].downcase =~ /bsd/
 
 $CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "")
 $CFLAGS << " -std=gnu99" if SOLARIS_32
+$CFLAGS << " -I/usr/local/include" if BSD
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
 $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{RbConfig::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
 $CXXFLAGS = " -std=gnu++98"
@@ -67,6 +69,7 @@ def check_libmemcached
       patch("libmemcached-7", "pipelined delete and unused replica code")
       patch("libmemcached-8", "avoid strdup() to work around tcmalloc on OS X bug")
       patch("libmemcached-9", "don't clone server_st by reference server_by_key()")
+      patch("libmemcached-10", "set errno properly after poll() timeout on connect")
 
       run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
 

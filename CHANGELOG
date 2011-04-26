@@ -1,3 +1,5 @@
+v1.2.6. Fix build issue on FreeBSD. Fix errno mangling on timeouts during memcached_connect().
+
 v1.2.5. Compile properly on JRuby (but doesn't run yet). Do zero-copy Ruby string allocations to improve performance.
 
 v1.2.3. Don't keep the server strings around forever.
