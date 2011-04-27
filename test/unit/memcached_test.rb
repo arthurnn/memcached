@@ -379,7 +379,7 @@ class MemcachedTest < Test::Unit::TestCase
     @binary_protocol_cache.set "#{key}_3", 3
     @binary_protocol_cache.delete "#{key}_4" rescue nil
     assert_equal(
-      {"test_get_multi_missing_3"=>3, "test_get_multi_missing_1"=>1},
+      {"test_get_multi_binary_3"=>3, "test_get_multi_binary_1"=>1},
       @binary_protocol_cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"])
      )
   end
