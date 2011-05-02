@@ -371,6 +371,10 @@ static memcached_return binary_read_one_response(memcached_server_st *ptr,
         if (memcached_safe_read(ptr, vptr, bodylen) != MEMCACHED_SUCCESS)
           return MEMCACHED_UNKNOWN_READ_FAILURE;
 
+        size_t prefix_length = ptr->root->prefix_key_length;
+        memmove(result->key, (result->key + prefix_length), keylen - prefix_length + 1);
+        result->key_length = keylen - prefix_length;
+
         memcached_string_set_length(&result->value, bodylen);
       }
       break;
