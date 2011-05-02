@@ -462,18 +462,16 @@ static memcached_return binary_mget_by_key(memcached_st *ptr,
       rc= MEMCACHED_SOME_ERRORS;
   }
 
-  if (number_of_keys > 1)
-  {
-    /*
-     * Send a noop command to flush the buffers
-     */
-    protocol_binary_request_noop request= {.bytes= {0}};
-    request.message.header.request.magic= PROTOCOL_BINARY_REQ;
-    request.message.header.request.opcode= PROTOCOL_BINARY_CMD_NOOP;
-    request.message.header.request.datatype= PROTOCOL_BINARY_RAW_BYTES;
+  /*
+   * Send a noop command to flush the buffers
+   */
+  protocol_binary_request_noop request= {.bytes= {0}};
+  request.message.header.request.magic= PROTOCOL_BINARY_REQ;
+  request.message.header.request.opcode= PROTOCOL_BINARY_CMD_NOOP;
+  request.message.header.request.datatype= PROTOCOL_BINARY_RAW_BYTES;
 
-    for (x= 0; x < ptr->number_of_hosts; x++)
-      if (memcached_server_response_count(&ptr->hosts[x]))
+  for (x= 0; x < ptr->number_of_hosts; x++) {
+    if (memcached_server_response_count(&ptr->hosts[x]))
       {
         if (memcached_io_write(&ptr->hosts[x], NULL, 0, 1) == -1)
         {
@@ -491,8 +489,7 @@ static memcached_return binary_mget_by_key(memcached_st *ptr,
         }
         memcached_server_response_increment(&ptr->hosts[x]);
       }
-    }
-
+  }
 
   return rc;
 }
