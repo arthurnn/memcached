@@ -95,7 +95,7 @@ static inline memcached_return memcached_send(memcached_st *ptr,
 
   if (cas)
     write_length= (size_t) snprintf(buffer, MEMCACHED_DEFAULT_COMMAND_SIZE,
-                                    "%s %s%.*s %u %llu %zu %llu%s\r\n",
+                                    "%s%s%.*s %u %llu %zu %llu%s\r\n",
                                     storage_op_string(verb),
                                     ptr->prefix_key,
                                     (int)key_length, key, flags,
