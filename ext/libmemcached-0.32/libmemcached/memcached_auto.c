@@ -83,7 +83,7 @@ static memcached_return binary_incr_decr(memcached_st *ptr, uint8_t cmd,
   }
   protocol_binary_request_incr request= {.bytes= {0}};
   
-  uint16_t key_with_prefix_length = strlen(ptr->prefix_key) + strlen(key);
+  uint16_t key_with_prefix_length = ptr->prefix_key_length + key_length;
   char *key_with_prefix = alloca(key_with_prefix_length + 1);
   strcpy(key_with_prefix, ptr->prefix_key);
   strcat(key_with_prefix, key);
