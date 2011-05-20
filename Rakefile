@@ -20,6 +20,11 @@ Echoe.new("memcached") do |p|
                       "ext/libmemcached-*/clients/memrm",
                       "ext/libmemcached-*/clients/memslap",
                       "ext/libmemcached-*/clients/memstat",
+                      "ext/libmemcached-*/tests/atomsmasher",
+                      "ext/libmemcached-*/tests/startservers",
+                      "ext/libmemcached-*/tests/testapp",
+                      "ext/libmemcached-*/tests/testplus",
+                      "ext/libmemcached-*/tests/udptest",
                       "ext/libmemcached-*/config.h",
                       "ext/libmemcached-*/config.log",
                       "ext/libmemcached-*/config.status",
@@ -29,7 +34,8 @@ Echoe.new("memcached") do |p|
                       "ext/libmemcached-*/stamp*",
                       "ext/libmemcached-*/support/libmemcached.pc",
                       "ext/libmemcached-*/support/libmemcached-fc.spec",
-                      "ext/libmemcached-*/**/*.[sl]?[oa]",
+                      "ext/libmemcached-*/**/*.s[oa]",
+                      "ext/libmemcached-*/**/*.l[oa]",
                       "ext/conftest.dSYM",
                       "lib/rlibmemcached*"]
 end

@@ -2,7 +2,7 @@ pkg/*
 *.bundle
 *.[oa]
 *.[sl]o
-*.la
+*.l[ao]
 ext/Makefile
 ext/bin
 ext/include
@@ -26,5 +26,10 @@ ext/libmemcached-*/libtool
 ext/libmemcached-*/stamp*
 ext/libmemcached-*/support/libmemcached.pc
 ext/libmemcached-*/support/libmemcached-fc.spec
+ext/libmemcached-*/tests/atomsmasher
+ext/libmemcached-*/tests/startservers
+ext/libmemcached-*/tests/testapp
+ext/libmemcached-*/tests/testplus
+ext/libmemcached-*/tests/udptest
 *.[1,3]
 .libs
