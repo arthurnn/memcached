@@ -1,3 +1,5 @@
+v1.2.7.1 Retry SomeErrorsWereReported exception
+
 v1.2.7. Fix prefix keys on binary (multi)gets. Remove extraneous space from CAS requests.
 
 v1.2.6. Fix build issue on FreeBSD. Fix errno mangling on timeouts during memcached_connect().
