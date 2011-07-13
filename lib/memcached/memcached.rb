@@ -47,7 +47,8 @@ class Memcached
         Memcached::ServerError,
         Memcached::SystemError,
         Memcached::UnknownReadFailure,
-        Memcached::WriteFailure]
+        Memcached::WriteFailure,
+        Memcached::SomeErrorsWereReported]
   }
 
 #:stopdoc:
