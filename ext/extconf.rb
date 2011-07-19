@@ -4,16 +4,17 @@ require 'rbconfig'
 HERE = File.expand_path(File.dirname(__FILE__))
 BUNDLE_PATH = Dir.glob("libmemcached-*").first
 
-SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
+SOLARIS_32 = Config::CONFIG['target'] == "i386-pc-solaris2.10"
 BSD = Config::CONFIG['host_os'].downcase =~ /bsd/
 
-$CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "")
+$CFLAGS = "#{Config::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "")
 $CFLAGS << " -std=gnu99" if SOLARIS_32
 $CFLAGS << " -I/usr/local/include" if BSD
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
-$LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{RbConfig::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
+$LDFLAGS = "#{Config::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{Config::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
 $CXXFLAGS = " -std=gnu++98"
 $CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
+$CC = "CC=#{Config::MAKEFILE_CONFIG["CC"].inspect}"
 
 # JRuby's default configure options can't build libmemcached properly
 LIBM_CFLAGS = defined?(JRUBY_VERSION) ? "-fPIC -g -O2" : $CFLAGS
@@ -50,7 +51,7 @@ def check_libmemcached
     run("touch -r #{BUNDLE_PATH}/m4/visibility.m4 #{BUNDLE_PATH}/configure.ac #{BUNDLE_PATH}/m4/pandora_have_sasl.m4", "Touching aclocal.m4 in libmemcached.")
 
     Dir.chdir(BUNDLE_PATH) do
-      run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
+      run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
     end
 
     Dir.chdir(BUNDLE_PATH) do
