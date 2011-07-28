@@ -7,7 +7,7 @@ BUNDLE_PATH = Dir.glob("libmemcached-*").first
 SOLARIS_32 = Config::CONFIG['target'] == "i386-pc-solaris2.10"
 BSD = Config::CONFIG['host_os'].downcase =~ /bsd/
 
-$CFLAGS = "#{Config::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "")
+$CFLAGS = "#{Config::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "").gsub("-Werror=declaration-after-statement", "")
 $CFLAGS << " -std=gnu99" if SOLARIS_32
 $CFLAGS << " -I/usr/local/include" if BSD
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
