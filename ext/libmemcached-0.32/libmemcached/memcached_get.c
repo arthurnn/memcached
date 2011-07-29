@@ -61,6 +61,11 @@ char *memcached_get_by_key(memcached_st *ptr,
   if (*error == MEMCACHED_END)
     *error= MEMCACHED_NOTFOUND;
 
+  (void)memcached_fetch(ptr, NULL, NULL,
+                        &dummy_length, &dummy_flags,
+                        &dummy_error);
+  WATCHPOINT_ASSERT(dummy_length == 0);
+
   if (value == NULL)
   {
     if (ptr->get_key_failure && *error == MEMCACHED_NOTFOUND)
@@ -106,13 +111,7 @@ char *memcached_get_by_key(memcached_st *ptr,
       }
     }
 
-    return NULL;
   }
-
-  (void)memcached_fetch(ptr, NULL, NULL,
-                        &dummy_length, &dummy_flags,
-                        &dummy_error);
-  WATCHPOINT_ASSERT(dummy_length == 0);
 
   return value;
 }
