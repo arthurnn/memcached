@@ -355,6 +355,18 @@ class MemcachedTest < Test::Unit::TestCase
     assert result.size > non_wrapped_result.size
   end
 
+  def test_get_set_binary_behavior
+    @binary_protocol_cache.delete(key) rescue nil
+
+    assert_raise(Memcached::NotFound) do
+      result = @binary_protocol_cache.get key
+    end
+
+    @binary_protocol_cache.set(key, '1', 0, false)
+
+    assert_equal(2, @binary_protocol_cache.incr(key))
+  end
+
   def test_get_multi
     @cache.set "#{key}_1", 1
     @cache.set "#{key}_2", 2

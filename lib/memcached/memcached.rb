@@ -491,15 +491,28 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       check_return_code(ret, keys)
 
       hash = {}
-      value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
-      while ret != 21 do # Lib::MEMCACHED_END
+
+      if keys.length == 1
+        # another parsing result because memcached does not send a NOOP signal
+        value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
         if ret == 0 # Lib::MEMCACHED_SUCCESS
           hash[key] = (marshal ? Marshal.load(value) : value)
         elsif ret != 16 # Lib::MEMCACHED_NOTFOUND
           check_return_code(ret, key)
         end
+
+      else
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
+        while ret != 21 do # Lib::MEMCACHED_END
+          if ret == 0 # Lib::MEMCACHED_SUCCESS
+            hash[key] = (marshal ? Marshal.load(value) : value)
+          elsif ret != 16 # Lib::MEMCACHED_NOTFOUND
+            check_return_code(ret, key)
+          end
+          value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
+        end
       end
+
       hash
     else
       # Single get
