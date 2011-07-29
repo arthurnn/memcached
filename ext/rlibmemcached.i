@@ -139,6 +139,7 @@
 %include "libmemcached/memcached_result.h"
 %include "libmemcached/memcached_server.h"
 %include "libmemcached/memcached_sasl.h"
+%include "libmemcached/memcached_touch.h"
 
 //// Custom C functions
 

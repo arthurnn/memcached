@@ -111,9 +111,9 @@ am__libmemcached_la_SOURCES_DIST = crc.c memcached.c memcached_auto.c \
 	memcached_analyze.c memcached_behavior.c memcached_connect.c \
 	memcached_delete.c memcached_do.c memcached_dump.c \
 	memcached_fetch.c memcached_flush.c memcached_get.c \
-	memcached_hash.c memcached_hosts.c memcached_io.c \
-	memcached_purge.c memcached_flush_buffers.c md5.c \
-	memcached_key.c memcached_quit.c memcached_parse.c \
+	memcached_touch.c memcached_hash.c memcached_hosts.c \
+	memcached_io.c memcached_purge.c memcached_flush_buffers.c \
+	md5.c memcached_key.c memcached_quit.c memcached_parse.c \
 	memcached_response.c memcached_result.c memcached_server.c \
 	memcached_storage.c memcached_string.c memcached_stats.c \
 	memcached_strerror.c memcached_verbosity.c memcached_version.c \
@@ -135,6 +135,7 @@ am_libmemcached_la_OBJECTS = libmemcached_la-crc.lo \
 	libmemcached_la-memcached_fetch.lo \
 	libmemcached_la-memcached_flush.lo \
 	libmemcached_la-memcached_get.lo \
+	libmemcached_la-memcached_touch.lo \
 	libmemcached_la-memcached_hash.lo \
 	libmemcached_la-memcached_hosts.lo \
 	libmemcached_la-memcached_io.lo \
@@ -187,10 +188,10 @@ DIST_SOURCES = $(am__libmemcached_la_SOURCES_DIST) \
 	$(libmemcachedcallbacks_la_SOURCES)
 am__pkginclude_HEADERS_DIST = memcached.h memcached.hpp \
 	memcached_configure.h memcached_constants.h memcached_get.h \
-	memcached_result.h memcached_sasl.h memcached_server.h \
-	memcached_storage.h memcached_string.h memcached_types.h \
-	memcached_watchpoint.h visibility.h memcached_util.h \
-	memcached_pool.h
+	memcached_touch.h memcached_result.h memcached_sasl.h \
+	memcached_server.h memcached_storage.h memcached_string.h \
+	memcached_types.h memcached_watchpoint.h visibility.h \
+	memcached_util.h memcached_pool.h
 HEADERS = $(noinst_HEADERS) $(pkginclude_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -368,10 +369,10 @@ noinst_HEADERS = libmemcached_probes.h \
                  memcached/protocol_binary.h
 
 pkginclude_HEADERS = memcached.h memcached.hpp memcached_configure.h \
-	memcached_constants.h memcached_get.h memcached_result.h \
-	memcached_sasl.h memcached_server.h memcached_storage.h \
-	memcached_string.h memcached_types.h memcached_watchpoint.h \
-	visibility.h $(am__append_1)
+	memcached_constants.h memcached_get.h memcached_touch.h \
+	memcached_result.h memcached_sasl.h memcached_server.h \
+	memcached_storage.h memcached_string.h memcached_types.h \
+	memcached_watchpoint.h visibility.h $(am__append_1)
 lib_LTLIBRARIES = libmemcached.la
 noinst_LTLIBRARIES = libmemcachedcallbacks.la
 libmemcachedcallbacks_la_CFLAGS = ${AM_CFLAGS} ${NO_STRICT_ALIASING}
@@ -381,9 +382,9 @@ libmemcached_la_SOURCES = crc.c memcached.c memcached_auto.c \
 	memcached_analyze.c memcached_behavior.c memcached_connect.c \
 	memcached_delete.c memcached_do.c memcached_dump.c \
 	memcached_fetch.c memcached_flush.c memcached_get.c \
-	memcached_hash.c memcached_hosts.c memcached_io.c \
-	memcached_purge.c memcached_flush_buffers.c md5.c \
-	memcached_key.c memcached_quit.c memcached_parse.c \
+	memcached_touch.c memcached_hash.c memcached_hosts.c \
+	memcached_io.c memcached_purge.c memcached_flush_buffers.c \
+	md5.c memcached_key.c memcached_quit.c memcached_parse.c \
 	memcached_response.c memcached_result.c memcached_server.c \
 	memcached_storage.c memcached_string.c memcached_stats.c \
 	memcached_strerror.c memcached_verbosity.c memcached_version.c \
@@ -517,6 +518,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmemcached_la-memcached_storage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmemcached_la-memcached_strerror.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmemcached_la-memcached_string.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmemcached_la-memcached_touch.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmemcached_la-memcached_verbosity.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmemcached_la-memcached_version.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmemcached_la-murmur_hash.Plo@am__quote@
@@ -629,6 +631,13 @@ libmemcached_la-memcached_get.lo: memcached_get.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='memcached_get.c' object='libmemcached_la-memcached_get.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcached_la_CFLAGS) $(CFLAGS) -c -o libmemcached_la-memcached_get.lo `test -f 'memcached_get.c' || echo '$(srcdir)/'`memcached_get.c
+
+libmemcached_la-memcached_touch.lo: memcached_touch.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcached_la_CFLAGS) $(CFLAGS) -MT libmemcached_la-memcached_touch.lo -MD -MP -MF $(DEPDIR)/libmemcached_la-memcached_touch.Tpo -c -o libmemcached_la-memcached_touch.lo `test -f 'memcached_touch.c' || echo '$(srcdir)/'`memcached_touch.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmemcached_la-memcached_touch.Tpo $(DEPDIR)/libmemcached_la-memcached_touch.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='memcached_touch.c' object='libmemcached_la-memcached_touch.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcached_la_CFLAGS) $(CFLAGS) -c -o libmemcached_la-memcached_touch.lo `test -f 'memcached_touch.c' || echo '$(srcdir)/'`memcached_touch.c
 
 libmemcached_la-memcached_hash.lo: memcached_hash.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcached_la_CFLAGS) $(CFLAGS) -MT libmemcached_la-memcached_hash.lo -MD -MP -MF $(DEPDIR)/libmemcached_la-memcached_hash.Tpo -c -o libmemcached_la-memcached_hash.lo `test -f 'memcached_hash.c' || echo '$(srcdir)/'`memcached_hash.c
