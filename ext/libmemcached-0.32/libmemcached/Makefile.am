@@ -1,8 +1,8 @@
 EXTRA_DIST = libmemcached_probes.d memcached/README.txt libmemcached.ver \
              memcached_configure.h.in
 
-EXTRA_HEADERS = 
-BUILT_SOURCES= 
+EXTRA_HEADERS =
+BUILT_SOURCES=
 
 noinst_HEADERS = libmemcached_probes.h \
                  memcached_io.h \
@@ -15,6 +15,7 @@ pkginclude_HEADERS= memcached.h \
                     memcached_configure.h \
 		    memcached_constants.h \
 		    memcached_get.h \
+		    memcached_touch.h \
 		    memcached_result.h \
                     memcached_sasl.h \
 		    memcached_server.h \
@@ -47,6 +48,7 @@ libmemcached_la_SOURCES = crc.c \
 			  memcached_fetch.c \
 			  memcached_flush.c \
 			  memcached_get.c \
+			  memcached_touch.c \
 			  memcached_hash.c \
 			  memcached_hosts.c \
 			  memcached_io.c \

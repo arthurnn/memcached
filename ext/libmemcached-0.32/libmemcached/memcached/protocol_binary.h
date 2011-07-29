@@ -106,6 +106,7 @@ extern "C"
     PROTOCOL_BINARY_CMD_FLUSHQ = 0x18,
     PROTOCOL_BINARY_CMD_APPENDQ = 0x19,
     PROTOCOL_BINARY_CMD_PREPENDQ = 0x1a,
+    PROTOCOL_BINARY_CMD_TOUCH = 0x1c,
     PROTOCOL_BINARY_CMD_SASL_LIST_MECHS = 0x20,
     PROTOCOL_BINARY_CMD_SASL_AUTH = 0x21,
     PROTOCOL_BINARY_CMD_SASL_STEP = 0x22,
@@ -204,6 +205,24 @@ extern "C"
   typedef protocol_binary_response_get protocol_binary_response_getq;
   typedef protocol_binary_response_get protocol_binary_response_getk;
   typedef protocol_binary_response_get protocol_binary_response_getkq;
+
+  /**
+   * Definition of the packet used by the touch command.
+   */
+  typedef union {
+      struct {
+          protocol_binary_request_header header;
+          struct {
+              uint32_t expiration;
+          } body;
+      } message;
+      uint8_t bytes[sizeof(protocol_binary_request_header) + 4];
+  } protocol_binary_request_touch;
+
+  /**
+   * Definition of the packet returned from the touch command
+   */
+  typedef protocol_binary_response_no_extras protocol_binary_response_touch;
 
   /**
    * Definition of the packet used by the delete command

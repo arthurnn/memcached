@@ -4509,6 +4509,85 @@ static test_return jenkins_run (memcached_st *memc __attribute__((unused)))
   return TEST_SUCCESS;
 }
 
+static memcached_return check_touch_capability(memcached_st *memc)
+{
+  test_return test_rc= pre_binary(memc);
+
+  if (test_rc != TEST_SUCCESS)
+    return MEMCACHED_PROTOCOL_ERROR;
+
+  const char *key= "touch_capability_key";
+  const char *val= "touch_capability_val";
+  memcached_return rc = memcached_touch(memc, key, strlen(key), 1);
+  /* it should return NOTFOUND here if TOUCH is implemented */
+  return (rc == MEMCACHED_NOTFOUND) ? MEMCACHED_SUCCESS : MEMCACHED_PROTOCOL_ERROR;
+}
+
+static test_return test_memcached_touch(memcached_st *memc)
+{
+  const char *key= "touchkey";
+  const char *val= "touchval";
+  size_t len;
+  uint32_t flags;
+  memcached_return rc;
+  char *value;
+
+  value= memcached_get(memc, key, strlen(key), &len, &flags, &rc);
+  assert(len == 0);
+  assert(value == 0);
+  assert(rc == MEMCACHED_NOTFOUND);
+
+  rc= memcached_set(memc, key, strlen(key), val, strlen(val), 2, 0);
+  assert(rc == MEMCACHED_SUCCESS);
+
+  sleep(1);
+
+  value= memcached_get(memc, key, strlen(key), &len, &flags, &rc);
+  assert(len == 8);
+  assert(memcmp(value, val, len) == 0);
+  assert(rc == MEMCACHED_SUCCESS);
+
+  rc= memcached_touch(memc, key, strlen(key), 3);
+  assert(rc == MEMCACHED_SUCCESS);
+
+  sleep(2);
+
+  value= memcached_get(memc, key, strlen(key), &len, &flags, &rc);
+  assert(len == 8);
+  assert(memcmp(value, val, len) == 0);
+  assert(rc == MEMCACHED_SUCCESS);
+
+  sleep(2);
+
+  value= memcached_get(memc, key, strlen(key), &len, &flags, &rc);
+  assert(len == 0);
+  assert(value == 0);
+  assert(rc == MEMCACHED_NOTFOUND);
+
+  return TEST_SUCCESS;
+}
+
+static test_return test_memcached_touch_with_prefix(memcached_st *orig_memc)
+{
+  const char *key= "touchkey";
+  const char *val= "touchval";
+  const char *prefix= "namespace:";
+  memcached_return rc;
+  memcached_st *memc= memcached_clone(NULL, orig_memc);
+
+  rc = memcached_callback_set(memc, MEMCACHED_CALLBACK_PREFIX_KEY, (void *)prefix);
+  assert(rc == MEMCACHED_SUCCESS);
+
+  rc= memcached_set(memc, key, strlen(key), val, strlen(val), 2, 0);
+  assert(rc == MEMCACHED_SUCCESS);
+
+  rc= memcached_touch(memc, key, strlen(key), 3);
+  assert(rc == MEMCACHED_SUCCESS);
+
+  return TEST_SUCCESS;
+}
+
+
 test_st udp_setup_server_tests[] ={
   {"set_udp_behavior_test", 0, set_udp_behavior_test},
   {"add_tcp_server_udp_client_test", 0, add_tcp_server_udp_client_test},
@@ -4718,6 +4797,12 @@ test_st hash_tests[] ={
   {0, 0, 0}
 };
 
+test_st touch_tests[] ={
+  {"memcached_touch", 1, test_memcached_touch},
+  {"memcached_touch_with_prefix", 1, test_memcached_touch_with_prefix},
+  {0, 0, 0}
+};
+
 collection_st collection[] ={
   {"hsieh_availability",0,0,hsieh_availability},
   {"udp_setup", init_udp, 0, udp_setup_server_tests},
@@ -4766,6 +4851,7 @@ collection_st collection[] ={
   {"consistent_ketama", pre_behavior_ketama, 0, consistent_tests},
   {"consistent_ketama_weighted", pre_behavior_ketama_weighted, 0, consistent_weighted_tests},
   {"test_hashes", 0, 0, hash_tests},
+  {"touch", check_touch_capability, 0, touch_tests},
   {0, 0, 0, 0}
 };
 
