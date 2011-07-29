@@ -137,23 +137,6 @@ static memcached_return set_data(memcached_stat_st *memc_stat, char *key, char *
   {
     memc_stat->threads= (uint32_t) strtol(value, (char **)NULL, 10);
   }
-  else if (!(strcmp("delete_misses", key) == 0 ||/* New stats in the 1.3 beta */
-             strcmp("delete_hits", key) == 0 ||/* Just swallow them for now.. */
-             strcmp("incr_misses", key) == 0 ||
-             strcmp("incr_hits", key) == 0 ||
-             strcmp("decr_misses", key) == 0 ||
-             strcmp("decr_hits", key) == 0 ||
-             strcmp("cas_misses", key) == 0 ||
-             strcmp("cas_hits", key) == 0 ||
-             strcmp("cas_badval", key) == 0 ||
-             strcmp("cmd_flush", key) == 0 ||
-             strcmp("accepting_conns", key) == 0 ||
-             strcmp("listen_disabled_num", key) == 0 ||
-             strcmp("conn_yields", key) == 0))
-  {
-    WATCHPOINT_STRING(key);
-    return MEMCACHED_UNKNOWN_STAT_KEY;
-  }
 
   return MEMCACHED_SUCCESS;
 }
