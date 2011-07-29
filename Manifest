@@ -18,11 +18,6 @@ ext/libmemcached-0.32/README
 ext/libmemcached-0.32/THANKS
 ext/libmemcached-0.32/TODO
 ext/libmemcached-0.32/aclocal.m4
-ext/libmemcached-0.32/autom4te.cache/output.0
-ext/libmemcached-0.32/autom4te.cache/output.1
-ext/libmemcached-0.32/autom4te.cache/requests
-ext/libmemcached-0.32/autom4te.cache/traces.0
-ext/libmemcached-0.32/autom4te.cache/traces.1
 ext/libmemcached-0.32/clients/Makefile.am
 ext/libmemcached-0.32/clients/Makefile.in
 ext/libmemcached-0.32/clients/client_options.h
