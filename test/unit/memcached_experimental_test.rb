@@ -51,6 +51,14 @@ class MemcachedExperimentalTest < Test::Unit::TestCase
     end
   end
 
+  def server_touch_capable
+    @experimental_binary_protocol_cache.set(key, 'touchval')
+    @experimental_binary_protocol_cache.touch(key)
+    yield
+  rescue Memcached::ProtocolError
+    # Skip tests when the server does not support the experimental touch command
+  end
+
   def test_get_len
     server_get_len_capable {
       value = "foobar"
@@ -197,6 +205,45 @@ class MemcachedExperimentalTest < Test::Unit::TestCase
       @experimental_cas_cache.set(key, "foo_bar", 0, false)
       assert_equal "foo", @experimental_cas_cache.get_len(3, key)
       assert_equal "foo_bar", @experimental_cas_cache.get_len(7, key)
+    }
+  end
+
+  # Touch command
+
+  def test_touch_capability
+    server_touch_capable {
+      @cache.set(key, "value", 3)
+      assert_nothing_raised do
+        @experimental_binary_protocol_cache.touch(key, 10)
+      end
+      assert_raises(Memcached::ActionNotSupported) do
+        @experimental_cache.touch(key, 10)
+      end
+    }
+  end
+
+  def test_touch_missing_key
+    server_touch_capable {
+      @experimental_binary_protocol_cache.delete key rescue nil
+      assert_raises(Memcached::NotFound) do
+        @experimental_binary_protocol_cache.touch(key, 10)
+      end
+    }
+  end
+
+  def test_touch
+    server_touch_capable {
+      @experimental_binary_protocol_cache.set key, @value, 2
+      assert_equal @value, @experimental_binary_protocol_cache.get(key)
+      sleep(1)
+      assert_equal @value, @experimental_binary_protocol_cache.get(key)
+      @experimental_binary_protocol_cache.touch(key, 3)
+      sleep(2)
+      assert_equal @value, @experimental_binary_protocol_cache.get(key)
+      sleep(2)
+      assert_raises(Memcached::NotFound) do
+        @experimental_binary_protocol_cache.get(key)
+      end
     }
   end
 

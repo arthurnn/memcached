@@ -23,6 +23,7 @@
 #include <libmemcached/memcached_constants.h>
 #include <libmemcached/memcached_types.h>
 #include <libmemcached/memcached_get.h>
+#include <libmemcached/memcached_touch.h>
 #include <libmemcached/memcached_server.h>
 #include <libmemcached/memcached_string.h>
 #include <libmemcached/memcached_result.h>
