@@ -1303,6 +1303,31 @@ static test_return get_test5(memcached_st *memc)
   return TEST_SUCCESS;
 }
 
+/*
+ * This test verifies that dummy NOOP response will be fetched when
+ * client try to GET missing key.
+ */
+static test_return get_test6(memcached_st *memc)
+{
+  const char *key= "getkey";
+  const char *val= "getval";
+  size_t len;
+  uint32_t flags;
+  char *value;
+  memcached_return rc;
+
+  value= memcached_get(memc, key, strlen(key), &len, &flags, &rc);
+  assert(len == 0);
+  assert(value == 0);
+  assert(rc == MEMCACHED_NOTFOUND);
+
+  rc= memcached_set(memc, key, strlen(key), val, strlen(val), 2, 0);
+  assert(rc == MEMCACHED_SUCCESS);
+
+  return TEST_SUCCESS;
+}
+
+
 /* Do not copy the style of this code, I just access hosts to testthis function */
 static test_return  stats_servername_test(memcached_st *memc)
 {
@@ -4536,6 +4561,7 @@ test_st tests[] ={
   {"get3", 0, get_test3 },
   {"get4", 0, get_test4 },
   {"partial mget", 0, get_test5 },
+  {"get_miss_noop", 0, get_test6 },
   {"get_len", 1, get_len_test },
   {"get_len2", 0, get_len_test2 },
   {"get_len3", 0, get_len_test3 },
