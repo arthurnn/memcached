@@ -3,10 +3,6 @@ memcached
 
 An interface to the libmemcached C client.
 
-== Warning
-
-This code is for testing of fixes intended for the mainline Fauna client. Only use it if you need fixes that are here and not in Fauna's memcached client.
-
 == License
 
 Copyright 2009-2011 Cloudburst, LLC. Licensed under the AFL 3. See the included LICENSE file. Portions copyright 2007-2009 TangentOrg, Brian Aker, licensed under the BSD license, and used with permission.
