@@ -89,11 +89,9 @@ class RailsTest < Test::Unit::TestCase
 
     # Conflicting set
     cache.set key, @value
-    assert_raises(Memcached::ConnectionDataExists) do
-      cache.cas(key) do |current|
-        cache.set key, value2
-        current
-      end
+    cache.cas(key) do |current|
+      assert_false cache.set key, value2
+      current
     end
   end
 
