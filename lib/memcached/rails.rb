@@ -31,6 +31,12 @@ class Memcached
       super(servers, opts)
     end
 
+    def servers
+      server_structs.map do |server|
+        Server.new server
+      end
+    end
+
     def logger=(logger)
       @logger = logger
     end
@@ -39,7 +45,7 @@ class Memcached
     # storing <tt>nil</tt> values.
     def get(key, raw=false)
       super(key, !raw)
-    rescue NotFound
+    rescue
     end
 
     # Alternative to #get. Accepts a key and an optional options hash supporting the single option
@@ -60,7 +66,7 @@ class Memcached
     def cas(key, ttl=@default_ttl, raw=false, &block)
       super(key, ttl, !raw, &block)
       true
-    rescue NotFound
+    rescue
       false
     end
 
@@ -75,7 +81,7 @@ class Memcached
     def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
       true
-    rescue NotStored
+    rescue
       false
     end
 
@@ -90,38 +96,39 @@ class Memcached
       super(key, value, ttl, !raw)
       # This causes me  pain
       @string_return_types ? "STORED\r\n" : true
-    rescue NotStored
+    rescue NotStored # This can still throw exceptions. What's the right behavior if the
+                     # server goes away?
       @string_return_types? "NOT STORED\r\n" : false
     end
 
     # Wraps Memcached#delete so that it doesn't raise.
     def delete(key, expiry=0)
       super(key)
-    rescue NotFound
+    rescue
     end
 
     # Wraps Memcached#incr so that it doesn't raise.
     def incr(*args)
       super
-    rescue NotFound
+    rescue
     end
 
     # Wraps Memcached#decr so that it doesn't raise.
     def decr(*args)
       super
-    rescue NotFound
+    rescue
     end
 
     # Wraps Memcached#append so that it doesn't raise.
     def append(*args)
       super
-    rescue NotStored
+    rescue
     end
 
     # Wraps Memcached#prepend so that it doesn't raise.
     def prepend(*args)
       super
-    rescue NotStored
+    rescue
     end
 
     alias :flush_all :flush
@@ -129,5 +136,39 @@ class Memcached
     alias :"[]" :get
     alias :"[]=" :set
 
+  end
+
+  class Server
+    def initialize(struct)
+      @struct = struct
+    end
+
+    def host
+      @struct.hostname
+    end
+
+    def port
+      @struct.port
+    end
+
+    def weight
+      @struct.weight
+    end
+
+    def multithreaded
+      true
+    end
+
+    def status
+      alive? ? 'CONNECTED' : 'NOT CONNECTED'
+    end
+
+    def inspect
+      "<Memcached::Rails::Server: %s:%d [%d] (%s)>" % [host, port, weight, status]
+    end
+
+    def alive?
+      @struct.fd != -1 || @struct.next_retry <= Time.now
+    end
   end
 end

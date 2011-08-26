@@ -169,6 +169,9 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   # Set the server list.
   # FIXME Does not necessarily free any existing server structs.
   def set_servers(servers)
+    server_structs.each do |server|
+      Lib.memcached_server_remove(server)
+    end
     Array(servers).each_with_index do |server, index|
       # Socket
       check_return_code(
