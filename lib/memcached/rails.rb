@@ -60,7 +60,7 @@ class Memcached
     def cas(key, ttl=@default_ttl, raw=false, &block)
       super(key, ttl, !raw, &block)
       true
-    rescue NotFound
+    rescue NotFound, ConnectionDataExists
       false
     end
 

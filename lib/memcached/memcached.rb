@@ -163,6 +163,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       @not_found.no_backtrace = true
       @not_stored = NotStored.new
       @not_stored.no_backtrace = true
+      @exists = ConnectionDataExists.new
+      @exists.no_backtrace = true
     end
   end
 
@@ -584,6 +586,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       raise @not_found # Lib::MEMCACHED_NOTFOUND
     elsif ret == 14
       raise @not_stored # Lib::MEMCACHED_NOTSTORED
+    elsif ret == 12
+      raise @exists # Lib::MEMCACHED_DATA_EXISTS
     else
       reraise(key, ret)
     end

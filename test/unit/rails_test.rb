@@ -87,14 +87,15 @@ class RailsTest < Test::Unit::TestCase
     assert_nil cache.get(key)
     assert_nil @called
 
-    # Conflicting set
+    # Conflicting set after a gets
     cache.set key, @value
-    assert_raises(Memcached::ConnectionDataExists) do
+    assert_nothing_raised do
       cache.cas(key) do |current|
-        cache.set key, value2
-        current
+          cache.set key, value2
+          current
       end
     end
+    assert_equal value2, cache.get(key)
   end
 
   def test_get_missing
