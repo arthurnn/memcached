@@ -55,11 +55,11 @@ task :exceptions do
 end
 
 task :test_all do
-  if !system("bash -c 'cd && source .bash_profile && rvm use ree-1.8.7-2010.02 && cd - && rake clean && rake'")
+  if !system("bash -c 'cd && source .bash_profile && rvm use ree && cd - && rake clean && rake'")
     puts "REE test failed"
     exit(1)
   end
-  if !system("bash -c 'cd && source .bash_profile && rvm use 1.9.2-p180 && cd - && rake clean && rake'")
+  if !system("bash -c 'cd && source .bash_profile && rvm use 1.9.2 && cd - && rake clean && rake'")
     puts "1.9 test failed"
     exit(1)
   end
