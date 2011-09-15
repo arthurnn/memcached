@@ -90,10 +90,11 @@ class RailsTest < Test::Unit::TestCase
     # Conflicting set after a gets
     cache.set key, @value
     assert_nothing_raised do
-      cache.cas(key) do |current|
-          cache.set key, value2
-          current
+      result = cache.cas(key) do |current|
+        cache.set key, value2
+        current
       end
+      assert_equal result, false
     end
     assert_equal value2, cache.get(key)
   end
