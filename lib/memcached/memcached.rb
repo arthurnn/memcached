@@ -157,12 +157,16 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     # Set the servers on the struct
     set_servers(servers)
 
-    @not_found = NotFound.new
-    @not_stored = NotStored.new
-
     # Not found exceptions
-    unless options[:show_backtraces]
+    if options[:show_backtraces]
+      # Raise classes for full context
+      @not_found = NotFound
+      @not_stored = NotStored
+    else
+      # Raise fast context-free exception instances
+      @not_found = NotFound.new
       @not_found.no_backtrace = true
+      @not_stored = NotStored.new
       @not_stored.no_backtrace = true
     end
   end
