@@ -2255,6 +2255,11 @@ SWIG_From_unsigned_SS_int  (unsigned int value)
 
 VALUE rb_str_new_by_ref(char *ptr, long len)
 {
+#ifdef RUBINIUS
+    VALUE ret = rb_str_new(ptr, len);
+    free(ptr);
+    return ret;
+#else
     NEWOBJ(str, struct RString);
     OBJSETUP(str, rb_cString, T_STRING);
 #ifdef RSTRING_NOEMBED
@@ -2271,6 +2276,7 @@ VALUE rb_str_new_by_ref(char *ptr, long len)
     str->aux.capa = 0;
 #endif
     return (VALUE)str;
+#endif
 }
 
 
