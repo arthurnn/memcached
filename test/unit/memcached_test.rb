@@ -447,7 +447,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       @cache.get(["#{key}_1", "#{key}_2"], false)
     end
-    assert_raise(ArgumentError) do
+    assert_raise(ArgumentError, TypeError) do
       @cache.get(["#{key}_1", "#{key}_2"])
     end
   end
