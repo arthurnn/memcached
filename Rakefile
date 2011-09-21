@@ -39,7 +39,8 @@ Echoe.new("memcached") do |p|
                       "ext/libmemcached-*/**/*.s[oa]",
                       "ext/libmemcached-*/**/*.l[oa]",
                       "ext/conftest.dSYM",
-                      "lib/rlibmemcached*"]
+                      "lib/rlibmemcached*",
+                      "**/*.rbc"]
 end
 
 task :exceptions do
@@ -61,6 +62,10 @@ task :test_all do
   end
   if !system("bash -c 'cd && source .bash_profile && rvm use 1.9.2 && cd - && rake clean && rake'")
     puts "1.9 test failed"
+    exit(1)
+  end
+  if !system("bash -c 'cd && source .bash_profile && rvm use rbx && cd - && rake clean && rake'")
+    puts "Rubinius test failed"
     exit(1)
   end
 end
