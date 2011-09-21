@@ -71,8 +71,8 @@ task :valgrind do
  exec("ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
 end
 
-def with_vms(vms, cmd)
-  ["ree", "1.9", "rbx", "jruby"].each do |vm|
+def with_vms(cmd)
+  ["ree", "1.9", "rbx", "jruby-head"].each do |vm|
     if !system("bash -c 'cd && source .bash_profile && rvm use #{vm} && cd - && rake clean && rake #{cmd}'")
       puts "#{vm} #{cmd} failed"
       exit(1)

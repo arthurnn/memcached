@@ -1,3 +1,5 @@
+v1.3.3. JRuby compatibility.
+
 v1.3.2 Fix bug in backtrace mode; Rubinius compatibility (evanphx).
 
 v1.3.1 Rescue ConnectionDataExists for cas because Rails shim over Memcached is not supposed to raise anything for legacy reasons
