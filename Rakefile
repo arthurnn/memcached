@@ -55,23 +55,6 @@ task :exceptions do
   end
 end
 
-task :test_all do
-  if !system("bash -c 'cd && source .bash_profile && rvm use ree && cd - && rake clean && rake'")
-    puts "REE test failed"
-    exit(1)
-  end
-  if !system("bash -c 'cd && source .bash_profile && rvm use 1.9.2 && cd - && rake clean && rake'")
-    puts "1.9 test failed"
-    exit(1)
-  end
-  if !system("bash -c 'cd && source .bash_profile && rvm use rbx && cd - && rake clean && rake'")
-    puts "Rubinius test failed"
-    exit(1)
-  end
-end
-
-task :prerelease => [:test_all]
-
 task :benchmark do
  exec("ruby #{File.dirname(__FILE__)}/test/profile/benchmark.rb")
 end
@@ -87,3 +70,23 @@ end
 task :valgrind do
  exec("ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
 end
+
+def with_vms(vms, cmd)
+  ["ree", "1.9", "rbx", "jruby"].each do |vm|
+    if !system("bash -c 'cd && source .bash_profile && rvm use #{vm} && cd - && rake clean && rake #{cmd}'")
+      puts "#{vm} #{cmd} failed"
+      exit(1)
+    end
+  end
+end
+
+task :test_all do
+  with_vms("test")
+end
+
+task :prerelease => [:test_all]
+
+task :benchmark_all do
+  with_vms("benchmark CLIENT=libm")
+end
+
