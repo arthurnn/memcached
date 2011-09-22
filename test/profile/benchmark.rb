@@ -3,7 +3,7 @@ HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
 UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached')
 
-require 'memcached' if !defined?(JRUBY_VERSION)
+require 'memcached'
 require 'benchmark'
 require 'rubygems'
 require 'ruby-debug' if ENV['DEBUG']
@@ -99,31 +99,29 @@ class Bench
   end
 
   def reset_clients
+    # Other clients
     @clients = {
       "mclient:ascii" => MemCache.new(['127.0.0.1:43042', '127.0.0.1:43043']),
       "stash:bin" => Remix::Stash.new(:root),
       "dalli:bin" => Dalli::ClientCompat.new(['127.0.0.1:43042', '127.0.0.1:43043'], :marshal => false, :threadsafe => false)}
 
-    if defined?(JRUBY_VERSION)
-      @clients.merge!({}) # jruby-memcache-client, #spymemcached
-    else
-      @clients.merge!({
-        "libm:ascii" => Memcached::Rails.new(
-          ['127.0.0.1:43042', '127.0.0.1:43043'],
-          :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-        "libm:ascii:pipeline" => Memcached::Rails.new(
-          ['127.0.0.1:43042', '127.0.0.1:43043'],
-          :no_block => true, :buffer_requests => true, :noreply => true, :namespace => "namespace"),
-        "libm:ascii:udp" => Memcached::Rails.new(
-          ["#{UNIX_SOCKET_NAME}0", "#{UNIX_SOCKET_NAME}1"],
-          :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-        "libm:bin" => Memcached::Rails.new(
-          ['127.0.0.1:43042', '127.0.0.1:43043'],
-          :buffer_requests => false, :no_block => false, :namespace => "namespace", :binary_protocol => true),
-        "libm:bin:buffer" => Memcached::Rails.new(
-          ['127.0.0.1:43042', '127.0.0.1:43043'],
-          :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true)})
-    end
+    # Us
+    @clients.merge!({
+      "libm:ascii" => Memcached::Rails.new(
+        ['127.0.0.1:43042', '127.0.0.1:43043'],
+        :buffer_requests => false, :no_block => false, :namespace => "namespace"),
+      "libm:ascii:pipeline" => Memcached::Rails.new(
+        ['127.0.0.1:43042', '127.0.0.1:43043'],
+        :no_block => true, :buffer_requests => true, :noreply => true, :namespace => "namespace"),
+      "libm:ascii:udp" => Memcached::Rails.new(
+        ["#{UNIX_SOCKET_NAME}0", "#{UNIX_SOCKET_NAME}1"],
+        :buffer_requests => false, :no_block => false, :namespace => "namespace"),
+      "libm:bin" => Memcached::Rails.new(
+        ['127.0.0.1:43042', '127.0.0.1:43043'],
+        :buffer_requests => false, :no_block => false, :namespace => "namespace", :binary_protocol => true),
+      "libm:bin:buffer" => Memcached::Rails.new(
+        ['127.0.0.1:43042', '127.0.0.1:43043'],
+        :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true)})
   end
 
   def benchmark_clients(test_name, populate_keys = true)
