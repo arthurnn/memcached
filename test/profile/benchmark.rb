@@ -14,7 +14,12 @@ puts `ruby -v`
 puts `env | egrep '^RUBY'`
 puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
 
-[["memcached"], ["remix-stash", "remix/stash"], ["memcache-client", "memcache"], ["kgio"], ["dalli"]].each do |gem_name, requirement|
+[
+  ["memcached"],
+  ["remix-stash", "remix/stash"],
+  [defined?(JRUBY_VERSION) ? "jruby-memcache-client" : "memcache-client", "memcache"],
+  ["kgio"], ["dalli"]
+].each do |gem_name, requirement|
   begin
     require requirement || gem_name
     gem gem_name
@@ -140,13 +145,13 @@ class Bench
           client.delete @k3
         end
         yield client
-        GC.disable
+        # GC.disable
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
       rescue Exception => e
         puts "#{test_name}: #{client_name} => #{e.inspect}" if ENV["DEBUG"]
         reset_clients
       end
-      GC.enable
+      # GC.enable
     end
     puts
   end
