@@ -142,7 +142,13 @@ class Bench
           client.delete @k2
           client.delete @k3
         end
+
+        # Dry run
         yield client
+
+        # Force native JIT to run on JRuby
+        10000.times { yield client } if defined?(JRUBY_VERSION)
+
         # GC.disable
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
       rescue Exception => e
