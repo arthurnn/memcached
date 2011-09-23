@@ -2,12 +2,15 @@
 HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
 UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached')
+JRUBY = defined?(JRUBY_VERSION)
 
+require 'ffi/times' if JRUBY
 require 'memcached'
 require 'benchmark'
 require 'rubygems'
 require 'ruby-debug' if ENV['DEBUG']
 begin; require 'memory'; rescue LoadError; end
+
 
 puts `uname -a`
 puts `ruby -v`
@@ -17,7 +20,7 @@ puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
 [
   ["memcached"],
   ["remix-stash", "remix/stash"],
-  [defined?(JRUBY_VERSION) ? "jruby-memcache-client" : "memcache-client", "memcache"],
+  [JRUBY ? "jruby-memcache-client" : "memcache-client", "memcache"],
   ["kgio"], ["dalli"]
 ].each do |gem_name, requirement|
   begin
@@ -146,13 +149,13 @@ class Bench
         # Force any JITs to run
         10003.times { yield client }
 
-        GC.disable if !defined?(JRUBY_VERSION)
+        GC.disable if !JRUBY
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
       rescue Exception => e
         puts "#{test_name}: #{client_name} => #{e.inspect}" if ENV["DEBUG"]
         reset_clients
       end
-      GC.enable if !defined?(JRUBY_VERSION)
+      GC.enable if !JRUBY
     end
     puts
   end
