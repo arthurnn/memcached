@@ -149,13 +149,13 @@ class Bench
         # Force native JIT to run on JRuby
         10000.times { yield client } if defined?(JRUBY_VERSION)
 
-        # GC.disable
+        GC.disable if !defined?(JRUBY_VERSION)
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
       rescue Exception => e
         puts "#{test_name}: #{client_name} => #{e.inspect}" if ENV["DEBUG"]
         reset_clients
       end
-      # GC.enable
+      GC.enable if !defined?(JRUBY_VERSION)
     end
     puts
   end
