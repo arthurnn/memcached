@@ -56,7 +56,7 @@ end
 class Bench
 
   def initialize(loops = nil, stack_depth = nil)
-    @loops = (loops || 20000).to_i
+    @loops = (loops || 50000).to_i
     @stack_depth = (stack_depth || 0).to_i
 
     puts "PID is #{Process.pid}"
