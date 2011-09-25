@@ -12,8 +12,7 @@ $CFLAGS << " -std=gnu99" if SOLARIS_32
 $CFLAGS << " -I/usr/local/include" if BSD
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
 $LDFLAGS = "#{Config::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{Config::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
-$CXXFLAGS = " -std=gnu++98"
-$CPPFLAGS = $ARCH_FLAG = $DLDFLAGS = ""
+$CXXFLAGS = "#{Config::CONFIG['CXXFLAGS']} -std=gnu++98"
 $CC = "CC=#{Config::MAKEFILE_CONFIG["CC"].inspect}"
 
 # JRuby's default configure options can't build libmemcached properly
