@@ -39,10 +39,10 @@
 /* Define to 1 if you have the `mtmalloc' library (-lmtmalloc). */
 #undef HAVE_LIBMTMALLOC
 
-/* Define if you have the sasl library. */
+/* Define if you have the libsasl library. */
 #undef HAVE_LIBSASL
 
-/* Define if you have the sasl2 library. */
+/* Define if you have the libsasl2 library. */
 #undef HAVE_LIBSASL2
 
 /* Define to 1 if you have the `tcmalloc' library (-ltcmalloc). */
