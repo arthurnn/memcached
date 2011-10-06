@@ -1,4 +1,4 @@
-v1.3.4. Re-run autoconf to potentially fix issue #52.
+v1.3.4. Revert all build scripts to potentially fix issue #52.
 
 v1.3.3. JRuby compatibility. Less aggressive flag clearing in extconf.rb.
 
