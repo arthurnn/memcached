@@ -1,3 +1,5 @@
+v1.3.5 Handling snd_timeout and rcv_timeout >= 1 million usec
+
 v1.3.4. Re-run autoconf to potentially fix issue #52.
 
 v1.3.3. JRuby compatibility. Less aggressive flag clearing in extconf.rb.
