@@ -40,6 +40,11 @@ target_triplet = @target@
 @BUILD_LIBMEMCACHEDUTIL_TRUE@am__append_1 = $(top_builddir)/libmemcachedutil/libmemcachedutil.la
 noinst_PROGRAMS = testapp$(EXEEXT) testplus$(EXEEXT) udptest$(EXEEXT) \
 	atomsmasher$(EXEEXT) startservers$(EXEEXT)
+@HAVE_SASL_TRUE@am__append_2 = $(LTLIBSASL)
+@HAVE_SASL_TRUE@am__append_3 = $(LTLIBSASL)
+@HAVE_SASL_TRUE@am__append_4 = $(LTLIBSASL)
+@HAVE_SASL_TRUE@am__append_5 = $(LTLIBSASL)
+@HAVE_SASL_TRUE@am__append_6 = $(LTLIBSASL)
 subdir = tests
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -88,24 +93,29 @@ libtest_la_OBJECTS = $(am_libtest_la_OBJECTS)
 PROGRAMS = $(noinst_PROGRAMS)
 am_atomsmasher_OBJECTS = atomsmasher.$(OBJEXT)
 atomsmasher_OBJECTS = $(am_atomsmasher_OBJECTS)
+am__DEPENDENCIES_1 =
+@HAVE_SASL_TRUE@am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 atomsmasher_DEPENDENCIES = $(top_builddir)/clients/libgenexec.la \
-	libtest.la libserver.la $(LDADDS)
+	libtest.la libserver.la $(LDADDS) $(am__DEPENDENCIES_2)
 am_startservers_OBJECTS = start.$(OBJEXT)
 startservers_OBJECTS = $(am_startservers_OBJECTS)
-startservers_DEPENDENCIES = libserver.la $(LDADDS)
+startservers_DEPENDENCIES = libserver.la $(LDADDS) \
+	$(am__DEPENDENCIES_2)
 am_testapp_OBJECTS = testapp-function.$(OBJEXT)
 testapp_OBJECTS = $(am_testapp_OBJECTS)
 testapp_DEPENDENCIES = $(top_builddir)/clients/libgenexec.la \
-	libtest.la libserver.la $(LDADDS)
+	libtest.la libserver.la $(LDADDS) $(am__DEPENDENCIES_2)
 testapp_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(testapp_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 am_testplus_OBJECTS = plus.$(OBJEXT)
 testplus_OBJECTS = $(am_testplus_OBJECTS)
-testplus_DEPENDENCIES = libtest.la libserver.la $(LDADDS)
+testplus_DEPENDENCIES = libtest.la libserver.la $(LDADDS) \
+	$(am__DEPENDENCIES_2)
 am_udptest_OBJECTS = udp.$(OBJEXT)
 udptest_OBJECTS = $(am_udptest_OBJECTS)
-udptest_DEPENDENCIES = libtest.la libserver.la $(LDADDS)
+udptest_DEPENDENCIES = libtest.la libserver.la $(LDADDS) \
+	$(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = 
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
@@ -318,15 +328,17 @@ libserver_la_SOURCES = server.c
 libtest_la_SOURCES = test.c
 testapp_CFLAGS = $(AM_CFLAGS) $(NO_CONVERSION) $(NO_STRICT_ALIASING)
 testapp_SOURCES = function.c
-testapp_LDADD = $(top_builddir)/clients/libgenexec.la libtest.la libserver.la $(LDADDS)
+testapp_LDADD = $(top_builddir)/clients/libgenexec.la libtest.la \
+	libserver.la $(LDADDS) $(am__append_2)
 testplus_SOURCES = plus.cpp
-testplus_LDADD = libtest.la libserver.la $(LDADDS)
+testplus_LDADD = libtest.la libserver.la $(LDADDS) $(am__append_3)
 udptest_SOURCES = udp.c
-udptest_LDADD = libtest.la libserver.la $(LDADDS)
+udptest_LDADD = libtest.la libserver.la $(LDADDS) $(am__append_4)
 atomsmasher_SOURCES = atomsmasher.c
-atomsmasher_LDADD = $(top_builddir)/clients/libgenexec.la libtest.la libserver.la $(LDADDS)
+atomsmasher_LDADD = $(top_builddir)/clients/libgenexec.la libtest.la \
+	libserver.la $(LDADDS) $(am__append_5)
 startservers_SOURCES = start.c
-startservers_LDADD = libserver.la $(LDADDS)
+startservers_LDADD = libserver.la $(LDADDS) $(am__append_6)
 all: all-am
 
 .SUFFIXES:

@@ -35,7 +35,7 @@ AC_DEFUN([_PANDORA_SEARCH_SASL],[
               HAVE_LIBSASL="$HAVE_LIBSASL2"
               LIBSASL="$LIBSASL2"
               LIBSASL_PREFIX="$LIBSASL2_PREFIX"
-	      LTLIBSASL="$LT_LIBSASL2"
+              LTLIBSASL="$LTLIBSASL2"
             ])
     ])
 
