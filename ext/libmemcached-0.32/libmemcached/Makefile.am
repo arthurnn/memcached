@@ -85,7 +85,7 @@ libmemcached_la_LIBADD= $(LIBM) libmemcachedcallbacks.la
 libmemcached_la_LDFLAGS = -version-info $(MEMCACHED_LIBRARY_VERSION) $(LD_VERSION_SCRIPT) $(LIBM)
 
 if HAVE_SASL
-libmemcached_la_LDFLAGS+= $(LIBSASL)
+libmemcached_la_LDFLAGS+= $(LTLIBSASL)
 libmemcached_la_SOURCES += memcached_sasl.c
 endif
 

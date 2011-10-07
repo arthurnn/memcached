@@ -1,9 +1,5 @@
 LDADDS = libutilities.la $(top_builddir)/libmemcached/libmemcached.la
 
-if HAVE_SASL
-LDADDS+= $(LIBSASL)
-endif
-
 bin_PROGRAMS = memcat memdump memcp memstat memrm memflush memslap memerror
 
 noinst_HEADERS = client_options.h \
@@ -48,6 +44,17 @@ memslap_SOURCES = memslap.c
 memslap_CFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
 memslap_LDADD = $(PTHREAD_LIBS) libgenexec.la $(LDADDS)
 memslap_LDFLAGS = $(AM_LDFLAGS) -rpath $(pkglibdir)
+
+if HAVE_SASL
+memcat_LDFLAGS+= $(LTLIBSASL)
+memcp_LDFLAGS+= $(LTLIBSASL)
+memdump_LDFLAGS+= $(LTLIBSASL)
+memstat_LDFLAGS+= $(LTLIBSASL)
+memrm_LDFLAGS+= $(LTLIBSASL)
+memflush_LDFLAGS+= $(LTLIBSASL)
+memerror_LDFLAGS+= $(LTLIBSASL)
+memslap_LDFLAGS+= $(LTLIBSASL)
+endif
 
 test-start-server:
 	memflush --servers=localhost
