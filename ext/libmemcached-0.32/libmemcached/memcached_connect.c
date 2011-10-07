@@ -57,8 +57,13 @@ static memcached_return set_socket_options(memcached_server_st *ptr)
     int error;
     struct timeval waittime;
 
-    waittime.tv_sec= 0;
-    waittime.tv_usec= ptr->root->snd_timeout;
+    if (ptr->root->snd_timeout >= (1000 * 1000)) {
+        waittime.tv_sec= ptr->root->snd_timeout / (1000 * 1000);
+        waittime.tv_usec= ptr->root->snd_timeout % (1000 * 1000);
+    } else {
+        waittime.tv_sec= 0;
+        waittime.tv_usec= ptr->root->snd_timeout;
+    }
 
     error= setsockopt(ptr->fd, SOL_SOCKET, SO_SNDTIMEO, 
                       &waittime, (socklen_t)sizeof(struct timeval));
@@ -72,8 +77,13 @@ static memcached_return set_socket_options(memcached_server_st *ptr)
     int error;
     struct timeval waittime;
 
-    waittime.tv_sec= 0;
-    waittime.tv_usec= ptr->root->rcv_timeout;
+    if (ptr->root->rcv_timeout >= (1000 * 1000)) {
+        waittime.tv_sec= ptr->root->rcv_timeout / (1000 * 1000);
+        waittime.tv_usec= ptr->root->rcv_timeout % (1000 * 1000);
+    } else {
+        waittime.tv_sec= 0;
+        waittime.tv_usec= ptr->root->rcv_timeout;
+    }
 
     error= setsockopt(ptr->fd, SOL_SOCKET, SO_RCVTIMEO, 
                       &waittime, (socklen_t)sizeof(struct timeval));
