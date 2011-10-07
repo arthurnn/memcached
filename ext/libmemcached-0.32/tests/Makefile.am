@@ -41,6 +41,14 @@ atomsmasher_LDADD = $(top_builddir)/clients/libgenexec.la libtest.la libserver.l
 startservers_SOURCES = start.c
 startservers_LDADD = libserver.la $(LDADDS)
 
+if HAVE_SASL
+testapp_LDADD+= $(LTLIBSASL)
+testplus_LDADD+= $(LTLIBSASL)
+udptest_LDADD+= $(LTLIBSASL)
+atomsmasher_LDADD+= $(LTLIBSASL)
+startservers_LDADD+= $(LTLIBSASL)
+endif
+
 record:
 	./testapp > output.res
 	./testplus > output_plus.res
