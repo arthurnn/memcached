@@ -20,6 +20,7 @@ pkginclude_HEADERS= memcached.h \
 		    memcached_server.h \
 		    memcached_storage.h \
 		    memcached_string.h \
+		    memcached_touch.h \
 		    memcached_types.h \
 		    memcached_watchpoint.h \
 		    visibility.h
