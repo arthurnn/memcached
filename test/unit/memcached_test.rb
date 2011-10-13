@@ -501,9 +501,11 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raise(Memcached::NotFound) do
       @cache.get key
     end
+  end
 
-    assert_raise(TypeError) do
-      @cache.set key, @value, Time.now
+  def test_set_time_in_past
+    assert_raise(ArgumentError) do
+      @cache.set key, @value, Time.now - 10
     end
   end
 

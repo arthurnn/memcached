@@ -106,7 +106,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     # Merge option defaults and discard meaningless keys
     @options = DEFAULTS.merge(opts)
     @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
-    @default_ttl = options[:default_ttl]
+    @default_ttl = to_seconds(options[:default_ttl])
 
     if servers == nil || servers == []
       if ENV.key?("MEMCACHE_SERVERS")
@@ -303,7 +303,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     value = marshal ? Marshal.dump(value) : value
     begin
       check_return_code(
-        Lib.memcached_set(@struct, key, value, ttl, flags),
+        Lib.memcached_set(@struct, key, value, to_seconds(ttl), flags),
         key
       )
     rescue => e
@@ -320,7 +320,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     value = marshal ? Marshal.dump(value) : value
     begin
       check_return_code(
-        Lib.memcached_add(@struct, key, value, ttl, flags),
+        Lib.memcached_add(@struct, key, value, to_seconds(ttl), flags),
         key
       )
     rescue => e
@@ -369,7 +369,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     value = marshal ? Marshal.dump(value) : value
     begin
       check_return_code(
-         Lib.memcached_replace(@struct, key, value, ttl, flags),
+         Lib.memcached_replace(@struct, key, value, to_seconds(ttl), flags),
         key
       )
     rescue => e
@@ -437,7 +437,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
     begin
       check_return_code(
-        Lib.memcached_cas(@struct, key, value, ttl, flags, cas),
+        Lib.memcached_cas(@struct, key, value, to_seconds(ttl), flags, cas),
         key
       )
     rescue => e
@@ -660,5 +660,20 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       strings << ":#{server.weight}" if options[:ketama_weighted]
     end
     strings.join
+  end
+
+  private
+
+  def to_seconds(ttl)
+    case ttl
+    when Time
+      t = (ttl - Time.now).round
+      raise ArgumentError, "Expiration time is in the past." if t < 0
+      t
+    when nil
+      nil
+    else
+      ttl.to_i
+    end
   end
 end
