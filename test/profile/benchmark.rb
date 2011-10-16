@@ -8,7 +8,7 @@ require 'ffi/times' if JRUBY
 require 'memcached'
 require 'benchmark'
 require 'rubygems'
-require 'ruby-debug' if ENV['DEBUG']
+require 'ruby-debug' if ENV['DEBUG'] && !JRUBY
 begin; require 'memory'; rescue LoadError; end
 
 
