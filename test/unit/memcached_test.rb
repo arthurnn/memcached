@@ -1279,6 +1279,14 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.instance_variable_get("@struct")
   end
 
+  # NOTE: This breaks encapsulation, but there's no other easy way to test this without
+  # mocking out Rlibmemcached calls
+  def test_reraise_invalid_return_code
+    assert_raise Memcached::Error do
+      @cache.send(:check_return_code, 5000)
+    end
+  end
+
   private
 
   def key
