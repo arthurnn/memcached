@@ -156,8 +156,8 @@ memcached_return update_continuum(memcached_st *ptr)
   uint32_t pointer_per_server= MEMCACHED_POINTS_PER_SERVER;
   uint32_t pointer_per_hash= 1;
   uint64_t total_weight= 0;
-  uint32_t is_ketama_weighted= 0;
-  uint32_t is_auto_ejecting= 0;
+  uint64_t is_ketama_weighted= 0;
+  uint64_t is_auto_ejecting= 0;
   uint32_t points_per_server= 0;
   uint32_t live_servers= 0;
   struct timeval now;
