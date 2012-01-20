@@ -1,6 +1,4 @@
-v1.3.7. Raise generic Memcached::Error (instead of nil) on unexpected return code.
-
-v1.3.6. Stop autoconf from running (eric).
+v1.3.6. Stop autoconf from running (eric). Raise generic Memcached::Error (instead of nil) on unexpected return code (gcampbell). Retry on Memcached::ServerEnd (ChristopherThorpe).
 
 v1.3.5. Fix build again (eric).
 
