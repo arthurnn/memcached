@@ -1,4 +1,3 @@
-
 =begin rdoc
 The Memcached client class.
 =end
@@ -44,6 +43,7 @@ class Memcached
         Memcached::Failure,
         Memcached::MemoryAllocationFailure,
         Memcached::ReadFailure,
+        Memcached::ServerEnd,
         Memcached::ServerError,
         Memcached::SystemError,
         Memcached::UnknownReadFailure,
