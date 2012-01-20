@@ -610,7 +610,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
         end
       end
     end
-    raise EXCEPTIONS[ret], message
+    if EXCEPTIONS[ret]
+      raise EXCEPTIONS[ret], message
+    else
+      raise Memcached::Error, "Unknown return code: #{ret}"
+    end
   end
 
   # Turn an array of keys into a hash of keys to servers.
