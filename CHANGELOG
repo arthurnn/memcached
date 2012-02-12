@@ -1,4 +1,6 @@
-v1.3.6. Stop autoconf from running (eric). Raise generic Memcached::Error (instead of nil) on unexpected return code (gcampbell). Retry on Memcached::ServerEnd (ChristopherThorpe).
+v1.3.7. Rebuild gem to work around timestamp issue in Gemspec on Rubygems 1.7 (tarcieri).
+
+v1.3.6. Stop autoconf from running (eric). Raise generic Memcached::Error (instead of nil) on unexpected return code (gcampbell). Retry on Memcached::ServerEnd (ChristopherThorpe)..8
 
 v1.3.5. Fix build again (eric).
 
