@@ -3,7 +3,7 @@ require 'echoe'
 
 Echoe.new("memcached") do |p|
   p.author = "Evan Weaver"
-  p.project = "fauna"
+  p.project = "evan"
   p.summary = "An interface to the libmemcached C client."
   p.rdoc_pattern = /README|TODO|LICENSE|CHANGELOG|BENCH|COMPAT|exceptions|experimental.rb|behaviors|rails.rb|memcached.rb/
   p.rdoc_options = %w[--line-numbers --inline-source --title Memcached --main README.rdoc --exclude=ext/bin --exclude=ext/libmemcached-.*/(clients|tests)]
