@@ -35,6 +35,11 @@ class Memcached
       @logger = logger
     end
 
+    # Check if there are any servers defined?
+    def active?
+      servers.any?
+    end
+
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from
     # storing <tt>nil</tt> values.
     def get(key, raw=false)

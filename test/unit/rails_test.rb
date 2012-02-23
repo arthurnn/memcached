@@ -115,6 +115,10 @@ class RailsTest < Test::Unit::TestCase
     assert_equal @namespace, @cache.namespace
   end
 
+  def test_active
+    assert @cache.active?
+  end
+
   private
 
   def key
