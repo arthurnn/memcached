@@ -134,5 +134,30 @@ class Memcached
     alias :"[]" :get
     alias :"[]=" :set
 
+    # Return an array of server objects.
+    def servers
+      server_structs.map do |server| 
+        class << server
+          def alive?
+            next_retry <= Time.now
+          end
+        end
+
+        server
+      end
+    end
+
+    # Wraps Memcached#set_servers to convert server objects to strings.
+    def set_servers(servers)
+      servers = servers.map do |server|
+        if server.is_a?(String)
+          server
+        else
+          inspect_server(server)
+        end
+      end
+
+      super
+    end
   end
 end
