@@ -65,6 +65,9 @@ class Memcached
     def cas(key, ttl=@default_ttl, raw=false, &block)
       super(key, ttl, !raw, &block)
       true
+    rescue TypeError
+      ttl = ttl.to_i
+      retry
     rescue NotFound, ConnectionDataExists
       false
     end
@@ -80,6 +83,9 @@ class Memcached
     def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
       true
+    rescue TypeError
+      ttl = ttl.to_i
+      retry
     rescue NotStored
       false
     end
@@ -95,6 +101,9 @@ class Memcached
       super(key, value, ttl, !raw)
       # This causes me  pain
       @string_return_types ? "STORED\r\n" : true
+    rescue TypeError
+      ttl = ttl.to_i
+      retry
     rescue NotStored
       @string_return_types? "NOT STORED\r\n" : false
     end

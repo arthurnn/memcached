@@ -1,5 +1,6 @@
 
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
+require 'active_support/duration'
 
 class RailsTest < Test::Unit::TestCase
 
@@ -130,6 +131,35 @@ class RailsTest < Test::Unit::TestCase
     compare_servers cache, @servers + @servers
     cache.set_servers @servers
     compare_servers cache, @servers + @servers + @servers
+  end
+
+  def test_cas_with_duration
+    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
+    value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
+    cache.set key, @value
+    cache.cas(key, ActiveSupport::Duration.new(2592000, [[:months, 1]])) do |current|
+      assert_equal @value, current
+      value2
+    end
+    assert_equal value2, cache.get(key)
+  end
+
+  def test_set_with_duration
+    @cache.set key, @value, ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
+  def test_write_with_duration
+    @cache.write key, @value, :ttl => ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
+  def test_add_with_duration
+    @cache.add key, @value, ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    result = @cache.get key
+    assert_equal @value, result
   end
 
   private
