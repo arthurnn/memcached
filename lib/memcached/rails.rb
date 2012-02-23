@@ -23,7 +23,9 @@ class Memcached
         args.any? ? args.unshift : opts.delete(:servers)
       ).flatten.compact
 
-      opts[:prefix_key] ||= opts[:namespace]
+      opts[:prefix_key] = opts[:namespace] if opts[:namespace]
+      opts[:prefix_delimiter] = opts[:namespace_separator] if opts[:namespace_separator]
+
       @logger = opts[:logger]
       @string_return_types = opts[:string_return_types]
 
