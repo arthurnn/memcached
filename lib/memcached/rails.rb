@@ -4,7 +4,7 @@ class Memcached
     eval("alias :'#{method_name}_orig' :'#{method_name}'")
   end
 
-  # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API and Rails 3.2.
+  # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API and Rails 3.2. (Note that ActiveSupport::Duration objects are supported, but not recommended, as ttl parameters. Using Fixnum ttls, such as provided by time_constants.gem, is much faster.)
   class Rails < ::Memcached
 
     DEFAULTS = {
@@ -159,14 +159,10 @@ class Memcached
 
     # Wraps Memcached#set_servers to convert server objects to strings.
     def set_servers(servers)
-      servers = servers.map do |server|
-        if server.is_a?(String)
-          server
-        else
-          inspect_server(server)
-        end
+      servers = Array(servers)
+      servers.map! do |server|
+        server.is_a?(String) ? server : inspect_server(server)
       end
-
       super
     end
   end

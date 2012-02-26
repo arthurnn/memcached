@@ -130,9 +130,8 @@ class RailsTest < Test::Unit::TestCase
     cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace)
     compare_servers cache, @servers
     cache.set_servers cache.servers
-    compare_servers cache, @servers + @servers
-    cache.set_servers @servers
-    compare_servers cache, @servers + @servers + @servers
+    cache = Memcached::Rails.new(:servers => @servers.first, :namespace => @namespace)
+    cache.set_servers @servers.first
   end
 
   def test_cas_with_duration
