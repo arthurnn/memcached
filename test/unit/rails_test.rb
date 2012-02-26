@@ -1,10 +1,12 @@
 
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
+require 'active_support/duration'
 
 class RailsTest < Test::Unit::TestCase
 
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043', "#{UNIX_SOCKET_NAME}0"]
+    @duration = ActiveSupport::Duration.new(2592000, [[:months, 1]])
     @namespace = 'rails_test'
     @cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace)
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
@@ -18,6 +20,7 @@ class RailsTest < Test::Unit::TestCase
   end
 
   def test_exist
+    @cache.delete(key)
     assert !@cache.exist?(key)
     @cache.set key, nil
     assert @cache.exist?(key)
@@ -115,10 +118,64 @@ class RailsTest < Test::Unit::TestCase
     assert_equal @namespace, @cache.namespace
   end
 
+  def test_active
+    assert @cache.active?
+  end
+
+  def test_servers
+    compare_servers @cache, @servers
+  end
+
+  def test_set_servers
+    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace)
+    compare_servers cache, @servers
+    cache.set_servers cache.servers
+    cache = Memcached::Rails.new(:servers => @servers.first, :namespace => @namespace)
+    cache.set_servers @servers.first
+  end
+
+  def test_cas_with_duration
+    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
+    value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
+    cache.set key, @value
+    cache.cas(key, @duration) do |current|
+      assert_equal @value, current
+      value2
+    end
+    assert_equal value2, cache.get(key)
+  end
+
+  def test_set_with_duration
+    @cache.set key, @value, @duration
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
+  def test_set_with_invalid_type
+    assert_raises(TypeError) do
+      @cache.set key, Object.new, 0, true
+    end
+  end
+
+  def test_write_with_duration
+    @cache.write key, @value, :ttl => @duration
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
+  def test_add_with_duration
+    @cache.add key, @value, @duration
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
   private
 
   def key
     caller.first[/.*[` ](.*)'/, 1] # '
   end
 
+  def compare_servers(cache, servers)
+    cache.servers.map{|s| "#{s.hostname}:#{s.port}".chomp(':0')} == servers
+  end
 end

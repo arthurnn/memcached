@@ -4,7 +4,7 @@ class Memcached
     eval("alias :'#{method_name}_orig' :'#{method_name}'")
   end
 
-  # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
+  # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API and Rails 3.2. (Note that ActiveSupport::Duration objects are supported, but not recommended, as ttl parameters. Using Fixnum ttls, such as provided by time_constants.gem, is much faster.)
   class Rails < ::Memcached
 
     DEFAULTS = {
@@ -23,7 +23,9 @@ class Memcached
         args.any? ? args.unshift : opts.delete(:servers)
       ).flatten.compact
 
-      opts[:prefix_key] ||= opts[:namespace]
+      opts[:prefix_key] = opts[:namespace] if opts[:namespace]
+      opts[:prefix_delimiter] = opts[:namespace_separator] if opts[:namespace_separator]
+
       @logger = opts[:logger]
       @string_return_types = opts[:string_return_types]
 
@@ -33,6 +35,11 @@ class Memcached
 
     def logger=(logger)
       @logger = logger
+    end
+
+    # Check if there are any servers defined?
+    def active?
+      servers.any?
     end
 
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from
@@ -60,6 +67,9 @@ class Memcached
     def cas(key, ttl=@default_ttl, raw=false, &block)
       super(key, ttl, !raw, &block)
       true
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotFound, ConnectionDataExists
       false
     end
@@ -75,6 +85,9 @@ class Memcached
     def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
       true
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotStored
       false
     end
@@ -88,8 +101,10 @@ class Memcached
     # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
-      # This causes me  pain
       @string_return_types ? "STORED\r\n" : true
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotStored
       @string_return_types? "NOT STORED\r\n" : false
     end
@@ -129,5 +144,23 @@ class Memcached
     alias :"[]" :get
     alias :"[]=" :set
 
+    # Return an array of server objects.
+    def servers
+      server_structs.each do |server|
+        def server.alive?
+          next_retry <= Time.now
+        end unless server.respond_to?(:alive?)
+      end
+      server_structs
+    end
+
+    # Wraps Memcached#set_servers to convert server objects to strings.
+    def set_servers(servers)
+      servers = Array(servers)
+      servers.map! do |server|
+        server.is_a?(String) ? server : inspect_server(server)
+      end
+      super
+    end
   end
 end
