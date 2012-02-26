@@ -146,15 +146,12 @@ class Memcached
 
     # Return an array of server objects.
     def servers
-      server_structs.map do |server|
-        class << server
-          def alive?
-            next_retry <= Time.now
-          end
-        end
-
-        server
+      server_structs.each do |server|
+        def server.alive?
+          next_retry <= Time.now
+        end unless server.respond_to?(:alive?)
       end
+      server_structs
     end
 
     # Wraps Memcached#set_servers to convert server objects to strings.
