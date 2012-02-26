@@ -10,6 +10,7 @@ Copyright 2009-2011 Cloudburst, LLC. Licensed under the AFL 3. See the included 
 
 * clean API
 * robust access to all memcached features
+* SASL support for the binary protocol
 * multiple hashing modes, including consistent hashing
 * ludicrous speed, including optional pipelined IO with no_reply
 
