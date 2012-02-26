@@ -72,7 +72,7 @@ task :valgrind do
 end
 
 def with_vms(cmd)
-  ["ree", "1.9.2", "rbx"].each do |vm| #, "jruby-head"
+  ["ree-1.8.7-2011.03", "1.9.2", "rbx"].each do |vm| #, "jruby-head"
     if !system("bash -c 'cd && source .bash_profile && rvm use #{vm} && cd - && rake clean >> /dev/null && rake compile >> /dev/null && rake #{cmd}'")
       puts "#{vm} #{cmd} failed"
       exit(1)
