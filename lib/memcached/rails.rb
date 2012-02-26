@@ -4,7 +4,7 @@ class Memcached
     eval("alias :'#{method_name}_orig' :'#{method_name}'")
   end
 
-  # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API.
+  # A legacy compatibility wrapper for the Memcached class. It has basic compatibility with the <b>memcache-client</b> API and Rails 3.2.
   class Rails < ::Memcached
 
     DEFAULTS = {
@@ -67,9 +67,9 @@ class Memcached
     def cas(key, ttl=@default_ttl, raw=false, &block)
       super(key, ttl, !raw, &block)
       true
-    rescue TypeError
-      ttl = ttl.to_i
-      retry
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotFound, ConnectionDataExists
       false
     end
@@ -85,9 +85,9 @@ class Memcached
     def set(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
       true
-    rescue TypeError
-      ttl = ttl.to_i
-      retry
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotStored
       false
     end
@@ -101,11 +101,10 @@ class Memcached
     # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
-      # This causes me  pain
       @string_return_types ? "STORED\r\n" : true
-    rescue TypeError
-      ttl = ttl.to_i
-      retry
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotStored
       @string_return_types? "NOT STORED\r\n" : false
     end
@@ -147,7 +146,7 @@ class Memcached
 
     # Return an array of server objects.
     def servers
-      server_structs.map do |server| 
+      server_structs.map do |server|
         class << server
           def alive?
             next_retry <= Time.now

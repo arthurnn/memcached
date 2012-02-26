@@ -6,6 +6,7 @@ class RailsTest < Test::Unit::TestCase
 
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043', "#{UNIX_SOCKET_NAME}0"]
+    @duration = ActiveSupport::Duration.new(2592000, [[:months, 1]])
     @namespace = 'rails_test'
     @cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace)
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
@@ -19,6 +20,7 @@ class RailsTest < Test::Unit::TestCase
   end
 
   def test_exist
+    @cache.delete(key)
     assert !@cache.exist?(key)
     @cache.set key, nil
     assert @cache.exist?(key)
@@ -137,7 +139,7 @@ class RailsTest < Test::Unit::TestCase
     cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
     cache.set key, @value
-    cache.cas(key, ActiveSupport::Duration.new(2592000, [[:months, 1]])) do |current|
+    cache.cas(key, @duration) do |current|
       assert_equal @value, current
       value2
     end
@@ -145,19 +147,25 @@ class RailsTest < Test::Unit::TestCase
   end
 
   def test_set_with_duration
-    @cache.set key, @value, ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    @cache.set key, @value, @duration
     result = @cache.get key
     assert_equal @value, result
   end
 
+  def test_set_with_invalid_type
+    assert_raises(TypeError) do
+      @cache.set key, Object.new, 0, true
+    end
+  end
+
   def test_write_with_duration
-    @cache.write key, @value, :ttl => ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    @cache.write key, @value, :ttl => @duration
     result = @cache.get key
     assert_equal @value, result
   end
 
   def test_add_with_duration
-    @cache.add key, @value, ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    @cache.add key, @value, @duration
     result = @cache.get key
     assert_equal @value, result
   end
@@ -169,20 +177,6 @@ class RailsTest < Test::Unit::TestCase
   end
 
   def compare_servers(cache, servers)
-    cache_servers = cache.servers
-    assert_equal servers.count, cache_servers.count
-    cache_servers.count.times do |n|
-      server = servers[n]
-      if cache_servers[n].type == Memcached::Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
-        assert_equal server, cache_servers[n].hostname
-      else
-        host, port = server.split(":")
-        assert_equal host, cache_servers[n].hostname
-        assert_equal port, cache_servers[n].port.to_s
-      end
-      assert_equal 8, cache_servers[n].weight
-      assert cache_servers[n].alive?
-    end
+    cache.servers.map{|s| "#{s.hostname}:#{s.port}".chomp(':0')} == servers
   end
-
 end
