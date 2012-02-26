@@ -84,3 +84,5 @@ end
 
 $CFLAGS << " -Os"
 create_makefile 'rlibmemcached'
+run("mv Makefile Makefile.in", "Copy Makefile")
+run("sed 's/-I.opt.local.include//' Makefile.in > Makefile", "Remove MacPorts from the include path")

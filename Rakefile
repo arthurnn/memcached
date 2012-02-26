@@ -13,6 +13,7 @@ Echoe.new("memcached") do |p|
                       "ext/lib",
                       "ext/share",
                       "ext/**/Makefile",
+                      "ext/Makefile.in",
                       "ext/libmemcached-*/autom4te.cache",
                       "ext/libmemcached-*/clients/memcat",
                       "ext/libmemcached-*/clients/memcp",
