@@ -1,5 +1,6 @@
 
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
+require 'active_support/duration'
 
 class RailsTest < Test::Unit::TestCase
 
@@ -115,10 +116,73 @@ class RailsTest < Test::Unit::TestCase
     assert_equal @namespace, @cache.namespace
   end
 
+  def test_active
+    assert @cache.active?
+  end
+
+  def test_servers
+    compare_servers @cache, @servers
+  end
+
+  def test_set_servers
+    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace)
+    compare_servers cache, @servers
+    cache.set_servers cache.servers
+    compare_servers cache, @servers + @servers
+    cache.set_servers @servers
+    compare_servers cache, @servers + @servers + @servers
+  end
+
+  def test_cas_with_duration
+    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
+    value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
+    cache.set key, @value
+    cache.cas(key, ActiveSupport::Duration.new(2592000, [[:months, 1]])) do |current|
+      assert_equal @value, current
+      value2
+    end
+    assert_equal value2, cache.get(key)
+  end
+
+  def test_set_with_duration
+    @cache.set key, @value, ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
+  def test_write_with_duration
+    @cache.write key, @value, :ttl => ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
+  def test_add_with_duration
+    @cache.add key, @value, ActiveSupport::Duration.new(2592000, [[:months, 1]])
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
   private
 
   def key
     caller.first[/.*[` ](.*)'/, 1] # '
+  end
+
+  def compare_servers(cache, servers)
+    cache_servers = cache.servers
+    assert_equal servers.count, cache_servers.count
+    cache_servers.count.times do |n|
+      server = servers[n]
+      if cache_servers[n].type == Memcached::Lib::MEMCACHED_CONNECTION_UNIX_SOCKET
+        assert_equal server, cache_servers[n].hostname
+      else
+        host, port = server.split(":")
+        assert_equal host, cache_servers[n].hostname
+        assert_equal port, cache_servers[n].port.to_s
+      end
+      assert_equal 8, cache_servers[n].weight
+      assert cache_servers[n].alive?
+    end
   end
 
 end
