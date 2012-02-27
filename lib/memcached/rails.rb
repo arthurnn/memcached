@@ -149,7 +149,7 @@ class Memcached
       server_structs.each do |server|
         def server.alive?
           next_retry <= Time.now
-        end unless server.respond_to?(:alive?)
+        end
       end
     end
 
