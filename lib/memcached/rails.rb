@@ -151,7 +151,6 @@ class Memcached
           next_retry <= Time.now
         end unless server.respond_to?(:alive?)
       end
-      server_structs
     end
 
     # Wraps Memcached#set_servers to convert server objects to strings.
