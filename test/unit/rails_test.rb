@@ -126,6 +126,12 @@ class RailsTest < Test::Unit::TestCase
     compare_servers @cache, @servers
   end
 
+  def test_servers_alive
+    @cache.servers.each do |server|
+      assert server.alive?
+    end
+  end
+
   def test_set_servers
     cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace)
     compare_servers cache, @servers
