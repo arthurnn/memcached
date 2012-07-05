@@ -152,7 +152,6 @@ ext/libmemcached-0.32/libmemcachedutil/libmemcachedutil.ver
 ext/libmemcached-0.32/libmemcachedutil/memcached_pool.c
 ext/libmemcached-0.32/m4/ac_cxx_compile_stdcxx_0x.m4
 ext/libmemcached-0.32/m4/ac_cxx_header_stdcxx_98.m4
-ext/libmemcached-0.32/m4/aclocal.m4
 ext/libmemcached-0.32/m4/acx_pthread.m4
 ext/libmemcached-0.32/m4/byteorder.m4
 ext/libmemcached-0.32/m4/deprecated.m4
@@ -225,6 +224,7 @@ lib/memcached/exceptions.rb
 lib/memcached/experimental.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
+memcached.gemspec
 test/profile/benchmark.rb
 test/profile/c_profiler.rb
 test/profile/exercise.rb
