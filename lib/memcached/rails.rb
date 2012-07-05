@@ -1,3 +1,5 @@
+require 'memcached'
+
 class Memcached
 
   (instance_methods - NilClass.instance_methods).each do |method_name|
