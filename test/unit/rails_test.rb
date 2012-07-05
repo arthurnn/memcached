@@ -203,6 +203,21 @@ class RailsTest < Test::Unit::TestCase
     assert_equal @value, result
   end
 
+  def test_fetch
+    # returns
+    assert_equal @value, @cache.fetch("x"){ @value }
+
+    # sets
+    assert_equal @value, @cache.read("x")
+
+    # reads
+    assert_equal @value, @cache.fetch("x"){ 1 }
+
+    # works with options
+    @cache.expects(:write).with("y", 1, :foo => :bar)
+    @cache.fetch("y", :foo => :bar){ 1 }
+  end
+
   private
 
   def key
