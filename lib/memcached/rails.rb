@@ -98,6 +98,17 @@ class Memcached
       set(key, value, options[:ttl] || @default_ttl, options[:raw])
     end
 
+    def fetch(key, options={})
+      result = read(key, options)
+      if result.nil?
+        result = yield
+        write(key, result, options)
+        result
+      else
+        result
+      end
+    end
+
     # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
       super(key, value, ttl, !raw)
