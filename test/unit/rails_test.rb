@@ -163,10 +163,38 @@ class RailsTest < Test::Unit::TestCase
     end
   end
 
-  def test_write_with_duration
-    @cache.write key, @value, :ttl => @duration
+  def test_write_with_default_duration
+    # should be do an actual write
+    @cache.write key, @value
     result = @cache.get key
     assert_equal @value, result
+
+    # should use correct ttl
+    @cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :default_ttl => 123)
+    @cache.expects(:set).with(key, @value, 123, nil)
+    @cache.write key, @value
+  end
+
+  def test_write_with_duration_as_ttl
+    # should be do an actual write
+    @cache.write key, @value, :ttl => 123
+    result = @cache.get key
+    assert_equal @value, result
+
+    # should use correct ttl
+    @cache.expects(:set).with(key, @value, 123, nil)
+    @cache.write key, @value, :ttl => 123
+  end
+
+  def test_write_with_duration_as_expires_in
+    # should be do an actual write
+    @cache.write key, @value, :expires_in => @duration
+    result = @cache.get key
+    assert_equal @value, result
+
+    # should use correct ttl
+    @cache.expects(:set).with(key, @value, 123, nil)
+    @cache.write key, @value, :expires_in => 123
   end
 
   def test_add_with_duration
