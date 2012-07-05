@@ -8,6 +8,7 @@ Echoe.new("memcached") do |p|
   p.rdoc_pattern = /README|TODO|LICENSE|CHANGELOG|BENCH|COMPAT|exceptions|experimental.rb|behaviors|rails.rb|memcached.rb/
   p.rdoc_options = %w[--line-numbers --inline-source --title Memcached --main README.rdoc --exclude=ext/bin --exclude=ext/libmemcached-.*/(clients|tests)]
   p.retain_gemspec = true
+  p.development_dependencies = ["rake", "mocha", "echoe", "activesupport"]
   p.clean_pattern += ["ext/Makefile",
                       "ext/bin",
                       "ext/include",
