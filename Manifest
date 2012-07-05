@@ -225,6 +225,7 @@ lib/memcached/exceptions.rb
 lib/memcached/experimental.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
+memcached.gemspec
 test/profile/benchmark.rb
 test/profile/c_profiler.rb
 test/profile/exercise.rb
