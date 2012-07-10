@@ -87,7 +87,7 @@ task :test_all do
   with_vms("test")
 end
 
-task :prerelease => [:test_all]
+task :prerelease => [:test]
 
 task :benchmark_all do
   with_vms("benchmark CLIENT=libm")
