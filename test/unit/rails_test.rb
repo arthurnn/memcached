@@ -218,9 +218,6 @@ class RailsTest < Test::Unit::TestCase
   end
 
   def test_read_multi
-    require 'debugger'
-    debugger
-
     # empty
     assert_equal({}, @cache.read_multi)
     assert_equal({}, @cache.read_multi("a", "b"))
@@ -242,6 +239,13 @@ class RailsTest < Test::Unit::TestCase
     # keeps order
     assert_equal ["a", "b"], @cache.read_multi("a", "b").keys
     assert_equal ["b", "a"], @cache.read_multi("b", "a").keys
+  end
+
+  def test_clear
+    @cache.write("x", 1)
+    assert_equal 1, @cache.read("x")
+    assert_equal nil, @cache.clear
+    assert_equal nil, @cache.read("x")
   end
 
   private

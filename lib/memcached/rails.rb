@@ -153,6 +153,7 @@ class Memcached
     end
 
     alias :flush_all :flush
+    alias :clear :flush
 
     alias :"[]" :get
     alias :"[]=" :set
