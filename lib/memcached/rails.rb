@@ -157,6 +157,11 @@ class Memcached
     alias :"[]" :get
     alias :"[]=" :set
 
+    def read_multi(*keys)
+      return {} if keys.empty?
+      get_multi(keys)
+    end
+
     # Return an array of server objects.
     def servers
       server_structs.each do |server|
