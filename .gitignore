@@ -8,6 +8,7 @@ ext/bin
 ext/include
 ext/lib
 ext/share
+ext/Makefile.in
 ext/**/Makefile
 ext/libmemcached-*/**/Makefile
 ext/libmemcached-*/autom4te.cache
