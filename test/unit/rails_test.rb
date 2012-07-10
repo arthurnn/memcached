@@ -1,4 +1,3 @@
-
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
 require 'active_support/duration'
 
@@ -216,6 +215,37 @@ class RailsTest < Test::Unit::TestCase
     # works with options
     @cache.expects(:write).with("y", 1, :foo => :bar)
     @cache.fetch("y", :foo => :bar){ 1 }
+  end
+
+  def test_read_multi
+    # empty
+    assert_equal({}, @cache.read_multi)
+    assert_equal({}, @cache.read_multi("a", "b"))
+    assert_raise TypeError do
+      @cache.read_multi(["a", "b"])
+    end
+
+    # filled
+    @cache.write "a", @value
+    assert_equal({"a" => @value}, @cache.read_multi("a", "b"))
+    assert_raise TypeError do
+      @cache.read_multi(["a", "b"])
+    end
+
+    # multiple keys
+    @cache.write "b", 1
+    assert_equal({"a" => @value, "b" => 1}, @cache.read_multi("a", "b"))
+
+    # keeps order
+    assert_equal ["a", "b"], @cache.read_multi("a", "b").keys
+    assert_equal ["b", "a"], @cache.read_multi("b", "a").keys
+  end
+
+  def test_clear
+    @cache.write("x", 1)
+    assert_equal 1, @cache.read("x")
+    assert_equal nil, @cache.clear
+    assert_equal nil, @cache.read("x")
   end
 
   private

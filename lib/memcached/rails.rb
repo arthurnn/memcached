@@ -153,9 +153,15 @@ class Memcached
     end
 
     alias :flush_all :flush
+    alias :clear :flush
 
     alias :"[]" :get
     alias :"[]=" :set
+
+    def read_multi(*keys)
+      return {} if keys.empty?
+      get_multi(keys)
+    end
 
     # Return an array of server objects.
     def servers
