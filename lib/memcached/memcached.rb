@@ -300,7 +300,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt>, and pass a String as the <tt>value</tt>, if you want to set a raw byte array.
   #
   def set(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value
+    value = encode(value, marshal, flags)
     begin
       check_return_code(
         Lib.memcached_set(@struct, key, value, ttl, flags),
@@ -317,7 +317,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Add a key/value pair. Raises <b>Memcached::NotStored</b> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
   def add(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value
+    value = encode(value, marshal, flags)
     begin
       check_return_code(
         Lib.memcached_add(@struct, key, value, ttl, flags),
@@ -366,7 +366,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Replace a key/value pair. Raises <b>Memcached::NotFound</b> if the key does not exist on the server. The parameters are the same as <tt>set</tt>.
   def replace(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value
+    value = encode(value, marshal, flags)
     begin
       check_return_code(
          Lib.memcached_replace(@struct, key, value, ttl, flags),
@@ -505,17 +505,15 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
         end
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
       end
-      if marshal
-        hash.each do |key, value|
-          hash[key] = Marshal.load(value)
-        end
+      hash.each do |key, value|
+        hash[key] = decode(value, marshal, flags)
       end
       hash
     else
       # Single get
       value, flags, ret = Lib.memcached_get_rvalue(@struct, keys)
       check_return_code(ret, keys)
-      marshal ? Marshal.load(value) : value
+      decode(value, marshal, flags)
     end
   rescue => e
     tries ||= 0
@@ -669,5 +667,13 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       strings << ":#{server.weight}" if options[:ketama_weighted]
     end
     strings.join
+  end
+
+  def encode(value, marshal, flags)
+    value = marshal ? Marshal.dump(value) : value
+  end
+
+  def decode(value, marshal, flags)
+    marshal ? Marshal.load(value) : value
   end
 end
