@@ -18,11 +18,19 @@ static memcached_return binary_exist(memcached_st *ptr, memcached_server_st *ser
                                                             +ptr->prefix_key_length
                                                             +request.message.header.request.extlen));
 
-  memcached_return rc;
-  if ((rc= memcached_do(server, (const char*)request.bytes, send_length, 0)) != MEMCACHED_SUCCESS)
+
+  struct libmemcached_io_vector_st vector[]=
+  {
+    { send_length, request.bytes },
+    { strlen(ptr->prefix_key), ptr->prefix_key },
+    { key_length, key }
+  };
+
+  memcached_return rc= memcached_vdo(server, vector, 3, 1);
+  if (rc != MEMCACHED_SUCCESS)
   {
     memcached_io_reset(server);
-    return rc;
+    return (rc == MEMCACHED_SUCCESS) ? MEMCACHED_WRITE_FAILURE : rc;
   }
 
   rc= memcached_response(server, NULL, 0, NULL);
@@ -39,34 +47,23 @@ static memcached_return binary_exist(memcached_st *ptr, memcached_server_st *ser
 static memcached_return ascii_exist(memcached_st *ptr, memcached_server_st *server,
                                      const char* key, size_t key_length)
 {
-  char buffer[MEMCACHED_DEFAULT_COMMAND_SIZE];
-  char *buffer_ptr = buffer;
+  struct libmemcached_io_vector_st vector[]=
+  {
+    { sizeof("add ") -1, "add " },
+    { strlen(ptr->prefix_key), ptr->prefix_key },
+    { key_length, key },
+    { sizeof(" 0") -1, " 0" },
+    { sizeof(" 2678400") -1, " 2678400" },
+    { sizeof(" 0") -1, " 0" },
+    { 2, "\r\n" },
+    { 2, "\r\n" }
+  };
 
-  /* Copy in the command, no space needed, we handle that in the command function*/
-  memcpy(buffer_ptr, "add ", 4);
+  memcached_return rc = memcached_vdo(server, vector, 8, 1);
 
-  /* Copy in the key prefix, switch to the buffer_ptr */
-  buffer_ptr= memcpy(buffer_ptr + 4 , ptr->prefix_key, strlen(ptr->prefix_key));
-
-
-  /* Copy in the key, adjust point if a key prefix was used. */
-  buffer_ptr= memcpy(buffer_ptr + (ptr->prefix_key ? strlen(ptr->prefix_key) : 0),
-                     key, key_length);
-  buffer_ptr+= key_length;
-  buffer_ptr[0]=  ' ';
-  buffer_ptr++;
-
-  const char *expiration= "2678400";
-  size_t write_length= (size_t)(buffer_ptr - buffer);
-  write_length+= (size_t) snprintf(buffer_ptr, MEMCACHED_DEFAULT_COMMAND_SIZE,
-                                       "%u %llu %zu%s\r\n",
-                                       0,
-                                       (unsigned long long)expiration, 0,
-                                       "");
-
-  memcached_return rc=  memcached_do(server, buffer, write_length, 0);
   if (rc == MEMCACHED_SUCCESS)
   {
+    char buffer[MEMCACHED_DEFAULT_COMMAND_SIZE];
     rc= memcached_response(server, buffer, MEMCACHED_DEFAULT_COMMAND_SIZE, NULL);
 
     if (rc == MEMCACHED_NOTSTORED)
