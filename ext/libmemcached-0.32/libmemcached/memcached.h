@@ -28,6 +28,7 @@
 #include <libmemcached/memcached_string.h>
 #include <libmemcached/memcached_result.h>
 #include <libmemcached/memcached_storage.h>
+#include <libmemcached/memcached_exist.h>
 #include <libmemcached/memcached_sasl.h>
 
 #ifdef __cplusplus

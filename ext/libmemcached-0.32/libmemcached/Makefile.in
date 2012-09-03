@@ -109,7 +109,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES) $(noinst_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 am__libmemcached_la_SOURCES_DIST = crc.c memcached.c memcached_auto.c \
 	memcached_analyze.c memcached_behavior.c memcached_connect.c \
-	memcached_delete.c memcached_do.c memcached_dump.c \
+	memcached_delete.c memcached_do.c memcached_dump.c memcached_exist.c \
 	memcached_fetch.c memcached_flush.c memcached_get.c \
 	memcached_touch.c memcached_hash.c memcached_hosts.c \
 	memcached_io.c memcached_purge.c memcached_flush_buffers.c \
@@ -132,6 +132,7 @@ am_libmemcached_la_OBJECTS = libmemcached_la-crc.lo \
 	libmemcached_la-memcached_delete.lo \
 	libmemcached_la-memcached_do.lo \
 	libmemcached_la-memcached_dump.lo \
+	libmemcached_la-memcached_exist.lo \
 	libmemcached_la-memcached_fetch.lo \
 	libmemcached_la-memcached_flush.lo \
 	libmemcached_la-memcached_get.lo \
@@ -169,7 +170,7 @@ libmemcachedcallbacks_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(libmemcachedcallbacks_la_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-DEFAULT_INCLUDES = 
+DEFAULT_INCLUDES =
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
@@ -191,7 +192,7 @@ am__pkginclude_HEADERS_DIST = memcached.h memcached.hpp \
 	memcached_result.h memcached_sasl.h memcached_server.h \
 	memcached_storage.h memcached_string.h memcached_touch.h \
 	memcached_types.h memcached_watchpoint.h visibility.h \
-	memcached_util.h memcached_pool.h
+	memcached_util.h memcached_pool.h memcached_exist.h
 HEADERS = $(noinst_HEADERS) $(pkginclude_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -362,7 +363,7 @@ top_srcdir = @top_srcdir@
 EXTRA_DIST = libmemcached_probes.d memcached/README.txt libmemcached.ver \
              memcached_configure.h.in
 
-EXTRA_HEADERS = 
+EXTRA_HEADERS =
 BUILT_SOURCES = $(am__append_6)
 noinst_HEADERS = libmemcached_probes.h \
                  memcached_io.h \
@@ -371,7 +372,7 @@ noinst_HEADERS = libmemcached_probes.h \
                  memcached/protocol_binary.h
 
 pkginclude_HEADERS = memcached.h memcached.hpp memcached_configure.h \
-	memcached_constants.h memcached_get.h memcached_result.h \
+	memcached_constants.h memcached_get.h memcached_exist.h memcached_result.h \
 	memcached_sasl.h memcached_server.h memcached_storage.h \
 	memcached_string.h memcached_touch.h memcached_types.h \
 	memcached_watchpoint.h visibility.h $(am__append_1)
@@ -383,7 +384,7 @@ libmemcached_la_CFLAGS = ${AM_CFLAGS} ${NO_CONVERSION}
 libmemcached_la_SOURCES = crc.c memcached.c memcached_auto.c \
 	memcached_analyze.c memcached_behavior.c memcached_connect.c \
 	memcached_delete.c memcached_do.c memcached_dump.c \
-	memcached_fetch.c memcached_flush.c memcached_get.c \
+	memcached_exist.c memcached_fetch.c memcached_flush.c memcached_get.c \
 	memcached_touch.c memcached_hash.c memcached_hosts.c \
 	memcached_io.c memcached_purge.c memcached_flush_buffers.c \
 	md5.c memcached_key.c memcached_quit.c memcached_parse.c \
@@ -476,9 +477,9 @@ clean-noinstLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libmemcached.la: $(libmemcached_la_OBJECTS) $(libmemcached_la_DEPENDENCIES) 
+libmemcached.la: $(libmemcached_la_OBJECTS) $(libmemcached_la_DEPENDENCIES)
 	$(libmemcached_la_LINK) -rpath $(libdir) $(libmemcached_la_OBJECTS) $(libmemcached_la_LIBADD) $(LIBS)
-libmemcachedcallbacks.la: $(libmemcachedcallbacks_la_OBJECTS) $(libmemcachedcallbacks_la_DEPENDENCIES) 
+libmemcachedcallbacks.la: $(libmemcachedcallbacks_la_OBJECTS) $(libmemcachedcallbacks_la_DEPENDENCIES)
 	$(libmemcachedcallbacks_la_LINK)  $(libmemcachedcallbacks_la_OBJECTS) $(libmemcachedcallbacks_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
@@ -612,6 +613,13 @@ libmemcached_la-memcached_dump.lo: memcached_dump.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='memcached_dump.c' object='libmemcached_la-memcached_dump.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcached_la_CFLAGS) $(CFLAGS) -c -o libmemcached_la-memcached_dump.lo `test -f 'memcached_dump.c' || echo '$(srcdir)/'`memcached_dump.c
+
+libmemcached_la-memcached_exist.lo: memcached_exist.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcached_la_CFLAGS) $(CFLAGS) -MT libmemcached_la-memcached_exist.lo -MD -MP -MF $(DEPDIR)/libmemcached_la-memcached_exist.Tpo -c -o libmemcached_la-memcached_exist.lo `test -f 'memcached_exist.c' || echo '$(srcdir)/'`memcached_exist.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libmemcached_la-memcached_exist.Tpo $(DEPDIR)/libmemcached_la-memcached_exist.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='memcached_exist.c' object='libmemcached_la-memcached_exist.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcached_la_CFLAGS) $(CFLAGS) -c -o libmemcached_la-memcached_exist.lo `test -f 'memcached_exist.c' || echo '$(srcdir)/'`memcached_exist.c
 
 libmemcached_la-memcached_fetch.lo: memcached_fetch.c
 @am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libmemcached_la_CFLAGS) $(CFLAGS) -MT libmemcached_la-memcached_fetch.lo -MD -MP -MF $(DEPDIR)/libmemcached_la-memcached_fetch.Tpo -c -o libmemcached_la-memcached_fetch.lo `test -f 'memcached_fetch.c' || echo '$(srcdir)/'`memcached_fetch.c

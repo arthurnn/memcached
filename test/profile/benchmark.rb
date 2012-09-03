@@ -19,8 +19,6 @@ puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
 
 [
   ["memcached"],
-  ["remix-stash", "remix/stash"],
-  [JRUBY ? "jruby-memcache-client" : "memcache-client", "memcache"],
   ["kgio"], ["dalli"]
 ].each do |gem_name, requirement|
   begin
@@ -29,11 +27,6 @@ puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
     puts "Loaded #{gem_name} #{Gem.loaded_specs[gem_name].version.to_s rescue nil}"
   rescue LoadError
   end
-end
-
-class Remix::Stash
-  # Remix::Stash API doesn't let you set servers
-  @@clusters = {:default => Remix::Stash::Cluster.new(['127.0.0.1:43042', '127.0.0.1:43043'])}
 end
 
 class Dalli::ClientCompat < Dalli::Client
@@ -59,7 +52,7 @@ end
 class Bench
 
   def initialize(loops = nil, stack_depth = nil)
-    @loops = (loops || 50000).to_i
+    @loops = (loops || 5000).to_i
     @stack_depth = (stack_depth || 0).to_i
 
     puts "PID is #{Process.pid}"
@@ -104,26 +97,24 @@ class Bench
   def reset_clients
     # Other clients
     @clients = {
-      "mclient:ascii" => MemCache.new(['127.0.0.1:43042', '127.0.0.1:43043']),
-      "stash:bin" => Remix::Stash.new(:root),
-      "dalli:bin" => Dalli::ClientCompat.new(['127.0.0.1:43042', '127.0.0.1:43043'], :marshal => false, :threadsafe => false)}
+      "dalli:bin" => Dalli::ClientCompat.new(['127.0.0.1:11211'], :marshal => false, :threadsafe => false)}
 
     # Us
     @clients.merge!({
       "libm:ascii" => Memcached::Rails.new(
-        ['127.0.0.1:43042', '127.0.0.1:43043'],
+        ['127.0.0.1:11211'],
         :buffer_requests => false, :no_block => false, :namespace => "namespace"),
       "libm:ascii:pipeline" => Memcached::Rails.new(
-        ['127.0.0.1:43042', '127.0.0.1:43043'],
+        ['127.0.0.1:11211'],
         :no_block => true, :buffer_requests => true, :noreply => true, :namespace => "namespace"),
       "libm:ascii:udp" => Memcached::Rails.new(
         ["#{UNIX_SOCKET_NAME}0", "#{UNIX_SOCKET_NAME}1"],
         :buffer_requests => false, :no_block => false, :namespace => "namespace"),
       "libm:bin" => Memcached::Rails.new(
-        ['127.0.0.1:43042', '127.0.0.1:43043'],
+        ['127.0.0.1:11211'],
         :buffer_requests => false, :no_block => false, :namespace => "namespace", :binary_protocol => true),
       "libm:bin:buffer" => Memcached::Rails.new(
-        ['127.0.0.1:43042', '127.0.0.1:43043'],
+        ['127.0.0.1:11211'],
         :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true)})
   end
 
