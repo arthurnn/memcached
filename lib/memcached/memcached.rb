@@ -524,7 +524,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     retry
   end
 
-  def exist?(key)
+  def exist(key)
     check_return_code(
       Lib.memcached_exist(@struct, key),
       key
