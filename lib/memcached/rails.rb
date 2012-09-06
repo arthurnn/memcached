@@ -59,7 +59,7 @@ class Memcached
 
     # Returns whether the key exists, even if the value is nil.
     def exist?(key, options = {})
-      exist(key, options)
+      exist(key)
       true
     rescue NotFound
       false
