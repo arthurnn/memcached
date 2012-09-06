@@ -94,6 +94,16 @@ memcached_return memcached_exist_by_key(memcached_st *ptr,
   if (ptr->number_of_hosts == 0)
     return MEMCACHED_NO_SERVERS;
 
+  if (ptr->flags & MEM_NOREPLY)
+  {
+    size_t dummy_length;
+    uint32_t dummy_flags;
+    memcached_return dummy_error;
+
+    memcached_get(ptr, key, key_length, &dummy_length, &dummy_flags, &dummy_error);
+    return dummy_error;
+  }
+
   unsigned int server_key= memcached_generate_hash(ptr, key, key_length);
   memcached_server_st *server= &ptr->hosts[server_key];
 
