@@ -74,22 +74,41 @@ task :valgrind do
  exec("ruby #{File.dirname(__FILE__)}/test/profile/valgrind.rb")
 end
 
-def with_vms(cmd)
-  ["/usr/bin/ruby", "/opt/local/bin/ruby1.9", "/usr/local/rubinius/1.2.4/bin/rbx"].each do |vm|
-    bindir = vm.split("/")[0..-2].join("/")
-    puts "#{vm} #{cmd} started"
-    if File.exist?("#{bindir}/rake") && system("bash --norc --noprofile -c 'export PATH=#{bindir}:/bin:/usr/bin && which rake && #{bindir}/rake clean && #{bindir}/rake compile && #{bindir}/rake #{cmd}'")
-      puts "#{vm} #{cmd} complete"
+def with_vm(vm, cmd)
+  bindir = vm.split("/")[0..-2].join("/")
+  puts "#{vm} #{cmd} started"
+  if !File.exist?("#{bindir}/rake")
+    puts "#{vm} not found"
+    exit(1)
+  elsif system("bash --norc --noprofile -c 'export PATH=#{bindir}:/bin:/usr/bin && which rake && #{bindir}/rake clean && #{bindir}/rake compile'")
+    puts "#{vm} compiled"
+    if system("bash --norc --noprofile -c 'export PATH=#{bindir}:/bin:/usr/bin && #{bindir}/rake #{cmd}'")
+      puts "#{vm} #{cmd} success (1st try)"
+    elsif system("bash --norc --noprofile -c 'export PATH=#{bindir}:/bin:/usr/bin && #{bindir}/rake #{cmd}'")
+      puts "#{vm} #{cmd} success (2nd try)"
     else
       puts "#{vm} #{cmd} failed"
       exit(1)
     end
+  else
+    puts "#{vm} compilation failed"
+    exit(1)
   end
 end
 
-task :test_all do
-  with_vms("test")
+task :test_18 do
+  with_vm("/usr/bin/ruby", "test")
 end
+
+task :test_19 do
+  with_vm("/opt/local/bin/ruby1.9", "test")
+end
+
+task :test_rbx do
+  with_vm("/usr/local/rubinius/1.2.4/bin/rbx", "test")
+end
+
+task :test_all => [:test_18, :test_19, :test_rbx]
 
 task :prerelease => [:test_all]
 
