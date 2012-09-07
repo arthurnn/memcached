@@ -178,8 +178,8 @@ memcached_return memcached_io_read(memcached_server_st *ptr,
   return MEMCACHED_SUCCESS;
 }
 
-ssize_t memcached_io_write(memcached_server_st *ptr,
-                           const void *buffer, size_t length, char with_flush)
+static ssize_t _io_write(memcached_server_st *ptr,
+                         const void *buffer, size_t length, char with_flush)
 {
   size_t original_length;
   const char* buffer_ptr;
@@ -243,6 +243,34 @@ ssize_t memcached_io_write(memcached_server_st *ptr,
   }
 
   return (ssize_t) original_length;
+}
+
+ssize_t memcached_io_write(memcached_server_st *ptr,
+                           const void *buffer, size_t length, char with_flush)
+{
+  return _io_write(ptr, buffer, length, with_flush);
+}
+
+ssize_t memcached_io_writev(memcached_server_st *ptr,
+                            const struct libmemcached_io_vector_st *vector,
+                            size_t number_of, char with_flush)
+{
+  ssize_t total = 0;
+  char f = (char)false;
+
+  for (size_t x = 0; x < number_of; x++, vector++)
+  {
+    ssize_t returnable;
+    if ((returnable= _io_write(ptr, vector->buffer, vector->length, f)) == -1)
+      return -1;
+
+    total+= returnable;
+  }
+
+  if (with_flush && _io_write(ptr, NULL, 0, (char)true) == -1)
+    return -1;
+
+  return total;
 }
 
 memcached_return memcached_io_close(memcached_server_st *ptr)
@@ -429,7 +457,7 @@ static ssize_t io_flush(memcached_server_st *ptr,
   return (ssize_t) return_length;
 }
 
-/* 
+/*
   Eventually we will just kill off the server with the problem.
 */
 void memcached_io_reset(memcached_server_st *ptr)
@@ -439,7 +467,7 @@ void memcached_io_reset(memcached_server_st *ptr)
 
 /**
  * Read a given number of bytes from the server and place it into a specific
- * buffer. Reset the IO channel on this server if an error occurs. 
+ * buffer. Reset the IO channel on this server if an error occurs.
  */
 memcached_return memcached_safe_read(memcached_server_st *ptr,
                                      void *dta,
@@ -526,7 +554,7 @@ static void increment_udp_message_id(memcached_server_st *ptr)
   uint16_t cur_req= get_udp_datagram_request_id(header);
   int msg_num= get_msg_num_from_request_id(cur_req);
   int thread_id= get_thread_id_from_request_id(cur_req);
-  
+
   if (((++msg_num) & UDP_REQUEST_ID_THREAD_MASK) != 0)
     msg_num= 0;
 

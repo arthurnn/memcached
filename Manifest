@@ -111,6 +111,7 @@ ext/libmemcached-0.32/libmemcached/memcached_constants.h
 ext/libmemcached-0.32/libmemcached/memcached_delete.c
 ext/libmemcached-0.32/libmemcached/memcached_do.c
 ext/libmemcached-0.32/libmemcached/memcached_dump.c
+ext/libmemcached-0.32/libmemcached/memcached_exist.c
 ext/libmemcached-0.32/libmemcached/memcached_fetch.c
 ext/libmemcached-0.32/libmemcached/memcached_flush.c
 ext/libmemcached-0.32/libmemcached/memcached_flush_buffers.c

@@ -14,9 +14,10 @@ pkginclude_HEADERS= memcached.h \
 		    memcached.hpp \
                     memcached_configure.h \
 		    memcached_constants.h \
+		    memcached_exist.h \
 		    memcached_get.h \
 		    memcached_result.h \
-                    memcached_sasl.h \
+				memcached_sasl.h \
 		    memcached_server.h \
 		    memcached_storage.h \
 		    memcached_string.h \
@@ -45,6 +46,7 @@ libmemcached_la_SOURCES = crc.c \
 			  memcached_delete.c \
 			  memcached_do.c \
 			  memcached_dump.c \
+			  memcached_exist.c \
 			  memcached_fetch.c \
 			  memcached_flush.c \
 			  memcached_get.c \
@@ -53,7 +55,7 @@ libmemcached_la_SOURCES = crc.c \
 			  memcached_hosts.c \
 			  memcached_io.c \
 			  memcached_purge.c \
-                          memcached_flush_buffers.c \
+				memcached_flush_buffers.c \
 			  md5.c \
 			  memcached_key.c \
 			  memcached_quit.c \
@@ -69,7 +71,7 @@ libmemcached_la_SOURCES = crc.c \
 			  memcached_version.c \
 			  murmur_hash.c \
 			  jenkins_hash.c \
-                          memcached_allocators.c
+				memcached_allocators.c
 
 
 if INCLUDE_HSIEH_SRC

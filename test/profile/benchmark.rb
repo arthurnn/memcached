@@ -54,6 +54,9 @@ class Dalli::ClientCompat < Dalli::Client
     super
   rescue Dalli::DalliError
   end
+  def exist?(key)
+    !get(key).nil?
+  end
 end
 
 class Bench
@@ -204,6 +207,12 @@ class Bench
       c.delete @k3
     end
 
+    benchmark_clients("exist") do |c|
+      c.exist? @k1
+      c.exist? @k2
+      c.exist? @k3
+    end
+
     benchmark_clients("get-missing", false) do |c|
       c.get @k1
       c.get @k2
@@ -220,6 +229,12 @@ class Bench
       c.prepend @k1, @m_value
       c.prepend @k2, @m_value
       c.prepend @k3, @m_value
+    end
+
+    benchmark_clients("exist-missing", false) do |c|
+      c.exist? @k1
+      c.exist? @k2
+      c.exist? @k3
     end
 
     benchmark_clients("set-large") do |c|
