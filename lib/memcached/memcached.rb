@@ -524,6 +524,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     retry
   end
 
+  # Check if a key exists on the server. It will return nil if the value is found, or raise
+  # <tt>Memcached::NotFound</tt> if the key does not exist.
   def exist(key)
     check_return_code(
       Lib.memcached_exist(@struct, key),
