@@ -75,8 +75,12 @@ task :valgrind do
 end
 
 def with_vms(cmd)
-  ["ree-1.8.7-2011.03", "1.9.2", "rbx"].each do |vm| #, "jruby-head"
-    if !system("bash -c 'cd && source .bash_profile && rvm use #{vm} && cd - && rake clean >> /dev/null && rake compile >> /dev/null && rake #{cmd}'")
+  ["/usr/bin/ruby", "/opt/local/bin/ruby1.9", "/usr/local/rubinius/1.2.4/bin/rbx"].each do |vm|
+    bindir = vm.split("/")[0..-2].join("/")
+    puts "#{vm} #{cmd} started"
+    if File.exist?("#{bindir}/rake") && system("bash --norc --noprofile -c 'export PATH=#{bindir}:/bin:/usr/bin && which rake && #{bindir}/rake clean && #{bindir}/rake compile && #{bindir}/rake #{cmd}'")
+      puts "#{vm} #{cmd} complete"
+    else
       puts "#{vm} #{cmd} failed"
       exit(1)
     end
@@ -87,7 +91,7 @@ task :test_all do
   with_vms("test")
 end
 
-task :prerelease => [:test]
+task :prerelease => [:test_all]
 
 task :benchmark_all do
   with_vms("benchmark CLIENT=libm")

@@ -1,4 +1,4 @@
-v1.4.4  Add memcached_exist function to libmemcached and Memcached#exist to expose it.
+v1.4.4. Add memcached_exist function to libmemcached and Memcached#exist to expose it (ccocchi). Make test_all work again without RVM.
 
 v1.4.3. Various convenience methods added to Memcached::Rails (grosser). Retain gemspec. Add Gemfile for convenience.
 

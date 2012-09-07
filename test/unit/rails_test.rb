@@ -236,9 +236,11 @@ class RailsTest < Test::Unit::TestCase
     @cache.write "b", 1
     assert_equal({"a" => @value, "b" => 1}, @cache.read_multi("a", "b"))
 
-    # keeps order
-    assert_equal ["a", "b"], @cache.read_multi("a", "b").keys
-    assert_equal ["b", "a"], @cache.read_multi("b", "a").keys
+    # keeps order on 1.9
+    if RUBY_VERSION =~ /^1.9/
+      assert_equal ["a", "b"], @cache.read_multi("a", "b").keys
+      assert_equal ["b", "a"], @cache.read_multi("b", "a").keys
+    end
   end
 
   def test_clear
