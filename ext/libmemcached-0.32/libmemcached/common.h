@@ -136,6 +136,12 @@ void memcached_quit_server(memcached_server_st *ptr, uint8_t io_death);
 LIBMEMCACHED_LOCAL
 memcached_return memcached_do(memcached_server_st *ptr, const void *commmand,
                               size_t command_length, uint8_t with_flush);
+
+LIBMEMCACHED_LOCAL
+memcached_return memcached_vdo(memcached_server_st *ptr,
+                               const struct libmemcached_io_vector_st *vector, size_t count,
+                               uint8_t with_flush);
+
 LIBMEMCACHED_LOCAL
 memcached_return value_fetch(memcached_server_st *ptr,
                              char *buffer,
@@ -161,11 +167,11 @@ extern uint64_t htonll(uint64_t);
 LIBMEMCACHED_LOCAL
 memcached_return memcached_purge(memcached_server_st *ptr);
 
-static inline memcached_return memcached_validate_key_length(size_t key_length, 
+static inline memcached_return memcached_validate_key_length(size_t key_length,
                                                              bool binary) {
   unlikely (key_length == 0)
     return MEMCACHED_BAD_KEY_PROVIDED;
-  
+
   if (binary)
   {
     unlikely (key_length > 0xffff)
@@ -173,7 +179,7 @@ static inline memcached_return memcached_validate_key_length(size_t key_length,
   }
   else
   {
-    unlikely (key_length >= MEMCACHED_MAX_KEY) 
+    unlikely (key_length >= MEMCACHED_MAX_KEY)
       return MEMCACHED_BAD_KEY_PROVIDED;
   }
 

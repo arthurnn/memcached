@@ -1,3 +1,5 @@
+v1.4.4  Add memcached_exist function to libmemcached and Memcached#exist to expose it.
+
 v1.4.3. Various convenience methods added to Memcached::Rails (grosser). Retain gemspec. Add Gemfile for convenience.
 
 v1.4.2. Remove race from Marshal.load for any poor saps who have side-effects in their serialization mechanism (jason-o-matic).

@@ -647,6 +647,30 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
+  # Exist
+
+  def test_missing_exist
+    assert_raise(Memcached::NotFound) do
+      @cache.exist key
+    end
+  end
+
+  def test_exist
+    @cache.set key, @value
+    assert_nil @cache.exist(key)
+  end
+
+  def test_missing_exist_binary
+    assert_raise(Memcached::NotFound) do
+      @binary_protocol_cache.exist key
+    end
+  end
+
+  def test_exist_binary
+    @binary_protocol_cache.set key, @value
+    assert_nil @binary_protocol_cache.exist(key)
+  end
+
   # Replace
 
   def test_replace
