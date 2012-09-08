@@ -110,7 +110,7 @@ end
 
 task :test_all => [:test_18, :test_19, :test_rbx]
 
-task :prerelease => [:test_all]
+task :prerelease => [:manifest, :test_all, :install]
 
 task :benchmark_all do
   with_vms("benchmark CLIENT=libm")

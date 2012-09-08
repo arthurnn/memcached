@@ -48,6 +48,7 @@ ext/libmemcached-0.32/config/ltmain.sh
 ext/libmemcached-0.32/config/missing
 ext/libmemcached-0.32/configure
 ext/libmemcached-0.32/configure.ac
+ext/libmemcached-0.32/configure.lineno
 ext/libmemcached-0.32/docs/Makefile.am
 ext/libmemcached-0.32/docs/Makefile.in
 ext/libmemcached-0.32/docs/libmemcached.pod
@@ -112,6 +113,7 @@ ext/libmemcached-0.32/libmemcached/memcached_delete.c
 ext/libmemcached-0.32/libmemcached/memcached_do.c
 ext/libmemcached-0.32/libmemcached/memcached_dump.c
 ext/libmemcached-0.32/libmemcached/memcached_exist.c
+ext/libmemcached-0.32/libmemcached/memcached_exist.h
 ext/libmemcached-0.32/libmemcached/memcached_fetch.c
 ext/libmemcached-0.32/libmemcached/memcached_flush.c
 ext/libmemcached-0.32/libmemcached/memcached_flush_buffers.c
