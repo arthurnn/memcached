@@ -836,6 +836,13 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
+  def test_key_error_message
+    key = "i have a space"
+    @cache.set key, @value
+  rescue Memcached::ABadKeyWasProvidedOrCharactersOutOfRange => e
+    assert_match /#{key}/, e.message
+  end
+
   def test_server_error_message
     @cache.set key, "I'm big" * 1000000
     assert false # Never reached

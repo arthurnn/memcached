@@ -552,6 +552,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     else
       check_return_code(ret)
     end
+  rescue ABadKeyWasProvidedOrCharactersOutOfRange
   end
 
   # Return a Hash of statistics responses from the set of servers. Each value is an array with one entry for each server, in the same order the servers were defined.
