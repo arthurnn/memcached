@@ -608,6 +608,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       reraise(key, ret)
     end
   rescue TypeError
+    # Reached if show_backtraces is true
     reraise(key, ret)
   end
 
