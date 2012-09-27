@@ -2,12 +2,12 @@
 
 Gem::Specification.new do |s|
   s.name = "memcached"
-  s.version = "1.4.5"
+  s.version = "1.4.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
   s.cert_chain = ["/Users/eweaver/cloudburst/configuration/gem_certificates/evan_weaver-original-public_cert.pem"]
-  s.date = "2012-09-08"
+  s.date = "2012-09-27"
   s.description = "An interface to the libmemcached C client."
   s.email = ""
   s.extensions = ["ext/extconf.rb"]

@@ -830,15 +830,26 @@ class MemcachedTest < Test::Unit::TestCase
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @cache.get(key)
     end
-
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
       @cache.get([key])
     end
   end
 
+  def test_verify_key_disabled
+    cache = Memcached.new @servers, :verify_key => false
+    key = "i have a space"
+    assert_raises(Memcached::ProtocolError) do
+      cache.set key, @value
+    end
+    assert_raises(Memcached::NotFound) do
+      cache.get key, @value
+    end
+  end
+
   def test_key_error_message
     key = "i have a space"
-    @cache.set key, @value
+    @cache.get key, @value
+    assert false # Never reached
   rescue Memcached::ABadKeyWasProvidedOrCharactersOutOfRange => e
     assert_match /#{key}/, e.message
   end
