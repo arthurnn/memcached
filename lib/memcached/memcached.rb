@@ -369,7 +369,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     value = marshal ? Marshal.dump(value) : value
     begin
       check_return_code(
-         Lib.memcached_replace(@struct, key, value, ttl, flags),
+        Lib.memcached_replace(@struct, key, value, ttl, flags),
         key
       )
     rescue => e
@@ -613,7 +613,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   end
 
   def reraise(key, ret)
-    message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}"
+    message = "Key #{inspect_keys(key, (detect_failure if ret == Lib::MEMCACHED_SERVER_MARKED_DEAD)).inspect}" if key
     if key.is_a?(String)
       if ret == Lib::MEMCACHED_ERRNO
         if (server = Lib.memcached_server_by_key(@struct, key)).is_a?(Array)
@@ -622,7 +622,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
         end
       elsif ret == Lib::MEMCACHED_SERVER_ERROR
         if (server = Lib.memcached_server_by_key(@struct, key)).is_a?(Array)
-          message = "\"#{server.first.cached_server_error}\". #{message}."
+          message = "\"#{server.first.cached_server_error}\". #{message}"
         end
       end
     end
