@@ -2304,6 +2304,7 @@ VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t 
 VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
   size_t value_length = 0;
   VALUE ary = rb_ary_new();
+  if (error) *error = MEMCACHED_TIMEOUT; // timeouts leave error uninitialized
   char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
   VALUE str = rb_str_new_by_ref(value, value_length);
   rb_ary_push(ary, str);
