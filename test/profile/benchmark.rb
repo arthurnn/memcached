@@ -9,6 +9,11 @@ require 'memcached'
 require 'benchmark'
 require 'rubygems'
 require 'ruby-debug' if ENV['DEBUG'] && !JRUBY
+if ENV['PROFILE']
+  require 'ruby-prof'
+  require 'fileutils'
+  FileUtils.mkdir_p 'profiles'
+end
 begin; require 'memory'; rescue LoadError; end
 
 
@@ -153,7 +158,12 @@ class Bench
         10003.times { yield client }
 
         GC.disable if !JRUBY
+        RubyProf.start if ENV['PROFILE']
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
+        if ENV['PROFILE']
+          prof = RubyProf::MultiPrinter.new(RubyProf.stop)
+          prof.print(:path => 'profiles', :profile => "#{test_name}-#{client_name.gsub(':','-')}")
+        end
       rescue Exception => e
         puts "#{test_name}: #{client_name} => #{e.inspect}" if ENV["DEBUG"]
         reset_clients
