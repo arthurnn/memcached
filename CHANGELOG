@@ -1,4 +1,6 @@
 
+v1.5.0. Fix unknown return code errors (tmm1).
+
 v1.4.6. Correctly report key in error message instead of erroring again (jason-o-matic, timhaines).
 
 v1.4.5. Fix missing file in manifest. Add install test to pre-release hook.
