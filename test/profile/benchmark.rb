@@ -249,7 +249,7 @@ class Bench
       c.get @k3, true
     end
 
-    if defined?(Memcached)
+    if defined?(Memcached) && ENV['TEST'].empty? && ENV['CLIENT'].empty?
       benchmark_hashes(Memcached::HASH_VALUES, "hash") do |i|
         Rlibmemcached.memcached_generate_hash_rvalue(@k1, i)
         Rlibmemcached.memcached_generate_hash_rvalue(@k2, i)
