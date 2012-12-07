@@ -48,7 +48,6 @@ ext/libmemcached-0.32/config/ltmain.sh
 ext/libmemcached-0.32/config/missing
 ext/libmemcached-0.32/configure
 ext/libmemcached-0.32/configure.ac
-ext/libmemcached-0.32/configure.lineno
 ext/libmemcached-0.32/docs/Makefile.am
 ext/libmemcached-0.32/docs/Makefile.in
 ext/libmemcached-0.32/docs/libmemcached.pod
@@ -157,7 +156,6 @@ ext/libmemcached-0.32/libmemcachedutil/libmemcachedutil.ver
 ext/libmemcached-0.32/libmemcachedutil/memcached_pool.c
 ext/libmemcached-0.32/m4/ac_cxx_compile_stdcxx_0x.m4
 ext/libmemcached-0.32/m4/ac_cxx_header_stdcxx_98.m4
-ext/libmemcached-0.32/m4/aclocal.m4
 ext/libmemcached-0.32/m4/acx_pthread.m4
 ext/libmemcached-0.32/m4/byteorder.m4
 ext/libmemcached-0.32/m4/deprecated.m4
