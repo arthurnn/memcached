@@ -48,7 +48,8 @@ def check_libmemcached
 
   Dir.chdir(HERE) do
     Dir.chdir(BUNDLE_PATH) do
-      run("find . | xargs touch", "Touching all files so autoconf doesn't run.")
+      ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
+      run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
       run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{HERE} --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
     end
 
