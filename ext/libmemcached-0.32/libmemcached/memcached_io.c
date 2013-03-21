@@ -421,7 +421,7 @@ static ssize_t io_flush(memcached_server_st *ptr,
         if (rc == MEMCACHED_SUCCESS)
           continue;
         else if (rc == MEMCACHED_TIMEOUT) {
-          if((ptr->root->snd_timeout) && (timeout_cnt++ <=  ptr->root->max_poll_retries))
+          if((ptr->root->snd_timeout) && (timeout_cnt++ <=  ptr->root->poll_max_retries))
             continue;
         }
 

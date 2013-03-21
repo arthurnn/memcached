@@ -19,7 +19,7 @@ class Memcached
     :timeout => 0.25,
     :rcv_timeout => nil,
     :snd_timeout => nil,
-    :max_poll_retries => 1,
+    :poll_max_retries => 1,
     :poll_timeout => nil,
     :connect_timeout => 0.25,
     :prefix_key => '',
@@ -97,7 +97,7 @@ Valid option parameters are:
 <tt>:binary_protocol</tt>:: Use the binary protocol. Defaults to false. Please note that using the binary protocol is usually <b>slower</b> than the ASCII protocol.
 <tt>:sort_hosts</tt>:: Whether to force the server list to stay sorted. This defeats consistent hashing and is rarely useful.
 <tt>:verify_key</tt>:: Validate keys before accepting them. Never disable this.
-<tt>:max_poll_retries</tt>:: Maximum poll timeout retries before marking a flush failed on timeouts.
+<tt>:poll_max_retries</tt>:: Maximum poll timeout retries before marking a flush failed on timeouts.
 
 Please note that when <tt>:no_block => true</tt>, update methods do not raise on errors. For example, if you try to <tt>set</tt> an invalid key, it will appear to succeed. The actual setting of the key occurs after libmemcached has returned control to your program, so there is no way to backtrack and raise the exception.
 
