@@ -374,7 +374,7 @@ static ssize_t io_flush(memcached_server_st *ptr,
   size_t return_length;
   char *local_write_ptr= ptr->write_buffer;
   size_t write_length= ptr->write_buffer_offset;
-  ssize_t timeout_cnt;
+  int timeout_cnt;
 
   *error= MEMCACHED_SUCCESS;
 
