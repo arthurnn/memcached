@@ -374,6 +374,7 @@ static ssize_t io_flush(memcached_server_st *ptr,
   size_t return_length;
   char *local_write_ptr= ptr->write_buffer;
   size_t write_length= ptr->write_buffer_offset;
+  ssize_t timeout_cnt;
 
   *error= MEMCACHED_SUCCESS;
 
@@ -395,6 +396,7 @@ static ssize_t io_flush(memcached_server_st *ptr,
 #endif
 
   return_length= 0;
+  timeout_cnt = 0;
   while (write_length)
   {
     WATCHPOINT_ASSERT(ptr->fd != -1);
@@ -416,8 +418,14 @@ static ssize_t io_flush(memcached_server_st *ptr,
         memcached_return rc;
         rc= io_wait(ptr, MEM_WRITE);
 
-        if (rc == MEMCACHED_SUCCESS || rc == MEMCACHED_TIMEOUT)
+        if (rc == MEMCACHED_SUCCESS)
           continue;
+        else if (rc == MEMCACHED_TIMEOUT) {
+          if(timeout_cnt++ > 10)
+            return -1;
+          else
+            continue;
+        }
 
         memcached_quit_server(ptr, 1);
         return -1;
