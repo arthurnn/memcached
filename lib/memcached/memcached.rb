@@ -18,6 +18,7 @@ class Memcached
     :retry_timeout => 60,
     :timeout => 0.25,
     :rcv_timeout => nil,
+    :snd_timeout => nil,
     :poll_timeout => nil,
     :connect_timeout => 0.25,
     :prefix_key => '',
@@ -143,6 +144,9 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     # Read timeouts
     options[:rcv_timeout] ||= options[:timeout]
     options[:poll_timeout] ||= options[:timeout]
+    
+    # Write timeouts
+    options[:snd_timeout] ||= options[:timeout]
 
     # Set the prefix key. Support the legacy name.
     set_prefix_key(options[:prefix_key] || options[:namespace])
