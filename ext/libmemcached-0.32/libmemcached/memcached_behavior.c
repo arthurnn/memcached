@@ -132,8 +132,8 @@ memcached_return memcached_behavior_set(memcached_st *ptr,
   case MEMCACHED_BEHAVIOR_POLL_TIMEOUT:
     ptr->poll_timeout= (int32_t)data;
     break;
-  case MEMCACHED_BEHAVIOR_MAX_POLL_RETRIES:
-    ptr->max_poll_retries= (uint32_t) data;
+  case MEMCACHED_BEHAVIOR_POLL_MAX_RETRIES:
+    ptr->poll_max_retries= (uint32_t) data;
     break;
   case MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT:
     ptr->connect_timeout= (int32_t)data;
@@ -232,8 +232,8 @@ uint64_t memcached_behavior_get(memcached_st *ptr,
     return (uint64_t)ptr->snd_timeout;
   case MEMCACHED_BEHAVIOR_RCV_TIMEOUT:
     return (uint64_t)ptr->rcv_timeout;
-  case MEMCACHED_BEHAVIOR_MAX_POLL_RETRIES:
-    return (uint64_t)ptr->max_poll_retries;
+  case MEMCACHED_BEHAVIOR_POLL_MAX_RETRIES:
+    return (uint64_t)ptr->poll_max_retries;
   case MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE:
     {
       int sock_size;
