@@ -27,6 +27,7 @@ end
 require 'memcached/exceptions'
 require 'memcached/behaviors'
 require 'memcached/auth'
+require 'memcached/encoder/marshal'
 require 'memcached/memcached'
 require 'memcached/rails'
 require 'memcached/experimental'

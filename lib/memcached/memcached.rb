@@ -33,6 +33,7 @@ class Memcached
     :binary_protocol => false,
     :credentials => nil,
     :experimental_features => false,
+    :encoder => Memcached::Encoder::Marshal,
     :exception_retry_limit => 5,
     :exceptions_to_retry => [
         Memcached::ServerIsMarkedDead,
@@ -297,10 +298,10 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #
   # Accepts an optional <tt>ttl</tt> value to specify the maximum lifetime of the key on the server, in seconds. <tt>ttl</tt> must be a <tt>FixNum</tt>. <tt>0</tt> means no ttl. Note that there is no guarantee that the key will persist as long as the <tt>ttl</tt>, but it will not persist longer.
   #
-  # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt>, and pass a String as the <tt>value</tt>, if you want to set a raw byte array.
+  # Also accepts an <tt>encode</tt> value, which defaults to <tt>true</tt> and uses the default Marshal encoder. Set <tt>encode</tt> to <tt>false</tt>, and pass a String as the <tt>value</tt>, if you want to set a raw byte array.
   #
-  def set(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value
+  def set(key, value, ttl=@default_ttl, encode=true, flags=FLAGS)
+    value = encode ? options[:encoder].encode(value) : value
     begin
       check_return_code(
         Lib.memcached_set(@struct, key, value, ttl, flags),
@@ -316,8 +317,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   end
 
   # Add a key/value pair. Raises <b>Memcached::NotStored</b> if the key already exists on the server. The parameters are the same as <tt>set</tt>.
-  def add(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value
+  def add(key, value, ttl=@default_ttl, encode=true, flags=FLAGS)
+    value = encode ? options[:encoder].encode(value) : value
     begin
       check_return_code(
         Lib.memcached_add(@struct, key, value, ttl, flags),
@@ -335,7 +336,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #
   # Also accepts an optional <tt>offset</tt> paramater, which defaults to 1. <tt>offset</tt> must be an integer.
   #
-  # Note that the key must be initialized to an unmarshalled integer first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
+  # Note that the key must be initialized to an unencoded integer first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>encode</tt> set to <tt>false</tt>.
   def increment(key, offset=1)
     ret, value = Lib.memcached_increment(@struct, key, offset)
     check_return_code(ret, key)
@@ -365,8 +366,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #:startdoc:
 
   # Replace a key/value pair. Raises <b>Memcached::NotFound</b> if the key does not exist on the server. The parameters are the same as <tt>set</tt>.
-  def replace(key, value, ttl=@default_ttl, marshal=true, flags=FLAGS)
-    value = marshal ? Marshal.dump(value) : value
+  def replace(key, value, ttl=@default_ttl, encode=true, flags=FLAGS)
+    value = encode ? options[:encoder].encode(value) : value
     begin
       check_return_code(
         Lib.memcached_replace(@struct, key, value, ttl, flags),
@@ -382,7 +383,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Appends a string to a key's value. Accepts a String <tt>key</tt> and a String <tt>value</tt>. Raises <b>Memcached::NotFound</b> if the key does not exist on the server.
   #
-  # Note that the key must be initialized to an unmarshalled string first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>marshal</tt> set to <tt>false</tt>.
+  # Note that the key must be initialized to an unencoded string first, via <tt>set</tt>, <tt>add</tt>, or <tt>replace</tt> with <tt>encode</tt> set to <tt>false</tt>.
   def append(key, value)
     # Requires memcached 1.2.4
     check_return_code(
@@ -416,7 +417,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #
   # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
   # :retry_on_exceptions does not apply to this method
-  def cas(key, ttl=@default_ttl, marshal=true, flags=FLAGS)
+  def cas(key, ttl=@default_ttl, encode=true, flags=FLAGS)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
 
     begin
@@ -431,9 +432,9 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
     cas = @struct.result.cas
 
-    value = Marshal.load(value) if marshal
+    value = options[:encoder].decode(value) if encode
     value = yield value
-    value = Marshal.dump(value) if marshal
+    value = options[:encoder].encode(value) if encode
 
     begin
       check_return_code(
@@ -481,7 +482,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Gets a key's value from the server. Accepts a String <tt>key</tt> or array of String <tt>keys</tt>.
   #
-  # Also accepts a <tt>marshal</tt> value, which defaults to <tt>true</tt>. Set <tt>marshal</tt> to <tt>false</tt> if you want the <tt>value</tt> to be returned directly as a String. Otherwise it will be assumed to be a marshalled Ruby object and unmarshalled.
+  # Also accepts a <tt>encode</tt> value, which defaults to <tt>true</tt>. Set <tt>encode</tt> to <tt>false</tt> if you want the <tt>value</tt> to be returned directly as a String. Otherwise it will be assumed to be an encoded Ruby object and decoded.
   #
   # If you pass a String key, and the key does not exist on the server, <b>Memcached::NotFound</b> will be raised. If you pass an array of keys, memcached's <tt>multiget</tt> mode will be used, and a hash of key/value pairs will be returned. The hash will contain only the keys that were found.
   #
@@ -489,7 +490,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #
   # Note that when you rescue Memcached::NotFound exceptions, you should use a the block rescue syntax instead of the inline syntax. Block rescues are very fast, but inline rescues are very slow.
   #
-  def get(keys, marshal=true)
+  def get(keys, encode=true)
     if keys.is_a? Array
       # Multi get
       ret = Lib.memcached_mget(@struct, keys);
@@ -505,9 +506,9 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
         end
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
       end
-      if marshal
+      if encode
         hash.each do |key, value|
-          hash[key] = Marshal.load(value)
+          hash[key] = options[:encoder].decode(value)
         end
       end
       hash
@@ -515,7 +516,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       # Single get
       value, flags, ret = Lib.memcached_get_rvalue(@struct, keys)
       check_return_code(ret, keys)
-      marshal ? Marshal.load(value) : value
+      encode ? options[:encoder].decode(value) : value
     end
   rescue => e
     tries ||= 0
@@ -534,11 +535,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   end
 
   # Gets a key's value from the previous server. Only useful with random distribution.
-  def get_from_last(key, marshal=true)
+  def get_from_last(key, encode=true)
     raise ArgumentError, "get_from_last() is not useful unless :random distribution is enabled." unless options[:distribution] == :random
     value, flags, ret = Lib.memcached_get_from_last_rvalue(@struct, key)
     check_return_code(ret, key)
-    marshal ? Marshal.load(value) : value
+    encode ? options[:encoder].decode(value) : value
   end
 
   ### Information methods
