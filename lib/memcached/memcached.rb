@@ -500,15 +500,15 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
       while ret != 21 do # Lib::MEMCACHED_END
         if ret == 0 # Lib::MEMCACHED_SUCCESS
-          hash[key] = value
+          hash[key] = encode ? [value, flags] : value
         elsif ret != 16 # Lib::MEMCACHED_NOTFOUND
           check_return_code(ret, key)
         end
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
       end
       if encode
-        hash.each do |key, value|
-          hash[key] = options[:encoder].decode(value, flags)
+        hash.each do |key, value_and_flags|
+          hash[key] = options[:encoder].decode(*value_and_flags)
         end
       end
       hash
