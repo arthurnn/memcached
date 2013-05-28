@@ -9,7 +9,7 @@
 
 typedef enum {
   MEM_READ,
-  MEM_WRITE,
+  MEM_WRITE
 } memc_read_or_write;
 
 static ssize_t io_flush(memcached_server_st *ptr, memcached_return *error);
