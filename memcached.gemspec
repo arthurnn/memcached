@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
   s.cert_chain = ["/Users/eweaver/cloudburst/configuration/gem_certificates/evan_weaver-original-public_cert.pem"]
-  s.date = "2013-05-27"
+  s.date = "2013-05-28"
   s.description = "An interface to the libmemcached C client."
   s.email = ""
   s.extensions = ["ext/extconf.rb"]
