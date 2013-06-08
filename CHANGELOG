@@ -1,4 +1,6 @@
 
+v1.5.1. Fix segfault on Ruby 1.9.3-p429 (plerohellec).
+
 v1.5.0. Fix unknown return code errors (tmm1).
 
 v1.4.6. Correctly report key in error message instead of erroring again (jason-o-matic, timhaines).
