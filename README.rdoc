@@ -4,7 +4,7 @@ An interface to the libmemcached C client.
 
 == License
 
-Copyright 2009-2011 Cloudburst, LLC. Licensed under the AFL 3. See the included LICENSE file. Portions copyright 2007-2009 TangentOrg, Brian Aker, licensed under the BSD license, and used with permission.
+Copyright 2009-2013 Cloudburst, LLC. Licensed under the AFL 3. See the included LICENSE file. Portions copyright 2007-2009 TangentOrg, Brian Aker, licensed under the BSD license, and used with permission.
 
 == Features
 
