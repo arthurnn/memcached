@@ -486,7 +486,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
   # Gets a key's value from the server. Accepts a String <tt>key</tt> or array of String <tt>keys</tt>.
   #
-  # Also accepts a <tt>encode</tt> value, which defaults to <tt>true</tt>. Set <tt>encode</tt> to <tt>false</tt> if you want the <tt>value</tt> to be returned directly as a String. Otherwise it will be assumed to be an encoded Ruby object and decoded.
+  # Also accepts a <tt>decode</tt> value, which defaults to <tt>true</tt>. Set <tt>decode</tt> to <tt>false</tt> if you want the <tt>value</tt> to be returned directly as a String. Otherwise it will be assumed to be an encoded Ruby object and decoded.
   #
   # If you pass a String key, and the key does not exist on the server, <b>Memcached::NotFound</b> will be raised. If you pass an array of keys, memcached's <tt>multiget</tt> mode will be used, and a hash of key/value pairs will be returned. The hash will contain only the keys that were found.
   #
@@ -494,7 +494,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #
   # Note that when you rescue Memcached::NotFound exceptions, you should use a the block rescue syntax instead of the inline syntax. Block rescues are very fast, but inline rescues are very slow.
   #
-  def get(keys, encode=true)
+  def get(keys, decode=true)
     if keys.is_a? Array
       # Multi get
       ret = Lib.memcached_mget(@struct, keys);
@@ -504,13 +504,13 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
       while ret != 21 do # Lib::MEMCACHED_END
         if ret == 0 # Lib::MEMCACHED_SUCCESS
-          hash[key] = encode ? [value, flags] : value
+          hash[key] = decode ? [value, flags] : value
         elsif ret != 16 # Lib::MEMCACHED_NOTFOUND
           check_return_code(ret, key)
         end
         value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
       end
-      if encode
+      if decode
         hash.each do |key, value_and_flags|
           hash[key] = @codec.decode(key, *value_and_flags)
         end
@@ -520,7 +520,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       # Single get
       value, flags, ret = Lib.memcached_get_rvalue(@struct, keys)
       check_return_code(ret, keys)
-      encode ? @codec.decode(keys, value, flags) : value
+      decode ? @codec.decode(keys, value, flags) : value
     end
   rescue => e
     tries ||= 0
@@ -539,11 +539,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   end
 
   # Gets a key's value from the previous server. Only useful with random distribution.
-  def get_from_last(key, encode=true)
+  def get_from_last(key, decode=true)
     raise ArgumentError, "get_from_last() is not useful unless :random distribution is enabled." unless options[:distribution] == :random
     value, flags, ret = Lib.memcached_get_from_last_rvalue(@struct, key)
     check_return_code(ret, key)
-    encode ? @codec.decode(key, value, flags) : value
+    decode ? @codec.decode(key, value, flags) : value
   end
 
   ### Information methods
