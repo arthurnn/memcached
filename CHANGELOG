@@ -1,4 +1,6 @@
 
+v1.6.0. Add support for custom encoders (jason-o-matic).
+
 v1.5.1. Fix segfault on Ruby 1.9.3-p429 (plerohellec).
 
 v1.5.0. Fix unknown return code errors (tmm1).
