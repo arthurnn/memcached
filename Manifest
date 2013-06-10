@@ -224,9 +224,9 @@ ext/rlibmemcached_wrap.c
 lib/memcached.rb
 lib/memcached/auth.rb
 lib/memcached/behaviors.rb
-lib/memcached/encoder/marshal.rb
 lib/memcached/exceptions.rb
 lib/memcached/experimental.rb
+lib/memcached/marshal_codec.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
 memcached.gemspec
