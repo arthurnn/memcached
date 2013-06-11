@@ -1,4 +1,6 @@
 
+v1.6.1. Clean up C-level handling of to_str (jason-o-matic).
+
 v1.6.0. Add support for custom encoders (jason-o-matic).
 
 v1.5.1. Fix segfault on Ruby 1.9.3-p429 (plerohellec).
