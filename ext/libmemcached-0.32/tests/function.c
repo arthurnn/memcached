@@ -230,6 +230,7 @@ static test_return  clone_test(memcached_st *memc)
     assert(memc_clone->on_cleanup == memc->on_cleanup);
     assert(memc_clone->on_clone == memc->on_clone);
     assert(memc_clone->poll_timeout == memc->poll_timeout);
+    assert(memc_clone->poll_max_retries == memc->poll_max_retries);
     assert(memc_clone->rcv_timeout == memc->rcv_timeout);
     assert(memc_clone->recv_size == memc->recv_size);
     assert(memc_clone->retry_timeout == memc->retry_timeout);
