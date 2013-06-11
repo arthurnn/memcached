@@ -2,6 +2,7 @@
 %{
 #include <libmemcached/visibility.h>
 #include <libmemcached/memcached.h>
+#include <libmemcached/memcached_exist.h>
 %}
 
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_st;
@@ -40,14 +41,15 @@
 // Array of strings map for multiget
 %typemap(in) (const char **keys, size_t *key_length, size_t number_of_keys) {
   unsigned int i;
+  VALUE str;
   Check_Type($input, T_ARRAY);
   $3 = (unsigned int) RARRAY_LEN($input);
   $2 = (size_t *) malloc(($3+1)*sizeof(size_t));
   $1 = (char **) malloc(($3+1)*sizeof(char *));
   for(i = 0; i < $3; i ++) {
-    Check_Type(RARRAY_PTR($input)[i], T_STRING);
-    $2[i] = RSTRING_LEN(RARRAY_PTR($input)[i]);
-    $1[i] = StringValuePtr(RARRAY_PTR($input)[i]);
+    str = rb_string_value(&RARRAY_PTR($input)[i]);
+    $1[i] = RSTRING_PTR(str);
+    $2[i] = RSTRING_LEN(str);
   }
 }
 
@@ -58,16 +60,20 @@
 
 // Generic strings
 %typemap(in) (const char *str, size_t len) {
- $1 = STR2CSTR($input);
- $2 = (size_t) RSTRING_LEN($input);
+  VALUE str;
+  str = rb_string_value(&$input);
+  $1 = RSTRING_PTR(str);
+  $2 = RSTRING_LEN(str);
 };
 
 // Void type strings without lengths for prefix_key callback
 %typemap(in) (void *data) {
-  if ( (size_t) RSTRING_LEN($input) == 0) {
+  VALUE str;
+  str = rb_string_value(&$input);
+  if (RSTRING_LEN(str) == 0) {
     $1 = NULL;
   } else {
-    $1 = STR2CSTR($input);
+    $1 = RSTRING_PTR(str);
   }
 };
 
@@ -80,10 +86,11 @@
 // Key strings with same master key
 // This will have to go if people actually want to set the master key separately
 %typemap(in) (const char *master_key, size_t master_key_length, const char *key, size_t key_length) {
- $3 = $1 = STR2CSTR($input);
- $4 = $2 = (size_t) RSTRING_LEN($input);
+  VALUE str;
+  str = rb_string_value(&$input);
+  $3 = $1 = RSTRING_PTR(str);
+  $4 = $2 = RSTRING_LEN(str);
 };
-
 
 //// Output maps
 
@@ -140,6 +147,7 @@
 %include "libmemcached/memcached_server.h"
 %include "libmemcached/memcached_sasl.h"
 %include "libmemcached/memcached_touch.h"
+%include "libmemcached/memcached_exist.h"
 
 //// Custom C functions
 
@@ -247,4 +255,3 @@ VALUE memcached_generate_hash_rvalue(const char *key, size_t key_length,memcache
     fprintf(stderr, "Failed to initialized SASL.\n");
   }
 %}
-

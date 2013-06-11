@@ -1,6 +1,12 @@
 
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
 
+class NilClass
+  def to_str
+    "error"
+  end
+end
+
 class MemcachedTest < Test::Unit::TestCase
 
   def setup
@@ -265,6 +271,15 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
+  def test_get_coerces_string_type
+    assert_raises(Memcached::NotFound) do
+      @cache.get nil
+    end
+    assert_raises(TypeError) do
+      @cache.get 1
+    end
+  end
+
   def test_get_with_server_timeout
     socket = stub_server 43047
     cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :exception_retry_limit => 0)
@@ -408,9 +423,12 @@ class MemcachedTest < Test::Unit::TestCase
       @cache.get(["#{key}_1"], false))
   end
 
-  def test_get_multi_checks_types
-    assert_raises(TypeError, ArgumentError) do
-      @cache.get([nil])
+  def test_get_multi_coerces_string_type
+    assert_nothing_raised do
+      @cache.get [nil]
+    end
+    assert_raises(TypeError) do
+      @cache.get [1]
     end
   end
 
@@ -519,6 +537,16 @@ class MemcachedTest < Test::Unit::TestCase
     sleep(2)
     assert_raise(Memcached::NotFound) do
       cache.get key
+    end
+  end
+
+  def test_set_coerces_string_type
+    assert_nothing_raised do
+      @cache.set nil, @value
+    end
+
+    assert_raises(TypeError) do
+      @cache.set 1, @value
     end
   end
 
@@ -1342,4 +1370,3 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
 end
-

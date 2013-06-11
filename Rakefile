@@ -46,6 +46,15 @@ Echoe.new("memcached") do |p|
                       "**/*.rbc"]
 end
 
+task :swig do
+  run("swig -DLIBMEMCACHED_WITH_SASL_SUPPORT -Iext/libmemcached-0.32 -ruby -autorename -o ext/rlibmemcached_wrap.c.in ext/rlibmemcached.i", "Running SWIG")
+  swig_patches = {
+    "#ifndef RUBY_INIT_STACK" => "#ifdef __NEVER__" # Patching SWIG output for JRuby.
+  }.map{|pair| "s/#{pair.join('/')}/"}.join(';')
+  # sed has different syntax for inplace switch in BSD and GNU version, so using intermediate file
+  run("sed '#{swig_patches}' ext/rlibmemcached_wrap.c.in > ext/rlibmemcached_wrap.c", "Apply patches to SWIG output")
+end
+
 task :exceptions do
   $LOAD_PATH << "lib"
   require 'memcached'
@@ -116,3 +125,8 @@ task :benchmark_all do
   with_vms("benchmark CLIENT=libm")
 end
 
+def run(cmd, reason)
+  puts reason
+  puts cmd
+  raise "'#{cmd}' failed" unless system(cmd)
+end

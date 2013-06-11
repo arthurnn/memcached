@@ -33,17 +33,10 @@ if ENV['DEBUG']
   $EXTRA_CONF = ""
 end
 
-def run(cmd, reason)
-  puts reason
-  puts cmd
-  raise "'#{cmd}' failed" unless system(cmd)
-end
-
 def check_libmemcached
   return if ENV["EXTERNAL_LIB"]
 
   $includes = " -I#{HERE}/include"
-  $defines = " -DLIBMEMCACHED_WITH_SASL_SUPPORT"
   $libraries = " -L#{HERE}/lib"
   $CFLAGS = "#{$includes} #{$libraries} #{$CFLAGS}"
   $LDFLAGS = "-lsasl2 -lm #{$libraries} #{$LDFLAGS}"
@@ -71,20 +64,13 @@ def check_libmemcached
   $LIBS << " -lmemcached_gem -lsasl2"
 end
 
-check_libmemcached
-
-if ENV['SWIG']
-  puts "WARNING: Swig 2.0.2 not found. Other versions may not work." if (`swig -version`!~ /2.0.2/)
-  run("swig #{$defines} #{$includes} -ruby -autorename -o rlibmemcached_wrap.c.in rlibmemcached.i", "Running SWIG.")
-  swig_patches = {
-    "STR2CSTR" => "StringValuePtr",                                # Patching SWIG output for Ruby 1.9.
-    "\"swig_runtime_data\"" =>  "\"SwigRuntimeData\"",             # Patching SWIG output for Ruby 1.9.
-    "#ifndef RUBY_INIT_STACK" => "#ifdef __NEVER__",               # Patching SWIG output for JRuby.
-  }.map{|pair| "s/#{pair.join('/')}/"}.join(';')
-
-  # sed has different syntax for inplace switch in BSD and GNU version, so using intermediate file
-  run("sed '#{swig_patches}' rlibmemcached_wrap.c.in > rlibmemcached_wrap.c", "Apply patches to SWIG output")
+def run(cmd, reason)
+  puts reason
+  puts cmd
+  raise "'#{cmd}' failed" unless system(cmd)
 end
+
+check_libmemcached
 
 $CFLAGS << " -Os"
 create_makefile 'rlibmemcached'
