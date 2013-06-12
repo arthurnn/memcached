@@ -100,12 +100,24 @@ class Memcached
       set(key, value, options[:ttl] || options[:expires_in] || @default_ttl, options[:raw])
     end
 
+    # Fetches data from the cache, using the given key. If there is data in
+    # the cache with the given key, then that data is returned.
+    #
+    # If there is no such data in the cache (a cache miss), then nil will be
+    # returned. However, if a block has been passed, that block will be run
+    # in the event of a cache miss. The return value of the block will be
+    # written to the cache under the given cache key, and that return value
+    # will be returned.
     def fetch(key, options={})
       result = read(key, options)
       if result.nil?
-        result = yield
-        write(key, result, options)
-        result
+        if block_given?
+          result = yield
+          write(key, result, options)
+          result
+        else
+          result
+        end
       else
         result
       end
