@@ -250,6 +250,32 @@ class RailsTest < Test::Unit::TestCase
     assert_equal nil, @cache.read("x")
   end
 
+  def test_increment
+    rand_key = "rand-key-#{rand}"
+    assert_equal nil, @cache.increment(rand_key)
+
+    start = 10
+    @cache.write rand_key, start.to_s, { raw: true }
+
+    assert_equal start, @cache.read(rand_key, { raw: true }).to_i
+    assert_equal start+1, @cache.increment(rand_key)
+
+    assert_equal start+1+5, @cache.increment(rand_key, 5)
+  end
+
+  def test_decrement
+    rand_key = "rand-key-#{rand}"
+    assert_equal nil, @cache.decrement(rand_key)
+
+    start = 10
+    @cache.write rand_key, start.to_s, { raw: true }
+
+    assert_equal start, @cache.read(rand_key, { raw: true }).to_i
+    assert_equal start-1, @cache.decrement(rand_key)
+
+    assert_equal start-1-5, @cache.decrement(rand_key, 5)
+  end
+
   private
 
   def key
