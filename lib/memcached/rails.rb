@@ -109,9 +109,13 @@ class Memcached
     def fetch(key, options={})
       result = read(key, options)
       if result.nil?
-        result = yield
-        write(key, result, options)
-        result
+        if block_given?
+          result = yield
+          write(key, result, options)
+          result
+        else
+          result
+        end
       else
         result
       end
