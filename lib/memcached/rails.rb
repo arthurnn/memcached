@@ -53,8 +53,12 @@ class Memcached
 
     # Alternative to #get. Accepts a key and an optional options hash supporting the single option
     # :raw.
-    def read(key, options = {})
-      get(key, options[:raw])
+    def read(key, options = nil)
+      if options
+        get(key, options[:raw])
+      else
+        get(key)
+      end
     end
 
     # Returns whether the key exists, even if the value is nil.

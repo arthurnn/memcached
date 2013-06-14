@@ -307,6 +307,11 @@ class RailsTest < Test::Unit::TestCase
     assert_equal start-1-5, @cache.decrement(rand_key, 5)
   end
 
+  def test_read_with_nil_options
+    @cache.write key, @value
+    assert_equal @value, @cache.read(key, nil)
+  end
+
   private
 
   def key
