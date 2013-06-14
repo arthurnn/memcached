@@ -235,6 +235,19 @@ class RailsTest < Test::Unit::TestCase
     @cache.fetch("y", :foo => :bar){ 1 }
   end
 
+  def test_fetch_when_no_block_given
+    rand_key = "key-#{rand}"
+
+    # gets nil the first time
+    assert_equal nil, @cache.fetch(rand_key)
+
+    # sets value to @value
+    assert_equal @value, @cache.fetch(rand_key) { @value }
+
+    # gets @value
+    assert_equal @value, @cache.fetch(rand_key)
+  end
+
   def test_read_multi
     # empty
     assert_equal({}, @cache.read_multi)
