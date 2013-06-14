@@ -180,5 +180,19 @@ class Memcached
       end
       super
     end
+
+    def increment(name, amount = 1, options = nil)
+      response = super(name, amount)
+      response ? response.to_i : nil
+    rescue
+      nil
+    end
+
+    def decrement(name, amount = 1, options = nil)
+      response = super(name, amount)
+      response ? response.to_i : nil
+    rescue
+      nil
+    end
   end
 end
