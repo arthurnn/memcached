@@ -196,6 +196,24 @@ class RailsTest < Test::Unit::TestCase
     @cache.write key, @value, :expires_in => 123
   end
 
+  def test_write_with_unless_exist
+    @cache.write key, @value, :unless_exist => true
+    result = @cache.get key
+    assert_equal @value, result
+
+    rand_value = "rand-value-#{rand}"
+    @cache.write key, rand_value, :unless_exist => true
+
+    result = @cache.get key
+    assert_equal @value, result
+  end
+
+  def test_write_with_fixnum_and_raw
+    @cache.write key, 1, :raw => true
+    result = @cache.read key, :raw => true
+    assert_equal "1", result
+  end
+
   def test_add_with_duration
     @cache.add key, @value, @duration
     result = @cache.get key
