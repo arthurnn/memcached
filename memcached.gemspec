@@ -6,7 +6,6 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
-  s.cert_chain = ["/Users/eweaver/cloudburst/configuration/gem_certificates/evan_weaver-original-public_cert.pem"]
   s.date = "2013-06-11"
   s.description = "An interface to the libmemcached C client."
   s.email = ""
@@ -18,9 +17,15 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib", "ext"]
   s.rubyforge_project = "evan"
   s.rubygems_version = "1.8.23"
-  s.signing_key = "/Users/eweaver/cloudburst/configuration/gem_certificates/evan_weaver-original-private_key.pem"
   s.summary = "An interface to the libmemcached C client."
   s.test_files = ["test/test_helper.rb", "test/unit/binding_test.rb", "test/unit/memcached_experimental_test.rb", "test/unit/memcached_test.rb", "test/unit/rails_test.rb"]
+
+  unless File.exists?("/Users/eweaver/cloudburst/configuration/gem_certificates/evan_weaver-original-private_key.pem")
+    warn "Warning! No private key present, creating unsigned gem."
+  else
+    s.signing_key = "/Users/eweaver/cloudburst/configuration/gem_certificates/evan_weaver-original-private_key.pem"
+    s.cert_chain  = ["/Users/eweaver/cloudburst/configuration/gem_certificates/evan_weaver-original-public_cert.pem"]
+  end
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
