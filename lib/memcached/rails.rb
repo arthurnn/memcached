@@ -111,7 +111,7 @@ class Memcached
       end
     end
 
-    def fetch(key, options={})
+    def fetch(key, options = nil)
       result = read(key, options)
       if result.nil?
         if block_given?
@@ -138,7 +138,7 @@ class Memcached
     end
 
     # Wraps Memcached#delete so that it doesn't raise.
-    def delete(key, expiry=0)
+    def delete(key, options = nil)
       super(key)
     rescue NotFound
     end
