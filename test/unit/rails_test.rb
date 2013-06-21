@@ -312,6 +312,11 @@ class RailsTest < Test::Unit::TestCase
     assert_equal @value, @cache.read(key, nil)
   end
 
+  def test_write_with_nil_options
+    @cache.write key, @value, nil
+    assert_equal @value, @cache.read(key)
+  end
+
   private
 
   def key

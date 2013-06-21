@@ -100,13 +100,14 @@ class Memcached
 
     # Alternative to #set. Accepts a key, value, and an optional options hash supporting the
     # options :raw and :ttl.
-    def write(key, value, options = {})
+    def write(key, value, options = nil)
       value = value.to_s if options && options[:raw]
-      ttl = options[:ttl] || options[:expires_in] || @default_ttl
+      ttl = options ? (options[:ttl] || options[:expires_in] || @default_ttl) : @default_ttl
+      raw = options ? options[:raw] : nil
       if options && options[:unless_exist]
-        add(key, value, ttl, options[:raw])
+        add(key, value, ttl, raw)
       else
-        set(key, value, ttl, options[:raw])
+        set(key, value, ttl, raw)
       end
     end
 
