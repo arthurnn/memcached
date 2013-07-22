@@ -149,9 +149,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     options[:rcv_timeout] ||= options[:timeout]
     options[:poll_timeout] ||= options[:timeout]
 
-    # Set the prefix key. Support the legacy name.
-    set_prefix_key(options[:prefix_key] || options[:namespace])
-
     # Set the behaviors and credentials on the struct
     set_behaviors
     set_credentials
@@ -221,7 +218,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       end
     )
   end
-  alias :set_namespace :set_prefix_key
 
   # Return the current prefix key.
   def prefix_key
@@ -231,7 +227,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       ""
     end
   end
-  alias :namespace :prefix_key
 
   # Safely copy this instance. Returns a Memcached instance.
   #
