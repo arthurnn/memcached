@@ -9,7 +9,7 @@
 
 typedef enum {
   MEM_READ,
-  MEM_WRITE,
+  MEM_WRITE
 } memc_read_or_write;
 
 static ssize_t io_flush(memcached_server_st *ptr, memcached_return *error);
@@ -94,6 +94,7 @@ memcached_return memcached_io_read(memcached_server_st *ptr,
                                    void *buffer, size_t length, ssize_t *nread)
 {
   char *buffer_ptr;
+  memcached_return rc;
 
   buffer_ptr= buffer;
 
@@ -111,7 +112,7 @@ memcached_return memcached_io_read(memcached_server_st *ptr,
         else if (data_read == -1)
         {
           ptr->cached_errno= errno;
-          memcached_return rc= MEMCACHED_UNKNOWN_READ_FAILURE;
+          rc= MEMCACHED_UNKNOWN_READ_FAILURE;
           switch (errno)
           {
           case EAGAIN:
@@ -197,7 +198,7 @@ static ssize_t _io_write(memcached_server_st *ptr,
 
     if (ptr->type == MEMCACHED_CONNECTION_UDP)
     {
-      //UDP does not support partial writes
+      /* UDP does not support partial writes */
       buffer_end= MAX_UDP_DATAGRAM_LENGTH;
       should_write= length;
       if (ptr->write_buffer_offset + should_write > buffer_end)
@@ -257,8 +258,9 @@ ssize_t memcached_io_writev(memcached_server_st *ptr,
 {
   ssize_t total = 0;
   char f = (char)false;
+  size_t x;
 
-  for (size_t x = 0; x < number_of; x++, vector++)
+  for (x = 0; x < number_of; x++, vector++)
   {
     ssize_t returnable;
     if ((returnable= _io_write(ptr, vector->buffer, vector->length, f)) == -1)
@@ -308,9 +310,12 @@ memcached_server_st *memcached_io_get_readable_server(memcached_st *memc)
 {
 #define MAX_SERVERS_TO_POLL 100
   struct pollfd fds[MAX_SERVERS_TO_POLL];
-  unsigned int host_index= 0;
+  unsigned int host_index= 0,
+               x,
+               y;
+  int err;
 
-  for (unsigned int x= 0;
+  for (x= 0;
        x< memc->number_of_hosts && host_index < MAX_SERVERS_TO_POLL;
        ++x)
   {
@@ -329,14 +334,14 @@ memcached_server_st *memcached_io_get_readable_server(memcached_st *memc)
   if (host_index < 2)
   {
     /* We have 0 or 1 server with pending events.. */
-    for (unsigned int x= 0; x< memc->number_of_hosts; ++x)
+    for (x= 0; x< memc->number_of_hosts; ++x)
       if (memcached_server_response_count(&memc->hosts[x]) > 0)
         return &memc->hosts[x];
 
     return NULL;
   }
 
-  int err= poll(fds, host_index, memc->poll_timeout);
+  err= poll(fds, host_index, memc->poll_timeout);
   switch (err) {
   case -1:
     memc->cached_errno = errno;
@@ -344,9 +349,9 @@ memcached_server_st *memcached_io_get_readable_server(memcached_st *memc)
   case 0:
     break;
   default:
-    for (unsigned int x= 0; x < host_index; ++x)
+    for (x= 0; x < host_index; ++x)
       if (fds[x].revents & POLLIN)
-        for (unsigned int y= 0; y < memc->number_of_hosts; ++y)
+        for (y= 0; y < memc->number_of_hosts; ++y)
           if (memc->hosts[y].fd == fds[x].fd)
             return &memc->hosts[y];
   }
@@ -357,6 +362,11 @@ memcached_server_st *memcached_io_get_readable_server(memcached_st *memc)
 static ssize_t io_flush(memcached_server_st *ptr,
                         memcached_return *error)
 {
+  ssize_t sent_length;
+  size_t return_length;
+  char *local_write_ptr;
+  size_t write_length;
+
   /*
   ** We might want to purge the input buffer if we haven't consumed
   ** any output yet... The test for the limits is the purge is inline
@@ -370,16 +380,14 @@ static ssize_t io_flush(memcached_server_st *ptr,
      if (rc != MEMCACHED_SUCCESS && rc != MEMCACHED_STORED)
        return -1;
   }
-  ssize_t sent_length;
-  size_t return_length;
-  char *local_write_ptr= ptr->write_buffer;
-  size_t write_length= ptr->write_buffer_offset;
+  local_write_ptr= ptr->write_buffer;
+  write_length= ptr->write_buffer_offset;
 
   *error= MEMCACHED_SUCCESS;
 
   WATCHPOINT_ASSERT(ptr->fd != -1);
 
-  // UDP Sanity check, make sure that we are not sending somthing too big
+  /* UDP Sanity check, make sure that we are not sending somthing too big */
   if (ptr->type == MEMCACHED_CONNECTION_UDP && write_length > MAX_UDP_DATAGRAM_LENGTH)
     return -1;
 
@@ -444,11 +452,15 @@ static ssize_t io_flush(memcached_server_st *ptr,
   }
 
   WATCHPOINT_ASSERT(write_length == 0);
-  // Need to study this assert() WATCHPOINT_ASSERT(return_length ==
-  // ptr->write_buffer_offset);
+  /*
+   * Need to study this assert() WATCHPOINT_ASSERT(return_length ==
+   * ptr->write_buffer_offset);
+   */
 
-  // if we are a udp server, the begining of the buffer is reserverd for
-  // the upd frame header
+  /*
+   * if we are a udp server, the begining of the buffer is reserverd for
+   * the upd frame header
+   */
   if (ptr->type == MEMCACHED_CONNECTION_UDP)
     ptr->write_buffer_offset= UDP_DATAGRAM_HEADER_LENGTH;
   else
