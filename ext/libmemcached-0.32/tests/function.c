@@ -293,7 +293,7 @@ static test_return  error_test(memcached_st *memc)
                         1437122909U, 2300930706U, 2943759320U, 674306647U, 2400528935U, 54481931U, 4186304426U, 1741088401U, 2979625118U,
                         4159057246U, 1769812374U, 2302537950U, 1110330676U};
 
-  // You have updated the memcache_error messages but not updated docs/tests.
+  /* You have updated the memcache_error messages but not updated docs/tests. */
   assert(MEMCACHED_SUCCESS == 0 && MEMCACHED_MAXIMUM_RETURN == 40);
   for (rc= MEMCACHED_SUCCESS; rc < MEMCACHED_MAXIMUM_RETURN; rc++)
   {
@@ -457,6 +457,7 @@ static test_return  cas_test(memcached_st *memc)
   size_t value_length= strlen(value);
   const char *value2= "change the value";
   size_t value2_length= strlen(value2);
+	uint64_t cas;
 
   memcached_result_st results_obj;
   memcached_result_st *results;
@@ -483,7 +484,7 @@ static test_return  cas_test(memcached_st *memc)
   assert(!memcmp(value, memcached_result_value(results), value_length));
   assert(strlen(memcached_result_value(results)) == value_length);
   assert(rc == MEMCACHED_SUCCESS);
-  uint64_t cas = memcached_result_cas(results);
+  cas = memcached_result_cas(results);
 
   #if 0
   results= memcached_fetch_result(memc, &results_obj, &rc);
@@ -514,6 +515,7 @@ static test_return  mget_len_no_cas_test(memcached_st *memc)
   const char *keys[]= {"fudge_for_me", "son_of_bonnie", "food_a_la_carte"};
   size_t keys_length[]= {12, 13, 15};
   const unsigned int specified_length = 4;
+  char *result_str;
 
   memcached_result_st results_obj;
   memcached_result_st *results;
@@ -565,7 +567,7 @@ static test_return  mget_len_no_cas_test(memcached_st *memc)
     assert(rc == MEMCACHED_SUCCESS);
     assert(!memcached_result_cas(results));
 
-    char *result_str = memcached_result_value(results);
+    result_str = memcached_result_value(results);
     assert(strlen(result_str) == specified_length);
 
     x++;
@@ -587,6 +589,11 @@ static test_return  mget_len_cas_test(memcached_st *memc)
   const unsigned int specified_length = 4;
   const char *value2= "change the value";
   size_t value2_length= strlen(value2);
+	memcached_st *mclone;
+	char *result_str;
+  uint64_t cas;
+  char *key;
+  uint32_t key_length;
 
   memcached_result_st results_obj;
   memcached_result_st *results;
@@ -635,7 +642,7 @@ static test_return  mget_len_cas_test(memcached_st *memc)
    * results so clone the memcached_st state and move on with life.
    * This happens when using memcached_mget() and memcached_mget_len().
    */
-  memcached_st *mclone= memcached_clone(NULL, memc);
+  mclone= memcached_clone(NULL, memc);
 
   x = 0;
   while ((results= memcached_fetch_result(memc, &results_obj, &rc)))
@@ -644,14 +651,14 @@ static test_return  mget_len_cas_test(memcached_st *memc)
     assert(&results_obj == results);
     assert(rc == MEMCACHED_SUCCESS);
 
-    char *result_str = memcached_result_value(results);
+    result_str = memcached_result_value(results);
     assert(strlen(result_str) == specified_length);
 
     assert(memcached_result_cas(results));
 
-    uint64_t cas = memcached_result_cas(results);
-    char *key = memcached_result_key_value(results);
-    uint32_t key_length = memcached_result_key_length(results);
+    cas = memcached_result_cas(results);
+    key = memcached_result_key_value(results);
+    key_length = memcached_result_key_length(results);
     rc= memcached_cas(mclone, key, key_length, value2, value2_length, 0, 0, cas);
 
     /*
@@ -836,6 +843,7 @@ static test_return  bad_key_test(memcached_st *memc)
   memcached_st *memc_clone;
   unsigned int set= 1;
   size_t max_keylen= 0xffff;
+  const char *keys[] = { "GoodKey", "Bad Key", "NotMine" };
 
   memc_clone= memcached_clone(NULL, memc);
   assert(memc_clone);
@@ -862,7 +870,6 @@ static test_return  bad_key_test(memcached_st *memc)
     assert(!string);
 
     /* Test multi key for bad keys */
-    const char *keys[] = { "GoodKey", "Bad Key", "NotMine" };
     size_t key_lengths[] = { 7, 7, 7 };
     set= 1;
     rc= memcached_behavior_set(memc_clone, MEMCACHED_BEHAVIOR_VERIFY_KEY, set);
@@ -2816,6 +2823,7 @@ static test_return user_supplied_bug18(memcached_st *trash)
 static test_return auto_eject_hosts(memcached_st *trash)
 {
   (void) trash;
+  int x;
 
   memcached_return rc;
   memcached_st *memc= memcached_create(NULL);
@@ -2859,7 +2867,7 @@ static test_return auto_eject_hosts(memcached_st *trash)
   memc->hosts[2].next_retry = time(NULL) + 15;
   memc->next_distribution_rebuild= time(NULL) - 1;
 
-  for (int x= 0; x < 99; x++)
+  for (x= 0; x < 99; x++)
   {
     uint32_t server_idx = memcached_generate_hash(memc, test_cases[x].key, strlen(test_cases[x].key));
     assert(server_idx != 2);
@@ -2869,7 +2877,7 @@ static test_return auto_eject_hosts(memcached_st *trash)
   memc->hosts[2].next_retry = time(NULL) - 1;
   memc->next_distribution_rebuild= time(NULL) - 1;
   run_distribution(memc);
-  for (int x= 0; x < 99; x++)
+  for (x= 0; x < 99; x++)
   {
     uint32_t server_idx = memcached_generate_hash(memc, test_cases[x].key, strlen(test_cases[x].key));
     char *hostname = memc->hosts[server_idx].hostname;
@@ -3681,6 +3689,8 @@ static memcached_return  poll_timeout(memcached_st *memc)
 
 static test_return noreply_test(memcached_st *memc)
 {
+  int count, x;
+  uint32_t y;
   memcached_return ret;
   ret= memcached_behavior_set(memc, MEMCACHED_BEHAVIOR_NOREPLY, 1);
   assert(ret == MEMCACHED_SUCCESS);
@@ -3692,9 +3702,9 @@ static test_return noreply_test(memcached_st *memc)
   assert(memcached_behavior_get(memc, MEMCACHED_BEHAVIOR_BUFFER_REQUESTS) == 1);
   assert(memcached_behavior_get(memc, MEMCACHED_BEHAVIOR_SUPPORT_CAS) == 1);
 
-  for (int count=0; count < 5; ++count)
+  for (count=0; count < 5; ++count)
   {
-    for (int x=0; x < 100; ++x)
+    for (x=0; x < 100; ++x)
     {
       char key[10];
       size_t len= (size_t)sprintf(key, "%d", x);
@@ -3728,8 +3738,8 @@ static test_return noreply_test(memcached_st *memc)
     ** way it is supposed to do!!!!
     */
     int no_msg=0;
-    for (uint32_t x=0; x < memc->number_of_hosts; ++x)
-      no_msg+=(int)(memc->hosts[x].cursor_active);
+    for (y=0; x < memc->number_of_hosts; ++y)
+      no_msg+=(int)(memc->hosts[y].cursor_active);
 
     assert(no_msg == 0);
     assert(memcached_flush_buffers(memc) == MEMCACHED_SUCCESS);
@@ -3737,7 +3747,7 @@ static test_return noreply_test(memcached_st *memc)
     /*
      ** Now validate that all items was set properly!
      */
-    for (int x=0; x < 100; ++x)
+    for (x=0; x < 100; ++x)
     {
       char key[10];
       size_t len= (size_t)sprintf(key, "%d", x);
