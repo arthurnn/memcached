@@ -52,9 +52,7 @@ class Memcached
       end
     end
 
-    def try
-      yield
-    rescue => e
+    def log_exception(e)
       logger.warn("memcached error: #{e.class}: #{e.message}") if logger
       false
     end
@@ -62,41 +60,63 @@ class Memcached
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from
     # storing <tt>nil</tt> values.
     def get(key, raw=false)
-      try { super(key, !raw) }
+      super(key, !raw)
+    rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Alternative to #get. Accepts a key and an optional options hash supporting the single option
     # :raw.
     def read(key, options = nil)
-      try do
-        if options
-          get(key, options[:raw])
-        else
-          get(key)
-        end
+      if options
+        get(key, options[:raw])
+      else
+        get(key)
       end
+    rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Returns whether the key exists, even if the value is nil.
     def exist?(key, options = {})
-      try { exist(key).nil? }
+      exist(key)
+      true
+    rescue NotFound
+      false
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
     def cas(key, ttl=@default_ttl, raw=false, &block)
-      try { super(key, normalize_ttl(ttl), !raw, &block).nil? }
+      super(key, normalize_ttl(ttl), !raw, &block)
+      true
+    rescue NotFound, ConnectionDataExists
+      false
+    rescue Error => e
+      log_exception e
     end
 
     alias :compare_and_swap :cas
 
     # Wraps Memcached#get.
     def get_multi(keys, raw=false)
-      try { get_orig(keys, !raw) }
+      get_orig(keys, !raw)
+    rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#set.
     def set(key, value, ttl=@default_ttl, raw=false)
-      try { super(key, value, normalize_ttl(ttl), !raw).nil? }
+      super(key, value, normalize_ttl(ttl), !raw)
+      true
+    rescue NotStored
+      false
+    rescue Error => e
+      log_exception e
     end
 
     # Alternative to #set. Accepts a key, value, and an optional options hash supporting the
@@ -129,36 +149,52 @@ class Memcached
 
     # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
-      if (try { super(key, value, normalize_ttl(ttl), !raw).nil? })
-        @string_return_types ? "STORED\r\n" : true
-      else
-        @string_return_types? "NOT STORED\r\n" : false
-      end
+      super(key, value, normalize_ttl(ttl), !raw)
+      @string_return_types ? "STORED\r\n" : true
+    rescue NotStored
+    rescue Error => e
+      log_exception e
+      @string_return_types? "NOT STORED\r\n" : false
     end
 
     # Wraps Memcached#delete so that it doesn't raise.
     def delete(key, options = nil)
-      try { super(key) }
+      super(key)
+    rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#incr so that it doesn't raise.
     def incr(*args)
-      try { super }
+      super
+    rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#decr so that it doesn't raise.
     def decr(*args)
-      try { super }
+      super
+    rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#append so that it doesn't raise.
     def append(*args)
-      try { super }
+      super
+    rescue NotStored
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#prepend so that it doesn't raise.
     def prepend(*args)
-      try { super }
+      super
+    rescue NotStored
+    rescue Error => e
+      log_exception e
     end
 
     alias :flush_all :flush
