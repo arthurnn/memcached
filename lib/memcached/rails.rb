@@ -55,7 +55,7 @@ class Memcached
     def try
       yield
     rescue => e
-      logger.info("memcached error: #{e.class}: #{e.message}") if logger
+      logger.warn("memcached error: #{e.class}: #{e.message}") if logger
       false
     end
 
