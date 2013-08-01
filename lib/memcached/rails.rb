@@ -44,11 +44,18 @@ class Memcached
       servers.any?
     end
 
+    def log_exception(e)
+      logger.warn("memcached error: #{e.class}: #{e.message}") if logger
+      false
+    end
+
     # Wraps Memcached#get so that it doesn't raise. This has the side-effect of preventing you from
     # storing <tt>nil</tt> values.
     def get(key, raw=false)
       super(key, !raw)
     rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Alternative to #get. Accepts a key and an optional options hash supporting the single option
@@ -59,6 +66,9 @@ class Memcached
       else
         get(key)
       end
+    rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Returns whether the key exists, even if the value is nil.
@@ -67,6 +77,8 @@ class Memcached
       true
     rescue NotFound
       false
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
@@ -78,6 +90,8 @@ class Memcached
       ttl = ttl.value and retry rescue raise e
     rescue NotFound, ConnectionDataExists
       false
+    rescue Error => e
+      log_exception e
     end
 
     alias :compare_and_swap :cas
@@ -85,6 +99,9 @@ class Memcached
     # Wraps Memcached#get.
     def get_multi(keys, raw=false)
       get_orig(keys, !raw)
+    rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#set.
@@ -96,6 +113,8 @@ class Memcached
       ttl = ttl.value and retry rescue raise e
     rescue NotStored
       false
+    rescue Error => e
+      log_exception e
     end
 
     # Alternative to #set. Accepts a key, value, and an optional options hash supporting the
@@ -134,6 +153,8 @@ class Memcached
       # Maybe we got an ActiveSupport::Duration
       ttl = ttl.value and retry rescue raise e
     rescue NotStored
+    rescue Error => e
+      log_exception e
       @string_return_types? "NOT STORED\r\n" : false
     end
 
@@ -141,30 +162,40 @@ class Memcached
     def delete(key, options = nil)
       super(key)
     rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#incr so that it doesn't raise.
     def incr(*args)
       super
     rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#decr so that it doesn't raise.
     def decr(*args)
       super
     rescue NotFound
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#append so that it doesn't raise.
     def append(*args)
       super
     rescue NotStored
+    rescue Error => e
+      log_exception e
     end
 
     # Wraps Memcached#prepend so that it doesn't raise.
     def prepend(*args)
       super
     rescue NotStored
+    rescue Error => e
+      log_exception e
     end
 
     alias :flush_all :flush
