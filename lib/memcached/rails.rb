@@ -44,14 +44,6 @@ class Memcached
       servers.any?
     end
 
-    def normalize_ttl(ttl)
-      if ttl.respond_to?(:value)
-        ttl.value
-      else
-        ttl
-      end
-    end
-
     def log_exception(e)
       logger.warn("memcached error: #{e.class}: #{e.message}") if logger
       false
@@ -91,8 +83,11 @@ class Memcached
 
     # Wraps Memcached#cas so that it doesn't raise. Doesn't set anything if no value is present.
     def cas(key, ttl=@default_ttl, raw=false, &block)
-      super(key, normalize_ttl(ttl), !raw, &block)
+      super(key, ttl, !raw, &block)
       true
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotFound, ConnectionDataExists
       false
     rescue Error => e
@@ -111,8 +106,11 @@ class Memcached
 
     # Wraps Memcached#set.
     def set(key, value, ttl=@default_ttl, raw=false)
-      super(key, value, normalize_ttl(ttl), !raw)
+      super(key, value, ttl, !raw)
       true
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotStored
       false
     rescue Error => e
@@ -149,8 +147,11 @@ class Memcached
 
     # Wraps Memcached#add so that it doesn't raise.
     def add(key, value, ttl=@default_ttl, raw=false)
-      super(key, value, normalize_ttl(ttl), !raw)
+      super(key, value, ttl, !raw)
       @string_return_types ? "STORED\r\n" : true
+    rescue TypeError => e
+      # Maybe we got an ActiveSupport::Duration
+      ttl = ttl.value and retry rescue raise e
     rescue NotStored
     rescue Error => e
       log_exception e
