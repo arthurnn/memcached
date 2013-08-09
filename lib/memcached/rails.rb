@@ -39,6 +39,10 @@ class Memcached
       @logger = logger
     end
 
+    def namespace
+       @options[:prefix_key]
+    end
+
     # Check if there are any servers defined?
     def active?
       servers.any?

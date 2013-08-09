@@ -110,7 +110,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
 
     # Merge option defaults and discard meaningless keys
     @options = DEFAULTS.merge(opts)
-    @options.delete_if { |k,v| not DEFAULTS.keys.include? k }
+    @options.each do |key,_|
+       unless DEFAULTS.keys.include? key
+         raise ArgumentError, "#{key.inspect} is not a valid configuration parameter."
+       end
+    end
 
     # Marginally speed up settings access for hot paths
     @default_ttl = options[:default_ttl]
@@ -151,9 +155,12 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     # Read timeouts
     options[:rcv_timeout] ||= options[:timeout]
     options[:poll_timeout] ||= options[:timeout]
-    
+
     # Write timeouts
     options[:snd_timeout] ||= options[:timeout]
+
+    # Set the prefix key
+    set_prefix_key(options[:prefix_key])
 
     # Set the behaviors and credentials on the struct
     set_behaviors
