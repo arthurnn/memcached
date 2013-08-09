@@ -221,7 +221,6 @@ ext/libmemcached-0.32/tests/test.h
 ext/libmemcached-0.32/tests/udp.c
 ext/rlibmemcached.i
 ext/rlibmemcached_wrap.c
-gem-public_cert.pem
 lib/memcached.rb
 lib/memcached/auth.rb
 lib/memcached/behaviors.rb
@@ -231,6 +230,7 @@ lib/memcached/marshal_codec.rb
 lib/memcached/memcached.rb
 lib/memcached/rails.rb
 memcached.gemspec
+memcached.pem
 test/profile/benchmark.rb
 test/profile/c_profiler.rb
 test/profile/exercise.rb
