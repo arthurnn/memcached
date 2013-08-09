@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Evan Weaver"]
+  s.cert_chain = ["/Users/eweaver/cloudburst/configuration/gem_certificates/gem-public_cert.pem"]
   s.date = "2013-08-09"
   s.description = "An interface to the libmemcached C client."
   s.email = ""
@@ -16,13 +17,13 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--line-numbers", "--inline-source", "--title", "Memcached", "--main", "README.rdoc", "--exclude=ext/bin", "--exclude=ext/libmemcached-.*/(clients|tests)"]
   s.require_paths = ["lib", "ext"]
   s.rubyforge_project = "evan"
-  s.rubygems_version = "1.8.23"
-  s.signing_key = "/Users/eweaver/cloudburst/configuration/gem_certificates/evan_weaver-original-private_key.pem"
+  s.rubygems_version = "2.0.6"
+  s.signing_key = "/Users/eweaver/cloudburst/configuration/gem_certificates/gem-private_key.pem"
   s.summary = "An interface to the libmemcached C client."
   s.test_files = ["test/test_helper.rb", "test/unit/binding_test.rb", "test/unit/memcached_experimental_test.rb", "test/unit/memcached_test.rb", "test/unit/rails_test.rb"]
 
   if s.respond_to? :specification_version then
-    s.specification_version = 3
+    s.specification_version = 4
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<rake>, [">= 0"])
