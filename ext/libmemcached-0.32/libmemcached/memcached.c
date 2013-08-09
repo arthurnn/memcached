@@ -86,6 +86,7 @@ memcached_st *memcached_clone(memcached_st *clone, memcached_st *source)
   new_clone->send_size= source->send_size;
   new_clone->recv_size= source->recv_size;
   new_clone->poll_timeout= source->poll_timeout;
+  new_clone->poll_max_retries = source->poll_max_retries;
   new_clone->connect_timeout= source->connect_timeout;
   new_clone->retry_timeout= source->retry_timeout;
   new_clone->distribution= source->distribution;

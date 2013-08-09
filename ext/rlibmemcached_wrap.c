@@ -13726,6 +13726,7 @@ SWIGEXPORT void Init_rlibmemcached(void) {
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_CACHE_LOOKUPS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_CACHE_LOOKUPS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_SUPPORT_CAS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_SUPPORT_CAS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_POLL_TIMEOUT", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_POLL_TIMEOUT)));
+  rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_POLL_MAX_RETRIES", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_POLL_MAX_RETRIES)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_DISTRIBUTION", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_DISTRIBUTION)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_BUFFER_REQUESTS", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_BUFFER_REQUESTS)));
   rb_define_const(mRlibmemcached, "MEMCACHED_BEHAVIOR_USER_DATA", SWIG_From_int((int)(MEMCACHED_BEHAVIOR_USER_DATA)));
