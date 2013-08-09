@@ -25,11 +25,11 @@ class Memcached
         args.any? ? args.unshift : opts.delete(:servers)
       ).flatten.compact
 
-      opts[:prefix_key] = opts[:namespace] if opts[:namespace]
-      opts[:prefix_delimiter] = opts[:namespace_separator] if opts[:namespace_separator]
+      opts[:prefix_key] = opts.delete(:namespace) if opts[:namespace]
+      opts[:prefix_delimiter] = opts.delete(:namespace_separator) if opts[:namespace_separator]
 
-      @logger = opts[:logger]
-      @string_return_types = opts[:string_return_types]
+      @logger = opts.delete(:logger)
+      @string_return_types = opts.delete(:string_return_types)
 
       logger.info { "memcached #{VERSION} #{servers.inspect}" } if logger
       super(servers, opts)

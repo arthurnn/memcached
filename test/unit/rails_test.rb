@@ -1,5 +1,6 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
 require 'active_support/duration'
+require 'logger'
 
 class RailsTest < Test::Unit::TestCase
 
@@ -7,7 +8,7 @@ class RailsTest < Test::Unit::TestCase
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043', "#{UNIX_SOCKET_NAME}0"]
     @duration = ActiveSupport::Duration.new(2592000, [[:months, 1]])
     @namespace = 'rails_test'
-    @cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace)
+    @cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :logger => Logger.new(File.open("/dev/null", "w")))
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
