@@ -9,6 +9,8 @@ Rakefile
 TODO
 ext/extconf-make.rb
 ext/extconf.rb
+ext/lib64/libmemcached.la
+ext/lib64/pkgconfig/libmemcached.pc
 ext/libmemcached-0.32/AUTHORS
 ext/libmemcached-0.32/COPYING
 ext/libmemcached-0.32/ChangeLog
