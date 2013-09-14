@@ -122,5 +122,5 @@ Patches and contributions are very welcome. Please note that contributors are re
 
 == Further resources
 
-* {Memcached wiki}[http://www.socialtext.net/memcached/index.cgi]
-* {Libmemcached homepage}[http://tangent.org/552/libmemcached.html]
+* {Memcached wiki}[https://code.google.com/p/memcached/wiki/NewStart]
+* {Libmemcached homepage}[libmemcached.org]
