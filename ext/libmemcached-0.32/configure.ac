@@ -76,7 +76,6 @@ DETECT_BYTEORDER
 ENABLE_UTILLIB
 SETSOCKOPT_SANITY
 ENABLE_HSIEH_HASH
-REQUIRE_POD2MAN
 PROTOCOL_BINARY_TEST
 WITH_MEMCACHED
 ENABLE_DEPRECATED
@@ -91,7 +90,6 @@ AC_CONFIG_FILES([
   Makefile
   clients/Makefile
   tests/Makefile
-  docs/Makefile
   libmemcached/Makefile
   libmemcached/memcached_configure.h
   libmemcachedutil/Makefile

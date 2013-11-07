@@ -1,3 +1,5 @@
+v1.7.2. Don't build libmemcached docs (peppo1616).
+
 v1.7.1. Override lib target.
 
 v1.7.0. Remove legacy :namespace option from base class. Always rescue in Memcached::Rails and log, for people who don't care if their cache is actually working (mnzaki). Add snd_timeout (jreichhold).
