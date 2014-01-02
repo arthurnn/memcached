@@ -1,4 +1,3 @@
-gem 'echoe', '>= 4.5.6'
 require 'echoe'
 
 ENV["GEM_CERTIFICATE_CHAIN"]="memcached.pem"
