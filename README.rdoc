@@ -75,11 +75,11 @@ Note that the API is not the same as that of <b>Ruby-MemCache</b> or <b>memcache
   $cache.delete 'test'
   $cache.get 'test' #=> raises Memcached::NotFound
 
-== Rails
+== Rails 3.x
 
   # config/environment.rb
   require "memcached/rails"
-  config.cache_store = Memcached::Rails.new(:servers => ['127.0.0.1'])
+  config.cache_store = :mem_cache_store, Memcached::Rails.new(:servers => ['127.0.0.1'])
 
 == Pipelining
 
