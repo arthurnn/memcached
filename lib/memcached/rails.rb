@@ -166,6 +166,7 @@ class Memcached
     def delete(key, options = nil)
       super(key)
     rescue NotFound
+      false
     rescue Error => e
       log_exception e
     end

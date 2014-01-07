@@ -53,7 +53,7 @@ class RailsTest < Test::Unit::TestCase
   def test_delete_missing
     assert_nothing_raised do
       @cache.delete key
-      assert_nil(@cache.delete(key))
+      assert !@cache.delete(key)
     end
   end
 
