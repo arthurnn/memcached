@@ -165,7 +165,9 @@ class Memcached
     # Wraps Memcached#delete so that it doesn't raise.
     def delete(key, options = nil)
       super(key)
+      true
     rescue NotFound
+      false
     rescue Error => e
       log_exception e
     end
