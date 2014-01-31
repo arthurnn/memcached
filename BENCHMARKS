@@ -7,122 +7,136 @@ You can easily run your own benchmarks, as long as you have memcached itself on 
 
 == x86-64 OS X
 
-  These benchmarks were run on a 64-bit OS X machine, with memcached 1.4.5:
+  These benchmarks were run on a 64-bit OS X machine, with memcached 1.7.2:
 
-  Darwin winter.local 11.3.0 Darwin Kernel Version 11.3.0: Thu Jan 12 18:47:41 PST 2012; root:xnu-1699.24.23~1/RELEASE_X86_64 x86_64
-  ruby 1.9.2p290 (2011-07-09 revision 32553) [x86_64-darwin11.0.1]
-  RUBY_VERSION=ruby-1.9.2-p290
-  Ruby 1.9.2p290
-  Loaded memcached 1.4.0
-  Loaded remix-stash 1.1.3
-  Loaded memcache-client 1.8.5
-  Loaded kgio 2.6.0
-  Loaded dalli 1.1.5
-  PID is 7161
-  Loops is 50000
-  Stack depth is 0
-  Small value size is: 19 bytes
-  Large value size is: 4189 bytes
-                                            user     system      total        real
-  set: dalli:bin                        6.230000   2.860000   9.090000 ( 13.771901)
-  set: libm:ascii                       0.900000   1.600000   2.500000 (  6.201596)
-  set: libm:ascii:pipeline              0.380000   0.010000   0.390000 (  0.399863)
-  set: libm:ascii:udp                   0.540000   0.810000   1.350000 (  3.033980)
-  set: libm:bin                         0.660000   1.550000   2.210000 (  5.829103)
-  set: libm:bin:buffer                  0.310000   0.560000   0.870000 (  1.335899)
-  set: mclient:ascii                   13.760000   3.640000  17.400000 ( 17.519859)
-  set: stash:bin                        4.350000   2.260000   6.610000 ( 10.901810)
+Darwin Arthurs-MacBook-Pro.local 13.0.0 Darwin Kernel Version 13.0.0: Thu Sep 19 22:22:27 PDT 2013; root:xnu-2422.1.72~6/RELEASE_X86_64 x86_64
+ruby 2.0.0p353 (2013-11-22 revision 43784) [x86_64-darwin13.0.0]
+RUBYOPT=-rbundler/setup
+RUBYLIB=/Users/arthurnn/.rbenv/versions/2.0.0-p353/lib/ruby/gems/2.0.0/gems/bundler-1.5.1/lib
+Ruby 2.0.0p353
+Loaded memcached 1.7.2
+Loaded remix-stash 1.1.3
+Loaded memcache-client 1.8.5
+Loaded dalli 2.6.4
+PID is 67055
+Loops is 50000
+Stack depth is 0
+Small value size is: 19 bytes
+Large value size is: 4189 bytes
+                                           user     system      total        real
+set: dalli:bin                         6.440000   2.910000   9.350000 ( 10.563638)
+set: libm:ascii                        0.790000   1.800000   2.590000 (  6.383041)
+set: libm:ascii:pipeline               0.190000   0.010000   0.200000 (  0.202092)
+set: libm:ascii:udp                    0.550000   0.940000   1.490000 (  3.119734)
+set: libm:bin                          0.590000   1.790000   2.380000 (  6.075610)
+set: libm:bin:buffer                   0.160000   0.440000   0.600000 (  0.887930)
+set: mclient:ascii                     6.280000   3.380000   9.660000 ( 10.730003)
+set: stash:bin                         3.540000   1.990000   5.530000 (  9.223562)
 
-  get: dalli:bin                        6.370000   3.040000   9.410000 ( 13.762127)
-  get: libm:ascii                       1.130000   1.710000   2.840000 (  6.472671)
-  get: libm:ascii:pipeline              1.350000   2.480000   3.830000 (  8.459317)
-  get: libm:ascii:udp                   0.770000   0.910000   1.680000 (  3.084506)
-  get: libm:bin                         1.450000   2.910000   4.360000 (  9.041859)
-  get: libm:bin:buffer                  1.390000   3.400000   4.790000 (  9.160760)
-  get: mclient:ascii                   15.390000   3.890000  19.280000 ( 19.325698)
-  get: stash:bin                        3.630000   2.310000   5.940000 (  9.561887)
+get: dalli:bin                         6.680000   3.390000  10.070000 ( 11.180611)
+get: libm:ascii                        1.070000   1.830000   2.900000 (  6.305700)
+get: libm:ascii:pipeline               1.240000   2.440000   3.680000 (  7.115719)
+get: libm:ascii:udp                    0.830000   1.020000   1.850000 (  3.171187)
+get: libm:bin                          0.850000   2.290000   3.140000 (  6.281492)
+get: libm:bin:buffer                   0.840000   2.600000   3.440000 (  6.200500)
+get: mclient:ascii                     8.070000   3.530000  11.600000 ( 12.345600)
+get: stash:bin                         3.090000   2.100000   5.190000 (  8.480606)
 
-  get-multi: dalli:bin                 11.220000   4.720000  15.940000 ( 15.977336)
-  get-multi: libm:ascii                 1.150000   1.190000   2.340000 (  4.063418)
-  get-multi: libm:ascii:pipeline        1.160000   1.190000   2.350000 (  4.063346)
-  get-multi: libm:ascii:udp             1.200000   1.110000   2.310000 (  2.746055)
-  get-multi: libm:bin                   1.520000   2.320000   3.840000 (  5.053102)
-  get-multi: libm:bin:buffer            1.560000   2.350000   3.910000 (  5.154312)
+get-multi: dalli:bin                   5.930000   2.180000   8.110000 (  8.108164)
+get-multi: libm:ascii                  0.940000   0.970000   1.910000 (  2.837050)
+get-multi: libm:ascii:pipeline         0.940000   0.970000   1.910000 (  2.824970)
+get-multi: libm:ascii:udp              0.780000   0.610000   1.390000 (  1.639728)
+get-multi: libm:bin                    0.750000   1.570000   2.320000 (  3.138594)
+get-multi: libm:bin:buffer             0.770000   1.610000   2.380000 (  3.192629)
 
-  append: dalli:bin                     5.470000   2.930000   8.400000 ( 24.011438)
-  append: libm:ascii                    1.290000   1.790000   3.080000 ( 17.774130)
-  append: libm:ascii:pipeline           0.450000   0.040000   0.490000 (  6.633257)
-  append: libm:ascii:udp                1.070000   0.970000   2.040000 ( 14.307639)
-  append: libm:bin                      1.010000   1.740000   2.750000 ( 17.286027)
-  append: libm:bin:buffer               1.570000   3.060000   4.630000 ( 11.351744)
-  append: mclient:ascii                13.860000   4.610000  18.470000 ( 28.063347)
+append: dalli:bin                      5.740000   2.980000   8.720000 ( 16.344137)
+append: libm:ascii                     1.020000   1.950000   2.970000 ( 12.789710)
+append: libm:ascii:pipeline            0.230000   0.070000   0.300000 (  3.346092)
+append: libm:ascii:udp                 0.770000   1.100000   1.870000 (  9.013537)
+append: libm:bin                       0.800000   1.950000   2.750000 ( 12.440546)
+append: libm:bin:buffer                0.600000   1.570000   2.170000 (  4.633185)
+append: mclient:ascii                  6.330000   3.470000   9.800000 ( 17.164551)
 
-  prepend: dalli:bin                    5.480000   2.920000   8.400000 ( 24.141383)
-  prepend: libm:ascii                   1.290000   1.800000   3.090000 ( 17.990164)
-  prepend: libm:ascii:pipeline          0.460000   0.050000   0.510000 (  6.913219)
-  prepend: libm:ascii:udp               1.080000   0.970000   2.050000 ( 14.498750)
-  prepend: libm:bin                     1.010000   1.750000   2.760000 ( 17.490186)
-  prepend: libm:bin:buffer              1.590000   3.030000   4.620000 ( 11.528854)
-  prepend: mclient:ascii               13.820000   4.590000  18.410000 ( 27.996415)
+prepend: dalli:bin                     5.710000   2.840000   8.550000 ( 16.196913)
+prepend: libm:ascii                    1.040000   1.970000   3.010000 ( 13.116495)
+prepend: libm:ascii:pipeline           0.230000   0.060000   0.290000 (  3.606279)
+prepend: libm:ascii:udp                0.760000   1.090000   1.850000 ( 10.152684)
+prepend: libm:bin                      0.790000   1.880000   2.670000 ( 12.556400)
+prepend: libm:bin:buffer               0.600000   1.600000   2.200000 (  5.044049)
+prepend: mclient:ascii                 6.350000   3.440000   9.790000 ( 17.142962)
 
-  delete: dalli:bin                     5.190000   2.860000   8.050000 ( 12.158696)
-  delete: libm:ascii                    1.730000   1.760000   3.490000 (  6.891763)
-  delete: libm:ascii:pipeline           0.270000   0.010000   0.280000 (  0.286750)
-  delete: libm:ascii:udp                1.280000   0.960000   2.240000 (  3.521770)
-  delete: libm:bin                      1.670000   1.730000   3.400000 (  6.670207)
-  delete: libm:bin:buffer               1.990000   1.420000   3.410000 (  3.408682)
-  delete: mclient:ascii                12.300000   3.440000  15.740000 ( 15.004959)
+delete: dalli:bin                      5.800000   2.980000   8.780000 (  9.778920)
+delete: libm:ascii                     1.420000   1.990000   3.410000 (  6.912480)
+delete: libm:ascii:pipeline            0.130000   0.010000   0.140000 (  0.139597)
+delete: libm:ascii:udp                 1.050000   1.030000   2.080000 (  3.356582)
+delete: libm:bin                       1.350000   1.940000   3.290000 (  6.627281)
+delete: libm:bin:buffer                0.840000   0.900000   1.740000 (  1.812440)
+delete: mclient:ascii                  5.980000   3.260000   9.240000 (  9.918309)
 
-  get-missing: dalli:bin                5.190000   2.900000   8.090000 ( 12.288468)
-  get-missing: libm:ascii               1.890000   1.930000   3.820000 (  7.300238)
-  get-missing: libm:ascii:pipeline      2.000000   2.400000   4.400000 (  7.861120)
-  get-missing: libm:ascii:udp           1.420000   1.000000   2.420000 (  3.684960)
-  get-missing: libm:bin                 2.450000   2.880000   5.330000 (  9.904413)
-  get-missing: libm:bin:buffer          2.590000   3.600000   6.190000 ( 10.558657)
-  get-missing: mclient:ascii           12.610000   3.520000  16.130000 ( 16.112399)
+exist: dalli:bin                       6.680000   3.420000  10.100000 ( 11.182683)
+exist: libm:ascii                      0.580000   1.810000   2.390000 (  6.127155)
+exist: libm:ascii:pipeline             1.110000   2.390000   3.500000 (  6.927549)
+exist: libm:ascii:udp                  0.360000   0.920000   1.280000 (  2.827431)
+exist: libm:bin                        0.540000   1.760000   2.300000 (  5.829209)
+exist: libm:bin:buffer                 0.330000   1.030000   1.360000 (  1.668925)
 
-  append-missing: dalli:bin             5.440000   2.930000   8.370000 ( 13.119090)
-  append-missing: libm:ascii            2.060000   2.060000   4.120000 (  8.168211)
-  append-missing: libm:ascii:pipeline   0.410000   0.020000   0.430000 (  0.423779)
-  append-missing: libm:ascii:udp        1.470000   0.980000   2.450000 (  4.093117)
-  append-missing: libm:bin              1.800000   1.880000   3.680000 (  7.384185)
-  append-missing: libm:bin:buffer       1.920000   2.500000   4.420000 (  8.242885)
-  append-missing: mclient:ascii        12.780000   3.560000  16.340000 ( 16.303513)
+get-missing: dalli:bin                 5.800000   2.760000   8.560000 (  9.562492)
+get-missing: libm:ascii                1.500000   1.950000   3.450000 (  6.884550)
+get-missing: libm:ascii:pipeline       1.550000   2.690000   4.240000 (  7.153775)
+get-missing: libm:ascii:udp            1.170000   1.220000   2.390000 (  3.620543)
+get-missing: libm:bin                  1.570000   2.520000   4.090000 (  7.067088)
+get-missing: libm:bin:buffer           1.510000   2.690000   4.200000 (  6.904890)
+get-missing: mclient:ascii             6.040000   3.230000   9.270000 (  9.908836)
 
-  prepend-missing: dalli:bin            5.440000   2.940000   8.380000 ( 13.143816)
-  prepend-missing: libm:ascii           2.060000   2.050000   4.110000 (  8.207103)
-  prepend-missing: libm:ascii:pipeline  0.390000   0.010000   0.400000 (  0.405324)
-  prepend-missing: libm:ascii:udp       1.480000   0.980000   2.460000 (  4.100100)
-  prepend-missing: libm:bin             1.820000   1.910000   3.730000 (  7.485082)
-  prepend-missing: libm:bin:buffer      1.930000   2.490000   4.420000 (  8.220931)
-  prepend-missing: mclient:ascii       12.750000   3.570000  16.320000 ( 16.327426)
+append-missing: dalli:bin              5.830000   3.140000   8.970000 ( 10.275904)
+append-missing: libm:ascii             1.750000   2.150000   3.900000 (  7.840195)
+append-missing: libm:ascii:pipeline    0.210000   0.050000   0.260000 (  0.260620)
+append-missing: libm:ascii:udp         1.270000   1.180000   2.450000 (  3.927083)
+append-missing: libm:bin               1.490000   2.080000   3.570000 (  7.330363)
+append-missing: libm:bin:buffer        1.560000   2.520000   4.080000 (  7.541846)
+append-missing: mclient:ascii          6.180000   3.290000   9.470000 ( 10.531754)
 
-  set-large: dalli:bin                  8.210000   4.760000  12.970000 ( 20.323687)
-  set-large: libm:ascii                 0.980000   1.690000   2.670000 (  6.540981)
-  set-large: libm:ascii:pipeline        0.750000   0.620000   1.370000 (  1.374806)
-  set-large: libm:ascii:udp             0.590000   0.880000   1.470000 (  3.345455)
-  set-large: libm:bin                   0.720000   1.620000   2.340000 (  6.085282)
-  set-large: libm:bin:buffer            0.540000   1.000000   1.540000 (  2.073624)
-  set-large: mclient:ascii             15.440000   5.050000  20.490000 ( 21.033437)
-  set-large: stash:bin                  6.990000   2.970000   9.960000 ( 14.580058)
+prepend-missing: dalli:bin             5.830000   3.180000   9.010000 ( 10.289729)
+prepend-missing: libm:ascii            1.780000   2.210000   3.990000 (  7.993564)
+prepend-missing: libm:ascii:pipeline   0.210000   0.060000   0.270000 (  0.274244)
+prepend-missing: libm:ascii:udp        1.260000   1.190000   2.450000 (  3.898849)
+prepend-missing: libm:bin              1.470000   2.100000   3.570000 (  7.282732)
+prepend-missing: libm:bin:buffer       1.560000   2.540000   4.100000 (  7.578402)
+prepend-missing: mclient:ascii         6.180000   3.280000   9.460000 ( 10.530963)
 
-  get-large: dalli:bin                  6.430000   3.050000   9.480000 ( 13.863885)
-  get-large: libm:ascii                 1.280000   1.910000   3.190000 (  7.413390)
-  get-large: libm:ascii:pipeline        1.510000   2.690000   4.200000 (  9.178352)
-  get-large: libm:ascii:udp             0.940000   1.050000   1.990000 (  3.705017)
-  get-large: libm:bin                   1.580000   3.140000   4.720000 ( 10.028901)
-  get-large: libm:bin:buffer            1.550000   3.740000   5.290000 ( 10.237274)
-  get-large: mclient:ascii             15.090000   3.590000  18.680000 ( 18.686119)
-  get-large: stash:bin                  4.810000   3.010000   7.820000 ( 13.311248)
+exist-missing: dalli:bin               6.000000   3.140000   9.140000 ( 10.188436)
+exist-missing: libm:ascii              0.940000   1.990000   2.930000 (  6.798681)
+exist-missing: libm:ascii:pipeline     1.020000   2.390000   3.410000 (  6.467459)
+exist-missing: libm:ascii:udp          0.610000   1.060000   1.670000 (  3.301365)
+exist-missing: libm:bin                0.920000   2.000000   2.920000 (  6.681597)
+exist-missing: libm:bin:buffer         1.040000   2.540000   3.580000 (  7.287630)
 
-  hash:default                          0.540000   0.010000   0.550000 (  0.537555)
-  hash:md5                              0.910000   0.000000   0.910000 (  0.914356)
-  hash:crc                              0.620000   0.000000   0.620000 (  0.624606)
-  hash:fnv1_64                          0.420000   0.000000   0.420000 (  0.421316)
-  hash:fnv1a_64                         0.380000   0.000000   0.380000 (  0.376717)
-  hash:fnv1_32                          0.370000   0.000000   0.370000 (  0.368479)
-  hash:fnv1a_32                         0.350000   0.000000   0.350000 (  0.353779)
-  hash:hsieh                            0.160000   0.000000   0.160000 (  0.161812)
-  hash:murmur                           0.220000   0.000000   0.220000 (  0.220061)
-  hash:jenkins                          0.270000   0.000000   0.270000 (  0.264617)
-  hash:none                             0.160000   0.000000   0.160000 (  0.165394)
+set-large: dalli:bin                   7.100000   3.370000  10.470000 ( 11.795271)
+set-large: libm:ascii                  0.860000   1.850000   2.710000 (  6.650196)
+set-large: libm:ascii:pipeline         0.300000   0.270000   0.570000 (  0.586590)
+set-large: libm:ascii:udp              0.580000   0.970000   1.550000 (  3.266937)
+set-large: libm:bin                    0.630000   1.800000   2.430000 (  6.203372)
+set-large: libm:bin:buffer             0.260000   0.680000   0.940000 (  1.260024)
+set-large: mclient:ascii               6.680000   3.700000  10.380000 ( 11.808357)
+set-large: stash:bin                   5.080000   2.520000   7.600000 ( 11.345483)
+
+get-large: dalli:bin                   6.740000   3.700000  10.440000 ( 11.605284)
+get-large: libm:ascii                  1.080000   1.860000   2.940000 (  6.403185)
+get-large: libm:ascii:pipeline         1.200000   2.350000   3.550000 (  6.870392)
+get-large: libm:ascii:udp              0.810000   1.020000   1.830000 (  3.129513)
+get-large: libm:bin                    0.810000   2.150000   2.960000 (  5.941723)
+get-large: libm:bin:buffer             0.790000   2.410000   3.200000 (  5.724441)
+get-large: mclient:ascii               8.150000   3.240000  11.390000 ( 12.305832)
+get-large: stash:bin                   3.140000   2.130000   5.270000 (  8.635335)
+
+hash:default                           0.330000   0.000000   0.330000 (  0.328978)
+hash:md5                               0.630000   0.000000   0.630000 (  0.631381)
+hash:crc                               0.380000   0.000000   0.380000 (  0.376241)
+hash:fnv1_64                           0.240000   0.000000   0.240000 (  0.242814)
+hash:fnv1a_64                          0.250000   0.000000   0.250000 (  0.245082)
+hash:fnv1_32                           0.240000   0.000000   0.240000 (  0.242794)
+hash:fnv1a_32                          0.250000   0.000000   0.250000 (  0.245309)
+hash:hsieh                             0.090000   0.000000   0.090000 (  0.096613)
+hash:murmur                            0.150000   0.000000   0.150000 (  0.145111)
+hash:jenkins                           0.160000   0.000000   0.160000 (  0.161225)
+hash:none                              0.100000   0.000000   0.100000 (  0.097352)
