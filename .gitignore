@@ -37,3 +37,4 @@ ext/rlibmemcached_wrap.c.in
 ext/mkmf.log
 *.[1,3]
 .libs
+*.lock
