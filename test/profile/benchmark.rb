@@ -1,3 +1,4 @@
+Bundler.require(:benchmark)
 
 HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
