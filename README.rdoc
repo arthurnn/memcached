@@ -75,11 +75,9 @@ Note that the API is not the same as that of <b>Ruby-MemCache</b> or <b>memcache
   $cache.delete 'test'
   $cache.get 'test' #=> raises Memcached::NotFound
 
-== Rails 3.x
+== Rails 3 and 4
 
-  # config/environment.rb
-  require "memcached/rails"
-  config.cache_store = :mem_cache_store, Memcached::Rails.new(:servers => ['127.0.0.1'])
+Use {memcached_store gem}[https://github.com/Shopify/memcached_store] to integrate ActiveSupport cache store and memcached gem
 
 == Pipelining
 
