@@ -302,7 +302,7 @@ class MemcachedTest < Test::Unit::TestCase
         result = cache.get key
       end
     end).real
-
+  ensure
     socket.close
   end
 
@@ -333,6 +333,7 @@ class MemcachedTest < Test::Unit::TestCase
       end
     end).real
 
+  ensure
     socket.close
   end
 
@@ -1063,6 +1064,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set(key2, @value)
     end
 
+  ensure
     socket.close
   end
 
@@ -1097,7 +1099,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set(key2, @value)
       assert_equal cache.get(key2), @value
     end
-
+  ensure
     socket.close
   end
 
@@ -1141,7 +1143,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.set(key2, @value)
       assert_equal cache.get(key2), @value
     end
-
+  ensure
     socket.close
   end
 
@@ -1177,7 +1179,7 @@ class MemcachedTest < Test::Unit::TestCase
       assert_equal Memcached::ServerIsMarkedDead, e.class
       assert_match /localhost:43041/, e.message
     end
-
+  ensure
     socket.close
   end
 
@@ -1272,7 +1274,7 @@ class MemcachedTest < Test::Unit::TestCase
     exceptions = []
     100.times { begin; cache.set key, @value; rescue => e; exceptions << e; end }
     assert_equal failures, exceptions.map { |x| x.class }
-
+  ensure
     socket.close
   end
 
