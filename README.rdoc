@@ -1,4 +1,4 @@
-memcached
+= memcached
 
 An interface to the libmemcached C client.
 
