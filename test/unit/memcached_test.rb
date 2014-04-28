@@ -869,7 +869,7 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised Memcached::NotFound do
       cache.cas([key, key2]) do |current|
         block_called = true
-        assert_empty current
+        assert current.empty?
         {}
       end
     end

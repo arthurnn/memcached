@@ -439,7 +439,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       hash.each {|key, value| hash[key] = @codec.decode(key, value, key_to_flags[key]) } if decode
       hash = yield hash
       # Only CAS entries that were updated from the original hash
-      hash.keep_if {|key, value| key_to_cas.has_key? key }
+      hash.select! {|key, value| key_to_cas.has_key? key }
       hash.each {|key, value| hash[key], key_to_flags[key] = @codec.encode(key, value, key_to_flags[key]) } if decode
 
       multi_cas(hash, key_to_cas, key_to_flags, ttl)
