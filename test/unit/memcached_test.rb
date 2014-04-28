@@ -1475,8 +1475,7 @@ class MemcachedTest < Test::Unit::TestCase
     Memcached.new(
       @servers,
       :prefix_key => @prefix_key,
-      :support_cas => true,
-      :show_backtraces => true # TODO remove this line before committing!
+      :support_cas => true
     )
   end
 
