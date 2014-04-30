@@ -449,6 +449,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       value = yield value
       single_cas(keys, value, ttl, flags, cas, decode)
     end
+  rescue => e
+    tries_for_cas ||= 0
+    raise unless tries_for_cas < options[:exception_retry_limit] && should_retry(e)
+    tries_for_cas += 1
+    retry
   end
 
   alias :compare_and_swap :cas
@@ -498,6 +503,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     else
       single_get(keys, decode).first
     end
+  rescue => e
+    tries ||= 0
+    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    tries += 1
+    retry
   end
 
   # Check if a key exists on the server. It will return nil if the value is found, or raise
@@ -664,11 +674,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     cas = @struct.result.cas if @support_cas
     value = @codec.decode(key, value, flags) if decode
     [value, flags, cas]
-  rescue => e
-    tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
-    tries += 1
-    retry
   end
 
   def multi_get(keys, decode)
@@ -693,11 +698,6 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       end
     end
     [hash, flags_and_cas]
-  rescue => e
-    tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
-    tries += 1
-    retry
   end
 
   def multi_cas(hash, ttl, flags_and_cas, decode)
