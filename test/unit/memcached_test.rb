@@ -820,10 +820,11 @@ class MemcachedTest < Test::Unit::TestCase
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
 
     cache.set key, @value
-    cache.cas([key]) do |current|
+    result = cache.cas([key]) do |current|
       assert_equal({key => @value}, current)
       {key => value2}
     end
+    assert_equal({key => value2}, result)
     assert_equal value2, cache.get(key)
   end
 
@@ -834,10 +835,11 @@ class MemcachedTest < Test::Unit::TestCase
 
     cache.delete key2 rescue Memcached::NotFound
     cache.set key, @value
-    cache.cas([key]) do |current|
+    result = cache.cas([key]) do |current|
       assert_equal({key => @value}, current)
       {key2 => value2}
     end
+    assert_equal({}, result)
     assert_equal @value, cache.get(key)
     assert_raises(Memcached::NotFound) do
       cache.get(key2)
@@ -851,10 +853,11 @@ class MemcachedTest < Test::Unit::TestCase
 
     cache.set key, @value
     cache.set key2, value2
-    cache.cas([key, key2]) do |current|
+    result = cache.cas([key, key2]) do |current|
       assert_equal({key => @value, key2 => value2}, current)
       {key => value2}
     end
+    assert_equal({key => value2}, result)
     assert_equal value2, cache.get(key)
     assert_equal value2, cache.get(key2)
   end
@@ -862,18 +865,12 @@ class MemcachedTest < Test::Unit::TestCase
   def test_multi_cas_with_missing_set
     cache = cache_with_cas
     key2 = "test_multi_cas"
-    block_called = false
 
     cache.delete key rescue Memcached::NotFound
     cache.delete key2 rescue Memcached::NotFound
     assert_nothing_raised Memcached::NotFound do
-      cache.cas([key, key2]) do |current|
-        block_called = true
-        assert current.empty?
-        {}
-      end
+      assert_equal({}, cache.cas([key, key2]) { flunk })
     end
-    assert block_called
   end
 
   def test_multi_cas_partial_fulfillment
@@ -883,10 +880,11 @@ class MemcachedTest < Test::Unit::TestCase
 
     cache.delete key rescue Memcached::NotFound
     cache.set key2, value2
-    cache.cas([key, key2]) do |current|
+    result = cache.cas([key, key2]) do |current|
       assert_equal({key2 => value2}, current)
       {key2 => @value}
     end
+    assert_equal({key2 => @value}, result)
     assert_raises Memcached::NotFound do
       cache.get(key)
     end
@@ -900,12 +898,13 @@ class MemcachedTest < Test::Unit::TestCase
 
     cache.set key, @value
     cache.set key2, @value
-    assert_raises Memcached::ConnectionDataExists do
-      cache.cas([key, key2]) do |current|
+    assert_nothing_raised Memcached::ConnectionDataExists do
+      result = cache.cas([key, key2]) do |current|
         assert_equal({key => @value, key2 => @value}, current)
         cache.set key, value2
         {key => @value, key2 => value2}
       end
+      assert_equal({key2 => value2}, result)
     end
     assert_equal value2, cache.get(key)
     assert_equal value2, cache.get(key2)
