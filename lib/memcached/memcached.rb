@@ -432,6 +432,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   # :retry_on_exceptions does not apply to this method
   def cas(keys, ttl=@default_ttl, decode=true)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
+    tries ||= 0
 
     if keys.is_a? Array
       # Multi CAS
@@ -440,7 +441,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
         hash = yield hash
         # Only CAS entries that were updated from the original hash
         hash.delete_if {|k| !flags_and_cas.has_key?(k) }
-        hash = multi_cas(hash, ttl, flags_and_cas, decode)
+        hash = multi_cas(hash, ttl, flags_and_cas, decode, tries)
       end
       hash
     else
@@ -450,9 +451,8 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       single_cas(keys, value, ttl, flags, cas, decode)
     end
   rescue => e
-    tries_for_cas ||= 0
-    raise unless tries_for_cas < options[:exception_retry_limit] && should_retry(e)
-    tries_for_cas += 1
+    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    tries += 1
     retry
   end
 
@@ -700,29 +700,33 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     [hash, flags_and_cas]
   end
 
-  def multi_cas(hash, ttl, flags_and_cas, decode)
+  def multi_cas(hash, ttl, flags_and_cas, encode, tries)
     result = {}
     hash.each do |key, value|
+      raw_value = value
+      flags, cas = flags_and_cas[key]
+      value, flags = @codec.encode(key, value, flags) if encode
       begin
-        flags, cas = flags_and_cas[key]
-        single_cas(key, value, ttl, flags, cas, decode)
-        result[key] = value
-      rescue ConnectionDataExists
+        ret = Lib.memcached_cas(@struct, key, value, ttl, flags, cas)
+        if ret == 0 # Lib::MEMCACHED_SUCCESS
+          result[key] = raw_value
+        elsif ret != 12 && ret != 16 # Lib::MEMCACHED_DATA_EXISTS, Lib::MEMCACHED_NOTFOUND
+          check_return_code(ret, key)
+        end
+      rescue => e
+        raise unless tries < options[:exception_retry_limit] && should_retry(e)
+        tries += 1
+        retry
       end
     end
     result
   end
 
-  def single_cas(key, value, ttl, flags, cas, decode)
-    value, flags = @codec.encode(key, value, flags) if decode
+  def single_cas(key, value, ttl, flags, cas, encode)
+    value, flags = @codec.encode(key, value, flags) if encode
     check_return_code(
       Lib.memcached_cas(@struct, key, value, ttl, flags, cas),
       key
     )
-  rescue => e
-    tries_for_cas ||= 0
-    raise unless tries_for_cas < options[:exception_retry_limit] && should_retry(e)
-    tries_for_cas += 1
-    retry
   end
 end
