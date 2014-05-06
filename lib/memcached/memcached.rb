@@ -119,6 +119,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     # Marginally speed up settings access for hot paths
     @default_ttl = options[:default_ttl]
     @codec = options[:codec]
+    @support_cas = options[:support_cas]
 
     if servers == nil || servers == []
       if ENV.key?("MEMCACHE_SERVERS")
@@ -429,36 +430,30 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #
   # CAS stands for "compare and swap", and avoids the need for manual key mutexing. CAS support must be enabled in Memcached.new or a <b>Memcached::ClientError</b> will be raised. Note that CAS may be buggy in memcached itself.
   # :retry_on_exceptions does not apply to this method
-  def cas(key, ttl=@default_ttl, encode=true, flags=FLAGS)
+  def cas(keys, ttl=@default_ttl, decode=true)
     raise ClientError, "CAS not enabled for this Memcached instance" unless options[:support_cas]
+    tries ||= 0
 
-    begin
-      value, flags, ret = Lib.memcached_get_rvalue(@struct, key)
-      check_return_code(ret, key)
-    rescue => e
-      tries_for_get ||= 0
-      raise unless tries_for_get < options[:exception_retry_limit] && should_retry(e)
-      tries_for_get += 1
-      retry
+    if keys.is_a? Array
+      # Multi CAS
+      hash, flags_and_cas = multi_get(keys, decode)
+      unless hash.empty?
+        hash = yield hash
+        # Only CAS entries that were updated from the original hash
+        hash.delete_if {|k| !flags_and_cas.has_key?(k) }
+        hash = multi_cas(hash, ttl, flags_and_cas, decode, tries)
+      end
+      hash
+    else
+      # Single CAS
+      value, flags, cas = single_get(keys, decode)
+      value = yield value
+      single_cas(keys, value, ttl, flags, cas, decode)
     end
-
-    cas = @struct.result.cas
-
-    value = @codec.decode(key, value, flags) if encode
-    value = yield value
-    value, flags = @codec.encode(key, value, flags) if encode
-
-    begin
-      check_return_code(
-        Lib.memcached_cas(@struct, key, value, ttl, flags, cas),
-        key
-      )
-    rescue => e
-      tries_for_cas ||= 0
-      raise unless tries_for_cas < options[:exception_retry_limit] && should_retry(e)
-      tries_for_cas += 1
-      retry
-    end
+  rescue => e
+    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    tries += 1
+    retry
   end
 
   alias :compare_and_swap :cas
@@ -504,31 +499,9 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
   #
   def get(keys, decode=true)
     if keys.is_a? Array
-      # Multi get
-      ret = Lib.memcached_mget(@struct, keys);
-      check_return_code(ret, keys)
-
-      hash = {}
-      value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
-      while ret != 21 do # Lib::MEMCACHED_END
-        if ret == 0 # Lib::MEMCACHED_SUCCESS
-          hash[key] = decode ? [value, flags] : value
-        elsif ret != 16 # Lib::MEMCACHED_NOTFOUND
-          check_return_code(ret, key)
-        end
-        value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
-      end
-      if decode
-        hash.each do |key, value_and_flags|
-          hash[key] = @codec.decode(key, *value_and_flags)
-        end
-      end
-      hash
+      multi_get(keys, decode).first
     else
-      # Single get
-      value, flags, ret = Lib.memcached_get_rvalue(@struct, keys)
-      check_return_code(ret, keys)
-      decode ? @codec.decode(keys, value, flags) : value
+      single_get(keys, decode).first
     end
   rescue => e
     tries ||= 0
@@ -693,5 +666,67 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       strings << ":#{server.weight}" if options[:ketama_weighted]
     end
     strings.join
+  end
+
+  def single_get(key, decode)
+    value, flags, ret = Lib.memcached_get_rvalue(@struct, key)
+    check_return_code(ret, key)
+    cas = @struct.result.cas if @support_cas
+    value = @codec.decode(key, value, flags) if decode
+    [value, flags, cas]
+  end
+
+  def multi_get(keys, decode)
+    ret = Lib.memcached_mget(@struct, keys)
+    check_return_code(ret, keys)
+
+    hash = {}
+    flags_and_cas = {} if @support_cas
+    value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
+    while ret != 21 do # Lib::MEMCACHED_END
+      if ret == 0 # Lib::MEMCACHED_SUCCESS
+        flags_and_cas[key] = [flags, @struct.result.cas] if @support_cas
+        hash[key] = decode ? [value, flags] : value
+      elsif ret != 16 # Lib::MEMCACHED_NOTFOUND
+        check_return_code(ret, key)
+      end
+      value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
+    end
+    if decode
+      hash.each do |key, value_and_flags|
+        hash[key] = @codec.decode(key, *value_and_flags)
+      end
+    end
+    [hash, flags_and_cas]
+  end
+
+  def multi_cas(hash, ttl, flags_and_cas, encode, tries)
+    result = {}
+    hash.each do |key, value|
+      raw_value = value
+      flags, cas = flags_and_cas[key]
+      value, flags = @codec.encode(key, value, flags) if encode
+      begin
+        ret = Lib.memcached_cas(@struct, key, value, ttl, flags, cas)
+        if ret == 0 # Lib::MEMCACHED_SUCCESS
+          result[key] = raw_value
+        elsif ret != 12 && ret != 16 # Lib::MEMCACHED_DATA_EXISTS, Lib::MEMCACHED_NOTFOUND
+          check_return_code(ret, key)
+        end
+      rescue => e
+        raise unless tries < options[:exception_retry_limit] && should_retry(e)
+        tries += 1
+        retry
+      end
+    end
+    result
+  end
+
+  def single_cas(key, value, ttl, flags, cas, encode)
+    value, flags = @codec.encode(key, value, flags) if encode
+    check_return_code(
+      Lib.memcached_cas(@struct, key, value, ttl, flags, cas),
+      key
+    )
   end
 end
