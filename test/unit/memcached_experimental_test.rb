@@ -1,4 +1,3 @@
-
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
 
 class MemcachedExperimentalTest < Test::Unit::TestCase
@@ -271,4 +270,3 @@ class MemcachedExperimentalTest < Test::Unit::TestCase
   end
 
 end
-
