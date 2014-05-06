@@ -440,7 +440,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       unless hash.empty?
         hash = yield hash
         # Only CAS entries that were updated from the original hash
-        hash.delete_if {|k| !flags_and_cas.has_key?(k) }
+        hash.delete_if {|k, _| !flags_and_cas.has_key?(k) }
         hash = multi_cas(hash, ttl, flags_and_cas, decode, tries)
       end
       hash
