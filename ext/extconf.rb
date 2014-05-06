@@ -8,22 +8,22 @@ end
 HERE = File.expand_path(File.dirname(__FILE__))
 BUNDLE_PATH = Dir.glob("libmemcached-*").first
 
-SOLARIS_32 = Config::CONFIG['target'] == "i386-pc-solaris2.10"
-BSD = Config::CONFIG['host_os'].downcase =~ /bsd/
+SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
+BSD = RbConfig::CONFIG['host_os'].downcase =~ /bsd/
 
-$CFLAGS = "#{Config::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "").gsub("-Werror=declaration-after-statement", "")
+$CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "").gsub("-Werror=declaration-after-statement", "")
 $CFLAGS << " -std=gnu99" if SOLARIS_32
 $CFLAGS << " -I/usr/local/include" if BSD
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
-$LDFLAGS = "#{Config::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{Config::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
-$CXXFLAGS = "#{Config::CONFIG['CXXFLAGS']} -std=gnu++98"
-$CC = "CC=#{Config::MAKEFILE_CONFIG["CC"].inspect}"
+$LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{RbConfig::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
+$CXXFLAGS = "#{RbConfig::CONFIG['CXXFLAGS']} -std=gnu++98"
+$CC = "CC=#{RbConfig::MAKEFILE_CONFIG["CC"].inspect}"
 
 # JRuby's default configure options can't build libmemcached properly
 LIBM_CFLAGS = defined?(JRUBY_VERSION) ? "-fPIC -g -O2" : $CFLAGS
 LIBM_LDFLAGS = defined?(JRUBY_VERSION) ? "-fPIC -lsasl2 -lm" : $LDFLAGS
 
-GMAKE_CMD = Config::CONFIG['host_os'].downcase =~ /bsd|solaris/ ? "gmake" : "make"
+GMAKE_CMD = RbConfig::CONFIG['host_os'].downcase =~ /bsd|solaris/ ? "gmake" : "make"
 TAR_CMD = SOLARIS_32 ? 'gtar' : 'tar'
 PATCH_CMD = SOLARIS_32 ? 'gpatch' : 'patch'
 
