@@ -107,10 +107,6 @@ def with_vm(vm, cmd)
   end
 end
 
-task :test_18 do
-  with_vm("/usr/bin/ruby", "test")
-end
-
 task :test_19 do
   with_vm("/opt/local/bin/ruby1.9", "test")
 end
@@ -119,7 +115,7 @@ task :test_rbx do
   with_vm("/usr/local/rubinius/1.2.4/bin/rbx", "test")
 end
 
-task :test_all => [:test_18, :test_19, :test_rbx]
+task :test_all => [:test_19, :test_rbx]
 
 task :prerelease => [:manifest, :test_all, :install]
 
