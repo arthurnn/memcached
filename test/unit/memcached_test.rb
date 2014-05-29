@@ -558,10 +558,8 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
-  def disabled_test_set_retry_on_client_error
-    # FIXME Test passes, but Mocha doesn't restore the original method properly
-    Rlibmemcached.stubs(:memcached_set).raises(Memcached::ClientError)
-    Rlibmemcached.stubs(:memcached_set).returns(0)
+  def test_set_retry_on_client_error
+    Rlibmemcached.stubs(:memcached_set).raises(Memcached::ClientError).then.returns(0)
 
     assert_nothing_raised do
       @cache.set(key, @value)

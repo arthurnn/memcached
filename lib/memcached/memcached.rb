@@ -322,7 +322,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
       )
     rescue => e
       tries ||= 0
-      retry if e.instance_of?(ClientError) && !tries
+      tries = 1 and retry if e.instance_of?(ClientError) && tries == 0
       raise unless tries < options[:exception_retry_limit] && should_retry(e)
       tries += 1
       retry
