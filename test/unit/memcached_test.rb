@@ -564,6 +564,8 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       @cache.set(key, @value)
     end
+
+    Rlibmemcached.unstub(:memcached_set)
   end
 
   # Delete
