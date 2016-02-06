@@ -2,7 +2,7 @@ require 'mkmf'
 require 'rbconfig'
 
 unless find_header('sasl/sasl.h')
-    abort 'Please install SASL to continue. The package is called libsasl2-dev on Ubuntu and cyrus-sasl on Gentoo.'
+  abort 'Please install SASL to continue. The package is called libsasl2-dev on Ubuntu and cyrus-sasl on Gentoo.'
 end
 
 HERE = File.expand_path(File.dirname(__FILE__))
