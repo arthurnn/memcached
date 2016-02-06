@@ -1,5 +1,3 @@
-Bundler.require(:benchmark)
-
 HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
 UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached')
