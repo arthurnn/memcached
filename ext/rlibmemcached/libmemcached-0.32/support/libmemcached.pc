@@ -1,0 +1,10 @@
+prefix=/Users/arthurnn/src/memcached/ext/rlibmemcached
+exec_prefix=${prefix}
+libdir=/Users/arthurnn/src/memcached/ext/rlibmemcached/lib
+includedir=${prefix}/include
+
+Name: libmemcached
+Description: libmemcached C library.
+Version: 0.32
+Libs: -L${libdir} -lmemcached
+Cflags: -I${includedir}
