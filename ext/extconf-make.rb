@@ -15,7 +15,7 @@ old_dir = Dir.pwd
 Dir.chdir($PATH)
 
 system("cd .") if BSD #Fix for a "quirk" that BSD has..
-        
+
 puts(cmd = "#{$GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' || true 2>&1")
 raise "'#{cmd}' failed" unless system(cmd)
 
