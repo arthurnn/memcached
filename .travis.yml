@@ -1,5 +1,6 @@
 before_install:
   - "gem install bundler"
+  - "rm ${BUNDLE_GEMFILE}.lock"
 bundler_args: --without benchmark
 language: ruby
 services: memcached
