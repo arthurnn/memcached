@@ -12,6 +12,8 @@ require 'test/unit/assertions'
 require 'mocha/test_unit'
 require 'ostruct'
 
+require_relative 'setup'
+
 UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached') unless defined? UNIX_SOCKET_NAME
 
 class GenericClass
