@@ -209,7 +209,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
           raise ArgumentError, <<-MSG
 Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or 'localhost:11211:10')
 for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached).
-But it was #{servers.inspect}.
+But it was #{server}.
           MSG
         end
       )
