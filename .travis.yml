@@ -1,9 +1,12 @@
+language: ruby
+services: memcached
+
 before_install:
   - "gem install bundler"
   - "rm ${BUNDLE_GEMFILE}.lock"
 bundler_args: --without benchmark
-language: ruby
-services: memcached
+before_script:
+  - memcached -s /tmp/memcached -p 11212 -d
 rvm:
   - 1.8.7
   - 1.9.3
