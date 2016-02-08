@@ -6,7 +6,7 @@ unless find_header('sasl/sasl.h')
 end
 
 HERE = File.expand_path(File.dirname(__FILE__))
-BUNDLE_PATH = Dir.chdir(HERE) { Dir.glob("libmemcached-*").first }
+LIBMEMCACHED_DIR = Dir.glob(File.join(HERE, '..', '..', 'vendor',"libmemcached-*")).first
 
 SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
 BSD = RbConfig::CONFIG['host_os'].downcase =~ /bsd/
@@ -43,23 +43,19 @@ def check_libmemcached
   $LIBPATH = ["#{HERE}/lib"]
   $DEFLIBPATH = [] unless SOLARIS_32
 
-  Dir.chdir(HERE) do
-    Dir.chdir(BUNDLE_PATH) do
-      ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
-      run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
-      run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{HERE} --libdir=#{HERE}/lib --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
+  Dir.chdir(LIBMEMCACHED_DIR) do
+    Dir.mkdir("build") if !Dir.exists?("build")
+    build_folder = File.join(LIBMEMCACHED_DIR, "build")
 
-      run("#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' 2>&1")
-      run("#{GMAKE_CMD} install 2>&1")
-    end
+    ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
+    run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
+    run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
+    run("#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' 2>&1")
+    run("#{GMAKE_CMD} install 2>&1")
   end
 
-  # Absolutely prevent the linker from picking up any other libmemcached
-  Dir.chdir("#{HERE}/lib") do
-    system("cp -f libmemcached.a libmemcached_gem.a")
-    system("cp -f libmemcached.la libmemcached_gem.la")
-  end
-  $LIBS << " -lmemcached_gem -lsasl2"
+  pcfile = File.join(LIBMEMCACHED_DIR, "build", "lib", "pkgconfig", "libmemcached.pc")
+  $LDFLAGS << " -lsasl2 " + `pkg-config --libs --static #{pcfile}`.strip
 end
 
 def run(cmd, reason = nil)
@@ -70,7 +66,5 @@ end
 
 check_libmemcached
 
-#$CFLAGS << " -Os"
+$CFLAGS << " -Os"
 create_makefile 'rlibmemcached'
-#run("mv Makefile Makefile.in", "Copy Makefile")
-#run("sed 's/-I.opt.local.include//' Makefile.in > Makefile", "Remove MacPorts from the include path")
