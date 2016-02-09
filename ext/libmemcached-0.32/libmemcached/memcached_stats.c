@@ -87,15 +87,15 @@ static memcached_return set_data(memcached_stat_st *memc_stat, char *key, char *
   }
   else if (!strcmp("bytes_read", key))
   {
-    memc_stat->bytes_read= (uint32_t) strtoll(value, (char **)NULL, 10);
+    memc_stat->bytes_read= (uint64_t) strtoll(value, (char **)NULL, 10);
   }
   else if (!strcmp("bytes_written", key))
   {
-    memc_stat->bytes_written= (uint32_t) strtoll(value, (char **)NULL, 10);
+    memc_stat->bytes_written= (uint64_t) strtoll(value, (char **)NULL, 10);
   }
   else if (!strcmp("bytes", key))
   {
-    memc_stat->bytes= (uint32_t) strtoll(value, (char **)NULL, 10);
+    memc_stat->bytes= (uint64_t) strtoll(value, (char **)NULL, 10);
   }
   else if (!strcmp("curr_connections", key))
   {
