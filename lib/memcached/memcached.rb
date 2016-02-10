@@ -206,7 +206,11 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
             Lib.memcached_server_add_with_weight(*args)
           end
         else
-          raise ArgumentError, "Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or  'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached)."
+          raise ArgumentError, <<-MSG
+Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or 'localhost:11211:10')
+for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached).
+But it was #{server}.
+          MSG
         end
       )
     end

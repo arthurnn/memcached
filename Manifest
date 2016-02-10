@@ -7,7 +7,6 @@ Manifest
 README.rdoc
 Rakefile
 TODO
-ext/extconf-make.rb
 ext/extconf.rb
 ext/libmemcached-0.32/AUTHORS
 ext/libmemcached-0.32/COPYING
