@@ -1,9 +1,7 @@
 # memcached
 
 An interface to the libmemcached C client.
-
-[<img src="https://travis-ci.org/evan/memcached.svg?branch=master" alt="Build
-Status" />](https://travis-ci.org/evan/memcached)
+[![Build Status](https://travis-ci.org/arthurnn/memcached.svg?branch=master)](https://travis-ci.org/arthurnn/memcached)
 
 ## License
 
