@@ -9,7 +9,7 @@ GEM
     activesupport (3.2.6)
       i18n (~> 0.6)
       multi_json (~> 1.0)
-    dalli (2.6.4)
+    dalli (2.7.5)
     i18n (0.6.0)
     memcache-client (1.8.5)
     metaclass (0.0.4)
@@ -29,7 +29,7 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
-  dalli (~> 2.6.4)
+  dalli
   memcache-client
   memcached!
   mocha
