@@ -1,3 +1,4 @@
+v1.9.0. Refactory on the compile/build extension.
 v1.8.0. Add support for multi-entry CAS (fbogsany).
 	Make rails client .delete method more consistent with other APIs
 
