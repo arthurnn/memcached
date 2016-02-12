@@ -69,4 +69,4 @@ unless have_library 'memcached' and have_header 'libmemcached/memcached.h'
   abort "ERROR: Failed to build libmemcached"
 end
 
-create_makefile 'rlibmemcached'
+create_makefile 'rlibmemcached/memcached'
