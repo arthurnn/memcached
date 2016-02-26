@@ -139,6 +139,6 @@ required to assign copyright for their additions to Cloudburst, LLC.
 
 ## Further resources
 
-*   [Memcached wiki](https://code.google.com/p/memcached/wiki/NewStart)
+*   [Memcached wiki](https://github.com/memcached/memcached/wiki)
 *   [Libmemcached homepage](libmemcached.org)
 
