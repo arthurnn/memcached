@@ -16,6 +16,7 @@ static VALUE allocate(VALUE klass)
 static VALUE
 rb_connection_initialize(VALUE klass, VALUE servers)
 {
+  return Qnil;
 }
 
 static memcached_return_t
