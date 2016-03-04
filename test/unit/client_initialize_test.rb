@@ -1,9 +1,4 @@
-#require 'test_helper'
-require 'memcached'
-
-require 'test/unit'
-require 'test/unit/assertions'
-require 'mocha/test_unit'
+require 'test_helper'
 
 class ClientInitializeTest < Test::Unit::TestCase
 
