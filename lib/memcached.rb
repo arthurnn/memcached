@@ -1,7 +1,11 @@
 require 'taj'
 
+require 'memcached/marshal_codec'
+
 module Memcached
   class Client
+    FLAGS = 0x0
+
     attr_reader :servers
 
     def initialize(servers = nil)
@@ -10,10 +14,20 @@ module Memcached
       else
         @servers = [[:tcp, "localhost", 11211]]
       end
+
+      @codec = Memcached::MarshalCodec
     end
 
-    def set(key, value, ttl: @default_ttl, encode: true)#, flags: FLAGS)
-      connection.set(key, value.to_s)
+    def set(key, value, ttl: 0, encode: true, flags: FLAGS)
+      value, flags = @codec.encode(key, value, flags) if encode
+
+      connection.set(key, value)
+    end
+
+    def get(key)
+      value = connection.get(key)
+      value = @codec.decode(key, value, FLAGS)# if decode
+      value
     end
 
     def connection
@@ -50,7 +64,6 @@ end
 #require 'memcached/exceptions'
 #require 'memcached/behaviors'
 #require 'memcached/auth'
-#require 'memcached/marshal_codec'
 #require 'memcached/memcached'
 #require 'memcached/rails'
 #require 'memcached/experimental'

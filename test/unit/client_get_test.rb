@@ -1,0 +1,280 @@
+require 'test_helper'
+require 'ostruct'
+
+class ClientInitializeTest < Minitest::Test
+  def setup
+    @cache = Memcached::Client.new#(@servers, @options)
+
+    @value = OpenStruct.new(a: 1, b: 2, c: self.class)
+    @marshalled_value = Marshal.dump(@value)
+  end
+
+  def key
+    caller.first[/.*[` ](.*)'/, 1] # '
+  end
+
+  def test_simple_get
+    @cache.set "foo", "bar"
+    assert_equal "bar", @cache.get("foo")
+
+    @cache.set key, @value
+    assert_equal @value, @cache.get(key)
+  end
+
+#  def test_binary_get
+#    @cache.set key, @value
+#    assert_equal @value, @binary_protocol_cache.get(key)
+#  end
+#
+#  def test_udp_get
+#    @udp_cache.set(key, @value)
+#    assert_raises(Memcached::ActionNotSupported) do
+#      @udp_cache.get(key)
+#    end
+#  end
+
+  def test_get_nil
+    @cache.set key, nil, ttl:  0
+    result = @cache.get key
+    assert_equal nil, result
+  end
+
+#  def test_get_from_last
+#    cache = Memcached.new(@servers, :distribution => :random)
+#    10.times { |n| cache.set key, n }
+#    10.times do
+#      assert_equal cache.get(key), cache.get_from_last(key)
+#    end
+#  end
+#
+#  def test_get_missing
+#    @cache.delete key rescue nil
+#    assert_raise(Memcached::NotFound) do
+#      result = @cache.get key
+#    end
+#  end
+#
+#  def test_get_coerces_string_type
+#    assert_raises(Memcached::NotFound) do
+#      @cache.get nil
+#    end
+#    assert_raises(TypeError) do
+#      @cache.get 1
+#    end
+#  end
+#
+#  def test_get_with_server_timeout
+#    socket = stub_server 43047
+#    cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :exception_retry_limit => 0)
+#    assert 0.49 < (Benchmark.measure do
+#      assert_raise(Memcached::ATimeoutOccurred) do
+#        result = cache.get key
+#      end
+#    end).real
+#
+#    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5, :exception_retry_limit => 0)
+#    assert 0.49 < (Benchmark.measure do
+#      assert_raise(Memcached::ATimeoutOccurred) do
+#        result = cache.get key
+#      end
+#    end).real
+#
+#    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25, :exception_retry_limit => 0)
+#    assert 0.51 > (Benchmark.measure do
+#      assert_raise(Memcached::ATimeoutOccurred) do
+#        result = cache.get key
+#      end
+#    end).real
+#  ensure
+#    socket.close
+#  end
+#
+#  def test_get_with_no_block_server_timeout
+#    socket = stub_server 43048
+#    cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25, :exception_retry_limit => 0)
+#    assert 0.24 < (Benchmark.measure do
+#      assert_raise(Memcached::ATimeoutOccurred) do
+#        result = cache.get key
+#      end
+#    end).real
+#
+#    cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001, :exception_retry_limit => 0)
+#    assert 0.24 < (Benchmark.measure do
+#      assert_raise(Memcached::ATimeoutOccurred) do
+#        result = cache.get key
+#      end
+#    end).real
+#
+#    cache = Memcached.new("localhost:43048:1", :no_block => true,
+#      :poll_timeout => 0.001,
+#      :rcv_timeout => 0.25, # No affect in no-block mode
+#      :exception_retry_limit => 0
+#    )
+#    assert 0.24 > (Benchmark.measure do
+#      assert_raise(Memcached::ATimeoutOccurred) do
+#        result = cache.get key
+#      end
+#    end).real
+#
+#  ensure
+#    socket.close
+#  end
+#
+#  def test_get_with_prefix_key
+#    # Prefix_key
+#    cache = Memcached.new(
+#      # We can only use one server because the key is hashed separately from the prefix key
+#      @servers.first,
+#      :prefix_key => @prefix_key,
+#      :hash => :default,
+#      :distribution => :modula
+#    )
+#    cache.set key, @value
+#    assert_equal @value, cache.get(key)
+#
+#    # No prefix_key specified
+#    cache = Memcached.new(
+#      @servers.first,
+#      :hash => :default,
+#      :distribution => :modula
+#    )
+#    assert_nothing_raised do
+#      assert_equal @value, cache.get("#{@prefix_key}#{key}")
+#    end
+#  end
+#
+#  def test_values_with_null_characters_are_not_truncated
+#    value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
+#    @cache.set key, value
+#    result = @cache.get key, false
+#    non_wrapped_result = Rlibmemcached.memcached_get(
+#      @cache.instance_variable_get("@struct"),
+#      key
+#    ).first
+#    assert result.size > non_wrapped_result.size
+#  end
+#
+#  def test_get_multi
+#    @cache.set "#{key}_1", 1
+#    @cache.set "#{key}_2", 2
+#    assert_equal({"#{key}_1" => 1, "#{key}_2" => 2},
+#      @cache.get(["#{key}_1", "#{key}_2"]))
+#  end
+#
+#  def test_get_multi_missing
+#    @cache.set "#{key}_1", 1
+#    @cache.delete "#{key}_2" rescue nil
+#    @cache.set "#{key}_3", 3
+#    @cache.delete "#{key}_4" rescue nil
+#    assert_equal(
+#      {"test_get_multi_missing_3"=>3, "test_get_multi_missing_1"=>1},
+#      @cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"])
+#     )
+#  end
+#
+#  def test_get_multi_binary
+#    @binary_protocol_cache.set "#{key}_1", 1
+#    @binary_protocol_cache.delete "#{key}_2" rescue nil
+#    @binary_protocol_cache.set "#{key}_3", 3
+#    assert_equal(
+#      {"test_get_multi_binary_3"=>3, "test_get_multi_binary_1"=>1},
+#      @binary_protocol_cache.get(["#{key}_1", "#{key}_2",  "#{key}_3"])
+#     )
+#  end
+#
+#  def test_get_multi_binary_one_record_missing
+#    @binary_protocol_cache.delete("magic_key") rescue nil
+#    assert_equal({}, @binary_protocol_cache.get(["magic_key"]))
+#  end
+#
+#  def test_get_multi_binary_one_record
+#    @binary_protocol_cache.set("magic_key", 1)
+#    assert_equal({"magic_key" => 1}, @binary_protocol_cache.get(["magic_key"]))
+#  end
+#
+#  def test_get_multi_completely_missing
+#    @cache.delete "#{key}_1" rescue nil
+#    @cache.delete "#{key}_2" rescue nil
+#    assert_equal(
+#      {},
+#      @cache.get(["#{key}_1", "#{key}_2"])
+#     )
+#  end
+#
+#  def test_get_multi_empty_string
+#    @cache.set "#{key}_1", "", 0, false
+#    assert_equal({"#{key}_1" => ""},
+#      @cache.get(["#{key}_1"], false))
+#  end
+#
+#  def test_get_multi_coerces_string_type
+#    assert_nothing_raised do
+#      @cache.get [nil]
+#    end
+#    assert_raises(TypeError) do
+#      @cache.get [1]
+#    end
+#  end
+#
+#  def test_set_and_get_unmarshalled
+#    @cache.set key, @value
+#    result = @cache.get key, false
+#    assert_equal @marshalled_value, result
+#  end
+#
+#  def test_set_unmarshalled_and_get_unmarshalled
+#    @cache.set key, @marshalled_value, 0, false
+#    result = @cache.get key, false
+#    assert_equal @marshalled_value, result
+#  end
+#
+#  def test_set_unmarshalled_error
+#    assert_raises(TypeError) do
+#      @cache.set key, @value, 0, false
+#    end
+#  end
+#
+#  def test_get_multi_unmarshalled
+#    @cache.set "#{key}_1", "1", 0, false
+#    @cache.set "#{key}_2", "2", 0, false
+#    assert_equal(
+#      {"#{key}_1" => "1", "#{key}_2" => "2"},
+#      @cache.get(["#{key}_1", "#{key}_2"], false)
+#    )
+#  end
+#
+#  def test_get_multi_mixed_marshalling
+#    @cache.set "#{key}_1", 1
+#    @cache.set "#{key}_2", "2", 0, false
+#    assert_nothing_raised do
+#      @cache.get(["#{key}_1", "#{key}_2"], false)
+#    end
+#    assert_raise(ArgumentError, TypeError) do
+#      @cache.get(["#{key}_1", "#{key}_2"])
+#    end
+#  end
+#
+#  def test_random_distribution_is_statistically_random
+#    cache = Memcached.new(@servers, :distribution => :random)
+#    read_cache = Memcached.new(@servers.first)
+#    hits = 4
+#
+#    while hits == 4 do
+#      cache.flush
+#      20.times do |i|
+#        cache.set "#{key}#{i}", @value
+#      end
+#
+#      hits = 0
+#      20.times do |i|
+#        begin
+#          read_cache.get "#{key}#{i}"
+#          hits += 1
+#        rescue Memcached::NotFound
+#        end
+#      end
+#    end
+#
+#    assert_not_equal 4, hits
+#  end
+end
