@@ -2,6 +2,7 @@ require 'taj'
 
 module Memcached
   class Client
+    attr_reader :servers
 
     def initialize(servers = nil)
       if servers
@@ -22,9 +23,12 @@ module Memcached
     private
     def normalize_servers(servers)
       servers.map do |server|
-        if server.is_a?(String) && server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
+        server = server.to_s
+        if server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
           host, port, weight = server.split(":")
-          [host, port.to_i, weight]
+          [:tcp, host, port.to_i, weight]
+        elsif File.socket?(server)
+          [:socket, server, weight = 8]
         else
           nil
         end

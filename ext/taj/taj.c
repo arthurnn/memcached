@@ -38,11 +38,21 @@ rb_connection_initialize(VALUE self, VALUE rb_servers)
 
   for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
     VALUE rb_server = rb_ary_entry(rb_servers, i);
-    VALUE rb_hostname = rb_ary_entry(rb_server, 0);
-    VALUE rb_port = rb_ary_entry(rb_server, 1);
-    VALUE rb_weight = rb_ary_entry(rb_server, 2);
 
-    memcached_server_add (ctx->memc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
+    VALUE rb_backend = rb_ary_entry(rb_server, 0);
+
+    ID id_tcp = rb_intern("tcp");
+    ID id_socket = rb_intern("socket");
+    if (id_tcp == SYM2ID(rb_backend)) {
+      VALUE rb_hostname = rb_ary_entry(rb_server, 1);
+      VALUE rb_port = rb_ary_entry(rb_server, 2);
+      // TODO: add weight
+      //VALUE rb_weight = rb_ary_entry(rb_server, 3);
+      memcached_server_add (ctx->memc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
+    } else if (id_socket == SYM2ID(rb_backend)) {
+      VALUE rb_fd = rb_ary_entry(rb_server, 1);
+      memcached_server_add_unix_socket (ctx->memc, StringValueCStr(rb_fd));
+    }
   }
 
   return Qnil;
