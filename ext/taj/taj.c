@@ -1,6 +1,11 @@
 #include <taj.h>
 
-VALUE rb_mTaj;
+VALUE rb_mTaj,
+  Taj_Server;
+
+ID id_ivar_hostname,
+  id_ivar_port,
+  id_ivar_weight;
 
 typedef struct {
   memcached_st * memc;
@@ -63,12 +68,13 @@ iterate_server_function(const memcached_st *ptr, const memcached_instance_st * s
 {
   VALUE server_list = (VALUE) context;
 
-  VALUE r_tuple = rb_ary_new3(2,
-                              rb_str_new2(memcached_server_name(server)),
-                              UINT2NUM(memcached_server_port(server)));
+  VALUE rb_server = rb_obj_alloc(Taj_Server);
 
-  rb_ary_push(server_list, r_tuple);
+  rb_ivar_set(rb_server, id_ivar_hostname, rb_str_new2(memcached_server_name(server)));
+  rb_ivar_set(rb_server, id_ivar_port, UINT2NUM(memcached_server_port(server)));
+  // TODO weight
 
+  rb_ary_push(server_list, rb_server);
   return MEMCACHED_SUCCESS;
 }
 
@@ -125,4 +131,12 @@ void Init_taj(void)
   rb_define_method(cConnection, "set", rb_connection_set, 2);
   rb_define_method(cConnection, "get", rb_connection_get, 1);
 
+  Taj_Server = rb_define_class_under(rb_mTaj, "Server", rb_cObject);
+
+  rb_define_attr(Taj_Server, "hostname", 1, 0);
+  id_ivar_hostname = rb_intern("@hostname");
+  rb_define_attr(Taj_Server, "port", 1, 0);
+  id_ivar_port = rb_intern("@port");
+  rb_define_attr(Taj_Server, "weight", 1, 0);
+  id_ivar_weight = rb_intern("@weight");
 }

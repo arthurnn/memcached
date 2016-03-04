@@ -8,7 +8,7 @@ module Memcached
       if servers
         @servers = normalize_servers(servers)
       else
-        @servers = [["localhost", 11211]]
+        @servers = [[:tcp, "localhost", 11211]]
       end
     end
 
@@ -25,10 +25,12 @@ module Memcached
       servers.map do |server|
         server = server.to_s
         if server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
-          host, port, weight = server.split(":")
-          [:tcp, host, port.to_i, weight]
+          host, port, _weight = server.split(":")
+          # TODO weight
+          [:tcp, host, port.to_i]
         elsif File.socket?(server)
-          [:socket, server, weight = 8]
+          # TODO weight, default = 8
+          [:socket, server]
         else
           nil
         end
