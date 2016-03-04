@@ -102,7 +102,7 @@ rb_connection_set(VALUE self, VALUE key, VALUE value)
 
   memcached_return_t rc = memcached_set(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), (time_t)0, (uint32_t)0);
 
-  fprintf(stderr, "Couldn't store key: %s\n", memcached_strerror(ctx->memc, rc));
+  //fprintf(stderr, "Couldn't store key: %s\n", memcached_strerror(ctx->memc, rc));
   return (rc == MEMCACHED_SUCCESS);
 }
 
@@ -114,9 +114,13 @@ rb_connection_get(VALUE self, VALUE key)
   char *mkey = StringValuePtr(key);
 
   size_t return_value_length;
-  char *response  = memcached_get(ctx->memc, mkey, strlen(mkey), &return_value_length, (time_t)0, (uint32_t)0);
+  memcached_return_t rc;
+  char *response  = memcached_get(ctx->memc, mkey, strlen(mkey), &return_value_length, (time_t)0, &rc);
 
-  return rb_str_new2(response);
+  if (rc == MEMCACHED_SUCCESS)
+    return rb_str_new2(response);
+  else
+    return Qnil;
 }
 
 void Init_taj(void)

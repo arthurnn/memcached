@@ -1,5 +1,7 @@
 require 'test_helper'
+
 require 'ostruct'
+require 'securerandom'
 
 class ClientInitializeTest < Minitest::Test
   def setup
@@ -47,22 +49,20 @@ class ClientInitializeTest < Minitest::Test
 #    end
 #  end
 #
-#  def test_get_missing
-#    @cache.delete key rescue nil
-#    assert_raise(Memcached::NotFound) do
-#      result = @cache.get key
-#    end
-#  end
-#
-#  def test_get_coerces_string_type
-#    assert_raises(Memcached::NotFound) do
-#      @cache.get nil
-#    end
-#    assert_raises(TypeError) do
-#      @cache.get 1
-#    end
-#  end
-#
+  def test_get_missing
+    assert_nil @cache.get "#{key}/#{SecureRandom.hex}"
+  end
+
+  def test_get_coerces_string_type
+    assert_raises(TypeError) do
+      @cache.get nil
+    end
+
+    assert_raises(TypeError) do
+      @cache.get 1
+    end
+  end
+
 #  def test_get_with_server_timeout
 #    socket = stub_server 43047
 #    cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :exception_retry_limit => 0)

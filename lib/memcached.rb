@@ -26,6 +26,7 @@ module Memcached
 
     def get(key)
       value = connection.get(key)
+      return nil unless value
       value = @codec.decode(key, value, FLAGS)# if decode
       value
     end
