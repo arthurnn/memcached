@@ -1,3 +1,0 @@
-MEMRM="../src/memrm"
-
-$MEMRM --help
