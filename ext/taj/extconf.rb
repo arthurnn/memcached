@@ -51,8 +51,6 @@ def check_libmemcached
     pcfile = File.join(LIBMEMCACHED_DIR, "build", "lib", "pkgconfig", "libmemcached.pc")
     $LDFLAGS << " -lsasl2 " + `pkg-config --libs --static #{pcfile}`.strip
   end
-
-
   $DEFLIBPATH.unshift("#{LIBMEMCACHED_DIR}/build")
   dir_config('memcached', "#{LIBMEMCACHED_DIR}/build/include", "#{LIBMEMCACHED_DIR}/build/lib")
 end
@@ -63,7 +61,9 @@ def run(cmd, reason = nil)
   raise "'#{cmd}' failed" unless system(cmd)
 end
 
-check_libmemcached
+## TODO: Disable vendored version for now
+#check_libmemcached
+pkg_config 'libmemcached-1.0.18'
 
 unless have_library 'memcached' and have_header 'libmemcached/memcached.h'
   abort "ERROR: Failed to build libmemcached"
