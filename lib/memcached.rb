@@ -2,8 +2,8 @@ require 'taj'
 
 module Taj
   class Connection
-    def self.create(_)
-      self.new
+    def self.create(servers)
+      self.new(servers)
     end
   end
 end
