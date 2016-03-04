@@ -2,7 +2,8 @@
 
 VALUE rb_mTaj;
 
-static VALUE allocate(VALUE klass)
+static VALUE
+allocate(VALUE klass)
 {
   memcached_st *memc;
   const char *config_string = "--SERVER=localhost";
@@ -20,7 +21,7 @@ rb_connection_initialize(VALUE klass, VALUE servers)
 }
 
 static memcached_return_t
-server_ary_function(const memcached_st *ptr, const memcached_instance_st * server, void *context)
+iterate_server_function(const memcached_st *ptr, const memcached_instance_st * server, void *context)
 {
   VALUE server_list = (VALUE) context;
 
@@ -33,7 +34,8 @@ server_ary_function(const memcached_st *ptr, const memcached_instance_st * serve
   return MEMCACHED_SUCCESS;
 }
 
-static VALUE servers(VALUE self)
+static VALUE
+rb_connection_servers(VALUE self)
 {
   memcached_st *memc;
   Data_Get_Struct(self, memcached_st, memc);
@@ -41,13 +43,14 @@ static VALUE servers(VALUE self)
   VALUE server_list = rb_ary_new();
 
   memcached_server_fn callbacks[1];
-  callbacks[0] = server_ary_function;
+  callbacks[0] = iterate_server_function;
 
   memcached_server_cursor(memc, callbacks, (void *)server_list, 1);
   return server_list;
 }
 
-static VALUE set(VALUE self, VALUE key, VALUE value)
+static VALUE
+rb_connection_set(VALUE self, VALUE key, VALUE value)
 {
   memcached_st *memc;
   Data_Get_Struct(self, memcached_st, memc);
@@ -61,7 +64,8 @@ static VALUE set(VALUE self, VALUE key, VALUE value)
   return (rc == MEMCACHED_SUCCESS);
 }
 
-static VALUE get(VALUE self, VALUE key)
+static VALUE
+rb_connection_get(VALUE self, VALUE key)
 {
   memcached_st *memc;
   Data_Get_Struct(self, memcached_st, memc);
@@ -82,9 +86,8 @@ void Init_taj(void)
   rb_define_alloc_func(cConnection, allocate);
 
   rb_define_method(cConnection, "initialize", rb_connection_initialize, 1);
-
-  rb_define_method(cConnection, "servers", servers, 0);
-  rb_define_method(cConnection, "set", set, 2);
-  rb_define_method(cConnection, "get", get, 1);
+  rb_define_method(cConnection, "servers", rb_connection_servers, 0);
+  rb_define_method(cConnection, "set", rb_connection_set, 2);
+  rb_define_method(cConnection, "get", rb_connection_get, 1);
 
 }
