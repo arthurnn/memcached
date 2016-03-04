@@ -3,4 +3,7 @@
 
 #include <ruby.h>
 
+#include <libmemcached/memcached.h>
+//#include <libmemcached/memcached_pool.h>
+
 #endif
