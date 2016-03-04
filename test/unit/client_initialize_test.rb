@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ClientInitializeTest < Test::Unit::TestCase
+class ClientInitializeTest < Minitest::Test
 
   def setup
     @servers = ['localhost:43042', 'localhost:43043']
@@ -84,9 +84,9 @@ class ClientInitializeTest < Test::Unit::TestCase
 #  end
 
   def test_initialize_with_invalid_server_strings
-    assert_raise(ArgumentError) { Memcached::Client.new ":43042" }
-    assert_raise(ArgumentError) { Memcached::Client.new "localhost:memcached" }
-    assert_raise(ArgumentError) { Memcached::Client.new "local host:43043:1" }
+    assert_raises(ArgumentError) { Memcached::Client.new ":43042" }
+    assert_raises(ArgumentError) { Memcached::Client.new "localhost:memcached" }
+    assert_raises(ArgumentError) { Memcached::Client.new "local host:43043:1" }
   end
 
 #  def test_initialize_with_invalid_options
@@ -184,7 +184,7 @@ class ClientInitializeTest < Test::Unit::TestCase
 #  end
 
   def test_initialize_strange_argument
-    assert_raise(ArgumentError) { Memcached::Client.new 1 }
+    assert_raises(ArgumentError) { Memcached::Client.new 1 }
   end
 
 

@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.licenses = ["Academic Free License 3.0 (AFL-3.0)"]
 
   s.add_development_dependency 'rake'
+  s.add_development_dependency 'minitest'
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'activesupport'
   s.add_development_dependency "rake-compiler"

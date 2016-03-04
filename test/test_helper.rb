@@ -1,7 +1,6 @@
 require 'memcached'
 
-require 'test/unit'
-require 'test/unit/assertions'
-require 'mocha/test_unit'
+require "minitest/autorun"
+require 'mocha/mini_test'
 
 #require_relative 'setup'
