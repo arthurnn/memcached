@@ -8,7 +8,7 @@ require 'mocha/test_unit'
 class ClientTest < Test::Unit::TestCase
 
   def setup
-#    @servers = ['localhost:43042', 'localhost:43043', "#{UNIX_SOCKET_NAME}0"]
+    @servers = ['localhost:43042', 'localhost:43043']
   end
 
   def test_initialize_without_servers
@@ -16,8 +16,13 @@ class ClientTest < Test::Unit::TestCase
     assert_equal [["localhost", 11211]], client.connection.servers
   end
 
+  def test_initialize_with_multiple_servers
+    client = Memcached::Client.new @servers
+    assert_equal [["localhost", 43042], ["localhost", 43043]], client.connection.servers
+  end
+
   def test_set
-    client = Memcached::Client.new("")
+    client = Memcached::Client.new
     assert client.set('foo', 'baz')
     assert client.set('foo', true)
   end

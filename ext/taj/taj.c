@@ -20,23 +20,31 @@ free_memc(Taj_ctx * ctx)
   memcached_free(ctx->memc);
 }
 
-
 static VALUE
 allocate(VALUE klass)
 {
-
   Taj_ctx * ctx;
   VALUE rb_obj = Data_Make_Struct(klass, Taj_ctx, NULL, free_memc, ctx);
 
-  // memc = memcached_create(NULL); TODO: Append servers
-  const char *config_string = "--SERVER=localhost";
-  ctx->memc = memcached(config_string, strlen(config_string));
+  ctx->memc = memcached_create(NULL);
   return rb_obj;
 }
 
 static VALUE
-rb_connection_initialize(VALUE klass, VALUE servers)
+rb_connection_initialize(VALUE self, VALUE rb_servers)
 {
+  Taj_ctx *ctx = get_ctx(self);
+  int i;
+
+  for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
+    VALUE rb_server = rb_ary_entry(rb_servers, i);
+    VALUE rb_hostname = rb_ary_entry(rb_server, 0);
+    VALUE rb_port = rb_ary_entry(rb_server, 1);
+    VALUE rb_weight = rb_ary_entry(rb_server, 2);
+
+    memcached_server_add (ctx->memc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
+  }
+
   return Qnil;
 }
 
