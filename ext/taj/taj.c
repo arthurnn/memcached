@@ -13,6 +13,11 @@ static VALUE allocate(VALUE klass)
   return Data_Wrap_Struct(klass, NULL, &memcached_free, memc);
 }
 
+static VALUE
+rb_connection_initialize(VALUE klass, VALUE servers)
+{
+}
+
 static memcached_return_t
 server_ary_function(const memcached_st *ptr, const memcached_instance_st * server, void *context)
 {
@@ -74,8 +79,10 @@ void Init_taj(void)
 
   VALUE cConnection = rb_define_class_under(rb_mTaj, "Connection", rb_cObject);
   rb_define_alloc_func(cConnection, allocate);
-  rb_define_method(cConnection, "servers", servers, 0);
 
+  rb_define_method(cConnection, "initialize", rb_connection_initialize, 1);
+
+  rb_define_method(cConnection, "servers", servers, 0);
   rb_define_method(cConnection, "set", set, 2);
   rb_define_method(cConnection, "get", get, 1);
 
