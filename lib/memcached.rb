@@ -11,7 +11,7 @@ end
 module Memcached
   class Client
 
-    def initialize(servers)
+    def initialize(servers = nil)
       @servers = servers
     end
 

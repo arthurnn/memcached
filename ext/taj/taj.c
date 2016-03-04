@@ -5,12 +5,40 @@ VALUE rb_mTaj;
 static VALUE allocate(VALUE klass)
 {
   memcached_st *memc;
-  char *config_string = "--SERVER=localhost";
+  const char *config_string = "--SERVER=localhost";
 
   memc = memcached(config_string, strlen(config_string));
   // memc = memcached_create(NULL); TODO: Append servers
 
   return Data_Wrap_Struct(klass, NULL, &memcached_free, memc);
+}
+
+static memcached_return_t
+server_ary_function(const memcached_st *ptr, const memcached_instance_st * server, void *context)
+{
+  VALUE server_list = (VALUE) context;
+
+  VALUE r_tuple = rb_ary_new3(2,
+                              rb_str_new2(memcached_server_name(server)),
+                              UINT2NUM(memcached_server_port(server)));
+
+  rb_ary_push(server_list, r_tuple);
+
+  return MEMCACHED_SUCCESS;
+}
+
+static VALUE servers(VALUE self)
+{
+  memcached_st *memc;
+  Data_Get_Struct(self, memcached_st, memc);
+
+  VALUE server_list = rb_ary_new();
+
+  memcached_server_fn callbacks[1];
+  callbacks[0] = server_ary_function;
+
+  memcached_server_cursor(memc, callbacks, (void *)server_list, 1);
+  return server_list;
 }
 
 static VALUE set(VALUE self, VALUE key, VALUE value)
@@ -46,6 +74,8 @@ void Init_taj(void)
 
   VALUE cConnection = rb_define_class_under(rb_mTaj, "Connection", rb_cObject);
   rb_define_alloc_func(cConnection, allocate);
+  rb_define_method(cConnection, "servers", servers, 0);
+
   rb_define_method(cConnection, "set", set, 2);
   rb_define_method(cConnection, "get", get, 1);
 
