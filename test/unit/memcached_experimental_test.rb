@@ -1,6 +1,6 @@
 require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
 
-class MemcachedExperimentalTest < Test::Unit::TestCase
+class MemcachedExperimentalTest # TODO
 
   def setup
     @servers = ['localhost:43042', 'localhost:43043', "#{UNIX_SOCKET_NAME}0"]
