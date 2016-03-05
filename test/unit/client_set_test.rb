@@ -41,37 +41,30 @@ class ClientSetTest < Minitest::Test
   end
 
   def test_set_with_default_ttl
-    cache = Memcached.new(
-      @servers,
-      :default_ttl => 1
-    )
+    cache = Memcached::Client.new(@servers, ttl: 1)
     cache.set key, @value
-    assert_nothing_raised do
-      cache.get key
-    end
+    assert_equal @value, cache.get(key)
+
     sleep(2)
-    assert_raise(Memcached::NotFound) do
-      cache.get key
-    end
+
+    assert_nil cache.get(key)
   end
 
   def test_set_coerces_string_type
-    assert_nothing_raised do
-      @cache.set nil, @value
-    end
+    refute @cache.set(nil, @value)
 
     assert_raises(TypeError) do
       @cache.set 1, @value
     end
   end
 
-  def disabled_test_set_retry_on_client_error
-    # FIXME Test passes, but Mocha doesn't restore the original method properly
-    Rlibmemcached.stubs(:memcached_set).raises(Memcached::ClientError)
-    Rlibmemcached.stubs(:memcached_set).returns(0)
-
-    assert_nothing_raised do
-      @cache.set(key, @value)
-    end
-  end
+#  def disabled_test_set_retry_on_client_error
+#    # FIXME Test passes, but Mocha doesn't restore the original method properly
+#    Rlibmemcached.stubs(:memcached_set).raises(Memcached::ClientError)
+#    Rlibmemcached.stubs(:memcached_set).returns(0)
+#
+#    assert_nothing_raised do
+#      @cache.set(key, @value)
+#    end
+#  end
 end

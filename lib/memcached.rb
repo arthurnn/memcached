@@ -8,7 +8,7 @@ module Memcached
 
     attr_reader :servers
 
-    def initialize(servers = nil)
+    def initialize(servers = nil, ttl: 0)
       if servers
         @servers = normalize_servers(servers)
       else
@@ -16,15 +16,17 @@ module Memcached
       end
 
       @codec = Memcached::MarshalCodec
+      @default_ttl = ttl
     end
 
     def flush
       connection.flush
     end
 
-    def set(key, value, ttl: 0, raw: false, flags: FLAGS)
-      value, flags = @codec.encode(key, value, flags) unless raw
+    def set(key, value, ttl: @default_ttl, raw: false, flags: FLAGS)
+      return false unless key
 
+      value, flags = @codec.encode(key, value, flags) unless raw
       connection.set(key, value, ttl, flags)
     end
 
