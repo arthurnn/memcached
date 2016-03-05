@@ -154,12 +154,12 @@ class ClientInitializeTest < Minitest::Test
 #    assert result.size > non_wrapped_result.size
 #  end
 #
-#  def test_get_multi
-#    @cache.set "#{key}_1", 1
-#    @cache.set "#{key}_2", 2
-#    assert_equal({"#{key}_1" => 1, "#{key}_2" => 2},
-#      @cache.get(["#{key}_1", "#{key}_2"]))
-#  end
+  def test_get_multi
+    @cache.set "#{key}_1", 1
+    @cache.set "#{key}_2", 2
+    assert_equal({"#{key}_1" => 1, "#{key}_2" => 2},
+                 @cache.get_multi(["#{key}_1", "#{key}_2"]))
+  end
 #
 #  def test_get_multi_missing
 #    @cache.set "#{key}_1", 1

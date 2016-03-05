@@ -31,6 +31,13 @@ module Memcached
       value
     end
 
+    def get_multi(keys)
+      hash = connection.get_multi(keys)
+      hash.each do |key, value|
+        hash[key] = @codec.decode(key, value, FLAGS)
+      end
+    end
+
     def connection
       @connection ||= Taj::Connection.new(@servers)
     end

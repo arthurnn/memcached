@@ -123,6 +123,42 @@ rb_connection_get(VALUE self, VALUE key)
     return Qnil;
 }
 
+static VALUE
+rb_connection_get_multi(VALUE self, VALUE rb_keys)
+{
+  Taj_ctx *ctx = get_ctx(self);
+  VALUE rb_values = rb_hash_new();
+  int i;
+  long keys_len = RARRAY_LEN(rb_keys);
+  const char * keys[keys_len];
+  size_t key_length[keys_len];
+
+  VALUE * arr = RARRAY_PTR(rb_keys);
+  const char *key, *value;
+
+  memcached_return_t rc;
+  memcached_result_st *result;
+
+  for(i = 0; i < keys_len; i++) {
+    keys[i] = StringValuePtr(arr[i]);
+    key_length[i] = strlen(keys[i]);
+  }
+
+  memcached_mget(ctx->memc, keys, key_length, sizeof(keys)/sizeof(keys[0]));
+
+  while ((result = memcached_fetch_result(ctx->memc, NULL, &rc))) {
+    if (rc != MEMCACHED_SUCCESS)
+      return Qnil;
+
+    key = memcached_result_key_value(result);
+    value = memcached_result_value(result);
+    rb_hash_aset(rb_values, rb_str_new2(key), rb_str_new2(value));
+    memcached_result_free(result);
+  }
+
+  return rb_values;
+}
+
 void Init_taj(void)
 {
   rb_mTaj = rb_define_module("Taj");
@@ -134,6 +170,7 @@ void Init_taj(void)
   rb_define_method(cConnection, "servers", rb_connection_servers, 0);
   rb_define_method(cConnection, "set", rb_connection_set, 2);
   rb_define_method(cConnection, "get", rb_connection_get, 1);
+  rb_define_method(cConnection, "get_multi", rb_connection_get_multi, 1);
 
   Taj_Server = rb_define_class_under(rb_mTaj, "Server", rb_cObject);
 
