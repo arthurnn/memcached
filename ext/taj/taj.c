@@ -103,14 +103,14 @@ rb_connection_flush(VALUE self)
 }
 
 static VALUE
-rb_connection_set(VALUE self, VALUE key, VALUE value)
+rb_connection_set(VALUE self, VALUE key, VALUE value, VALUE ttl, VALUE flags)
 {
   Taj_ctx *ctx = get_ctx(self);
 
   char *mkey = StringValuePtr(key);
   char *mvalue = StringValuePtr(value);
 
-  memcached_return_t rc = memcached_set(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), (time_t)0, (uint32_t)0);
+  memcached_return_t rc = memcached_set(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(ttl), NUM2INT(flags));
 
   //fprintf(stderr, "Couldn't store key: %s\n", memcached_strerror(ctx->memc, rc));
   return (rc == MEMCACHED_SUCCESS);
@@ -179,7 +179,7 @@ void Init_taj(void)
   rb_define_method(cConnection, "initialize", rb_connection_initialize, 1);
   rb_define_method(cConnection, "servers", rb_connection_servers, 0);
   rb_define_method(cConnection, "flush", rb_connection_flush, 0);
-  rb_define_method(cConnection, "set", rb_connection_set, 2);
+  rb_define_method(cConnection, "set", rb_connection_set, 4);
   rb_define_method(cConnection, "get", rb_connection_get, 1);
   rb_define_method(cConnection, "get_multi", rb_connection_get_multi, 1);
 

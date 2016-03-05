@@ -25,7 +25,7 @@ module Memcached
     def set(key, value, ttl: 0, raw: false, flags: FLAGS)
       value, flags = @codec.encode(key, value, flags) unless raw
 
-      connection.set(key, value)
+      connection.set(key, value, ttl, flags)
     end
 
     def get(key, raw: false)
