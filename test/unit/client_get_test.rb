@@ -6,13 +6,14 @@ require 'securerandom'
 class ClientInitializeTest < Minitest::Test
   def setup
     @cache = Memcached::Client.new#(@servers, @options)
+    @cache.flush
 
     @value = OpenStruct.new(a: 1, b: 2, c: self.class)
     @marshalled_value = Marshal.dump(@value)
   end
 
   def key
-    caller.first[/.*[` ](.*)'/, 1] # '
+    caller.first[/.*[` ](.*)'/, 1]
   end
 
   def test_simple_get

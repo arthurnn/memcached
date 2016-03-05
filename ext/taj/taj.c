@@ -93,6 +93,16 @@ rb_connection_servers(VALUE self)
 }
 
 static VALUE
+rb_connection_flush(VALUE self)
+{
+  Taj_ctx *ctx = get_ctx(self);
+
+  memcached_return_t rc = memcached_flush(ctx->memc, 0);
+
+  return (rc == MEMCACHED_SUCCESS);
+}
+
+static VALUE
 rb_connection_set(VALUE self, VALUE key, VALUE value)
 {
   Taj_ctx *ctx = get_ctx(self);
@@ -168,6 +178,7 @@ void Init_taj(void)
 
   rb_define_method(cConnection, "initialize", rb_connection_initialize, 1);
   rb_define_method(cConnection, "servers", rb_connection_servers, 0);
+  rb_define_method(cConnection, "flush", rb_connection_flush, 0);
   rb_define_method(cConnection, "set", rb_connection_set, 2);
   rb_define_method(cConnection, "get", rb_connection_get, 1);
   rb_define_method(cConnection, "get_multi", rb_connection_get_multi, 1);

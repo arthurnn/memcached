@@ -18,6 +18,10 @@ module Memcached
       @codec = Memcached::MarshalCodec
     end
 
+    def flush
+      connection.flush
+    end
+
     def set(key, value, ttl: 0, encode: true, flags: FLAGS)
       value, flags = @codec.encode(key, value, flags) if encode
 
