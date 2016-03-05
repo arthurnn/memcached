@@ -160,17 +160,13 @@ class ClientInitializeTest < Minitest::Test
     assert_equal({"#{key}_1" => 1, "#{key}_2" => 2},
                  @cache.get_multi(["#{key}_1", "#{key}_2"]))
   end
-#
-#  def test_get_multi_missing
-#    @cache.set "#{key}_1", 1
-#    @cache.delete "#{key}_2" rescue nil
-#    @cache.set "#{key}_3", 3
-#    @cache.delete "#{key}_4" rescue nil
-#    assert_equal(
-#      {"test_get_multi_missing_3"=>3, "test_get_multi_missing_1"=>1},
-#      @cache.get(["#{key}_1", "#{key}_2",  "#{key}_3",  "#{key}_4"])
-#     )
-#  end
+
+  def test_get_multi_missing
+    keys = 4.times.map { |n| "#{key}/#{n}" }
+    @cache.set keys[0], 1
+    @cache.set keys[1], 3
+    assert_equal({keys[0] => 1, keys[1] => 3}, @cache.get_multi(keys))
+  end
 #
 #  def test_get_multi_binary
 #    @binary_protocol_cache.set "#{key}_1", 1
