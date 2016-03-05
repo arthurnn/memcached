@@ -119,6 +119,8 @@ rb_connection_set(VALUE self, VALUE key, VALUE value, VALUE ttl, VALUE flags)
 static VALUE
 rb_connection_get(VALUE self, VALUE key)
 {
+  Check_Type(key, T_STRING);
+
   Taj_ctx *ctx = get_ctx(self);
 
   char *mkey = StringValuePtr(key);
