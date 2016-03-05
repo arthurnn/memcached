@@ -3,7 +3,8 @@ require 'test_helper'
 require 'ostruct'
 require 'securerandom'
 
-class ClientInitializeTest < Minitest::Test
+class ClientGetTest < Minitest::Test
+
   def setup
     @cache = Memcached::Client.new#(@servers, @options)
     @cache.flush
