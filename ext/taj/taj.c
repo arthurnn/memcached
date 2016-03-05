@@ -192,6 +192,36 @@ rb_connection_add(VALUE self, VALUE rb_key, VALUE rb_value, VALUE ttl, VALUE fla
   return (rc == MEMCACHED_SUCCESS);
 }
 
+static VALUE
+rb_connection_inc(VALUE self, VALUE rb_key, VALUE rb_value)
+{
+  Taj_ctx *ctx = get_ctx(self);
+  char *mkey = StringValuePtr(rb_key);
+  uint32_t offset = NUM2UINT(rb_value);
+  uint64_t new_number;
+
+  memcached_increment(ctx->memc, mkey, strlen(mkey), offset, &new_number);
+  // handle rc not success
+  // (rc == MEMCACHED_SUCCESS);
+
+  return INT2NUM(new_number);
+}
+
+static VALUE
+rb_connection_dec(VALUE self, VALUE rb_key, VALUE rb_value)
+{
+  Taj_ctx *ctx = get_ctx(self);
+  char *mkey = StringValuePtr(rb_key);
+  uint32_t offset = NUM2UINT(rb_value);
+  uint64_t new_number;
+
+  memcached_decrement(ctx->memc, mkey, strlen(mkey), offset, &new_number);
+  // handle rc not success
+  // (rc == MEMCACHED_SUCCESS);
+
+  return INT2NUM(new_number);
+}
+
 void Init_taj(void)
 {
   rb_mTaj = rb_define_module("Taj");
@@ -207,6 +237,8 @@ void Init_taj(void)
   rb_define_method(cConnection, "get_multi", rb_connection_get_multi, 1);
   rb_define_method(cConnection, "delete", rb_connection_delete, 1);
   rb_define_method(cConnection, "add", rb_connection_add, 4);
+  rb_define_method(cConnection, "increment", rb_connection_inc, 2);
+  rb_define_method(cConnection, "decrement", rb_connection_dec, 2);
 
   Taj_Server = rb_define_class_under(rb_mTaj, "Server", rb_cObject);
 

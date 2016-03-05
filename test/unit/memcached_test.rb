@@ -60,52 +60,6 @@ class MemcachedTest # TODO
     @marshalled_value = Marshal.dump(@value)
   end
 
-  # Increment and decrement
-
-  def test_increment
-    @cache.set key, "10", 0, false
-    assert_equal 11, @cache.increment(key)
-  end
-
-  def test_increment_binary
-    @binary_protocol_cache.set key, "10", 0, false
-    assert_equal 11, @binary_protocol_cache.increment(key)
-  end
-
-  def test_increment_offset
-    @cache.set key, "10", 0, false
-    assert_equal 15, @cache.increment(key, 5)
-  end
-
-  def test_missing_increment
-    @cache.delete key rescue nil
-    assert_raise(Memcached::NotFound) do
-      @cache.increment key
-    end
-  end
-
-  def test_decrement
-    @cache.set key, "10", 0, false
-    assert_equal 9, @cache.decrement(key)
-  end
-
-  def test_decrement_binary
-    @binary_protocol_cache.set key, "10", 0, false
-    assert_equal 9, @binary_protocol_cache.decrement(key)
-  end
-
-  def test_decrement_offset
-    @cache.set key, "10", 0, false
-    assert_equal 5, @cache.decrement(key, 5)
-  end
-
-  def test_missing_decrement
-    @cache.delete key rescue nil
-    assert_raise(Memcached::NotFound) do
-      @cache.decrement key
-    end
-  end
-
   # Exist
 
   def test_missing_exist

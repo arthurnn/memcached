@@ -57,6 +57,14 @@ module Memcached
       connection.add(key, value, ttl, flags)
     end
 
+    def increment(key, offset = 1)
+      connection.increment(key, offset)
+    end
+
+    def decrement(key, offset = 1)
+      connection.decrement(key, offset)
+    end
+
     def connection
       @connection ||= Taj::Connection.new(@servers)
     end
