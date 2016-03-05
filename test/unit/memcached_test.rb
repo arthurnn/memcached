@@ -60,52 +60,6 @@ class MemcachedTest # TODO
     @marshalled_value = Marshal.dump(@value)
   end
 
-  # Flush
-
-  def test_flush
-    @cache.set key, @value
-    assert_equal @value,
-      @cache.get(key)
-    @cache.flush
-    assert_raise(Memcached::NotFound) do
-      @cache.get key
-    end
-  end
-
-  # Add
-
-  def test_add
-    @cache.delete key rescue nil
-    @cache.add key, @value
-    assert_equal @value, @cache.get(key)
-  end
-
-  def test_existing_add
-    @cache.set key, @value
-    assert_raise(Memcached::NotStored) do
-      @cache.add key, @value
-    end
-  end
-
-  def test_add_expiry
-    @cache.delete key rescue nil
-    @cache.set key, @value, 1
-    assert_nothing_raised do
-      @cache.get key
-    end
-    sleep(1)
-    assert_raise(Memcached::NotFound) do
-      @cache.get key
-    end
-  end
-
-  def test_unmarshalled_add
-    @cache.delete key rescue nil
-    @cache.add key, @marshalled_value, 0, false
-    assert_equal @marshalled_value, @cache.get(key, false)
-    assert_equal @value, @cache.get(key)
-  end
-
   # Increment and decrement
 
   def test_increment
