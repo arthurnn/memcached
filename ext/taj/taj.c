@@ -170,6 +170,15 @@ rb_connection_get_multi(VALUE self, VALUE rb_keys)
   return rb_values;
 }
 
+static VALUE
+rb_connection_delete(VALUE self, VALUE key)
+{
+  Taj_ctx *ctx = get_ctx(self);
+  char *mkey = StringValuePtr(key);
+  memcached_return_t rc = memcached_delete(ctx->memc, mkey, strlen(mkey), (time_t)0);
+  return (rc == MEMCACHED_SUCCESS);
+}
+
 void Init_taj(void)
 {
   rb_mTaj = rb_define_module("Taj");
@@ -183,6 +192,7 @@ void Init_taj(void)
   rb_define_method(cConnection, "set", rb_connection_set, 4);
   rb_define_method(cConnection, "get", rb_connection_get, 1);
   rb_define_method(cConnection, "get_multi", rb_connection_get_multi, 1);
+  rb_define_method(cConnection, "delete", rb_connection_delete, 1);
 
   Taj_Server = rb_define_class_under(rb_mTaj, "Server", rb_cObject);
 

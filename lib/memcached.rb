@@ -48,6 +48,10 @@ module Memcached
       hash
     end
 
+    def delete(key)
+      connection.delete(key)
+    end
+
     def connection
       @connection ||= Taj::Connection.new(@servers)
     end
