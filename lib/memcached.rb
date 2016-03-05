@@ -52,6 +52,13 @@ module Memcached
       connection.delete(key)
     end
 
+    def add(key, value, ttl: @default_ttl, raw: false, flags: FLAGS)
+      return false unless key
+
+      value, flags = @codec.encode(key, value, flags) unless raw
+      connection.add(key, value, ttl, flags)
+    end
+
     def connection
       @connection ||= Taj::Connection.new(@servers)
     end
