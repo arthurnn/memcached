@@ -18,7 +18,7 @@ class ClientSetTest < BaseTest
     cache.set key, @value, ttl: 1
 
     assert_equal @value, cache.get(key)
-    sleep(2)
+    sleep(1.02)
     assert_nil cache.get(key)
     assert_raises(TypeError) do
       cache.set key, @value, ttl: Time.now
@@ -30,7 +30,7 @@ class ClientSetTest < BaseTest
     cache.set key, @value
     assert_equal @value, cache.get(key)
 
-    sleep(2)
+    sleep(1.02)
 
     assert_nil cache.get(key)
   end
