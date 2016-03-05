@@ -125,7 +125,8 @@ rb_connection_get(VALUE self, VALUE key)
 
   size_t return_value_length;
   memcached_return_t rc;
-  char *response  = memcached_get(ctx->memc, mkey, strlen(mkey), &return_value_length, (time_t)0, &rc);
+  uint32_t flags; // TODO return flags so client can know if it should deserialize or decompress
+  char *response  = memcached_get(ctx->memc, mkey, strlen(mkey), &return_value_length, &flags, &rc);
 
   if (rc == MEMCACHED_SUCCESS)
     return rb_str_new2(response);
