@@ -1,24 +1,9 @@
 require 'test_helper'
 
-require 'ostruct'
-require 'securerandom'
-
-class ClientSetTest < Minitest::Test
-
-  def setup
-    @cache = Memcached::Client.new#(@servers, @options)
-    @cache.flush
-
-    @value = OpenStruct.new(a: 1, b: 2, c: self.class)
-    @marshalled_value = Marshal.dump(@value)
-  end
-
-  def key
-    caller.first[/.*[` ](.*)'/, 1]
-  end
+class ClientSetTest < BaseTest
 
   def test_simple_set
-    assert @cache.set(key, @value)
+    assert cache.set(key, @value)
   end
 
 #  def test_binary_set
@@ -30,13 +15,13 @@ class ClientSetTest < Minitest::Test
 #  end
 
   def test_set_expiry
-    @cache.set key, @value, ttl: 1
+    cache.set key, @value, ttl: 1
 
-    assert_equal @value, @cache.get(key)
+    assert_equal @value, cache.get(key)
     sleep(2)
-    assert_nil @cache.get(key)
+    assert_nil cache.get(key)
     assert_raises(TypeError) do
-      @cache.set key, @value, ttl: Time.now
+      cache.set key, @value, ttl: Time.now
     end
   end
 
@@ -51,10 +36,10 @@ class ClientSetTest < Minitest::Test
   end
 
   def test_set_coerces_string_type
-    refute @cache.set(nil, @value)
+    refute cache.set(nil, @value)
 
     assert_raises(TypeError) do
-      @cache.set 1, @value
+      cache.set 1, @value
     end
   end
 
@@ -64,7 +49,7 @@ class ClientSetTest < Minitest::Test
 #    Rlibmemcached.stubs(:memcached_set).returns(0)
 #
 #    assert_nothing_raised do
-#      @cache.set(key, @value)
+#      cache.set(key, @value)
 #    end
 #  end
 end

@@ -1,7 +1,7 @@
 
 unless defined? UNIX_SOCKET_NAME
   HERE = File.dirname(__FILE__)
-  UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached')
+  UNIX_SOCKET_NAME = File.join('/tmp', 'memcached')
 
   # Kill memcached
   system("killall -9 memcached")
