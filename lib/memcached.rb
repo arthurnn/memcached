@@ -22,24 +22,28 @@ module Memcached
       connection.flush
     end
 
-    def set(key, value, ttl: 0, encode: true, flags: FLAGS)
-      value, flags = @codec.encode(key, value, flags) if encode
+    def set(key, value, ttl: 0, raw: false, flags: FLAGS)
+      value, flags = @codec.encode(key, value, flags) unless raw
 
       connection.set(key, value)
     end
 
-    def get(key)
+    def get(key, raw: false)
       value = connection.get(key)
       return nil unless value
-      value = @codec.decode(key, value, FLAGS)# if decode
+      value = @codec.decode(key, value, FLAGS) unless raw
       value
     end
 
-    def get_multi(keys)
+    def get_multi(keys, raw: false)
+      keys = keys.compact
       hash = connection.get_multi(keys)
-      hash.each do |key, value|
-        hash[key] = @codec.decode(key, value, FLAGS)
+      unless raw
+        hash.each do |key, value|
+          hash[key] = @codec.decode(key, value, FLAGS)
+        end
       end
+      hash
     end
 
     def connection

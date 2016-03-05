@@ -190,68 +190,62 @@ class ClientGetTest < Minitest::Test
 #    assert_equal({"magic_key" => 1}, @binary_protocol_cache.get(["magic_key"]))
 #  end
 #
-#  def test_get_multi_completely_missing
-#    @cache.delete "#{key}_1" rescue nil
-#    @cache.delete "#{key}_2" rescue nil
-#    assert_equal(
-#      {},
-#      @cache.get(["#{key}_1", "#{key}_2"])
-#     )
-#  end
-#
-#  def test_get_multi_empty_string
-#    @cache.set "#{key}_1", "", 0, false
-#    assert_equal({"#{key}_1" => ""},
-#      @cache.get(["#{key}_1"], false))
-#  end
-#
-#  def test_get_multi_coerces_string_type
-#    assert_nothing_raised do
-#      @cache.get [nil]
-#    end
-#    assert_raises(TypeError) do
-#      @cache.get [1]
-#    end
-#  end
-#
-#  def test_set_and_get_unmarshalled
-#    @cache.set key, @value
-#    result = @cache.get key, false
-#    assert_equal @marshalled_value, result
-#  end
-#
-#  def test_set_unmarshalled_and_get_unmarshalled
-#    @cache.set key, @marshalled_value, 0, false
-#    result = @cache.get key, false
-#    assert_equal @marshalled_value, result
-#  end
-#
-#  def test_set_unmarshalled_error
-#    assert_raises(TypeError) do
-#      @cache.set key, @value, 0, false
-#    end
-#  end
-#
-#  def test_get_multi_unmarshalled
-#    @cache.set "#{key}_1", "1", 0, false
-#    @cache.set "#{key}_2", "2", 0, false
-#    assert_equal(
-#      {"#{key}_1" => "1", "#{key}_2" => "2"},
-#      @cache.get(["#{key}_1", "#{key}_2"], false)
-#    )
-#  end
-#
-#  def test_get_multi_mixed_marshalling
-#    @cache.set "#{key}_1", 1
-#    @cache.set "#{key}_2", "2", 0, false
-#    assert_nothing_raised do
-#      @cache.get(["#{key}_1", "#{key}_2"], false)
-#    end
-#    assert_raise(ArgumentError, TypeError) do
-#      @cache.get(["#{key}_1", "#{key}_2"])
-#    end
-#  end
-#
+  def test_get_multi_completely_missing
+    assert_equal({}, @cache.get_multi(["#{key}_1", "#{key}_2"]))
+  end
+
+  def test_get_multi_empty_string
+    @cache.set "#{key}_1", "", ttl: 0, raw: true
+    assert_equal({"#{key}_1" => ""},
+                 @cache.get_multi(["#{key}_1"], raw: true))
+  end
+
+  def test_get_multi_coerces_string_type
+    assert @cache.get_multi [nil]
+
+    assert_raises(TypeError) do
+      @cache.get_multi [1]
+    end
+  end
+
+  def test_set_and_get_unmarshalled
+    @cache.set key, @value
+    result = @cache.get key, raw: true
+    assert_equal @marshalled_value, result
+  end
+
+  def test_set_unmarshalled_and_get_unmarshalled
+    @cache.set key, @marshalled_value, raw: true
+    result = @cache.get key, raw: true
+    assert_equal @marshalled_value, result
+  end
+
+  def test_set_unmarshalled_error
+    assert_raises(TypeError) do
+      @cache.set key, @value, raw: true
+    end
+  end
+
+  def test_get_multi_unmarshalled
+    @cache.set "#{key}_1", "1", raw: true
+    @cache.set "#{key}_2", "2", raw: true
+    assert_equal(
+      {"#{key}_1" => "1", "#{key}_2" => "2"},
+      @cache.get_multi(["#{key}_1", "#{key}_2"], raw: true)
+    )
+  end
+
+  def test_get_multi_mixed_marshalling
+    @cache.set "#{key}_1", 1
+    @cache.set "#{key}_2", "2", raw: true
+
+    assert @cache.get_multi(["#{key}_1", "#{key}_2"], raw: true)
+
+    assert_raises(ArgumentError, TypeError) do
+      @cache.get_multi(["#{key}_1", "#{key}_2"])
+    end
+  end
+
 #  def test_random_distribution_is_statistically_random
 #    cache = Memcached.new(@servers, :distribution => :random)
 #    read_cache = Memcached.new(@servers.first)
