@@ -1,32 +1,17 @@
 require 'test_helper'
 
-require 'ostruct'
-require 'securerandom'
-
-class ClientGetTest < Minitest::Test
-
-  def setup
-    @cache = Memcached::Client.new#(@servers, @options)
-    @cache.flush
-
-    @value = OpenStruct.new(a: 1, b: 2, c: self.class)
-    @marshalled_value = Marshal.dump(@value)
-  end
-
-  def key
-    caller.first[/.*[` ](.*)'/, 1]
-  end
+class ClientGetTest < BaseTest
 
   def test_simple_get
-    @cache.set "foo", "bar"
-    assert_equal "bar", @cache.get("foo")
+    cache.set "foo", "bar"
+    assert_equal "bar", cache.get("foo")
 
-    @cache.set key, @value
-    assert_equal @value, @cache.get(key)
+    cache.set key, @value
+    assert_equal @value, cache.get(key)
   end
 
 #  def test_binary_get
-#    @cache.set key, @value
+#    cache.set key, @value
 #    assert_equal @value, @binary_protocol_cache.get(key)
 #  end
 #
@@ -38,8 +23,8 @@ class ClientGetTest < Minitest::Test
 #  end
 
   def test_get_nil
-    @cache.set key, nil, ttl:  0
-    result = @cache.get key
+    cache.set key, nil, ttl:  0
+    result = cache.get key
     assert_equal nil, result
   end
 
@@ -52,16 +37,16 @@ class ClientGetTest < Minitest::Test
 #  end
 #
   def test_get_missing
-    assert_nil @cache.get "#{key}/#{SecureRandom.hex}"
+    assert_nil cache.get "#{key}/#{SecureRandom.hex}"
   end
 
   def test_get_coerces_string_type
     assert_raises(TypeError) do
-      @cache.get nil
+      cache.get nil
     end
 
     assert_raises(TypeError) do
-      @cache.get 1
+      cache.get 1
     end
   end
 
@@ -147,27 +132,27 @@ class ClientGetTest < Minitest::Test
 #
 #  def test_values_with_null_characters_are_not_truncated
 #    value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
-#    @cache.set key, value
-#    result = @cache.get key, false
+#    cache.set key, value
+#    result = cache.get key, false
 #    non_wrapped_result = Rlibmemcached.memcached_get(
-#      @cache.instance_variable_get("@struct"),
+#      cache.instance_variable_get("@struct"),
 #      key
 #    ).first
 #    assert result.size > non_wrapped_result.size
 #  end
 #
   def test_get_multi
-    @cache.set "#{key}_1", 1
-    @cache.set "#{key}_2", 2
+    cache.set "#{key}_1", 1
+    cache.set "#{key}_2", 2
     assert_equal({"#{key}_1" => 1, "#{key}_2" => 2},
-                 @cache.get_multi(["#{key}_1", "#{key}_2"]))
+                 cache.get_multi(["#{key}_1", "#{key}_2"]))
   end
 
   def test_get_multi_missing
     keys = 4.times.map { |n| "#{key}/#{n}" }
-    @cache.set keys[0], 1
-    @cache.set keys[1], 3
-    assert_equal({keys[0] => 1, keys[1] => 3}, @cache.get_multi(keys))
+    cache.set keys[0], 1
+    cache.set keys[1], 3
+    assert_equal({keys[0] => 1, keys[1] => 3}, cache.get_multi(keys))
   end
 #
 #  def test_get_multi_binary
@@ -191,58 +176,58 @@ class ClientGetTest < Minitest::Test
 #  end
 #
   def test_get_multi_completely_missing
-    assert_equal({}, @cache.get_multi(["#{key}_1", "#{key}_2"]))
+    assert_equal({}, cache.get_multi(["#{key}_1", "#{key}_2"]))
   end
 
   def test_get_multi_empty_string
-    @cache.set "#{key}_1", "", ttl: 0, raw: true
+    cache.set "#{key}_1", "", ttl: 0, raw: true
     assert_equal({"#{key}_1" => ""},
-                 @cache.get_multi(["#{key}_1"], raw: true))
+                 cache.get_multi(["#{key}_1"], raw: true))
   end
 
   def test_get_multi_coerces_string_type
-    assert @cache.get_multi [nil]
+    assert cache.get_multi [nil]
 
     assert_raises(TypeError) do
-      @cache.get_multi [1]
+      cache.get_multi [1]
     end
   end
 
   def test_set_and_get_unmarshalled
-    @cache.set key, @value
-    result = @cache.get key, raw: true
+    cache.set key, @value
+    result = cache.get key, raw: true
     assert_equal @marshalled_value, result
   end
 
   def test_set_unmarshalled_and_get_unmarshalled
-    @cache.set key, @marshalled_value, raw: true
-    result = @cache.get key, raw: true
+    cache.set key, @marshalled_value, raw: true
+    result = cache.get key, raw: true
     assert_equal @marshalled_value, result
   end
 
   def test_set_unmarshalled_error
     assert_raises(TypeError) do
-      @cache.set key, @value, raw: true
+      cache.set key, @value, raw: true
     end
   end
 
   def test_get_multi_unmarshalled
-    @cache.set "#{key}_1", "1", raw: true
-    @cache.set "#{key}_2", "2", raw: true
+    cache.set "#{key}_1", "1", raw: true
+    cache.set "#{key}_2", "2", raw: true
     assert_equal(
       {"#{key}_1" => "1", "#{key}_2" => "2"},
-      @cache.get_multi(["#{key}_1", "#{key}_2"], raw: true)
+      cache.get_multi(["#{key}_1", "#{key}_2"], raw: true)
     )
   end
 
   def test_get_multi_mixed_marshalling
-    @cache.set "#{key}_1", 1
-    @cache.set "#{key}_2", "2", raw: true
+    cache.set "#{key}_1", 1
+    cache.set "#{key}_2", "2", raw: true
 
-    assert @cache.get_multi(["#{key}_1", "#{key}_2"], raw: true)
+    assert cache.get_multi(["#{key}_1", "#{key}_2"], raw: true)
 
     assert_raises(ArgumentError, TypeError) do
-      @cache.get_multi(["#{key}_1", "#{key}_2"])
+      cache.get_multi(["#{key}_1", "#{key}_2"])
     end
   end
 

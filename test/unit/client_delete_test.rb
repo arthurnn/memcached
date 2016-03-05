@@ -1,20 +1,15 @@
 require 'test_helper'
 
-class ClientDeleteTest < Minitest::Test
+class ClientDeleteTest < BaseTest
 
   def setup
-    @cache = Memcached::Client.new#(@servers, @options)
-    @cache.flush
-    @cache.set key, @value = "bar"
-  end
-
-  def key
-    caller.first[/.*[` ](.*)'/, 1]
+    super
+    cache.set key, @value = "bar"
   end
 
   def test_simple_delete
-    @cache.delete key
-    assert_nil @cache.get(key)
+    cache.delete key
+    assert_nil cache.get(key)
   end
 
 #  def test_binary_delete
@@ -26,6 +21,6 @@ class ClientDeleteTest < Minitest::Test
 #  end
 
   def test_missing_delete
-    refute @cache.delete(key)
+    refute cache.delete(key)
   end
 end

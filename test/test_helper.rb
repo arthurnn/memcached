@@ -15,6 +15,7 @@ class BaseTest < Minitest::Test
 
     @value = OpenStruct.new(a: 1, b: 2, c: self.class)
     @marshalled_value = Marshal.dump(@value)
+    @cache = nil
   end
 
   private

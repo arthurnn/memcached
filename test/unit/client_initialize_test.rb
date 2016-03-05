@@ -1,10 +1,6 @@
 require 'test_helper'
 
-class ClientInitializeTest < Minitest::Test
-
-  def setup
-    @servers = ['localhost:43042', 'localhost:43043']
-  end
+class ClientInitializeTest < BaseTest
 
   def test_initialize_without_servers
     client = Memcached::Client.new
@@ -14,11 +10,13 @@ class ClientInitializeTest < Minitest::Test
   end
 
   def test_initialize_with_multiple_servers
+    @servers = ['localhost:43042', 'localhost:43043']
     client = Memcached::Client.new @servers
     assert_equal [[:tcp, "localhost", 43042], [:tcp, "localhost", 43043]], client.servers
   end
 
   def test_initialize_with_multiple_servers_and_socket
+    @servers = ['localhost:43042', 'localhost:43043']
     client = Memcached::Client.new(@servers + ['/tmp/memcached0'])
     assert_equal [[:tcp, "localhost", 43042], [:tcp, "localhost", 43043], [:socket, '/tmp/memcached0']], client.servers
 
