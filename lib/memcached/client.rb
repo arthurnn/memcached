@@ -76,6 +76,14 @@ module Memcached
       connection.replace(key, value, ttl, flags)
     end
 
+    def prepend(key, value, ttl: @default_ttl, flags: FLAGS)
+      connection.prepend(key, value, ttl, flags)
+    end
+
+    def append(key, value, ttl: @default_ttl, flags: FLAGS)
+      connection.append(key, value, ttl, flags)
+    end
+
     def connection
       @connection ||= Taj::Connection.new(@servers)
     end

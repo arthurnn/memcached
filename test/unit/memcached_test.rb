@@ -60,58 +60,6 @@ class MemcachedTest # TODO
     @marshalled_value = Marshal.dump(@value)
   end
 
-  # Append and prepend
-
-  def test_append
-    @cache.set key, "start", 0, false
-    assert_nothing_raised do
-      @cache.append key, "end"
-    end
-    assert_equal "startend", @cache.get(key, false)
-
-    @binary_protocol_cache.set key, "start", 0, false
-    assert_nothing_raised do
-      @binary_protocol_cache.append key, "end"
-    end
-    assert_equal "startend", @binary_protocol_cache.get(key, false)
-  end
-
-  def test_missing_append
-    @cache.delete key rescue nil
-    assert_raise(Memcached::NotStored) do
-      @cache.append key, "end"
-    end
-    assert_raise(Memcached::NotFound) do
-      assert_equal @value, @cache.get(key)
-    end
-
-    @binary_protocol_cache.delete key rescue nil
-    assert_raise(Memcached::NotStored) do
-      @binary_protocol_cache.append key, "end"
-    end
-    assert_raise(Memcached::NotFound) do
-      assert_equal @value, @binary_protocol_cache.get(key)
-    end
-  end
-
-  def test_prepend
-    @cache.set key, "end", 0, false
-    assert_nothing_raised do
-      @cache.prepend key, "start"
-    end
-    assert_equal "startend", @cache.get(key, false)
-  end
-
-  def test_missing_prepend
-    @cache.delete key rescue nil
-    assert_raise(Memcached::NotStored) do
-      @cache.prepend key, "end"
-    end
-    assert_raise(Memcached::NotFound) do
-      assert_equal @value, @cache.get(key)
-    end
-  end
-
   # CAS
 
   def test_cas
