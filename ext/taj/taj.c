@@ -222,6 +222,16 @@ rb_connection_dec(VALUE self, VALUE rb_key, VALUE rb_value)
   return INT2NUM(new_number);
 }
 
+static VALUE
+rb_connection_exist(VALUE self, VALUE rb_key)
+{
+  Taj_ctx *ctx = get_ctx(self);
+  char *mkey = StringValuePtr(rb_key);
+
+  memcached_return_t rc = memcached_exist(ctx->memc, mkey, strlen(mkey));
+  return (rc == MEMCACHED_SUCCESS);
+}
+
 void Init_taj(void)
 {
   rb_mTaj = rb_define_module("Taj");
@@ -239,6 +249,7 @@ void Init_taj(void)
   rb_define_method(cConnection, "add", rb_connection_add, 4);
   rb_define_method(cConnection, "increment", rb_connection_inc, 2);
   rb_define_method(cConnection, "decrement", rb_connection_dec, 2);
+  rb_define_method(cConnection, "exist", rb_connection_exist, 1);
 
   Taj_Server = rb_define_class_under(rb_mTaj, "Server", rb_cObject);
 

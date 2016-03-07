@@ -65,6 +65,10 @@ module Memcached
       connection.decrement(key, offset)
     end
 
+    def exist(key)
+      connection.exist(key)
+    end
+
     def connection
       @connection ||= Taj::Connection.new(@servers)
     end
