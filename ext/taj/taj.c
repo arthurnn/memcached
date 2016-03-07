@@ -232,6 +232,20 @@ rb_connection_exist(VALUE self, VALUE rb_key)
   return (rc == MEMCACHED_SUCCESS);
 }
 
+static VALUE
+rb_connection_replace(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
+{
+  Taj_ctx *ctx = get_ctx(self);
+
+  char *mkey = StringValuePtr(rb_key);
+  char *mvalue = StringValuePtr(rb_value);
+
+  memcached_return_t rc = memcached_replace(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
+
+  //fprintf(stderr, "Couldn't store key: %s\n", memcached_strerror(ctx->memc, rc));
+  return (rc == MEMCACHED_SUCCESS);
+}
+
 void Init_taj(void)
 {
   rb_mTaj = rb_define_module("Taj");
@@ -250,6 +264,7 @@ void Init_taj(void)
   rb_define_method(cConnection, "increment", rb_connection_inc, 2);
   rb_define_method(cConnection, "decrement", rb_connection_dec, 2);
   rb_define_method(cConnection, "exist", rb_connection_exist, 1);
+  rb_define_method(cConnection, "replace", rb_connection_replace, 4);
 
   Taj_Server = rb_define_class_under(rb_mTaj, "Server", rb_cObject);
 

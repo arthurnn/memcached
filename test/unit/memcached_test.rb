@@ -60,26 +60,6 @@ class MemcachedTest # TODO
     @marshalled_value = Marshal.dump(@value)
   end
 
-  # Replace
-
-  def test_replace
-    @cache.set key, nil
-    assert_nothing_raised do
-      @cache.replace key, @value
-    end
-    assert_equal @value, @cache.get(key)
-  end
-
-  def test_missing_replace
-    @cache.delete key rescue nil
-    assert_raise(Memcached::NotStored) do
-      @cache.replace key, @value
-    end
-    assert_raise(Memcached::NotFound) do
-      assert_equal @value, @cache.get(key)
-    end
-  end
-
   # Append and prepend
 
   def test_append
