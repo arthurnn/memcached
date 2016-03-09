@@ -85,7 +85,7 @@ module Memcached
     end
 
     def connection
-      @connection ||= Taj::Connection.new(@servers)
+      @connection ||= Memcached::Connection.new(@servers)
     end
 
     private

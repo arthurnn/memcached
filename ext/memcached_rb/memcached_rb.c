@@ -1,6 +1,6 @@
 #include <memcached_rb.h>
 
-VALUE rb_mTaj,
+VALUE rb_mMemcached,
   Taj_Server,
   rb_eMemcachedError;
 
@@ -354,8 +354,7 @@ rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VAL
 
 void Init_memcached_rb(void)
 {
-  rb_mTaj = rb_define_module("Taj");
-  VALUE rb_mMemcached = rb_define_module("Memcached");
+  rb_mMemcached = rb_define_module("Memcached");
   int i;
 
   rb_eMemcachedError = rb_define_class_under(rb_mMemcached, "Error", rb_eStandardError);
@@ -368,7 +367,7 @@ void Init_memcached_rb(void)
       rb_eMemcachedErrors[i] = rb_define_class_under(rb_mMemcached, klass, rb_eMemcachedError);
   }
 
-  VALUE cConnection = rb_define_class_under(rb_mTaj, "Connection", rb_cObject);
+  VALUE cConnection = rb_define_class_under(rb_mMemcached, "Connection", rb_cObject);
   rb_define_alloc_func(cConnection, allocate);
 
   rb_define_method(cConnection, "initialize", rb_connection_initialize, 1);
@@ -386,7 +385,7 @@ void Init_memcached_rb(void)
   rb_define_method(cConnection, "prepend", rb_connection_prepend, 4);
   rb_define_method(cConnection, "append", rb_connection_append, 4);
 
-  Taj_Server = rb_define_class_under(rb_mTaj, "Server", rb_cObject);
+  Taj_Server = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
 
   rb_define_attr(Taj_Server, "hostname", 1, 0);
   id_ivar_hostname = rb_intern("@hostname");
