@@ -6,7 +6,9 @@ VALUE rb_mMemcached,
 
 ID id_ivar_hostname,
   id_ivar_port,
-  id_ivar_weight;
+  id_ivar_weight,
+  id_tcp,
+  id_socket;
 
 typedef struct {
   memcached_st * memc;
@@ -127,8 +129,6 @@ rb_connection_initialize(VALUE self, VALUE rb_servers)
 
     VALUE rb_backend = rb_ary_entry(rb_server, 0);
 
-    ID id_tcp = rb_intern("tcp");
-    ID id_socket = rb_intern("socket");
     if (id_tcp == SYM2ID(rb_backend)) {
       VALUE rb_hostname = rb_ary_entry(rb_server, 1);
       VALUE rb_port = rb_ary_entry(rb_server, 2);
@@ -400,4 +400,7 @@ void Init_memcached_rb(void)
   id_ivar_port = rb_intern("@port");
   rb_define_attr(rb_cServer, "weight", 1, 0);
   id_ivar_weight = rb_intern("@weight");
+
+  id_tcp = rb_intern("tcp");
+  id_socket = rb_intern("socket");
 }
