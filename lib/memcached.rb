@@ -1,4 +1,4 @@
-require 'taj'
+require 'memcached_rb'
 
 require 'memcached/client'
 

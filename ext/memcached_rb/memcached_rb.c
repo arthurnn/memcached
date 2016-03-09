@@ -1,4 +1,4 @@
-#include <taj.h>
+#include <memcached_rb.h>
 
 VALUE rb_mTaj,
   Taj_Server,
@@ -352,7 +352,7 @@ rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VAL
   return (rc == MEMCACHED_SUCCESS);
 }
 
-void Init_taj(void)
+void Init_memcached_rb(void)
 {
   rb_mTaj = rb_define_module("Taj");
   VALUE rb_mMemcached = rb_define_module("Memcached");
