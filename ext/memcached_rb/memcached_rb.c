@@ -1,7 +1,7 @@
 #include <memcached_rb.h>
 
 VALUE rb_mMemcached,
-  Taj_Server,
+  rb_cServer,
   rb_eMemcachedError;
 
 ID id_ivar_hostname,
@@ -148,7 +148,7 @@ iterate_server_function(const memcached_st *ptr, const memcached_instance_st * s
 {
   VALUE server_list = (VALUE) context;
 
-  VALUE rb_server = rb_obj_alloc(Taj_Server);
+  VALUE rb_server = rb_obj_alloc(rb_cServer);
 
   rb_ivar_set(rb_server, id_ivar_hostname, rb_str_new2(memcached_server_name(server)));
   rb_ivar_set(rb_server, id_ivar_port, UINT2NUM(memcached_server_port(server)));
@@ -385,12 +385,12 @@ void Init_memcached_rb(void)
   rb_define_method(cConnection, "prepend", rb_connection_prepend, 4);
   rb_define_method(cConnection, "append", rb_connection_append, 4);
 
-  Taj_Server = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
+  rb_cServer = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
 
-  rb_define_attr(Taj_Server, "hostname", 1, 0);
+  rb_define_attr(rb_cServer, "hostname", 1, 0);
   id_ivar_hostname = rb_intern("@hostname");
-  rb_define_attr(Taj_Server, "port", 1, 0);
+  rb_define_attr(rb_cServer, "port", 1, 0);
   id_ivar_port = rb_intern("@port");
-  rb_define_attr(Taj_Server, "weight", 1, 0);
+  rb_define_attr(rb_cServer, "weight", 1, 0);
   id_ivar_weight = rb_intern("@weight");
 }
