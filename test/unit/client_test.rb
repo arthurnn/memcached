@@ -48,15 +48,15 @@ class ClientTest < BaseTest
 
   # Error states
 
-#  def test_key_with_spaces
-#    key = "i have a space"
-#    #assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-#      cache.set key, @value
-#    #end
-#    #assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-#      #cache.get(key)
-#    #end
-#  end
+  def test_key_with_spaces
+    key = "i have a space"
+    assert_raises(Memcached::BadKeyProvided) do
+      cache.set key, @value
+    end
+    assert_raises(Memcached::BadKeyProvided) do
+      cache.get(key)
+    end
+  end
 
 #  def test_key_with_null
 #    key = "with\000null"
@@ -70,19 +70,18 @@ class ClientTest < BaseTest
 #      cache.get_multi([key])
 #  end
 
-#  def test_key_with_invalid_control_characters
-#    key = "ch\303\242teau"
-##    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-#      cache.set key, @value
-##    end
-##    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-#      cache.get(key)
-##    end
-#
-##    assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-#      cache.get_multi([key])
-##    end
-#  end
+  def test_key_with_invalid_control_characters
+    key = "ch\303\242teau"
+    assert_raises(Memcached::BadKeyProvided) do
+      cache.set key, @value
+    end
+    assert_raises(Memcached::BadKeyProvided) do
+      cache.get(key)
+    end
+    assert_raises(Memcached::BadKeyProvided) do
+      cache.get_multi([key])
+    end
+  end
 
   def test_key_too_long
     key = "x"*251
@@ -108,13 +107,6 @@ class ClientTest < BaseTest
 #    end
 #  end
 #
-#  def test_key_error_message
-#    key = "i have a space"
-#    cache.get key
-##  rescue Memcached::ABadKeyWasProvidedOrCharactersOutOfRange => e
-##    assert_match /#{key}/, e.message
-#  end
-
   def test_server_error_message
     err = assert_raises(Memcached::E2big) do
       cache.set key, "I'm big" * 1000000

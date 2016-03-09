@@ -120,6 +120,7 @@ rb_connection_initialize(VALUE self, VALUE rb_servers)
 {
   memcached_ctx *ctx = get_ctx(self);
   int i;
+  memcached_return_t rc;
 
   for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
     VALUE rb_server = rb_ary_entry(rb_servers, i);
@@ -133,12 +134,18 @@ rb_connection_initialize(VALUE self, VALUE rb_servers)
       VALUE rb_port = rb_ary_entry(rb_server, 2);
       // TODO: add weight
       //VALUE rb_weight = rb_ary_entry(rb_server, 3);
-      memcached_server_add (ctx->memc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
+      rc = memcached_server_add (ctx->memc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
+      handle_memcached_return(rc);
     } else if (id_socket == SYM2ID(rb_backend)) {
       VALUE rb_fd = rb_ary_entry(rb_server, 1);
-      memcached_server_add_unix_socket (ctx->memc, StringValueCStr(rb_fd));
+      rc = memcached_server_add_unix_socket (ctx->memc, StringValueCStr(rb_fd));
+      handle_memcached_return(rc);
     }
   }
+
+  // Verify keys by default
+  rc = memcached_behavior_set(ctx->memc, MEMCACHED_BEHAVIOR_VERIFY_KEY, true);
+  handle_memcached_return(rc);
 
   return Qnil;
 }
