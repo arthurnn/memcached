@@ -1,7 +1,8 @@
 #include <taj.h>
 
 VALUE rb_mTaj,
-  Taj_Server;
+  Taj_Server,
+  rb_eMemcachedError;
 
 ID id_ivar_hostname,
   id_ivar_port,
@@ -10,6 +11,85 @@ ID id_ivar_hostname,
 typedef struct {
   memcached_st * memc;
 } Taj_ctx;
+
+const char *MEMCACHED_ERROR_NAMES[] = {
+  NULL, // MEMCACHED_SUCCESS
+  "Failure", // MEMCACHED_FAILURE
+  "HostLookupFailure", // MEMCACHED_HOST_LOOKUP_FAILURE
+  "ConnectionFailure", // MEMCACHED_CONNECTION_FAILURE
+  "ConnectionBindFailure", // MEMCACHED_CONNECTION_BIND_FAILURE
+  "WriteFailure", // MEMCACHED_WRITE_FAILURE
+  "ReadFailure", // MEMCACHED_READ_FAILURE
+  "UnknownReadFailure", // MEMCACHED_UNKNOWN_READ_FAILURE
+  "ProtocolError", // MEMCACHED_PROTOCOL_ERROR
+  "ClientError", // MEMCACHED_CLIENT_ERROR
+  "ServerError", // MEMCACHED_SERVER_ERROR
+  "StdError", // MEMCACHED_ERROR
+  "DataExist", // MEMCACHED_DATA_EXISTS
+  "DataDoesNotExist", // MEMCACHED_DATA_DOES_NOT_EXIST
+  NULL, // MEMCACHED_NOTSTORED
+  NULL, // MEMCACHED_STORED
+  NULL, // MEMCACHED_NOTFOUND
+  "MemoryAllocationFailure", // MEMCACHED_MEMORY_ALLOCATION_FAILURE
+  "PartialRead", // MEMCACHED_PARTIAL_READ
+  "SomeError", // MEMCACHED_SOME_ERRORS
+  "NoServer", // MEMCACHED_NO_SERVERS
+  "End", // MEMCACHED_END
+  "Deleted", // MEMCACHED_DELETED
+  "Value", // MEMCACHED_VALUE
+  "Stat", // MEMCACHED_STAT
+  "Item", // MEMCACHED_ITEM
+  "Errno", // MEMCACHED_ERRNO
+  "FailUnixSocket", // MEMCACHED_FAIL_UNIX_SOCKET
+  "NotSupported", // MEMCACHED_NOT_SUPPORTED
+  "NoKeyProvided", // MEMCACHED_NO_KEY_PROVIDED
+  "FetchNotfinished", // MEMCACHED_FETCH_NOTFINISHED
+  "Timeout", // MEMCACHED_TIMEOUT
+  "Buffered", // MEMCACHED_BUFFERED
+  "BadKeyProvided", // MEMCACHED_BAD_KEY_PROVIDED
+  "InvalidHostProtocol", // MEMCACHED_INVALID_HOST_PROTOCOL
+  "ServerMarkedDead", // MEMCACHED_SERVER_MARKED_DEAD
+  "UnknownStatKey", // MEMCACHED_UNKNOWN_STAT_KEY
+  "E2big", // MEMCACHED_E2BIG
+  "InvalidArgument", // MEMCACHED_INVALID_ARGUMENTS
+  "KeyTooBig", // MEMCACHED_KEY_TOO_BIG
+  "AuthProblem", // MEMCACHED_AUTH_PROBLEM
+  "AuthFailure", // MEMCACHED_AUTH_FAILURE
+  "AuthContinue", // MEMCACHED_AUTH_CONTINUE
+  "ParseError", // MEMCACHED_PARSE_ERROR
+  "ParseUserError", // MEMCACHED_PARSE_USER_ERROR
+  "Deprecated", // MEMCACHED_DEPRECATED
+  "InProgress", // MEMCACHED_IN_PROGRESS
+  "ServerTemporarilyDisabled", // MEMCACHED_SERVER_TEMPORARILY_DISABLED
+  "ServerMemoryAllocationFailure", // MEMCACHED_SERVER_MEMORY_ALLOCATION_FAILURE
+  "MaximumReturn", // MEMCACHED_MAXIMUM_RETURN
+  "ConnectionSocketCreateFailure", // MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE
+};
+#define MEMCACHED_ERROR_COUNT 51
+
+VALUE rb_eMemcachedErrors[MEMCACHED_ERROR_COUNT];
+
+void
+handle_memcached_return(memcached_return_t rc)
+{
+  if (rc == MEMCACHED_SUCCESS)
+    return;
+
+  VALUE rb_error, boom;
+  const char * message;
+  if (rc > 0 && rc < MEMCACHED_ERROR_COUNT) {
+    rb_error = rb_eMemcachedErrors[rc];
+    if(Qnil == rb_error)
+      return;
+    message = memcached_strerror(NULL, rc);
+  } else {
+    rb_error = rb_eMemcachedError;
+    message = "Memcached returned type not handled";
+  }
+
+  boom = rb_exc_new2(rb_error, message);
+  rb_exc_raise(boom);
+}
 
 static Taj_ctx *
 get_ctx(VALUE obj)
@@ -98,6 +178,7 @@ rb_connection_flush(VALUE self)
   Taj_ctx *ctx = get_ctx(self);
 
   memcached_return_t rc = memcached_flush(ctx->memc, 0);
+  handle_memcached_return(rc);
 
   return (rc == MEMCACHED_SUCCESS);
 }
@@ -112,7 +193,7 @@ rb_connection_set(VALUE self, VALUE key, VALUE value, VALUE ttl, VALUE flags)
 
   memcached_return_t rc = memcached_set(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(ttl), NUM2INT(flags));
 
-  //fprintf(stderr, "Couldn't store key: %s\n", memcached_strerror(ctx->memc, rc));
+  handle_memcached_return(rc);
   return (rc == MEMCACHED_SUCCESS);
 }
 
@@ -130,6 +211,7 @@ rb_connection_get(VALUE self, VALUE key)
   uint32_t flags; // TODO return flags so client can know if it should deserialize or decompress
   char *response  = memcached_get(ctx->memc, mkey, strlen(mkey), &return_value_length, &flags, &rc);
 
+  handle_memcached_return(rc);
   if (rc == MEMCACHED_SUCCESS)
     return rb_str_new2(response);
   else
@@ -157,11 +239,11 @@ rb_connection_get_multi(VALUE self, VALUE rb_keys)
     key_length[i] = strlen(keys[i]);
   }
 
-  memcached_mget(ctx->memc, keys, key_length, sizeof(keys)/sizeof(keys[0]));
+  rc = memcached_mget(ctx->memc, keys, key_length, sizeof(keys)/sizeof(keys[0]));
+  handle_memcached_return(rc);
 
   while ((result = memcached_fetch_result(ctx->memc, NULL, &rc))) {
-    if (rc != MEMCACHED_SUCCESS)
-      return Qnil;
+    handle_memcached_return(rc);
 
     key = memcached_result_key_value(result);
     value = memcached_result_value(result);
@@ -178,6 +260,7 @@ rb_connection_delete(VALUE self, VALUE key)
   Taj_ctx *ctx = get_ctx(self);
   char *mkey = StringValuePtr(key);
   memcached_return_t rc = memcached_delete(ctx->memc, mkey, strlen(mkey), (time_t)0);
+  handle_memcached_return(rc);
   return (rc == MEMCACHED_SUCCESS);
 }
 
@@ -189,6 +272,7 @@ rb_connection_add(VALUE self, VALUE rb_key, VALUE rb_value, VALUE ttl, VALUE fla
   char *mvalue = StringValuePtr(rb_value);
 
   memcached_return_t rc = memcached_add(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(ttl), NUM2INT(flags));
+  handle_memcached_return(rc);
   return (rc == MEMCACHED_SUCCESS);
 }
 
@@ -200,10 +284,8 @@ rb_connection_inc(VALUE self, VALUE rb_key, VALUE rb_value)
   uint32_t offset = NUM2UINT(rb_value);
   uint64_t new_number;
 
-  memcached_increment(ctx->memc, mkey, strlen(mkey), offset, &new_number);
-  // handle rc not success
-  // (rc == MEMCACHED_SUCCESS);
-
+  memcached_return_t rc = memcached_increment(ctx->memc, mkey, strlen(mkey), offset, &new_number);
+  handle_memcached_return(rc);
   return INT2NUM(new_number);
 }
 
@@ -215,10 +297,8 @@ rb_connection_dec(VALUE self, VALUE rb_key, VALUE rb_value)
   uint32_t offset = NUM2UINT(rb_value);
   uint64_t new_number;
 
-  memcached_decrement(ctx->memc, mkey, strlen(mkey), offset, &new_number);
-  // handle rc not success
-  // (rc == MEMCACHED_SUCCESS);
-
+  memcached_return_t rc = memcached_decrement(ctx->memc, mkey, strlen(mkey), offset, &new_number);
+  handle_memcached_return(rc);
   return INT2NUM(new_number);
 }
 
@@ -229,6 +309,7 @@ rb_connection_exist(VALUE self, VALUE rb_key)
   char *mkey = StringValuePtr(rb_key);
 
   memcached_return_t rc = memcached_exist(ctx->memc, mkey, strlen(mkey));
+  handle_memcached_return(rc);
   return (rc == MEMCACHED_SUCCESS);
 }
 
@@ -241,8 +322,7 @@ rb_connection_replace(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VA
   char *mvalue = StringValuePtr(rb_value);
 
   memcached_return_t rc = memcached_replace(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
-
-  //fprintf(stderr, "Couldn't store key: %s\n", memcached_strerror(ctx->memc, rc));
+  handle_memcached_return(rc);
   return (rc == MEMCACHED_SUCCESS);
 }
 
@@ -255,7 +335,7 @@ rb_connection_prepend(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VA
   char *mvalue = StringValuePtr(rb_value);
 
   memcached_return_t rc = memcached_prepend(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
-
+  handle_memcached_return(rc);
   return (rc == MEMCACHED_SUCCESS);
 }
 
@@ -268,13 +348,25 @@ rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VAL
   char *mvalue = StringValuePtr(rb_value);
 
   memcached_return_t rc = memcached_append(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
-
+  handle_memcached_return(rc);
   return (rc == MEMCACHED_SUCCESS);
 }
 
 void Init_taj(void)
 {
   rb_mTaj = rb_define_module("Taj");
+  VALUE rb_mMemcached = rb_define_module("Memcached");
+  int i;
+
+  rb_eMemcachedError = rb_define_class_under(rb_mMemcached, "Error", rb_eStandardError);
+  //rb_eMemcachedErrors[0] = Qnil;
+  for(i = 1; i < MEMCACHED_ERROR_COUNT; i++){
+    const char* klass = MEMCACHED_ERROR_NAMES[i];
+    if(NULL == klass)
+      rb_eMemcachedErrors[i] = Qnil;
+    else
+      rb_eMemcachedErrors[i] = rb_define_class_under(rb_mMemcached, klass, rb_eMemcachedError);
+  }
 
   VALUE cConnection = rb_define_class_under(rb_mTaj, "Connection", rb_cObject);
   rb_define_alloc_func(cConnection, allocate);
