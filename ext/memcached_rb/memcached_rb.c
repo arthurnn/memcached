@@ -10,7 +10,7 @@ ID id_ivar_hostname,
 
 typedef struct {
   memcached_st * memc;
-} Taj_ctx;
+} memcached_ctx;
 
 const char *MEMCACHED_ERROR_NAMES[] = {
   NULL, // MEMCACHED_SUCCESS
@@ -91,16 +91,16 @@ handle_memcached_return(memcached_return_t rc)
   rb_exc_raise(boom);
 }
 
-static Taj_ctx *
+static memcached_ctx *
 get_ctx(VALUE obj)
 {
-  Taj_ctx* ctx;
-  Data_Get_Struct(obj, Taj_ctx, ctx);
+  memcached_ctx* ctx;
+  Data_Get_Struct(obj, memcached_ctx, ctx);
   return ctx;
 }
 
 static void
-free_memc(Taj_ctx * ctx)
+free_memc(memcached_ctx * ctx)
 {
   memcached_free(ctx->memc);
 }
@@ -108,8 +108,8 @@ free_memc(Taj_ctx * ctx)
 static VALUE
 allocate(VALUE klass)
 {
-  Taj_ctx * ctx;
-  VALUE rb_obj = Data_Make_Struct(klass, Taj_ctx, NULL, free_memc, ctx);
+  memcached_ctx * ctx;
+  VALUE rb_obj = Data_Make_Struct(klass, memcached_ctx, NULL, free_memc, ctx);
 
   ctx->memc = memcached_create(NULL);
   return rb_obj;
@@ -118,7 +118,7 @@ allocate(VALUE klass)
 static VALUE
 rb_connection_initialize(VALUE self, VALUE rb_servers)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
   int i;
 
   for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
@@ -161,7 +161,7 @@ iterate_server_function(const memcached_st *ptr, const memcached_instance_st * s
 static VALUE
 rb_connection_servers(VALUE self)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
 
   VALUE server_list = rb_ary_new();
 
@@ -175,7 +175,7 @@ rb_connection_servers(VALUE self)
 static VALUE
 rb_connection_flush(VALUE self)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
 
   memcached_return_t rc = memcached_flush(ctx->memc, 0);
   handle_memcached_return(rc);
@@ -186,7 +186,7 @@ rb_connection_flush(VALUE self)
 static VALUE
 rb_connection_set(VALUE self, VALUE key, VALUE value, VALUE ttl, VALUE flags)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
 
   char *mkey = StringValuePtr(key);
   char *mvalue = StringValuePtr(value);
@@ -202,7 +202,7 @@ rb_connection_get(VALUE self, VALUE key)
 {
   Check_Type(key, T_STRING);
 
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
 
   char *mkey = StringValuePtr(key);
 
@@ -221,7 +221,7 @@ rb_connection_get(VALUE self, VALUE key)
 static VALUE
 rb_connection_get_multi(VALUE self, VALUE rb_keys)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
   VALUE rb_values = rb_hash_new();
   int i;
   long keys_len = RARRAY_LEN(rb_keys);
@@ -257,7 +257,7 @@ rb_connection_get_multi(VALUE self, VALUE rb_keys)
 static VALUE
 rb_connection_delete(VALUE self, VALUE key)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
   char *mkey = StringValuePtr(key);
   memcached_return_t rc = memcached_delete(ctx->memc, mkey, strlen(mkey), (time_t)0);
   handle_memcached_return(rc);
@@ -267,7 +267,7 @@ rb_connection_delete(VALUE self, VALUE key)
 static VALUE
 rb_connection_add(VALUE self, VALUE rb_key, VALUE rb_value, VALUE ttl, VALUE flags)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
   char *mkey = StringValuePtr(rb_key);
   char *mvalue = StringValuePtr(rb_value);
 
@@ -279,7 +279,7 @@ rb_connection_add(VALUE self, VALUE rb_key, VALUE rb_value, VALUE ttl, VALUE fla
 static VALUE
 rb_connection_inc(VALUE self, VALUE rb_key, VALUE rb_value)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
   char *mkey = StringValuePtr(rb_key);
   uint32_t offset = NUM2UINT(rb_value);
   uint64_t new_number;
@@ -292,7 +292,7 @@ rb_connection_inc(VALUE self, VALUE rb_key, VALUE rb_value)
 static VALUE
 rb_connection_dec(VALUE self, VALUE rb_key, VALUE rb_value)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
   char *mkey = StringValuePtr(rb_key);
   uint32_t offset = NUM2UINT(rb_value);
   uint64_t new_number;
@@ -305,7 +305,7 @@ rb_connection_dec(VALUE self, VALUE rb_key, VALUE rb_value)
 static VALUE
 rb_connection_exist(VALUE self, VALUE rb_key)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
   char *mkey = StringValuePtr(rb_key);
 
   memcached_return_t rc = memcached_exist(ctx->memc, mkey, strlen(mkey));
@@ -316,7 +316,7 @@ rb_connection_exist(VALUE self, VALUE rb_key)
 static VALUE
 rb_connection_replace(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
 
   char *mkey = StringValuePtr(rb_key);
   char *mvalue = StringValuePtr(rb_value);
@@ -329,7 +329,7 @@ rb_connection_replace(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VA
 static VALUE
 rb_connection_prepend(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
 
   char *mkey = StringValuePtr(rb_key);
   char *mvalue = StringValuePtr(rb_value);
@@ -342,7 +342,7 @@ rb_connection_prepend(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VA
 static VALUE
 rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
-  Taj_ctx *ctx = get_ctx(self);
+  memcached_ctx *ctx = get_ctx(self);
 
   char *mkey = StringValuePtr(rb_key);
   char *mvalue = StringValuePtr(rb_value);
