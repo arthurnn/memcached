@@ -106,15 +106,13 @@ Init_memcached_rb_behavior(void)
   int i;
   VALUE rb_mBehaviors = rb_define_module_under(rb_mMemcached, "Behaviors");
 
-  for(i = 1; i < MEMCACHED_BEHAVIORS_COUNT; i++) {
+  for(i = 0; i < MEMCACHED_BEHAVIORS_COUNT; i++) {
     rb_define_const(rb_mBehaviors, MEMCACHED_BEHAVIOR_NAMES[i], UINT2NUM(i));
   }
-  for(i = 1; i < MEMCACHED_HASH_COUNT; i++) {
+  for(i = 0; i < MEMCACHED_HASH_COUNT; i++) {
     rb_define_const(rb_mBehaviors, MEMCACHED_HASH_NAMES[i], UINT2NUM(i));
   }
-  for(i = 1; i < MEMCACHED_DISTRIBUTION_COUNT; i++) {
+  for(i = 0; i < MEMCACHED_DISTRIBUTION_COUNT; i++) {
     rb_define_const(rb_mBehaviors, MEMCACHED_DISTRIBUTION_NAMES[i], UINT2NUM(i));
   }
 }
-
-
