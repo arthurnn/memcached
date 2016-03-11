@@ -1,5 +1,5 @@
-#ifndef _RUBY_GDA
-#define _RUBY_GDA
+#ifndef _RUBY_MEMCACHED_RB
+#define _RUBY_MEMCACHED_RB
 
 #include <ruby.h>
 
