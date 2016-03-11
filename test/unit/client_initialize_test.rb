@@ -163,11 +163,4 @@ class ClientInitializeTest < BaseTest
   def test_initialize_strange_argument
     assert_raises(ArgumentError) { Memcached::Client.new 1 }
   end
-
-
-#  def test_set
-#    client = Memcached::Client.new
-#    assert client.set('foo', 'baz')
-#    assert client.set('foo', true)
-#  end
 end
