@@ -74,6 +74,28 @@ const char* MEMCACHED_DISTRIBUTION_NAMES[] = {
 #define MEMCACHED_DISTRIBUTION_COUNT 8
 
 VALUE
+rb_connection_get_behavior(VALUE self, VALUE rb_behavior)
+{
+  memcached_ctx *ctx = get_ctx(self);
+  uint64_t ret;
+  memcached_behavior_t behavior;
+
+  behavior = NUM2UINT(rb_behavior);
+  ret = memcached_behavior_get(ctx->memc, behavior);
+
+  switch(behavior) {
+  case MEMCACHED_BEHAVIOR_HASH:
+  case MEMCACHED_BEHAVIOR_DISTRIBUTION:
+    return UINT2NUM(ret);
+  default:
+    if(0 == ret)
+      return Qfalse;
+    else
+      return Qtrue;
+  }
+}
+
+VALUE
 rb_connection_set_behavior(VALUE self, VALUE rb_behavior, VALUE rb_value)
 {
   memcached_return_t rc;

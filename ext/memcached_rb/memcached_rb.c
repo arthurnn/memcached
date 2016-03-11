@@ -390,6 +390,7 @@ void Init_memcached_rb(void)
   rb_define_method(cConnection, "replace", rb_connection_replace, 4);
   rb_define_method(cConnection, "prepend", rb_connection_prepend, 4);
   rb_define_method(cConnection, "append", rb_connection_append, 4);
+  rb_define_method(cConnection, "get_behavior", rb_connection_get_behavior, 1);
   rb_define_method(cConnection, "set_behavior", rb_connection_set_behavior, 2);
 
   rb_cServer = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
