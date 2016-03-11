@@ -97,6 +97,7 @@ module Memcached
 
     private
     def normalize_servers(servers)
+      servers = [servers] if servers.is_a?(String)
       servers.map do |server|
         server = server.to_s
         if server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
