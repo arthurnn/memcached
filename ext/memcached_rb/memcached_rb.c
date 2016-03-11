@@ -356,6 +356,24 @@ rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VAL
   return (rc == MEMCACHED_SUCCESS);
 }
 
+static VALUE
+rb_server_to_s(VALUE self)
+{
+  VALUE rb_ret;
+  VALUE rb_hostname = rb_ivar_get(self, id_ivar_hostname);
+  VALUE rb_port = rb_ivar_get(self, id_ivar_port);
+  uint32_t port = NUM2UINT(rb_port);
+
+  rb_ret = rb_str_new("", 0);
+  rb_str_append(rb_ret, rb_hostname);
+  if(0 != port) {
+    rb_str_append(rb_ret, rb_str_new2(":"));
+    rb_str_append(rb_ret, rb_fix2str(rb_port, 10));
+  }
+
+  return rb_ret;
+}
+
 void Init_memcached_rb(void)
 {
   rb_mMemcached = rb_define_module("Memcached");
@@ -394,6 +412,7 @@ void Init_memcached_rb(void)
   rb_define_method(cConnection, "set_behavior", rb_connection_set_behavior, 2);
 
   rb_cServer = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
+  rb_define_method(rb_cServer, "to_s", rb_server_to_s, 0);
 
   rb_define_attr(rb_cServer, "hostname", 1, 0);
   id_ivar_hostname = rb_intern("@hostname");
