@@ -18,7 +18,8 @@ module Memcached
       end
 
       @codec = Memcached::MarshalCodec
-      @default_ttl = options.delete(:ttl)
+      @default_ttl = options.delete(:ttl) || 0
+      @prefix_key = options.delete(:prefix_key) # TODO: do something with this
       @behaviors = normalize_behaviors(options)
 
       @options = options.freeze
