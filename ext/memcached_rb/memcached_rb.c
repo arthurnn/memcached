@@ -368,15 +368,16 @@ rb_connection_set_behavior(VALUE self, VALUE rb_behavior, VALUE rb_value)
   uint64_t data = 0;
 
   switch (TYPE(rb_value)) {
-  case T_NIL:
-  case T_FALSE:
-    break;
   case T_TRUE:
   case T_STRING:
     data = 1;
     break;
   case T_FIXNUM:
     data = FIX2UINT(rb_value);
+  case T_NIL:
+  case T_FALSE:
+  default:
+    break;
   }
 
   rc = memcached_behavior_set(ctx->memc, NUM2UINT(rb_behavior), data);
