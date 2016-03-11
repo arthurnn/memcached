@@ -8,9 +8,9 @@ module Memcached
 
   class Client
     FLAGS = 0x0
-    attr_reader :servers
+    attr_reader :servers, :options
 
-    def initialize(servers = nil, ttl: 0)
+    def initialize(servers = nil, options = {})
       if servers
         @servers = normalize_servers(servers)
       else
@@ -18,8 +18,10 @@ module Memcached
       end
 
       @codec = Memcached::MarshalCodec
-      @default_ttl = ttl
-      @behaviors = normalize_behaviors({hash: :fnv1_32, noreply: false, distribution: :consistent_ketama}) # TODO
+      @default_ttl = options.delete(:ttl)
+      @behaviors = normalize_behaviors(options)
+
+      @options = options.freeze
     end
 
     def flush
