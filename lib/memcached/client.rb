@@ -24,8 +24,7 @@ module Memcached
         if value.is_a? Symbol
           value = lookup_value(behavior, value)
         end
-        puts behavior, value
-        #set_behavior(beha, value)
+        set_behavior(behavior, value)
       end
 
     end
