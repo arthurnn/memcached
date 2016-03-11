@@ -53,12 +53,11 @@ class ClientInitializeTest < BaseTest
     end
   end
 
-#  def test_initialize_with_ip_address_and_options
-#    ## TODO
-#    cache = Memcached::Client.new '127.0.0.1:43042', :ketama_weighted => false
-#    assert_equal '127.0.0.1', cache.connection.servers.first.hostname
-#    assert_equal false, cache.options[:ketama_weighted]
-#  end
+  def test_initialize_with_ip_address_and_options
+    cache = Memcached::Client.new '127.0.0.1:43042', :ketama_weighted => false
+    assert_equal '127.0.0.1', cache.connection.servers.first.hostname
+    assert_equal false, cache.options[:ketama_weighted]
+  end
 
 #  def test_options_are_set
 #    Memcached::DEFAULTS.merge(@noblock_options).each do |key, expected|
@@ -69,17 +68,19 @@ class ClientInitializeTest < BaseTest
 #    end
 #  end
 
-#  def test_options_are_frozen
-#    assert_raise(TypeError, RuntimeError) do
-#      @cache.options[:no_block] = true
-#    end
-#  end
-#
-#  def test_behaviors_are_set
-#    Memcached::BEHAVIORS.keys.each do |key, value|
-#      assert_not_nil @cache.send(:get_behavior, key)
-#    end
-#  end
+  def test_options_are_frozen
+    assert_raises(TypeError, RuntimeError) do
+      cache.options[:no_block] = true
+    end
+  end
+
+  def test_behaviors_are_set
+    conn = cache.connection
+
+    refute conn.get_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK)
+    conn.set_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK, true)
+    assert conn.get_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK)
+  end
 
   def test_initialize_with_invalid_server_strings
     assert_raises(ArgumentError) { Memcached::Client.new ":43042" }
