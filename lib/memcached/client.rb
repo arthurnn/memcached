@@ -111,9 +111,9 @@ module Memcached
           # TODO weight, default = 8
           [:socket, server]
         else
-          nil
+          raise
         end
-      end.compact
+      end
     rescue
       raise ArgumentError, <<-MSG
       Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or 'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached).
