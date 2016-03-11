@@ -17,22 +17,30 @@ module Memcached
 
     def lookup_value(behavior, value)
       base_value = BASE_VALUES[behavior]
-      return false unless base_value
+      raise ArgumentError unless base_value
       value = base_value % value.to_s.upcase
-      #begin
       int_value = Behaviors.const_get(value)
-      #rescue NameError => e
-      #end
       int_value * (CONVERSION_FACTORS[behavior] || 1)
     end
 
     def set_behaviors(hash)
       hash.each do |key, value|
-        behavior = "MEMCACHED_BEHAVIOR_#{key.to_s.upcase}"
-        behavior = Behaviors.const_get(behavior) # TODO NameError
-        if value.is_a? Symbol
-          value = lookup_value(behavior, value)
+        behavior_string = "MEMCACHED_BEHAVIOR_#{key.to_s.upcase}"
+        begin
+          behavior = Behaviors.const_get(behavior_string)
+        rescue NameError
+          raise ArgumentError, "No behavior #{behavior_string.inspect}"
         end
+
+        if value.is_a? Symbol
+          begin
+            value = lookup_value(behavior, value)
+          rescue NameError, ArgumentError
+            msg =  "Invalid behavior value #{value.inspect} for #{behavior_string.inspect}"
+            raise(ArgumentError, msg)
+          end
+        end
+
         set_behavior(behavior, value)
       end
 
