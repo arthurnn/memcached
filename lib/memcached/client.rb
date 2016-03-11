@@ -1,9 +1,42 @@
 require 'memcached/marshal_codec'
 
 module Memcached
+
+  module Behaviors
+    BASE_VALUES = {
+      MEMCACHED_BEHAVIOR_HASH => "MEMCACHED_HASH_%s",
+      MEMCACHED_BEHAVIOR_DISTRIBUTION => "MEMCACHED_DISTRIBUTION_%s",
+    }
+
+    def lookup_value(behavior, value)
+      base_value = BASE_VALUES[behavior]
+      return false unless base_value
+      value = base_value % value.to_s.upcase
+      Behaviors.const_get(value)
+#    rescue NameError => e
+#      return false #  TODO
+    end
+
+    def set_behaviors(hash)
+      hash.each do |key, value|
+        behavior = "MEMCACHED_BEHAVIOR_#{key.to_s.upcase}"
+        behavior = Behaviors.const_get(behavior) # TODO NameError
+        if value.is_a? Symbol
+          value = lookup_value(behavior, value)
+        end
+        puts behavior, value
+        #set_behavior(beha, value)
+      end
+
+    end
+  end
+
+  class Connection
+    include Behaviors
+  end
+
   class Client
     FLAGS = 0x0
-
     attr_reader :servers
 
     def initialize(servers = nil, ttl: 0)
@@ -15,6 +48,7 @@ module Memcached
 
       @codec = Memcached::MarshalCodec
       @default_ttl = ttl
+      @behaviors = normalize_behaviors({hash: :fnv1_32, noreply: false, distribution: :consistent_ketama}) # TODO
     end
 
     def flush
@@ -85,7 +119,9 @@ module Memcached
     end
 
     def connection
-      @connection ||= Memcached::Connection.new(@servers)
+      @connection ||= Memcached::Connection.new(@servers).tap do |conn|
+        conn.set_behaviors(@behaviors)
+      end
     end
 
     private
@@ -108,6 +144,11 @@ module Memcached
       Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or 'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached).
 But it was #{servers.inspect}.
           MSG
+    end
+
+    # TODO
+    def normalize_behaviors(options)
+      options
     end
 
   end
