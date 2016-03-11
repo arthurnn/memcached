@@ -6,10 +6,10 @@ class ClientSetTest < BaseTest
     assert cache.set(key, @value)
   end
 
-#  def test_binary_set
-#    assert @binary_protocol_cache.set(key, @value)
-#  end
-#
+  def test_binary_set
+    assert binary_protocol_cache.set(key, @value)
+  end
+
 #  def test_udp_set
 #    assert @udp_cache.set(key, @value)
 #  end

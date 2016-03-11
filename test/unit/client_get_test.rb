@@ -10,11 +10,11 @@ class ClientGetTest < BaseTest
     assert_equal @value, cache.get(key)
   end
 
-#  def test_binary_get
-#    cache.set key, @value
-#    assert_equal @value, @binary_protocol_cache.get(key)
-#  end
-#
+  def test_binary_get
+    cache.set key, @value
+    assert_equal @value, binary_protocol_cache.get(key)
+  end
+
 #  def test_udp_get
 #    @udp_cache.set(key, @value)
 #    assert_raises(Memcached::ActionNotSupported) do
@@ -154,27 +154,25 @@ class ClientGetTest < BaseTest
     cache.set keys[1], 3
     assert_equal({keys[0] => 1, keys[1] => 3}, cache.get_multi(keys))
   end
-#
-#  def test_get_multi_binary
-#    @binary_protocol_cache.set "#{key}_1", 1
-#    @binary_protocol_cache.delete "#{key}_2" rescue nil
-#    @binary_protocol_cache.set "#{key}_3", 3
-#    assert_equal(
-#      {"test_get_multi_binary_3"=>3, "test_get_multi_binary_1"=>1},
-#      @binary_protocol_cache.get(["#{key}_1", "#{key}_2",  "#{key}_3"])
-#     )
-#  end
-#
-#  def test_get_multi_binary_one_record_missing
-#    @binary_protocol_cache.delete("magic_key") rescue nil
-#    assert_equal({}, @binary_protocol_cache.get(["magic_key"]))
-#  end
-#
-#  def test_get_multi_binary_one_record
-#    @binary_protocol_cache.set("magic_key", 1)
-#    assert_equal({"magic_key" => 1}, @binary_protocol_cache.get(["magic_key"]))
-#  end
-#
+
+  def test_get_multi_binary
+    binary_protocol_cache.set "#{key}_1", 1
+    binary_protocol_cache.set "#{key}_3", 3
+    assert_equal(
+      {"test_get_multi_binary_3"=>3, "test_get_multi_binary_1"=>1},
+      binary_protocol_cache.get_multi(["#{key}_1", "#{key}_2",  "#{key}_3"])
+     )
+  end
+
+  def test_get_multi_binary_one_record_missing
+    assert_equal({}, binary_protocol_cache.get_multi(["magic_key"]))
+  end
+
+  def test_get_multi_binary_one_record
+    binary_protocol_cache.set("magic_key", 1)
+    assert_equal({"magic_key" => 1}, binary_protocol_cache.get_multi(["magic_key"]))
+  end
+
   def test_get_multi_completely_missing
     assert_equal({}, cache.get_multi(["#{key}_1", "#{key}_2"]))
   end

@@ -22,16 +22,14 @@ class ClientTest < BaseTest
     assert cache.exist(key)
   end
 
-#  def test_missing_exist_binary
-#    assert_raise(Memcached::NotFound) do
-#      @binary_protocol_cache.exist key
-#    end
-#  end
-#
-#  def test_exist_binary
-#    @binary_protocol_cache.set key, @value
-#    assert_nil @binary_protocol_cache.exist(key)
-  #  end
+  def test_missing_exist_binary
+    refute binary_protocol_cache.exist(key)
+  end
+
+  def test_exist_binary
+    binary_protocol_cache.set key, @value
+    assert binary_protocol_cache.exist(key)
+  end
 
   # Replace
 

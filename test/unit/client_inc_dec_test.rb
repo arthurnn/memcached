@@ -7,10 +7,10 @@ class ClientIncDecTest < BaseTest
     assert_equal 11, cache.increment(key)
   end
 
-#  def test_increment_binary
-#    @binary_protocol_cache.set key, "10", 0, false
-#    assert_equal 11, @binary_protocol_cache.increment(key)
-#  end
+  def test_increment_binary
+    binary_protocol_cache.set key, "10", raw: true
+    assert_equal 11, binary_protocol_cache.increment(key)
+  end
 
   def test_increment_offset
     cache.set key, "10", raw: true
@@ -26,10 +26,10 @@ class ClientIncDecTest < BaseTest
     assert_equal 9, cache.decrement(key)
   end
 
-#  def test_decrement_binary
-#    @binary_protocol_cache.set key, "10", 0, false
-#    assert_equal 9, @binary_protocol_cache.decrement(key)
-#  end
+  def test_decrement_binary
+    binary_protocol_cache.set key, "10", raw: true
+    assert_equal 9, binary_protocol_cache.decrement(key)
+  end
 
   def test_decrement_offset
     cache.set key, "10", raw: true
