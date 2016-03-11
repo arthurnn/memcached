@@ -3,6 +3,13 @@ require 'memcached/marshal_codec'
 module Memcached
 
   module Behaviors
+    CONVERSION_FACTORS = {
+      MEMCACHED_BEHAVIOR_RCV_TIMEOUT => 1_000_000,
+      MEMCACHED_BEHAVIOR_SND_TIMEOUT => 1_000_000,
+      MEMCACHED_BEHAVIOR_POLL_TIMEOUT => 1_000,
+      MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT => 1_000
+    }
+
     BASE_VALUES = {
       MEMCACHED_BEHAVIOR_HASH => "MEMCACHED_HASH_%s",
       MEMCACHED_BEHAVIOR_DISTRIBUTION => "MEMCACHED_DISTRIBUTION_%s",
@@ -12,9 +19,11 @@ module Memcached
       base_value = BASE_VALUES[behavior]
       return false unless base_value
       value = base_value % value.to_s.upcase
-      Behaviors.const_get(value)
-#    rescue NameError => e
-#      return false #  TODO
+      #begin
+      int_value = Behaviors.const_get(value)
+      #rescue NameError => e
+      #end
+      int_value * (CONVERSION_FACTORS[behavior] || 1)
     end
 
     def set_behaviors(hash)
