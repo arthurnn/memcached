@@ -8,7 +8,6 @@ module Memcached
 end
 
 #require 'memcached/exceptions'
-#require 'memcached/behaviors'
 #require 'memcached/auth'
 #require 'memcached/memcached'
 #require 'memcached/rails'
