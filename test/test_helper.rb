@@ -16,6 +16,12 @@ class BaseTest < Minitest::Test
     @value = OpenStruct.new(a: 1, b: 2, c: self.class)
     @marshalled_value = Marshal.dump(@value)
     @cache = nil
+    @binary_protocol_cache = nil
+  end
+
+  def teardown
+    @cache.flush if @cache
+    @binary_protocol_cache.flush if @binary_protocol_cache
   end
 
   private
@@ -23,8 +29,17 @@ class BaseTest < Minitest::Test
   def cache
     return @cache if @cache
     @cache = Memcached::Client.new(@servers) #, @options)
-    @cache.flush
-    @cache
+  end
+
+  def binary_protocol_cache
+    return @binary_protocol_cache if @binary_protocol_cache
+    binary_protocol_options = {
+#      :prefix_key => @prefix_key,
+      :hash => :default,
+      :distribution => :modula,
+      :binary_protocol => true
+    }
+    @binary_protocol_cache = Memcached::Client.new(@servers, binary_protocol_options)
   end
 
   def key
