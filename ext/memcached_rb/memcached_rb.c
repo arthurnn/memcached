@@ -359,6 +359,31 @@ rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VAL
   return (rc == MEMCACHED_SUCCESS);
 }
 
+static VALUE
+rb_connection_set_behavior(VALUE self, VALUE rb_behavior, VALUE rb_value)
+{
+  memcached_return_t rc;
+  memcached_ctx *ctx = get_ctx(self);
+
+  uint64_t data = 0;
+
+  switch (TYPE(rb_value)) {
+  case T_NIL:
+  case T_FALSE:
+    break;
+  case T_TRUE:
+  case T_STRING:
+    data = 1;
+    break;
+  case T_FIXNUM:
+    data = FIX2UINT(rb_value);
+  }
+
+  rc = memcached_behavior_set(ctx->memc, NUM2UINT(rb_behavior), data);
+  handle_memcached_return(rc);
+  return (rc == MEMCACHED_SUCCESS);
+}
+
 void Init_memcached_rb(void)
 {
   rb_mMemcached = rb_define_module("Memcached");
@@ -391,6 +416,7 @@ void Init_memcached_rb(void)
   rb_define_method(cConnection, "replace", rb_connection_replace, 4);
   rb_define_method(cConnection, "prepend", rb_connection_prepend, 4);
   rb_define_method(cConnection, "append", rb_connection_append, 4);
+  rb_define_method(cConnection, "set_behavior", rb_connection_set_behavior, 2);
 
   rb_cServer = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
 
