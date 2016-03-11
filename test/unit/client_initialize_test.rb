@@ -95,8 +95,9 @@ class ClientInitializeTest < BaseTest
 #  end
 
 #  def test_initialize_with_invalid_prefix_key
-#    assert_raise(ArgumentError) do
-#      Memcached.new @servers, :prefix_key => "x" * 128
+#    assert_raises(ArgumentError) do
+#      client = Memcached::Client.new @servers, :prefix_key => "x" * 128
+#      client.connection
 #    end
 #  end
 
@@ -124,63 +125,40 @@ class ClientInitializeTest < BaseTest
 #    end
 #  end
 
-#  def test_initialize_negative_behavior
-#    cache = Memcached.new @servers,
-#      :buffer_requests => false
-#    assert_nothing_raised do
-#      cache.set key, @value
-#    end
-#  end
-#
-#  def test_initialize_without_backtraces
-#    cache = Memcached.new @servers,
-#      :show_backtraces => false
-#    cache.delete key rescue
-#    begin
-#      cache.get key
-#    rescue Memcached::NotFound => e
-#      assert e.backtrace.empty?
-#    end
-#    begin
-#      cache.append key, @value
-#    rescue Memcached::NotStored => e
-#      assert e.backtrace.empty?
-#    end
-#  end
+  def test_initialize_negative_behavior
+    cache = Memcached::Client.new @servers, :buffer_requests => false
+    cache.set key, @value
+  end
 
-#  def test_initialize_sort_hosts
-#    # Original
-#    cache = Memcached.new(@servers.sort,
-#      :sort_hosts => false,
-#      :distribution => :modula
-#    )
-#    assert_equal @servers.sort,
-#      cache.servers
-#
-#    # Original with sort_hosts
-#    cache = Memcached.new(@servers.sort,
-#      :sort_hosts => true,
-#      :distribution => :modula
-#    )
-#    assert_equal @servers.sort,
-#      cache.servers
-#
-#    # Reversed
-#    cache = Memcached.new(@servers.sort.reverse,
-#      :sort_hosts => false,
-#      :distribution => :modula
-#    )
-#      assert_equal @servers.sort.reverse,
-#    cache.servers
-#
-#    # Reversed with sort_hosts
-#    cache = Memcached.new(@servers.sort.reverse,
-#      :sort_hosts => true,
-#      :distribution => :modula
-#    )
-#    assert_equal @servers.sort,
-#      cache.servers
-#  end
+  def test_initialize_sort_hosts
+    # Original
+    cache = Memcached::Client.new(@servers.sort,
+      :sort_hosts => false,
+      :distribution => :modula
+    )
+    assert_equal @servers.sort, cache.connection.servers.map(&:to_s)
+
+    # Original with sort_hosts
+    cache = Memcached::Client.new(@servers.sort,
+      :sort_hosts => true,
+      :distribution => :modula
+    )
+    assert_equal @servers.sort, cache.connection.servers.map(&:to_s)
+
+    # Reversed
+    cache = Memcached::Client.new(@servers.sort.reverse,
+      :sort_hosts => false,
+      :distribution => :modula
+    )
+    assert_equal @servers.sort.reverse, cache.connection.servers.map(&:to_s)
+
+    # Reversed with sort_hosts
+    cache = Memcached::Client.new(@servers.sort.reverse,
+      :sort_hosts => true,
+      :distribution => :modula
+    )
+    assert_equal @servers.sort, cache.connection.servers.map(&:to_s)
+  end
 
   def test_initialize_strange_argument
     assert_raises(ArgumentError) { Memcached::Client.new 1 }
