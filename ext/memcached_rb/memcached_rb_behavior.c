@@ -1,4 +1,5 @@
 #include <memcached_rb.h>
+#include <memcached_rb_behavior.h>
 
 const char *MEMCACHED_BEHAVIOR_NAMES[] = {
   "MEMCACHED_BEHAVIOR_NO_BLOCK",
@@ -71,6 +72,33 @@ const char* MEMCACHED_DISTRIBUTION_NAMES[] = {
   "MEMCACHED_DISTRIBUTION_CONSISTENT_MAX"
 };
 #define MEMCACHED_DISTRIBUTION_COUNT 8
+
+VALUE
+rb_connection_set_behavior(VALUE self, VALUE rb_behavior, VALUE rb_value)
+{
+  memcached_return_t rc;
+  memcached_ctx *ctx = get_ctx(self);
+
+  uint64_t data = 0;
+
+  switch (TYPE(rb_value)) {
+  case T_TRUE:
+  case T_STRING:
+    // TODO try to lookup constant
+    data = 1;
+    break;
+  case T_FIXNUM:
+    data = FIX2UINT(rb_value);
+  case T_NIL:
+  case T_FALSE:
+  default:
+    break;
+  }
+
+  rc = memcached_behavior_set(ctx->memc, NUM2UINT(rb_behavior), data);
+  handle_memcached_return(rc);
+  return (rc == MEMCACHED_SUCCESS);
+}
 
 void
 Init_memcached_rb_behavior(void)

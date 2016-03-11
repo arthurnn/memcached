@@ -1,4 +1,5 @@
 #include <memcached_rb.h>
+#include <memcached_rb_behavior.h>
 
 VALUE rb_mMemcached,
   rb_cServer,
@@ -9,10 +10,6 @@ ID id_ivar_hostname,
   id_ivar_weight,
   id_tcp,
   id_socket;
-
-typedef struct {
-  memcached_st * memc;
-} memcached_ctx;
 
 const char *MEMCACHED_ERROR_NAMES[] = {
   NULL, // MEMCACHED_SUCCESS
@@ -93,7 +90,7 @@ handle_memcached_return(memcached_return_t rc)
   rb_exc_raise(boom);
 }
 
-static memcached_ctx *
+memcached_ctx *
 get_ctx(VALUE obj)
 {
   memcached_ctx* ctx;
@@ -359,39 +356,10 @@ rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VAL
   return (rc == MEMCACHED_SUCCESS);
 }
 
-static VALUE
-rb_connection_set_behavior(VALUE self, VALUE rb_behavior, VALUE rb_value)
-{
-  memcached_return_t rc;
-  memcached_ctx *ctx = get_ctx(self);
-
-  uint64_t data = 0;
-
-  switch (TYPE(rb_value)) {
-  case T_TRUE:
-  case T_STRING:
-    // TODO try to lookup constant
-    data = 1;
-    break;
-  case T_FIXNUM:
-    data = FIX2UINT(rb_value);
-  case T_NIL:
-  case T_FALSE:
-  default:
-    break;
-  }
-
-  rc = memcached_behavior_set(ctx->memc, NUM2UINT(rb_behavior), data);
-  handle_memcached_return(rc);
-  return (rc == MEMCACHED_SUCCESS);
-}
-
 void Init_memcached_rb(void)
 {
   rb_mMemcached = rb_define_module("Memcached");
   int i;
-
-  Init_memcached_rb_behavior();
 
   rb_eMemcachedError = rb_define_class_under(rb_mMemcached, "Error", rb_eStandardError);
   //rb_eMemcachedErrors[0] = Qnil;
@@ -405,6 +373,8 @@ void Init_memcached_rb(void)
 
   VALUE cConnection = rb_define_class_under(rb_mMemcached, "Connection", rb_cObject);
   rb_define_alloc_func(cConnection, allocate);
+
+  Init_memcached_rb_behavior();
 
   rb_define_method(cConnection, "initialize", rb_connection_initialize, 1);
   rb_define_method(cConnection, "servers", rb_connection_servers, 0);
