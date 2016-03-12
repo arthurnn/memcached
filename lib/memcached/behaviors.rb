@@ -39,9 +39,13 @@ module Memcached
           end
         end
 
-        set_behavior(behavior, value)
-      end
 
+        begin
+          set_behavior(behavior, value)
+        rescue Memcached::Deprecated
+          warn "Behavior #{behavior_string} is deprecated, and won't work anymore."
+        end
+      end
     end
   end
 
