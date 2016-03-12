@@ -17,8 +17,7 @@ module Memcached
       base_value = BASE_VALUES[behavior]
       raise ArgumentError unless base_value
       value = base_value % value.to_s.upcase
-      int_value = Behaviors.const_get(value)
-      int_value * (CONVERSION_FACTORS[behavior] || 1)
+      Behaviors.const_get(value)
     end
 
     def set_behaviors(hash)
@@ -35,10 +34,13 @@ module Memcached
             value = lookup_value(behavior, value)
           rescue NameError, ArgumentError
             msg =  "Invalid behavior value #{value.inspect} for #{behavior_string.inspect}"
-            raise(ArgumentError, msg)
+            raise ArgumentError, msg
           end
         end
 
+        if value.is_a? Numeric
+          value *= (CONVERSION_FACTORS[behavior] || 1)
+        end
 
         begin
           set_behavior(behavior, value)
