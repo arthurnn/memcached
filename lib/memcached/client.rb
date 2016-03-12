@@ -8,6 +8,23 @@ module Memcached
 
   class Client
     FLAGS = 0x0
+
+    DEFAULTS = {
+      :hash => :fnv1_32,
+      :distribution => :consistent_ketama,
+      :ketama_weighted => true,
+      :retry_timeout => 60,
+      :timeout => 0.25,
+#      :poll_max_retries => 1, TODO: doesnt exist anymore
+      :connect_timeout => 0.25,
+      #    :prefix_key => '',
+      #    :prefix_delimiter => '',
+      #    :hash_with_prefix_key => true,
+      :default_weight => 8,
+      :server_failure_limit => 2,
+      :verify_key => true,
+    }
+
     attr_reader :servers, :options
 
     def initialize(servers = nil, options = {})
@@ -16,13 +33,18 @@ module Memcached
       else
         @servers = [[:tcp, "localhost", 11211]]
       end
+      @options = DEFAULTS.merge(options)
 
       @codec = Memcached::MarshalCodec
-      @default_ttl = options.delete(:ttl) || 0
-      @prefix_key = options.delete(:prefix_key) # TODO: do something with this
-      @behaviors = normalize_behaviors(options)
+      @default_ttl = @options.delete(:ttl) || 0
 
-      @options = options.freeze
+      @prefix_key = @options.delete(:prefix_key) # TODO: do something with this
+      @default_weight = @options.delete(:default_weight) # TODO
+      @options.delete(:credentials) # TODO
+
+      @behaviors = normalize_behaviors(@options)
+
+      @options.freeze
     end
 
     def flush
@@ -121,8 +143,12 @@ But it was #{servers.inspect}.
           MSG
     end
 
-    # TODO
     def normalize_behaviors(options)
+      if timeout = options.delete(:timeout)
+        options[:rcv_timeout] ||= timeout
+        options[:snd_timeout] ||= timeout
+        options[:poll_timeout] ||= timeout
+      end
       options
     end
 
