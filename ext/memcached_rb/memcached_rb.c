@@ -33,7 +33,7 @@ const char *MEMCACHED_ERROR_NAMES[] = {
   "PartialRead", // MEMCACHED_PARTIAL_READ
   "SomeError", // MEMCACHED_SOME_ERRORS
   "NoServer", // MEMCACHED_NO_SERVERS
-  "End", // MEMCACHED_END
+  NULL, // MEMCACHED_END
   "Deleted", // MEMCACHED_DELETED
   "Value", // MEMCACHED_VALUE
   "Stat", // MEMCACHED_STAT
@@ -233,28 +233,35 @@ rb_connection_get_multi(VALUE self, VALUE rb_keys)
   size_t key_length[keys_len];
 
   VALUE * arr = RARRAY_PTR(rb_keys);
-  const char *key, *value;
-
   memcached_return_t rc;
-  memcached_result_st *result;
 
   for(i = 0; i < keys_len; i++) {
     keys[i] = StringValuePtr(arr[i]);
     key_length[i] = strlen(keys[i]);
   }
 
-  rc = memcached_mget(ctx->memc, keys, key_length, sizeof(keys)/sizeof(keys[0]));
+  char return_key[MEMCACHED_MAX_KEY];
+  size_t return_key_length;
+  char * return_value;
+  size_t return_value_length;
+
+  uint32_t flags;
+
+  rc = memcached_mget(ctx->memc, keys, key_length, keys_len);
   handle_memcached_return(rc);
 
-  while ((result = memcached_fetch_result(ctx->memc, NULL, &rc))) {
+  while (rc != MEMCACHED_END) {
+    return_value = memcached_fetch(ctx->memc, return_key, &return_key_length, &return_value_length, &flags, &rc);
     handle_memcached_return(rc);
+    // Break if empty key, but not on empty value
+    if(return_key_length <= 0)
+      break;
 
-    key = memcached_result_key_value(result);
-    value = memcached_result_value(result);
-    rb_hash_aset(rb_values, rb_str_new2(key), rb_str_new2(value));
-    memcached_result_free(result);
+    VALUE rb_value = rb_str_new(return_value, return_value_length);
+    VALUE rb_key = rb_str_new(return_key, return_key_length);
+    rb_hash_aset(rb_values, rb_key, rb_value);
+    free(return_value);
   }
-
   return rb_values;
 }
 
