@@ -90,6 +90,15 @@ handle_memcached_return(memcached_return_t rc)
   rb_exc_raise(boom);
 }
 
+#define Wrap_return_t(rc) \
+{ \
+  handle_memcached_return(rc); \
+  if(rc == MEMCACHED_BUFFERED) \
+    return Qnil; \
+  else \
+    return rc == MEMCACHED_SUCCESS ? Qtrue : Qfalse; \
+}
+
 memcached_ctx *
 get_ctx(VALUE obj)
 {
@@ -196,9 +205,7 @@ rb_connection_set(VALUE self, VALUE key, VALUE value, VALUE ttl, VALUE flags)
   char *mvalue = StringValuePtr(value);
 
   memcached_return_t rc = memcached_set(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(ttl), NUM2INT(flags));
-
-  handle_memcached_return(rc);
-  return (rc == MEMCACHED_SUCCESS);
+  Wrap_return_t(rc);
 }
 
 static VALUE
@@ -264,8 +271,7 @@ rb_connection_delete(VALUE self, VALUE key)
   memcached_ctx *ctx = get_ctx(self);
   char *mkey = StringValuePtr(key);
   memcached_return_t rc = memcached_delete(ctx->memc, mkey, strlen(mkey), (time_t)0);
-  handle_memcached_return(rc);
-  return (rc == MEMCACHED_SUCCESS);
+  Wrap_return_t(rc);
 }
 
 static VALUE
@@ -276,8 +282,7 @@ rb_connection_add(VALUE self, VALUE rb_key, VALUE rb_value, VALUE ttl, VALUE fla
   char *mvalue = StringValuePtr(rb_value);
 
   memcached_return_t rc = memcached_add(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(ttl), NUM2INT(flags));
-  handle_memcached_return(rc);
-  return (rc == MEMCACHED_SUCCESS);
+  Wrap_return_t(rc);
 }
 
 static VALUE
@@ -339,8 +344,7 @@ rb_connection_prepend(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VA
   char *mvalue = StringValuePtr(rb_value);
 
   memcached_return_t rc = memcached_prepend(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
-  handle_memcached_return(rc);
-  return (rc == MEMCACHED_SUCCESS);
+  Wrap_return_t(rc);
 }
 
 static VALUE
@@ -352,8 +356,7 @@ rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VAL
   char *mvalue = StringValuePtr(rb_value);
 
   memcached_return_t rc = memcached_append(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
-  handle_memcached_return(rc);
-  return (rc == MEMCACHED_SUCCESS);
+  Wrap_return_t(rc);
 }
 
 static VALUE
