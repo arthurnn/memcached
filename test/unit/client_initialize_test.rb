@@ -88,22 +88,24 @@ class ClientInitializeTest < BaseTest
     assert_raises(ArgumentError) { Memcached::Client.new "local host:43043:1" }
   end
 
-#  def test_initialize_with_invalid_options
-#    assert_raise(ArgumentError) do
-#      Memcached.new @servers, :sort_hosts => true, :distribution => :consistent
-#    end
-#  end
+  def test_initialize_with_sort_host_and_consistent_distribution
+    assert_raises(ArgumentError) do
+      Memcached::Client.new @servers, :sort_hosts => true, :distribution => :consistent
+    end
+  end
+
+  def test_initialize_with_invalid_options
+    assert_raises(ArgumentError) do
+      client = Memcached::Client.new @servers, foo: true
+      client.connection
+    end
+  end
 
 #  def test_initialize_with_invalid_prefix_key
 #    assert_raises(ArgumentError) do
 #      client = Memcached::Client.new @servers, :prefix_key => "x" * 128
 #      client.connection
 #    end
-#  end
-
-#  def test_initialize_without_prefix_key
-#    cache = Memcached.new @servers
-#    assert_equal 3, cache.send(:server_structs).size
 #  end
 #
 #  def test_set_prefix_key

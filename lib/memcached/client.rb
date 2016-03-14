@@ -144,6 +144,21 @@ But it was #{servers.inspect}.
     end
 
     def normalize_behaviors(options)
+      # UDP requires noreply
+      options[:noreply] = true if options[:use_udp]
+
+      # Buffering requires non-blocking
+      # FIXME This should all be wrapped up in a single :pipeline option.
+      options[:no_block] = true if options[:buffer_requests]
+
+      # Disallow weights without ketama
+      options.delete(:ketama_weighted) if options[:distribution] != :consistent_ketama
+
+      # Disallow :sort_hosts with consistent hashing
+      if options[:sort_hosts] && options[:distribution] == :consistent
+        raise ArgumentError, ":sort_hosts defeats :consistent hashing"
+      end
+
       if timeout = options.delete(:timeout)
         options[:rcv_timeout] ||= timeout
         options[:snd_timeout] ||= timeout
