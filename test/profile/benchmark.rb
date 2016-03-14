@@ -164,6 +164,7 @@ class Bench
           prof.print(:path => 'profiles', :profile => "#{test_name}-#{client_name.gsub(':','-')}")
         end
       rescue Exception => e
+        # FIXME: stop swallowing errors
         puts "#{test_name}: #{client_name} => #{e.inspect}" if ENV["DEBUG"]
         reset_clients
       end
@@ -247,27 +248,28 @@ class Bench
     end
 
     benchmark_clients("set-large") do |c|
-      c.set @k1, @m_large_value, 0, true
-      c.set @k2, @m_large_value, 0, true
-      c.set @k3, @m_large_value, 0, true
+      c.set @k1, @m_large_value
+      c.set @k2, @m_large_value
+      c.set @k3, @m_large_value
     end
 
     benchmark_clients("get-large") do |c|
-      c.get @k1, true
-      c.get @k2, true
-      c.get @k3, true
+      c.get @k1
+      c.get @k2
+      c.get @k3
     end
 
-    if defined?(Memcached) && !ENV['TEST'] && !ENV['CLIENT']
-      benchmark_hashes(Memcached::HASH_VALUES, "hash") do |i|
-        Rlibmemcached.memcached_generate_hash_rvalue(@k1, i)
-        Rlibmemcached.memcached_generate_hash_rvalue(@k2, i)
-        Rlibmemcached.memcached_generate_hash_rvalue(@k3, i)
-        Rlibmemcached.memcached_generate_hash_rvalue(@k4, i)
-        Rlibmemcached.memcached_generate_hash_rvalue(@k5, i)
-        Rlibmemcached.memcached_generate_hash_rvalue(@k6, i)
-      end
-    end
+## TODO: benchmark this in another file
+#    if defined?(Memcached) && !ENV['TEST'] && !ENV['CLIENT']
+#      benchmark_hashes(Memcached::HASH_VALUES, "hash") do |i|
+#        Rlibmemcached.memcached_generate_hash_rvalue(@k1, i)
+#        Rlibmemcached.memcached_generate_hash_rvalue(@k2, i)
+#        Rlibmemcached.memcached_generate_hash_rvalue(@k3, i)
+#        Rlibmemcached.memcached_generate_hash_rvalue(@k4, i)
+#        Rlibmemcached.memcached_generate_hash_rvalue(@k5, i)
+#        Rlibmemcached.memcached_generate_hash_rvalue(@k6, i)
+#      end
+#    end
   end
 end
 
