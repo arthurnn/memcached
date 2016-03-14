@@ -8,6 +8,7 @@
 ** TODO test udp operations
 ** TODO Add stats operation
 ** TODO Add clone operation
+** TODO Add reset operation
 ** TODO Add login support and tests for it
 ** TODO Update README
 
