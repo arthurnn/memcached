@@ -4,6 +4,7 @@ services: memcached
 before_install:
   - "gem install bundler"
   - "rm ${BUNDLE_GEMFILE}.lock"
+  - "sudo apt-get install libmemcached-dev"
 bundler_args: --without benchmark
 before_script: bundle exec ruby -Ilib:test test/setup.rb
 rvm:
