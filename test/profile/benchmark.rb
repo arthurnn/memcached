@@ -1,6 +1,6 @@
 HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
-UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached')
+UNIX_SOCKET_NAME = File.join('/tmp', 'memcached')
 JRUBY = defined?(JRUBY_VERSION)
 
 require 'ffi/times' if JRUBY
@@ -117,21 +117,21 @@ class Bench
 
     # Us
     @clients.merge!({
-      "libm:ascii" => Memcached::Rails.new(
+      "libm:ascii" => Memcached::Client.new(
         ['127.0.0.1:43042', '127.0.0.1:43043'],
-        :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-      "libm:ascii:pipeline" => Memcached::Rails.new(
+        :buffer_requests => false, :no_block => false, :prefix_key => "namespace"),
+      "libm:ascii:pipeline" => Memcached::Client.new(
         ['127.0.0.1:43042', '127.0.0.1:43043'],
-        :no_block => true, :buffer_requests => true, :noreply => true, :namespace => "namespace"),
-      "libm:ascii:udp" => Memcached::Rails.new(
+        :no_block => true, :buffer_requests => true, :noreply => true, :prefix_key => "namespace"),
+      "libm:ascii:udp" => Memcached::Client.new(
         ["#{UNIX_SOCKET_NAME}0", "#{UNIX_SOCKET_NAME}1"],
-        :buffer_requests => false, :no_block => false, :namespace => "namespace"),
-      "libm:bin" => Memcached::Rails.new(
+        :buffer_requests => false, :no_block => false, :prefix_key => "namespace"),
+      "libm:bin" => Memcached::Client.new(
         ['127.0.0.1:43042', '127.0.0.1:43043'],
-        :buffer_requests => false, :no_block => false, :namespace => "namespace", :binary_protocol => true),
-      "libm:bin:buffer" => Memcached::Rails.new(
+        :buffer_requests => false, :no_block => false, :prefix_key => "namespace", :binary_protocol => true),
+      "libm:bin:buffer" => Memcached::Client.new(
         ['127.0.0.1:43042', '127.0.0.1:43043'],
-        :no_block => true, :buffer_requests => true, :namespace => "namespace", :binary_protocol => true)})
+        :no_block => true, :buffer_requests => true, :prefix_key => "namespace", :binary_protocol => true)})
   end
 
   def benchmark_clients(test_name, populate_keys = true)
@@ -144,9 +144,9 @@ class Bench
       client = @clients[client_name]
       begin
         if populate_keys
-          client.set @k1, @m_value, 0, true
-          client.set @k2, @m_value, 0, true
-          client.set @k3, @m_value, 0, true
+          client.set @k1, @m_value
+          client.set @k2, @m_value
+          client.set @k3, @m_value
         else
           client.delete @k1
           client.delete @k2
@@ -183,19 +183,19 @@ class Bench
 
   def run_without_recursion
     benchmark_clients("set") do |c|
-      c.set @k1, @m_value, 0, true
-      c.set @k2, @m_value, 0, true
-      c.set @k3, @m_value, 0, true
+      c.set @k1, @m_value
+      c.set @k2, @m_value
+      c.set @k3, @m_value
     end
 
     benchmark_clients("get") do |c|
-      c.get @k1, true
-      c.get @k2, true
-      c.get @k3, true
+      c.get @k1
+      c.get @k2
+      c.get @k3
     end
 
     benchmark_clients("get-multi") do |c|
-      c.get_multi @keys, true
+      c.get_multi @keys
     end
 
     benchmark_clients("append") do |c|
