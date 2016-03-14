@@ -5,14 +5,10 @@ before_install:
   - "gem install bundler"
   - "rm ${BUNDLE_GEMFILE}.lock"
 bundler_args: --without benchmark
+before_script: bundle exec ruby -Ilib:test test/setup.rb
 rvm:
-  - 2.0
   - 2.1
   - 2.2
   - 2.3.0
-  - rbx-19mode
-matrix:
-  allow_failures:
-    - rvm: rbx-19mode
 notifications:
   email: false
