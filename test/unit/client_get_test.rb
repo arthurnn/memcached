@@ -107,29 +107,27 @@ class ClientGetTest < BaseTest
 #    socket.close
 #  end
 #
-#  def test_get_with_prefix_key
-#    # Prefix_key
-#    cache = Memcached.new(
-#      # We can only use one server because the key is hashed separately from the prefix key
-#      @servers.first,
-#      :prefix_key => @prefix_key,
-#      :hash => :default,
-#      :distribution => :modula
-#    )
-#    cache.set key, @value
-#    assert_equal @value, cache.get(key)
-#
-#    # No prefix_key specified
-#    cache = Memcached.new(
-#      @servers.first,
-#      :hash => :default,
-#      :distribution => :modula
-#    )
-#    assert_nothing_raised do
-#      assert_equal @value, cache.get("#{@prefix_key}#{key}")
-#    end
-#  end
-#
+  def test_get_with_prefix_key
+    # Prefix_key
+    cache = Memcached::Client.new(
+      # We can only use one server because the key is hashed separately from the prefix key
+      @servers.first,
+      :prefix_key => @prefix_key,
+      :hash => :default,
+      :distribution => :modula
+    )
+    cache.set key, @value
+    assert_equal @value, cache.get(key)
+
+    # No prefix_key specified
+    cache = Memcached::Client.new(
+      @servers.first,
+      :hash => :default,
+      :distribution => :modula
+    )
+    assert_equal @value, cache.get("#{@prefix_key}#{key}")
+  end
+
 #  def test_values_with_null_characters_are_not_truncated
 #    value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
 #    cache.set key, value
