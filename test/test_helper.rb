@@ -45,4 +45,10 @@ class BaseTest < Minitest::Test
   def key
     caller.first[/.*[` ](.*)'/, 1]
   end
+
+  def stub_server(port)
+    socket = TCPServer.new('127.0.0.1', port)
+    Thread.new { socket.accept }
+    socket
+  end
 end

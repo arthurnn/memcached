@@ -599,5 +599,4 @@ class MemcachedTest # TODO
     Thread.new { socket.accept }
     socket
   end
-
 end

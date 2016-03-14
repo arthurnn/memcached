@@ -52,4 +52,48 @@ class ClientSetTest < BaseTest
 #      cache.set(key, @value)
 #    end
 #  end
+
+  def test_set_with_server_timeout
+    socket = stub_server 43047
+    cache = Memcached::Client.new("localhost:43047:1", :timeout => 0.5)
+    assert_raises(Memcached::Timeout) do
+      cache.set key, "v"
+    end
+
+    cache = Memcached::Client.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5)
+    assert_raises(Memcached::Timeout) do
+      cache.set key, "v"
+    end
+
+    cache = Memcached::Client.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25)
+    assert_raises(Memcached::Timeout) do
+      cache.set key, "v"
+    end
+  ensure
+    socket.close if socket
+  end
+
+  def test_set_with_no_block_server_timeout
+    socket = stub_server 43048
+    cache = Memcached::Client.new("localhost:43048:1", :no_block => true, :timeout => 0.25)
+
+    assert_raises(Memcached::Timeout) do
+      cache.set key, "v"
+    end
+
+    cache = Memcached::Client.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001)
+    assert_raises(Memcached::Timeout) do
+      cache.set key, "v"
+    end
+
+    cache = Memcached::Client.new("localhost:43048:1", :no_block => true,
+      :poll_timeout => 0.001,
+      :rcv_timeout => 0.25 # No affect in no-block mode
+    )
+    assert_raises(Memcached::Timeout) do
+      cache.set key, "v"
+    end
+  ensure
+    socket.close if socket
+  end
 end

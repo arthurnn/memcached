@@ -50,63 +50,6 @@ class ClientGetTest < BaseTest
     end
   end
 
-#  def test_get_with_server_timeout
-#    socket = stub_server 43047
-#    cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :exception_retry_limit => 0)
-#    assert 0.49 < (Benchmark.measure do
-#      assert_raise(Memcached::ATimeoutOccurred) do
-#        result = cache.get key
-#      end
-#    end).real
-#
-#    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5, :exception_retry_limit => 0)
-#    assert 0.49 < (Benchmark.measure do
-#      assert_raise(Memcached::ATimeoutOccurred) do
-#        result = cache.get key
-#      end
-#    end).real
-#
-#    cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25, :exception_retry_limit => 0)
-#    assert 0.51 > (Benchmark.measure do
-#      assert_raise(Memcached::ATimeoutOccurred) do
-#        result = cache.get key
-#      end
-#    end).real
-#  ensure
-#    socket.close
-#  end
-#
-#  def test_get_with_no_block_server_timeout
-#    socket = stub_server 43048
-#    cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25, :exception_retry_limit => 0)
-#    assert 0.24 < (Benchmark.measure do
-#      assert_raise(Memcached::ATimeoutOccurred) do
-#        result = cache.get key
-#      end
-#    end).real
-#
-#    cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001, :exception_retry_limit => 0)
-#    assert 0.24 < (Benchmark.measure do
-#      assert_raise(Memcached::ATimeoutOccurred) do
-#        result = cache.get key
-#      end
-#    end).real
-#
-#    cache = Memcached.new("localhost:43048:1", :no_block => true,
-#      :poll_timeout => 0.001,
-#      :rcv_timeout => 0.25, # No affect in no-block mode
-#      :exception_retry_limit => 0
-#    )
-#    assert 0.24 > (Benchmark.measure do
-#      assert_raise(Memcached::ATimeoutOccurred) do
-#        result = cache.get key
-#      end
-#    end).real
-#
-#  ensure
-#    socket.close
-#  end
-#
   def test_get_with_prefix_key
     # Prefix_key
     cache = Memcached::Client.new(
@@ -128,17 +71,6 @@ class ClientGetTest < BaseTest
     assert_equal @value, cache.get("#{@prefix_key}#{key}")
   end
 
-#  def test_values_with_null_characters_are_not_truncated
-#    value = OpenStruct.new(:a => Object.new) # Marshals with a null \000
-#    cache.set key, value
-#    result = cache.get key, false
-#    non_wrapped_result = Rlibmemcached.memcached_get(
-#      cache.instance_variable_get("@struct"),
-#      key
-#    ).first
-#    assert result.size > non_wrapped_result.size
-#  end
-#
   def test_get_multi
     cache.set "#{key}_1", 1
     cache.set "#{key}_2", 2
