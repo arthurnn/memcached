@@ -1,1 +1,0 @@
-* Remove SWIG and modify libmemcached to accept and return Ruby objects directly

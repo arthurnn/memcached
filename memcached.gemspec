@@ -13,11 +13,12 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib", "ext"]
-  s.extensions = ["ext/rlibmemcached/extconf.rb"]
+  s.extensions = ["ext/memcached_rb/extconf.rb"]
 
   s.licenses = ["Academic Free License 3.0 (AFL-3.0)"]
 
   s.add_development_dependency 'rake'
+  s.add_development_dependency 'minitest'
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'activesupport'
   s.add_development_dependency "rake-compiler"

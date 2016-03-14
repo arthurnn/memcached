@@ -1,5 +1,5 @@
 
-class Memcached
+module Memcached
 
 =begin rdoc
 

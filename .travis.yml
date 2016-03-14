@@ -2,17 +2,17 @@ language: ruby
 services: memcached
 
 before_install:
-  - "gem install bundler"
+  - sudo apt-get remove --auto-remove -yqq libmemcached-dev
+  - sudo add-apt-repository -y ppa:ondrej/php5
+  - sudo apt-get -qq update
+  - sudo apt-get install -yqq libmemcached-dev
+  - gem install bundler
   - "rm ${BUNDLE_GEMFILE}.lock"
 bundler_args: --without benchmark
+before_script: bundle exec ruby -Ilib:test test/setup.rb
 rvm:
-  - 2.0
   - 2.1
   - 2.2
   - 2.3.0
-  - rbx-19mode
-matrix:
-  allow_failures:
-    - rvm: rbx-19mode
 notifications:
   email: false

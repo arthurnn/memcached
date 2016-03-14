@@ -1,3 +1,0 @@
-MEMCP="../src/memcp"
-
-$MEMCP --help

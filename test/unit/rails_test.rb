@@ -2,7 +2,7 @@ require File.expand_path("#{File.dirname(__FILE__)}/../test_helper")
 require 'active_support/duration'
 require 'logger'
 
-class RailsTest < Test::Unit::TestCase
+class RailsTest # TODO
 
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043', "#{UNIX_SOCKET_NAME}0"]

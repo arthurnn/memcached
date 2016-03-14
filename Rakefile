@@ -3,7 +3,7 @@ require 'rake/testtask'
 require 'rake/extensiontask'
 
 spec = Gem::Specification.load('memcached.gemspec')
-Rake::ExtensionTask.new('rlibmemcached', spec) do |ext|
+Rake::ExtensionTask.new('memcached_rb', spec) do |ext|
   ext.lib_dir = 'lib'
 end
 
@@ -14,15 +14,6 @@ Rake::TestTask.new do |t|
   t.warning = true
 end
 task :default => [:compile, :test]
-
-task :swig do
-  run("swig -DLIBMEMCACHED_WITH_SASL_SUPPORT -Iext/rlibmemcached/libmemcached-0.32 -ruby -autorename -o ext/rlibmemcached/rlibmemcached_wrap.c.in ext/rlibmemcached/rlibmemcached.i", "Running SWIG")
-  swig_patches = {
-    "#ifndef RUBY_INIT_STACK" => "#ifdef __NEVER__" # Patching SWIG output for JRuby.
-  }.map{|pair| "s/#{pair.join('/')}/"}.join(';')
-  # sed has different syntax for inplace switch in BSD and GNU version, so using intermediate file
-  run("sed '#{swig_patches}' ext/rlibmemcached/rlibmemcached_wrap.c.in > ext/rlibmemcached/rlibmemcached_wrap.c", "Apply patches to SWIG output")
-end
 
 task :exceptions do
   $LOAD_PATH << "lib"

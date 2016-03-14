@@ -1,4 +1,4 @@
-class Memcached
+module Memcached
   module MarshalCodec
       def self.encode(key, value, flags)
         [Marshal.dump(value), flags]
