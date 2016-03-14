@@ -360,6 +360,35 @@ rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VAL
 }
 
 static VALUE
+rb_connection_set_prefix(VALUE self, VALUE rb_prefix)
+{
+  memcached_ctx *ctx = get_ctx(self);
+  memcached_return_t rc;
+  if(Qnil == rb_prefix) {
+    rc = memcached_callback_set(ctx->memc, MEMCACHED_CALLBACK_NAMESPACE, NULL);
+  } else {
+    char *prefix = StringValuePtr(rb_prefix);
+    rc = memcached_callback_set(ctx->memc, MEMCACHED_CALLBACK_NAMESPACE, prefix);
+  }
+  Wrap_return_t(rc);
+}
+
+static VALUE
+rb_connection_get_prefix(VALUE self)
+{
+  memcached_ctx *ctx = get_ctx(self);
+  memcached_return_t rc;
+  char * value;
+
+  value = (char*) memcached_callback_get(ctx->memc, MEMCACHED_CALLBACK_NAMESPACE, &rc);
+  handle_memcached_return(rc);
+  if(NULL == value)
+    return Qnil;
+  else
+    return rb_str_new2(value);
+}
+
+static VALUE
 rb_server_to_s(VALUE self)
 {
   VALUE rb_ret;
@@ -413,6 +442,8 @@ void Init_memcached_rb(void)
   rb_define_method(cConnection, "append", rb_connection_append, 4);
   rb_define_method(cConnection, "get_behavior", rb_connection_get_behavior, 1);
   rb_define_method(cConnection, "set_behavior", rb_connection_set_behavior, 2);
+  rb_define_method(cConnection, "set_prefix", rb_connection_set_prefix, 1);
+  rb_define_method(cConnection, "get_prefix", rb_connection_get_prefix, 0);
 
   rb_cServer = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
   rb_define_method(rb_cServer, "to_s", rb_server_to_s, 0);

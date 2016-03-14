@@ -101,31 +101,34 @@ class ClientInitializeTest < BaseTest
     end
   end
 
-#  def test_initialize_with_invalid_prefix_key
-#    assert_raises(ArgumentError) do
-#      client = Memcached::Client.new @servers, :prefix_key => "x" * 128
-#      client.connection
-#    end
-#  end
-#
-#  def test_set_prefix_key
-#    cache = Memcached.new @servers, :prefix_key => "foo"
-#    cache.set_prefix_key("bar")
-#    assert_equal "bar", cache.prefix_key
-#  end
-#
-#  def test_set_prefix_key_to_empty_string
-#    cache = Memcached.new @servers, :prefix_key => "foo"
-#    cache.set_prefix_key("")
-#    assert_equal "", cache.prefix_key
-#  end
+  def test_initialize_with_invalid_prefix_key
+    assert_raises(Memcached::KeyTooBig) do
+      client = Memcached::Client.new @servers, :prefix_key => "x" * 128
+      client.connection
+    end
+  end
 
-#  def test_memcached_callback_set_with_empty_string_should_not_raise_exception
-#    cache = Memcached.new @servers, :prefix_key => "foo"
-#    assert_nothing_raised do
-#      cache.set_prefix_key("")
-#    end
-#  end
+  def test_set_namespace
+    cache = Memcached::Client.new @servers, :prefix_key => "foo"
+    assert_equal "foo", cache.namespace
+
+    cache.namespace = "bar"
+    assert_equal "bar", cache.namespace
+  end
+
+  def test_set_prefix_key_to_empty_string
+    cache = Memcached::Client.new @servers, :prefix_key => "foo"
+    assert_raises(Memcached::InvalidArgument) do
+      cache.namespace = ""
+    end
+    assert_equal "foo", cache.namespace
+  end
+
+  def test_set_prefix_key_to_nil
+    cache = Memcached::Client.new @servers, :prefix_key => "foo"
+    cache.namespace = nil
+    assert_equal nil, cache.namespace
+  end
 
   def test_initialize_negative_behavior
     cache = Memcached::Client.new @servers, :buffer_requests => false

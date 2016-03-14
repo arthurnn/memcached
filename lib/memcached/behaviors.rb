@@ -21,6 +21,7 @@ module Memcached
     end
 
     def set_behaviors(hash)
+      return unless hash
       hash.each do |key, value|
         behavior_string = "MEMCACHED_BEHAVIOR_#{key.to_s.upcase}"
         begin

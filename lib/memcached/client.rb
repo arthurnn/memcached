@@ -37,12 +37,14 @@ module Memcached
 
       @codec = Memcached::MarshalCodec
       @default_ttl = @options.delete(:ttl) || 0
+      prefix = @options.delete(:prefix_key)
 
-      @prefix_key = @options.delete(:prefix_key) # TODO: do something with this
       @default_weight = @options.delete(:default_weight) # TODO
       @options.delete(:credentials) # TODO
 
       @behaviors = normalize_behaviors(@options)
+
+      self.namespace = prefix if prefix
 
       @options.freeze
     end
@@ -112,6 +114,14 @@ module Memcached
 
     def append(key, value, ttl: @default_ttl, flags: FLAGS)
       connection.append(key, value, ttl, flags)
+    end
+
+    def namespace
+      connection.get_prefix
+    end
+
+    def namespace=(value)
+      connection.set_prefix(value)
     end
 
     def connection
