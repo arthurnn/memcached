@@ -17,9 +17,7 @@ module Memcached
       :timeout => 0.25,
 #      :poll_max_retries => 1, TODO: doesnt exist anymore
       :connect_timeout => 0.25,
-      #    :prefix_key => '',
-      #    :prefix_delimiter => '',
-      #    :hash_with_prefix_key => true,
+      :hash_with_prefix_key => true,
       :default_weight => 8,
       :server_failure_limit => 2,
       :verify_key => true,
