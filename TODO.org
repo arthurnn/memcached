@@ -7,7 +7,7 @@
 ** TODO add shim for compatibility with version 1
 ** TODO test udp operations
 ** TODO Add stats operation
-** TODO Add clone operation
+** DONE Add clone operation
 ** TODO Add reset operation
 ** TODO Add login support and tests for it
 ** TODO Update README
