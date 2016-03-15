@@ -424,8 +424,7 @@ void Init_memcached_rb(void)
   int i;
 
   rb_eMemcachedError = rb_define_class_under(rb_mMemcached, "Error", rb_eStandardError);
-  //rb_eMemcachedErrors[0] = Qnil;
-  for(i = 1; i < MEMCACHED_ERROR_COUNT; i++){
+  for(i = 0; i < MEMCACHED_ERROR_COUNT; i++){
     const char* klass = MEMCACHED_ERROR_NAMES[i];
     if(NULL == klass)
       rb_eMemcachedErrors[i] = Qnil;
