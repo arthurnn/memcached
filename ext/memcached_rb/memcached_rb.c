@@ -1,5 +1,7 @@
 #include "memcached_rb.h"
 
+VALUE rb_mMemcached;
+
 static VALUE rb_cServer;
 static VALUE rb_cConnection;
 static VALUE rb_eMemcachedError;
