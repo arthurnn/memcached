@@ -13,6 +13,9 @@ class BaseTest < Minitest::Test
     @servers = ['localhost:43042', 'localhost:43043', "#{UNIX_SOCKET_NAME}0"]
     @udp_servers = ['localhost:43052', 'localhost:43053']
 
+    # Maximum allowed prefix key size for :hash_with_prefix_key_key => false
+    @prefix_key = 'prefix_key_'
+
     @value = OpenStruct.new(a: 1, b: 2, c: self.class)
     @marshalled_value = Marshal.dump(@value)
     @cache = nil
@@ -28,13 +31,13 @@ class BaseTest < Minitest::Test
 
   def cache
     return @cache if @cache
-    @cache = Memcached::Client.new(@servers) #, @options)
+    @cache = Memcached::Client.new(@servers, hash: :default, distribution: :modula, prefix_key: @prefix_key)
   end
 
   def binary_protocol_cache
     return @binary_protocol_cache if @binary_protocol_cache
     binary_protocol_options = {
-#      :prefix_key => @prefix_key,
+      :prefix_key => @prefix_key,
       :hash => :default,
       :distribution => :modula,
       :binary_protocol => true
