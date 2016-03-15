@@ -1,17 +1,17 @@
 module Memcached
   class Server
-    attr_reader :name
+    attr_reader :hostname
     attr_reader :port
     attr_reader :weight
 
     def initialize(name, port, weight = nil)
-      @name = name
+      @hostname = name
       @port = port
       @weight = weight
     end
 
     def to_s
-      "#{name}:#{port}"
+      "#{hostname}:#{port}"
     end
   end
 end
