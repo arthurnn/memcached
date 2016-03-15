@@ -3,7 +3,8 @@
 
 VALUE rb_mMemcached,
   rb_cServer,
-  rb_eMemcachedError;
+  rb_eMemcachedError,
+  rb_cConnection;
 
 ID id_ivar_hostname,
   id_ivar_port,
@@ -430,30 +431,30 @@ void Init_memcached_rb(void)
       rb_eMemcachedErrors[i] = rb_define_class_under(rb_mMemcached, klass, rb_eMemcachedError);
   }
 
-  VALUE cConnection = rb_define_class_under(rb_mMemcached, "Connection", rb_cObject);
-  rb_define_alloc_func(cConnection, allocate);
+  rb_cConnection = rb_define_class_under(rb_mMemcached, "Connection", rb_cObject);
+  rb_define_alloc_func(rb_cConnection, allocate);
 
   Init_memcached_rb_behavior();
 
-  rb_define_method(cConnection, "initialize", rb_connection_initialize, 1);
-  rb_define_method(cConnection, "clone", rb_connection_clone, 0);
-  rb_define_method(cConnection, "servers", rb_connection_servers, 0);
-  rb_define_method(cConnection, "flush", rb_connection_flush, 0);
-  rb_define_method(cConnection, "set", rb_connection_set, 4);
-  rb_define_method(cConnection, "get", rb_connection_get, 1);
-  rb_define_method(cConnection, "get_multi", rb_connection_get_multi, 1);
-  rb_define_method(cConnection, "delete", rb_connection_delete, 1);
-  rb_define_method(cConnection, "add", rb_connection_add, 4);
-  rb_define_method(cConnection, "increment", rb_connection_inc, 2);
-  rb_define_method(cConnection, "decrement", rb_connection_dec, 2);
-  rb_define_method(cConnection, "exist", rb_connection_exist, 1);
-  rb_define_method(cConnection, "replace", rb_connection_replace, 4);
-  rb_define_method(cConnection, "prepend", rb_connection_prepend, 4);
-  rb_define_method(cConnection, "append", rb_connection_append, 4);
-  rb_define_method(cConnection, "get_behavior", rb_connection_get_behavior, 1);
-  rb_define_method(cConnection, "set_behavior", rb_connection_set_behavior, 2);
-  rb_define_method(cConnection, "set_prefix", rb_connection_set_prefix, 1);
-  rb_define_method(cConnection, "get_prefix", rb_connection_get_prefix, 0);
+  rb_define_method(rb_cConnection, "initialize", rb_connection_initialize, 1);
+  rb_define_method(rb_cConnection, "clone", rb_connection_clone, 0);
+  rb_define_method(rb_cConnection, "servers", rb_connection_servers, 0);
+  rb_define_method(rb_cConnection, "flush", rb_connection_flush, 0);
+  rb_define_method(rb_cConnection, "set", rb_connection_set, 4);
+  rb_define_method(rb_cConnection, "get", rb_connection_get, 1);
+  rb_define_method(rb_cConnection, "get_multi", rb_connection_get_multi, 1);
+  rb_define_method(rb_cConnection, "delete", rb_connection_delete, 1);
+  rb_define_method(rb_cConnection, "add", rb_connection_add, 4);
+  rb_define_method(rb_cConnection, "increment", rb_connection_inc, 2);
+  rb_define_method(rb_cConnection, "decrement", rb_connection_dec, 2);
+  rb_define_method(rb_cConnection, "exist", rb_connection_exist, 1);
+  rb_define_method(rb_cConnection, "replace", rb_connection_replace, 4);
+  rb_define_method(rb_cConnection, "prepend", rb_connection_prepend, 4);
+  rb_define_method(rb_cConnection, "append", rb_connection_append, 4);
+  rb_define_method(rb_cConnection, "get_behavior", rb_connection_get_behavior, 1);
+  rb_define_method(rb_cConnection, "set_behavior", rb_connection_set_behavior, 2);
+  rb_define_method(rb_cConnection, "set_prefix", rb_connection_set_prefix, 1);
+  rb_define_method(rb_cConnection, "get_prefix", rb_connection_get_prefix, 0);
 
   rb_cServer = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
   rb_define_method(rb_cServer, "to_s", rb_server_to_s, 0);
