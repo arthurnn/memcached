@@ -160,4 +160,34 @@ class ClientTest < BaseTest
     end
     threads.each { |thread| thread.join }
   end
+
+  def test_consistent_hashing
+    keys = %w(EN6qtgMW n6Oz2W4I ss4A8Brr QShqFLZt Y3hgP9bs CokDD4OD Nd3iTSE1 24vBV4AU H9XBUQs5 E5j8vUq1 AzSh8fva PYBlK2Pi Ke3TgZ4I AyAIYanO oxj8Xhyd eBFnE6Bt yZyTikWQ pwGoU7Pw 2UNDkKRN qMJzkgo2 keFXbQXq pBl2QnIg ApRl3mWY wmalTJW1 TLueug8M wPQL4Qfg uACwus23 nmOk9R6w lwgZJrzJ v1UJtKdG RK629Cra U2UXFRqr d9OQLNl8 KAm1K3m5 Z13gKZ1v tNVai1nT LhpVXuVx pRib1Itj I1oLUob7 Z1nUsd5Q ZOwHehUa aXpFX29U ZsnqxlGz ivQRjOdb mB3iBEAj)
+
+    # Five servers
+    cache = Memcached::Client.new(
+      @servers + ['localhost:43044', 'localhost:43045', 'localhost:43046'],
+      :prefix_key => @prefix_key
+    )
+
+    cache.flush
+    keys.each do |key|
+      cache.set(key, @value)
+    end
+
+    # Pull a server
+    cache = Memcached::Client.new(
+      @servers + ['localhost:43044', 'localhost:43046'],
+      :prefix_key => @prefix_key
+    )
+
+    failed = 0
+    keys.each_with_index do |key, i|
+      unless cache.get(key)
+        failed += 1
+      end
+    end
+
+    assert(failed < keys.size / 3, "#{failed} failed out of #{keys.size}")
+  end
 end
