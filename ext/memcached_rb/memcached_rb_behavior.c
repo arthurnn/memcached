@@ -139,6 +139,10 @@ rb_connection_set_behavior(VALUE self, VALUE rb_behavior, VALUE rb_value)
 	case T_FIXNUM:
 		value = FIX2INT(rb_value);
 		break;
+	case T_BIGNUM:
+	case T_FLOAT:
+		value = NUM2INT(rb_value);
+		break;
 	case T_NIL:
 	case T_FALSE:
 		break;
