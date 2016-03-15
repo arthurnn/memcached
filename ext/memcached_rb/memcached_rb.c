@@ -128,7 +128,7 @@ rb_connection_new(VALUE klass, VALUE rb_servers)
 			VALUE rb_hostname = rb_ary_entry(rb_server, 1);
 			VALUE rb_port = rb_ary_entry(rb_server, 2);
 
-			Check_Type(rb_server, T_STRING);
+			Check_Type(rb_hostname, T_STRING);
 			Check_Type(rb_port, T_FIXNUM);
 
 			// TODO: add weight
