@@ -156,6 +156,15 @@ rb_connection_initialize(VALUE self, VALUE rb_servers)
   return Qnil;
 }
 
+static VALUE
+rb_connection_clone(VALUE self)
+{
+  VALUE clone = rb_obj_clone(self);
+  memcached_ctx *ctx = get_ctx(clone);
+  ctx->memc = memcached_clone(NULL, ctx->memc);
+  return clone;
+}
+
 static memcached_return_t
 iterate_server_function(const memcached_st *ptr, const memcached_instance_st * server, void *context)
 {
@@ -427,6 +436,7 @@ void Init_memcached_rb(void)
   Init_memcached_rb_behavior();
 
   rb_define_method(cConnection, "initialize", rb_connection_initialize, 1);
+  rb_define_method(cConnection, "clone", rb_connection_clone, 0);
   rb_define_method(cConnection, "servers", rb_connection_servers, 0);
   rb_define_method(cConnection, "flush", rb_connection_flush, 0);
   rb_define_method(cConnection, "set", rb_connection_set, 4);

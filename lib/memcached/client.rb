@@ -122,6 +122,12 @@ module Memcached
       connection.set_prefix(value)
     end
 
+    def clone
+      client = super
+      client.instance_variable_set(:@connection, @connection.clone) if @connection
+      client
+    end
+
     def connection
       @connection ||= Memcached::Connection.new(@servers).tap do |conn|
         conn.set_behaviors(@behaviors)

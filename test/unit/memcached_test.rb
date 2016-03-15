@@ -233,22 +233,6 @@ class MemcachedTest # TODO
     assert_raises(Memcached::SomeErrorsWereReported) { cache.stats }
   end
 
-  # Clone
-
-  def test_clone
-    cache = @cache.clone
-    assert_equal cache.servers, @cache.servers
-    assert_not_equal cache, @cache
-
-    # Definitely check that the structs are unlinked
-    assert_not_equal @cache.instance_variable_get('@struct').object_id,
-      cache.instance_variable_get('@struct').object_id
-
-    assert_nothing_raised do
-      @cache.set key, @value
-    end
-  end
-
   # Server removal and consistent hashing
 
   def test_unresponsive_server

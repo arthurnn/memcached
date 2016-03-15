@@ -117,5 +117,33 @@ class ClientTest < BaseTest
 #    @cache.send(:check_return_code, Rlibmemcached::MEMCACHED_ERRNO, key)
 #  rescue Memcached::SystemError => e
 #    assert_match /^Errno 1: "Operation not permitted". Key/, e.message
-#  end
+  #  end
+
+  def test_clone_with_connection_loaded
+    @cache = cache
+    cache = @cache.clone
+    assert_equal cache.servers, @cache.servers
+    refute_equal cache, @cache
+
+    # Definitely check that the connections are unlinked
+    refute_equal @cache.connection.object_id, cache.connection.object_id
+
+    # normal set, should work
+    @cache.set key, @value
+  end
+
+  def test_clone_with_connected_client
+    @cache = cache
+    @cache.set key, @value
+
+    cache = @cache.clone
+    assert_equal cache.servers, @cache.servers
+    refute_equal cache, @cache
+
+    # Definitely check that the connections are unlinked
+    refute_equal @cache.connection.object_id, cache.connection.object_id
+
+    # normal set, should work
+    @cache.set key, @value
+  end
 end
