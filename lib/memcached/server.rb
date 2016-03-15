@@ -11,7 +11,10 @@ module Memcached
     end
 
     def to_s
-      "#{hostname}:#{port}"
+      s = hostname
+      s << ":#{port}" if 0 != port
+      s << ":#{weight}" if weight
+      s
     end
   end
 end
