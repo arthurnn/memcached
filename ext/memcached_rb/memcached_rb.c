@@ -117,7 +117,7 @@ rb_connection_new(VALUE klass, VALUE rb_servers)
 
 	for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
 		VALUE rb_server, rb_backend;
-		
+
 		rb_server = rb_ary_entry(rb_servers, i);
 		Check_Type(rb_server, T_ARRAY);
 
@@ -155,7 +155,7 @@ static memcached_return_t
 iterate_server_function(const memcached_st *ptr, const memcached_instance_st * server, void *context)
 {
 	VALUE rb_server_list = (VALUE)context;
-	VALUE rb_server = rb_funcall(rb_cServer, rb_intern("new"), 2, 
+	VALUE rb_server = rb_funcall(rb_cServer, rb_intern("new"), 2,
 			rb_str_new2(memcached_server_name(server)),
 			UINT2NUM(memcached_server_port(server)));
 
@@ -208,7 +208,7 @@ rb_connection_set(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE 
 		RSTRING_PTR(rb_value), RSTRING_LEN(rb_value),
 		FIX2INT(rb_ttl), FIX2INT(rb_flags)
 	);
-			
+
 	rb_memcached_return(rc);
 }
 
@@ -486,7 +486,7 @@ void Init_memcached_rb(void)
 
 	for (i = 1; i < MEMCACHED_ERROR_COUNT; i++) {
 		const char *klass = MEMCACHED_ERROR_NAMES[i];
-		rb_eMemcachedErrors[i] = klass ? 
+		rb_eMemcachedErrors[i] = klass ?
 			rb_define_class_under(rb_mMemcached, klass, rb_eMemcachedError) : Qnil;
 	}
 
