@@ -51,27 +51,4 @@ module Memcached
       end
     end
   end
-
-#  DIRECT_VALUE_BEHAVIORS = [:retry_timeout, :connect_timeout, :rcv_timeout, :socket_recv_size, :poll_timeout, :socket_send_size, :server_failure_limit, :snd_timeout, :poll_max_retries]
- # TODO  get_behavior
-
-  # Get a behavior value for this Memcached instance. Accepts a Symbol.
-#  def get_behavior(behavior)
-#    raise ArgumentError, "No behavior #{behavior.inspect}" unless b_id = BEHAVIORS[behavior]
-#    value = Lib.memcached_behavior_get(@struct, b_id)
-#
-#    if BEHAVIOR_VALUES.invert.has_key?(value)
-#      # False, nil are valid values so we can not rely on direct lookups
-#      case behavior
-#        # Scoped values; still annoying
-#        when :hash then HASH_VALUES.invert[value]
-#        when :distribution then DISTRIBUTION_VALUES.invert[value]
-#        else
-#          value
-#      end
-#    else
-#      value
-#    end
-#  end
-
 end
