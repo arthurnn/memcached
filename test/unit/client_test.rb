@@ -146,4 +146,18 @@ class ClientTest < BaseTest
     # normal set, should work
     @cache.set key, @value
   end
+
+  def test_thread_contention
+    @cache = cache
+
+    threads = []
+    4.times do |index|
+      threads << Thread.new do
+        cache = @cache.clone
+        cache.set("test_thread_contention_#{index}", "value#{index}")
+        assert_equal "value#{index}", cache.get("test_thread_contention_#{index}")
+      end
+    end
+    threads.each { |thread| thread.join }
+  end
 end

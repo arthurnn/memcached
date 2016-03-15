@@ -523,21 +523,6 @@ class MemcachedTest # TODO
     assert(failed < keys.size / 3, "#{failed} failed out of #{keys.size}")
   end
 
-  # Concurrency
-
-  def test_thread_contention
-    threads = []
-    4.times do |index|
-      threads << Thread.new do
-        cache = @cache.clone
-        assert_nothing_raised do
-          cache.set("test_thread_contention_#{index}", index)
-        end
-        assert_equal index, cache.get("test_thread_contention_#{index}")
-      end
-    end
-    threads.each {|thread| thread.join}
-  end
 
   # Hash
 
