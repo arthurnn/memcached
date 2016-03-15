@@ -486,6 +486,21 @@ rb_connection_get_prefix(VALUE self)
 	return value ? rb_str_new2(value) : Qnil;
 }
 
+static VALUE
+rb_connection_touch(VALUE self, VALUE rb_key, VALUE rb_ttl)
+{
+	memcached_st *mc;
+	memcached_return_t rc;
+
+	UnwrapMemcached(self, mc);
+
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_ttl, T_FIXNUM);
+
+	rc = memcached_touch(mc, RSTRING_PTR(rb_key), RSTRING_LEN(rb_key), FIX2INT(rb_ttl));
+	rb_memcached_return(rc);
+}
+
 void Init_memcached_rb(void)
 {
 	size_t i;
@@ -521,6 +536,7 @@ void Init_memcached_rb(void)
 	rb_define_method(rb_cConnection, "set_behavior", rb_connection_set_behavior, 2);
 	rb_define_method(rb_cConnection, "set_prefix", rb_connection_set_prefix, 1);
 	rb_define_method(rb_cConnection, "get_prefix", rb_connection_get_prefix, 0);
+	rb_define_method(rb_cConnection, "touch", rb_connection_touch, 2);
 
 	id_tcp = rb_intern("tcp");
 	id_socket = rb_intern("socket");

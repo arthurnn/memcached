@@ -122,6 +122,10 @@ module Memcached
       connection.set_prefix(value)
     end
 
+    def touch(key, ttl = @default_ttl)
+      connection.touch(key, ttl)
+    end
+
     def clone
       client = super
       client.instance_variable_set(:@connection, @connection.clone) if @connection

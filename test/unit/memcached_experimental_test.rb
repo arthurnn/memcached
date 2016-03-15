@@ -207,45 +207,6 @@ class MemcachedExperimentalTest # TODO
     end
   end
 
-  # Touch command
-
-  def test_touch_capability
-    server_touch_capable do
-      @experimental_binary_protocol_cache.set(key, "value", 10)
-      assert_nothing_raised do
-        @experimental_binary_protocol_cache.touch(key, 20)
-      end
-      assert_raises(Memcached::ActionNotSupported) do
-        @experimental_cache.touch(key, 10)
-      end
-    end
-  end
-
-  def test_touch_missing_key
-    server_touch_capable do
-      @experimental_binary_protocol_cache.delete key rescue nil
-      assert_raises(Memcached::NotFound) do
-        @experimental_binary_protocol_cache.touch(key, 10)
-      end
-    end
-  end
-
-  def test_touch
-    server_touch_capable do
-      @experimental_binary_protocol_cache.set key, @value, 2
-      assert_equal @value, @experimental_binary_protocol_cache.get(key)
-      sleep(1)
-      assert_equal @value, @experimental_binary_protocol_cache.get(key)
-      @experimental_binary_protocol_cache.touch(key, 3)
-      sleep(2)
-      assert_equal @value, @experimental_binary_protocol_cache.get(key)
-      sleep(2)
-      assert_raises(Memcached::NotFound) do
-        @experimental_binary_protocol_cache.get(key)
-      end
-    end
-  end
-
   # Memory cleanup
 
   def test_reset

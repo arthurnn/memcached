@@ -191,4 +191,22 @@ class ClientTest < BaseTest
 
     assert(failed < keys.size / 3, "#{failed} failed out of #{keys.size}")
   end
+
+  # Touch command
+
+  def test_touch_missing_key
+    refute cache.touch(key, 10)
+  end
+
+  def test_touch
+    cache.set key, @value, ttl: 2
+    assert_equal @value, cache.get(key)
+    sleep(1)
+    assert_equal @value, cache.get(key)
+    cache.touch(key, 3)
+    sleep(2)
+    assert_equal @value, cache.get(key)
+    sleep(2.02)
+    refute cache.get(key)
+  end
 end
