@@ -346,7 +346,7 @@ rb_connection_inc(VALUE self, VALUE rb_key, VALUE rb_value)
 		(uint32_t)FIX2ULONG(rb_value), &result
 	);
 	rb_memcached_error_check(rc);
-	return ULL2NUM(result);
+	return LL2NUM(result);
 }
 
 static VALUE
@@ -365,7 +365,7 @@ rb_connection_dec(VALUE self, VALUE rb_key, VALUE rb_value)
 		(uint32_t)FIX2ULONG(rb_value), &result
 	);
 	rb_memcached_error_check(rc);
-	return ULL2NUM(result);
+	return LL2NUM(result);
 }
 
 static VALUE
