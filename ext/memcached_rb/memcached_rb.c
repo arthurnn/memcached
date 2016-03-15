@@ -1,472 +1,527 @@
-#include <memcached_rb.h>
-#include <memcached_rb_behavior.h>
+#include "memcached_rb.h"
 
-VALUE rb_mMemcached,
-  rb_cServer,
-  rb_eMemcachedError,
-  rb_cConnection;
+static VALUE rb_cServer;
+static VALUE rb_cConnection;
+static VALUE rb_eMemcachedError;
 
-ID id_ivar_hostname,
-  id_ivar_port,
-  id_ivar_weight,
-  id_tcp,
-  id_socket;
+static ID id_tcp;
+static ID id_socket;
 
 const char *MEMCACHED_ERROR_NAMES[] = {
-  NULL, // MEMCACHED_SUCCESS
-  "Failure", // MEMCACHED_FAILURE
-  "HostLookupFailure", // MEMCACHED_HOST_LOOKUP_FAILURE
-  "ConnectionFailure", // MEMCACHED_CONNECTION_FAILURE
-  "ConnectionBindFailure", // MEMCACHED_CONNECTION_BIND_FAILURE
-  "WriteFailure", // MEMCACHED_WRITE_FAILURE
-  "ReadFailure", // MEMCACHED_READ_FAILURE
-  "UnknownReadFailure", // MEMCACHED_UNKNOWN_READ_FAILURE
-  "ProtocolError", // MEMCACHED_PROTOCOL_ERROR
-  "ClientError", // MEMCACHED_CLIENT_ERROR
-  "ServerError", // MEMCACHED_SERVER_ERROR
-  "StdError", // MEMCACHED_ERROR
-  "DataExist", // MEMCACHED_DATA_EXISTS
-  "DataDoesNotExist", // MEMCACHED_DATA_DOES_NOT_EXIST
-  NULL, // MEMCACHED_NOTSTORED
-  NULL, // MEMCACHED_STORED
-  NULL, // MEMCACHED_NOTFOUND
-  "MemoryAllocationFailure", // MEMCACHED_MEMORY_ALLOCATION_FAILURE
-  "PartialRead", // MEMCACHED_PARTIAL_READ
-  "SomeError", // MEMCACHED_SOME_ERRORS
-  "NoServer", // MEMCACHED_NO_SERVERS
-  "End", // MEMCACHED_END
-  "Deleted", // MEMCACHED_DELETED
-  "Value", // MEMCACHED_VALUE
-  "Stat", // MEMCACHED_STAT
-  "Item", // MEMCACHED_ITEM
-  "Errno", // MEMCACHED_ERRNO
-  "FailUnixSocket", // MEMCACHED_FAIL_UNIX_SOCKET
-  "NotSupported", // MEMCACHED_NOT_SUPPORTED
-  "NoKeyProvided", // MEMCACHED_NO_KEY_PROVIDED
-  "FetchNotfinished", // MEMCACHED_FETCH_NOTFINISHED
-  "Timeout", // MEMCACHED_TIMEOUT
-  NULL, // MEMCACHED_BUFFERED
-  "BadKeyProvided", // MEMCACHED_BAD_KEY_PROVIDED
-  "InvalidHostProtocol", // MEMCACHED_INVALID_HOST_PROTOCOL
-  "ServerMarkedDead", // MEMCACHED_SERVER_MARKED_DEAD
-  "UnknownStatKey", // MEMCACHED_UNKNOWN_STAT_KEY
-  "E2big", // MEMCACHED_E2BIG
-  "InvalidArgument", // MEMCACHED_INVALID_ARGUMENTS
-  "KeyTooBig", // MEMCACHED_KEY_TOO_BIG
-  "AuthProblem", // MEMCACHED_AUTH_PROBLEM
-  "AuthFailure", // MEMCACHED_AUTH_FAILURE
-  "AuthContinue", // MEMCACHED_AUTH_CONTINUE
-  "ParseError", // MEMCACHED_PARSE_ERROR
-  "ParseUserError", // MEMCACHED_PARSE_USER_ERROR
-  "Deprecated", // MEMCACHED_DEPRECATED
-  "InProgress", // MEMCACHED_IN_PROGRESS
-  "ServerTemporarilyDisabled", // MEMCACHED_SERVER_TEMPORARILY_DISABLED
-  "ServerMemoryAllocationFailure", // MEMCACHED_SERVER_MEMORY_ALLOCATION_FAILURE
-  "MaximumReturn", // MEMCACHED_MAXIMUM_RETURN
-  "ConnectionSocketCreateFailure", // MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE
+	NULL, // MEMCACHED_SUCCESS
+	"Failure", // MEMCACHED_FAILURE
+	"HostLookupFailure", // MEMCACHED_HOST_LOOKUP_FAILURE
+	"ConnectionFailure", // MEMCACHED_CONNECTION_FAILURE
+	"ConnectionBindFailure", // MEMCACHED_CONNECTION_BIND_FAILURE
+	"WriteFailure", // MEMCACHED_WRITE_FAILURE
+	"ReadFailure", // MEMCACHED_READ_FAILURE
+	"UnknownReadFailure", // MEMCACHED_UNKNOWN_READ_FAILURE
+	"ProtocolError", // MEMCACHED_PROTOCOL_ERROR
+	"ClientError", // MEMCACHED_CLIENT_ERROR
+	"ServerError", // MEMCACHED_SERVER_ERROR
+	"StdError", // MEMCACHED_ERROR
+	"DataExist", // MEMCACHED_DATA_EXISTS
+	"DataDoesNotExist", // MEMCACHED_DATA_DOES_NOT_EXIST
+	NULL, // MEMCACHED_NOTSTORED
+	NULL, // MEMCACHED_STORED
+	NULL, // MEMCACHED_NOTFOUND
+	"MemoryAllocationFailure", // MEMCACHED_MEMORY_ALLOCATION_FAILURE
+	"PartialRead", // MEMCACHED_PARTIAL_READ
+	"SomeError", // MEMCACHED_SOME_ERRORS
+	"NoServer", // MEMCACHED_NO_SERVERS
+	"End", // MEMCACHED_END
+	"Deleted", // MEMCACHED_DELETED
+	"Value", // MEMCACHED_VALUE
+	"Stat", // MEMCACHED_STAT
+	"Item", // MEMCACHED_ITEM
+	"Errno", // MEMCACHED_ERRNO
+	"FailUnixSocket", // MEMCACHED_FAIL_UNIX_SOCKET
+	"NotSupported", // MEMCACHED_NOT_SUPPORTED
+	"NoKeyProvided", // MEMCACHED_NO_KEY_PROVIDED
+	"FetchNotfinished", // MEMCACHED_FETCH_NOTFINISHED
+	"Timeout", // MEMCACHED_TIMEOUT
+	NULL, // MEMCACHED_BUFFERED
+	"BadKeyProvided", // MEMCACHED_BAD_KEY_PROVIDED
+	"InvalidHostProtocol", // MEMCACHED_INVALID_HOST_PROTOCOL
+	"ServerMarkedDead", // MEMCACHED_SERVER_MARKED_DEAD
+	"UnknownStatKey", // MEMCACHED_UNKNOWN_STAT_KEY
+	"E2big", // MEMCACHED_E2BIG
+	"InvalidArgument", // MEMCACHED_INVALID_ARGUMENTS
+	"KeyTooBig", // MEMCACHED_KEY_TOO_BIG
+	"AuthProblem", // MEMCACHED_AUTH_PROBLEM
+	"AuthFailure", // MEMCACHED_AUTH_FAILURE
+	"AuthContinue", // MEMCACHED_AUTH_CONTINUE
+	"ParseError", // MEMCACHED_PARSE_ERROR
+	"ParseUserError", // MEMCACHED_PARSE_USER_ERROR
+	"Deprecated", // MEMCACHED_DEPRECATED
+	"InProgress", // MEMCACHED_IN_PROGRESS
+	"ServerTemporarilyDisabled", // MEMCACHED_SERVER_TEMPORARILY_DISABLED
+	"ServerMemoryAllocationFailure", // MEMCACHED_SERVER_MEMORY_ALLOCATION_FAILURE
+	"MaximumReturn", // MEMCACHED_MAXIMUM_RETURN
+	"ConnectionSocketCreateFailure", // MEMCACHED_CONNECTION_SOCKET_CREATE_FAILURE
 };
-#define MEMCACHED_ERROR_COUNT 51
 
-VALUE rb_eMemcachedErrors[MEMCACHED_ERROR_COUNT];
+#define MEMCACHED_ERROR_COUNT (ARRAY_SIZE(MEMCACHED_ERROR_NAMES))
+static VALUE rb_eMemcachedErrors[MEMCACHED_ERROR_COUNT];
 
 void
-handle_memcached_return(memcached_return_t rc)
+rb_memcached_error_check(memcached_return_t rc)
 {
-  if (rc == MEMCACHED_SUCCESS)
-    return;
+	VALUE rb_err;
+	const char * message;
 
-  VALUE rb_error, boom;
-  const char * message;
-  if (rc > 0 && rc < MEMCACHED_ERROR_COUNT) {
-    rb_error = rb_eMemcachedErrors[rc];
-    if(Qnil == rb_error)
-      return;
-    message = memcached_strerror(NULL, rc);
-  } else {
-    rb_error = rb_eMemcachedError;
-    message = "Memcached returned type not handled";
-  }
+	if (rc == MEMCACHED_SUCCESS)
+		return;
 
-  boom = rb_exc_new2(rb_error, message);
-  rb_exc_raise(boom);
+	if (rc > 0 && rc < MEMCACHED_ERROR_COUNT) {
+		rb_err = rb_eMemcachedErrors[rc];
+		if (NIL_P(rb_err))
+			return;
+		message = memcached_strerror(NULL, rc);
+	} else {
+		rb_err = rb_eMemcachedError;
+		message = "Memcached returned type not handled";
+	}
+
+	rb_exc_raise(rb_exc_new2(rb_err, message));
 }
 
-#define Wrap_return_t(rc) \
-{ \
-  handle_memcached_return(rc); \
-  if(rc == MEMCACHED_BUFFERED) \
-    return Qnil; \
-  else \
-    return rc == MEMCACHED_SUCCESS ? Qtrue : Qfalse; \
-}
+#define rb_memcached_return(rc) { \
+		rb_memcached_error_check(rc); \
+		switch (rc) { \
+		case MEMCACHED_BUFFERED: return Qnil; \
+		case MEMCACHED_SUCCESS: return Qtrue; \
+		default: return Qfalse; }}
 
-memcached_ctx *
-get_ctx(VALUE obj)
-{
-  memcached_ctx* ctx;
-  Data_Get_Struct(obj, memcached_ctx, ctx);
-  return ctx;
-}
 
-static void
-free_memc(memcached_ctx * ctx)
+static VALUE
+rb_memcached_alloc(VALUE klass)
 {
-  memcached_free(ctx->memc);
+	memcached_st *mc = memcached_create(NULL);
+	return Data_Wrap_Struct(klass, NULL, memcached_free, mc);
 }
 
 static VALUE
-allocate(VALUE klass)
+rb_connection_new(VALUE klass, VALUE rb_servers)
 {
-  memcached_ctx * ctx;
-  VALUE rb_obj = Data_Make_Struct(klass, memcached_ctx, NULL, free_memc, ctx);
+	VALUE rb_mc = rb_memcached_alloc(klass);
 
-  ctx->memc = memcached_create(NULL);
-  return rb_obj;
-}
+	memcached_st *mc;
+	memcached_return_t rc;
+	long i;
 
-static VALUE
-rb_connection_initialize(VALUE self, VALUE rb_servers)
-{
-  memcached_ctx *ctx = get_ctx(self);
-  int i;
-  memcached_return_t rc;
+	UnwrapMemcached(rb_mc, mc);
+	Check_Type(rb_servers, T_ARRAY);
 
-  for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
-    VALUE rb_server = rb_ary_entry(rb_servers, i);
+	for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
+		VALUE rb_server, rb_backend;
 
-    VALUE rb_backend = rb_ary_entry(rb_server, 0);
+		rb_server = rb_ary_entry(rb_servers, i);
+		Check_Type(rb_server, T_ARRAY);
 
-    if (id_tcp == SYM2ID(rb_backend)) {
-      VALUE rb_hostname = rb_ary_entry(rb_server, 1);
-      VALUE rb_port = rb_ary_entry(rb_server, 2);
-      // TODO: add weight
-      //VALUE rb_weight = rb_ary_entry(rb_server, 3);
-      rc = memcached_server_add (ctx->memc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
-      handle_memcached_return(rc);
-    } else if (id_socket == SYM2ID(rb_backend)) {
-      VALUE rb_fd = rb_ary_entry(rb_server, 1);
-      rc = memcached_server_add_unix_socket (ctx->memc, StringValueCStr(rb_fd));
-      handle_memcached_return(rc);
-    }
-  }
+		rb_backend = rb_ary_entry(rb_server, 0);
+		Check_Type(rb_backend, T_SYMBOL);
 
-  // Verify keys by default
-  rc = memcached_behavior_set(ctx->memc, MEMCACHED_BEHAVIOR_VERIFY_KEY, true);
-  handle_memcached_return(rc);
+		if (SYM2ID(rb_backend) == id_tcp) {
+			VALUE rb_hostname = rb_ary_entry(rb_server, 1);
+			VALUE rb_port = rb_ary_entry(rb_server, 2);
 
-  return Qnil;
+			Check_Type(rb_hostname, T_STRING);
+			Check_Type(rb_port, T_FIXNUM);
+
+			// TODO: add weight
+			//VALUE rb_weight = rb_ary_entry(rb_server, 3);
+			rc = memcached_server_add(mc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
+			rb_memcached_error_check(rc);
+		}
+		else if (SYM2ID(rb_backend) == id_socket) {
+			VALUE rb_fd = rb_ary_entry(rb_server, 1);
+			Check_Type(rb_fd, T_STRING);
+			rc = memcached_server_add_unix_socket(mc, StringValueCStr(rb_fd));
+			rb_memcached_error_check(rc);
+		}
+	}
+
+	// Verify keys by default
+	rc = memcached_behavior_set(mc, MEMCACHED_BEHAVIOR_VERIFY_KEY, true);
+	rb_memcached_error_check(rc);
+
+	return rb_mc;
 }
 
 static VALUE
 rb_connection_clone(VALUE self)
 {
-  memcached_st * memc;
-  memcached_ctx *ctx = get_ctx(self);
-  memc = memcached_clone(NULL, ctx->memc);
-  VALUE rb_obj = Data_Make_Struct(rb_cConnection, memcached_ctx, NULL, free_memc, ctx);
-  ctx->memc = memc;
+  memcached_st *mc, *clone;
+	UnwrapMemcached(self, mc);
+	clone = memcached_clone(NULL, mc);
+	VALUE rb_obj = Data_Wrap_Struct(rb_cConnection, NULL, memcached_free, clone);
   return rb_obj;
 }
 
 static memcached_return_t
 iterate_server_function(const memcached_st *ptr, const memcached_instance_st * server, void *context)
 {
-  VALUE server_list = (VALUE) context;
+	VALUE rb_server_list = (VALUE)context;
+	VALUE rb_server = rb_funcall(rb_cServer, rb_intern("new"), 2,
+			rb_str_new2(memcached_server_name(server)),
+			UINT2NUM(memcached_server_port(server)));
 
-  VALUE rb_server = rb_obj_alloc(rb_cServer);
-
-  rb_ivar_set(rb_server, id_ivar_hostname, rb_str_new2(memcached_server_name(server)));
-  rb_ivar_set(rb_server, id_ivar_port, UINT2NUM(memcached_server_port(server)));
-  // TODO weight
-
-  rb_ary_push(server_list, rb_server);
-  return MEMCACHED_SUCCESS;
+	rb_ary_push(rb_server_list, rb_server);
+	return MEMCACHED_SUCCESS;
 }
 
 static VALUE
 rb_connection_servers(VALUE self)
 {
-  memcached_ctx *ctx = get_ctx(self);
+	memcached_server_fn callbacks[1] = { &iterate_server_function };
+	memcached_st *mc;
 
-  VALUE server_list = rb_ary_new();
+	VALUE rb_result;
 
-  memcached_server_fn callbacks[1];
-  callbacks[0] = iterate_server_function;
+	UnwrapMemcached(self, mc);
+	rb_result = rb_ary_new();
 
-  memcached_server_cursor(ctx->memc, callbacks, (void *)server_list, 1);
-  return server_list;
+	memcached_server_cursor(mc, callbacks, (void *)rb_result, 1);
+	return rb_result;
 }
 
 static VALUE
 rb_connection_flush(VALUE self)
 {
-  memcached_ctx *ctx = get_ctx(self);
+	memcached_st *mc;
+	memcached_return_t rc;
 
-  memcached_return_t rc = memcached_flush(ctx->memc, 0);
-  handle_memcached_return(rc);
+	UnwrapMemcached(self, mc);
+	rc = memcached_flush(mc, 0);
+	rb_memcached_error_check(rc);
 
-  return (rc == MEMCACHED_SUCCESS);
+	return (rc == MEMCACHED_SUCCESS) ? Qtrue : Qfalse;
 }
 
 static VALUE
-rb_connection_set(VALUE self, VALUE key, VALUE value, VALUE ttl, VALUE flags)
+rb_connection_set(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
-  memcached_ctx *ctx = get_ctx(self);
+	memcached_st *mc;
+	memcached_return_t rc;
 
-  char *mkey = StringValuePtr(key);
-  char *mvalue = StringValuePtr(value);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_value, T_STRING);
+	Check_Type(rb_ttl, T_FIXNUM);
+	Check_Type(rb_flags, T_FIXNUM);
 
-  memcached_return_t rc = memcached_set(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(ttl), NUM2INT(flags));
-  Wrap_return_t(rc);
+	rc = memcached_set(mc,
+		RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+		RSTRING_PTR(rb_value), RSTRING_LEN(rb_value),
+		FIX2INT(rb_ttl), FIX2INT(rb_flags)
+	);
+
+	rb_memcached_return(rc);
 }
 
 static VALUE
-rb_connection_get(VALUE self, VALUE key)
+rb_connection_get(VALUE self, VALUE rb_key)
 {
-  Check_Type(key, T_STRING);
+	VALUE rb_val;
 
-  memcached_ctx *ctx = get_ctx(self);
+	memcached_st *mc;
+	memcached_return_t rc;
+	size_t ret_len;
+	uint32_t ret_flags;
+	char *ret;
 
-  char *mkey = StringValuePtr(key);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
 
-  size_t return_value_length;
-  memcached_return_t rc;
-  uint32_t flags; // TODO return flags so client can know if it should deserialize or decompress
-  char *response  = memcached_get(ctx->memc, mkey, strlen(mkey), &return_value_length, &flags, &rc);
+	ret = memcached_get(mc,
+		RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+		&ret_len, &ret_flags, &rc);
 
-  handle_memcached_return(rc);
-  if (rc == MEMCACHED_SUCCESS)
-    return rb_str_new2(response);
-  else
-    return Qnil;
+	if (ret == NULL) {
+		rb_memcached_error_check(rc);
+		return Qnil;
+	}
+
+	rb_val = rb_str_new(ret, ret_len);
+	free(ret);
+
+	/* TODO: return the flags too, maybe */
+	return rb_val;
+}
+
+memcached_return_t
+rb_connection__mget_callback(const memcached_st *mc, memcached_result_st *result, void *context)
+{
+	VALUE rb_result = (VALUE)context;
+	VALUE rb_key = rb_str_new(
+			memcached_result_key_value(result),
+			memcached_result_key_length(result));
+	VALUE rb_value = rb_str_new(
+			memcached_result_value(result),
+			memcached_result_length(result));
+
+	rb_hash_aset(rb_result, rb_key, rb_value);
+	return MEMCACHED_SUCCESS;
 }
 
 static VALUE
 rb_connection_get_multi(VALUE self, VALUE rb_keys)
 {
-  memcached_ctx *ctx = get_ctx(self);
-  VALUE rb_values = rb_hash_new();
-  int i;
-  long keys_len = RARRAY_LEN(rb_keys);
-  const char * keys[keys_len];
-  size_t key_length[keys_len];
+	memcached_execute_fn callbacks[1] = { &rb_connection__mget_callback };
+	memcached_st *mc;
+	memcached_return_t rc;
 
-  VALUE * arr = RARRAY_PTR(rb_keys);
+	long i, keys_len;
+	const char **c_keys;
+	size_t *c_lengths;
 
-  memcached_return_t rc;
-  memcached_result_st *result;
+	VALUE rb_result;
 
-  for(i = 0; i < keys_len; i++) {
-    keys[i] = StringValuePtr(arr[i]);
-    key_length[i] = strlen(keys[i]);
-  }
+	UnwrapMemcached(self, mc);
 
-  rc = memcached_mget(ctx->memc, keys, key_length, sizeof(keys)/sizeof(keys[0]));
-  handle_memcached_return(rc);
+	Check_Type(rb_keys, T_ARRAY);
+	keys_len = RARRAY_LEN(rb_keys);
 
-  while ((result = memcached_fetch_result(ctx->memc, NULL, &rc))) {
-    handle_memcached_return(rc);
+	c_keys = alloca(keys_len * sizeof(const char *));
+	c_lengths = alloca(keys_len * sizeof(size_t));
 
-    VALUE rb_key = rb_str_new(memcached_result_key_value(result), memcached_result_key_length(result));
-    VALUE rb_value = rb_str_new(memcached_result_value(result), memcached_result_length(result));
+	for (i = 0; i < keys_len; i++) {
+		VALUE rb_key = rb_ary_entry(rb_keys, i);
+		Check_Type(rb_key, T_STRING);
 
-    rb_hash_aset(rb_values, rb_key, rb_value);
-    memcached_result_free(result);
-  }
+		c_keys[i] = RSTRING_PTR(rb_key);
+		c_lengths[i] = RSTRING_LEN(rb_key);
+	}
 
-  return rb_values;
+	rc = memcached_mget(mc, c_keys, c_lengths, (size_t)keys_len);
+	rb_memcached_error_check(rc);
+
+	rb_result = rb_hash_new();
+	rc = memcached_fetch_execute(mc, callbacks, (void *)rb_result, 1);
+	rb_memcached_error_check(rc);
+
+	return rb_result;
 }
 
 static VALUE
-rb_connection_delete(VALUE self, VALUE key)
+rb_connection_delete(VALUE self, VALUE rb_key)
 {
-  memcached_ctx *ctx = get_ctx(self);
-  char *mkey = StringValuePtr(key);
-  memcached_return_t rc = memcached_delete(ctx->memc, mkey, strlen(mkey), (time_t)0);
-  Wrap_return_t(rc);
+	memcached_st *mc;
+	memcached_return_t rc;
+
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+
+	rc = memcached_delete(mc, RSTRING_PTR(rb_key), RSTRING_LEN(rb_key), (time_t)0);
+	rb_memcached_return(rc);
 }
 
 static VALUE
-rb_connection_add(VALUE self, VALUE rb_key, VALUE rb_value, VALUE ttl, VALUE flags)
+rb_connection_add(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
-  memcached_ctx *ctx = get_ctx(self);
-  char *mkey = StringValuePtr(rb_key);
-  char *mvalue = StringValuePtr(rb_value);
+	memcached_st *mc;
+	memcached_return_t rc;
 
-  memcached_return_t rc = memcached_add(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(ttl), NUM2INT(flags));
-  Wrap_return_t(rc);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_value, T_STRING);
+	Check_Type(rb_ttl, T_FIXNUM);
+	Check_Type(rb_flags, T_FIXNUM);
+
+	rc = memcached_add(mc,
+			RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+			RSTRING_PTR(rb_value), RSTRING_LEN(rb_value),
+			FIX2INT(rb_ttl), FIX2INT(rb_flags)
+	);
+
+	rb_memcached_return(rc);
 }
 
 static VALUE
 rb_connection_inc(VALUE self, VALUE rb_key, VALUE rb_value)
 {
-  memcached_ctx *ctx = get_ctx(self);
-  char *mkey = StringValuePtr(rb_key);
-  uint32_t offset = NUM2UINT(rb_value);
-  uint64_t new_number;
+	memcached_st *mc;
+	memcached_return_t rc;
+	uint64_t result;
 
-  memcached_return_t rc = memcached_increment(ctx->memc, mkey, strlen(mkey), offset, &new_number);
-  handle_memcached_return(rc);
-  return INT2NUM(new_number);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_value, T_FIXNUM);
+
+	rc = memcached_increment(mc,
+		RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+		(uint32_t)FIX2ULONG(rb_value), &result
+	);
+	rb_memcached_error_check(rc);
+	return LL2NUM(result);
 }
 
 static VALUE
 rb_connection_dec(VALUE self, VALUE rb_key, VALUE rb_value)
 {
-  memcached_ctx *ctx = get_ctx(self);
-  char *mkey = StringValuePtr(rb_key);
-  uint32_t offset = NUM2UINT(rb_value);
-  uint64_t new_number;
+	memcached_st *mc;
+	memcached_return_t rc;
+	uint64_t result;
 
-  memcached_return_t rc = memcached_decrement(ctx->memc, mkey, strlen(mkey), offset, &new_number);
-  handle_memcached_return(rc);
-  return INT2NUM(new_number);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_value, T_FIXNUM);
+
+	rc = memcached_decrement(mc,
+		RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+		(uint32_t)FIX2ULONG(rb_value), &result
+	);
+	rb_memcached_error_check(rc);
+	return LL2NUM(result);
 }
 
 static VALUE
 rb_connection_exist(VALUE self, VALUE rb_key)
 {
-  memcached_ctx *ctx = get_ctx(self);
-  char *mkey = StringValuePtr(rb_key);
+	memcached_st *mc;
+	memcached_return_t rc;
 
-  memcached_return_t rc = memcached_exist(ctx->memc, mkey, strlen(mkey));
-  handle_memcached_return(rc);
-  return (rc == MEMCACHED_SUCCESS);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+
+	rc = memcached_exist(mc, RSTRING_PTR(rb_key), RSTRING_LEN(rb_key));
+	rb_memcached_error_check(rc);
+	return (rc == MEMCACHED_SUCCESS) ? Qtrue : Qfalse;
 }
 
 static VALUE
 rb_connection_replace(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
-  memcached_ctx *ctx = get_ctx(self);
+	memcached_st *mc;
+	memcached_return_t rc;
 
-  char *mkey = StringValuePtr(rb_key);
-  char *mvalue = StringValuePtr(rb_value);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_value, T_STRING);
+	Check_Type(rb_ttl, T_FIXNUM);
+	Check_Type(rb_flags, T_FIXNUM);
 
-  memcached_return_t rc = memcached_replace(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
-  handle_memcached_return(rc);
-  return (rc == MEMCACHED_SUCCESS);
+	rc = memcached_replace(mc,
+		RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+		RSTRING_PTR(rb_value), RSTRING_LEN(rb_value),
+		FIX2INT(rb_ttl), FIX2INT(rb_flags)
+	);
+	rb_memcached_error_check(rc);
+	return (rc == MEMCACHED_SUCCESS) ? Qtrue : Qfalse;
 }
 
 static VALUE
 rb_connection_prepend(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
-  memcached_ctx *ctx = get_ctx(self);
+	memcached_st *mc;
+	memcached_return_t rc;
 
-  char *mkey = StringValuePtr(rb_key);
-  char *mvalue = StringValuePtr(rb_value);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_value, T_STRING);
+	Check_Type(rb_ttl, T_FIXNUM);
+	Check_Type(rb_flags, T_FIXNUM);
 
-  memcached_return_t rc = memcached_prepend(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
-  Wrap_return_t(rc);
+	rc = memcached_prepend(mc,
+		RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+		RSTRING_PTR(rb_value), RSTRING_LEN(rb_value),
+		FIX2INT(rb_ttl), FIX2INT(rb_flags)
+	);
+	rb_memcached_return(rc);
 }
 
 static VALUE
 rb_connection_append(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
-  memcached_ctx *ctx = get_ctx(self);
+	memcached_st *mc;
+	memcached_return_t rc;
 
-  char *mkey = StringValuePtr(rb_key);
-  char *mvalue = StringValuePtr(rb_value);
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_value, T_STRING);
+	Check_Type(rb_ttl, T_FIXNUM);
+	Check_Type(rb_flags, T_FIXNUM);
 
-  memcached_return_t rc = memcached_append(ctx->memc, mkey, strlen(mkey), mvalue, strlen(mvalue), NUM2INT(rb_ttl), NUM2INT(rb_flags));
-  Wrap_return_t(rc);
+	rc = memcached_append(mc,
+		RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+		RSTRING_PTR(rb_value), RSTRING_LEN(rb_value),
+		FIX2INT(rb_ttl), FIX2INT(rb_flags)
+	);
+	rb_memcached_return(rc);
 }
 
 static VALUE
 rb_connection_set_prefix(VALUE self, VALUE rb_prefix)
 {
-  memcached_ctx *ctx = get_ctx(self);
-  memcached_return_t rc;
-  if(Qnil == rb_prefix) {
-    rc = memcached_callback_set(ctx->memc, MEMCACHED_CALLBACK_NAMESPACE, NULL);
-  } else {
-    char *prefix = StringValuePtr(rb_prefix);
-    rc = memcached_callback_set(ctx->memc, MEMCACHED_CALLBACK_NAMESPACE, prefix);
-  }
-  Wrap_return_t(rc);
+	memcached_st *mc;
+	memcached_return_t rc;
+	const char *prefix = NULL;
+
+	UnwrapMemcached(self, mc);
+
+	if (!NIL_P(rb_prefix)) {
+		Check_Type(rb_prefix, T_STRING);
+		prefix = StringValueCStr(rb_prefix);
+	}
+
+	rc = memcached_callback_set(mc, MEMCACHED_CALLBACK_NAMESPACE, prefix);
+	rb_memcached_return(rc);
 }
 
 static VALUE
 rb_connection_get_prefix(VALUE self)
 {
-  memcached_ctx *ctx = get_ctx(self);
-  memcached_return_t rc;
-  char * value;
+	memcached_st *mc;
+	memcached_return_t rc;
+	const char *value;
 
-  value = (char*) memcached_callback_get(ctx->memc, MEMCACHED_CALLBACK_NAMESPACE, &rc);
-  handle_memcached_return(rc);
-  if(NULL == value)
-    return Qnil;
-  else
-    return rb_str_new2(value);
-}
+	UnwrapMemcached(self, mc);
 
-static VALUE
-rb_server_to_s(VALUE self)
-{
-  VALUE rb_ret;
-  VALUE rb_hostname = rb_ivar_get(self, id_ivar_hostname);
-  VALUE rb_port = rb_ivar_get(self, id_ivar_port);
-  uint32_t port = NUM2UINT(rb_port);
+	value = memcached_callback_get(mc, MEMCACHED_CALLBACK_NAMESPACE, &rc);
+	rb_memcached_error_check(rc);
 
-  rb_ret = rb_str_new("", 0);
-  rb_str_append(rb_ret, rb_hostname);
-  if(0 != port) {
-    rb_str_append(rb_ret, rb_str_new2(":"));
-    rb_str_append(rb_ret, rb_fix2str(rb_port, 10));
-  }
-
-  return rb_ret;
+	return value ? rb_str_new2(value) : Qnil;
 }
 
 void Init_memcached_rb(void)
 {
-  rb_mMemcached = rb_define_module("Memcached");
-  int i;
+	size_t i;
 
-  rb_eMemcachedError = rb_define_class_under(rb_mMemcached, "Error", rb_eStandardError);
-  for(i = 0; i < MEMCACHED_ERROR_COUNT; i++){
-    const char* klass = MEMCACHED_ERROR_NAMES[i];
-    if(NULL == klass)
-      rb_eMemcachedErrors[i] = Qnil;
-    else
-      rb_eMemcachedErrors[i] = rb_define_class_under(rb_mMemcached, klass, rb_eMemcachedError);
-  }
+	rb_mMemcached = rb_define_module("Memcached");
+	rb_cServer = rb_const_get(rb_mMemcached, rb_intern("Server"));
+	rb_eMemcachedError = rb_define_class_under(rb_mMemcached, "Error", rb_eStandardError);
 
-  rb_cConnection = rb_define_class_under(rb_mMemcached, "Connection", rb_cObject);
-  rb_define_alloc_func(rb_cConnection, allocate);
+	for (i = 1; i < MEMCACHED_ERROR_COUNT; i++) {
+		const char *klass = MEMCACHED_ERROR_NAMES[i];
+		rb_eMemcachedErrors[i] = klass ?
+			rb_define_class_under(rb_mMemcached, klass, rb_eMemcachedError) : Qnil;
+	}
 
-  Init_memcached_rb_behavior();
+	rb_cConnection = rb_define_class_under(rb_mMemcached, "Connection", rb_cObject);
+	rb_define_singleton_method(rb_cConnection, "new", rb_connection_new, 1);
 
-  rb_define_method(rb_cConnection, "initialize", rb_connection_initialize, 1);
-  rb_define_method(rb_cConnection, "clone", rb_connection_clone, 0);
-  rb_define_method(rb_cConnection, "servers", rb_connection_servers, 0);
-  rb_define_method(rb_cConnection, "flush", rb_connection_flush, 0);
-  rb_define_method(rb_cConnection, "set", rb_connection_set, 4);
-  rb_define_method(rb_cConnection, "get", rb_connection_get, 1);
-  rb_define_method(rb_cConnection, "get_multi", rb_connection_get_multi, 1);
-  rb_define_method(rb_cConnection, "delete", rb_connection_delete, 1);
-  rb_define_method(rb_cConnection, "add", rb_connection_add, 4);
-  rb_define_method(rb_cConnection, "increment", rb_connection_inc, 2);
-  rb_define_method(rb_cConnection, "decrement", rb_connection_dec, 2);
-  rb_define_method(rb_cConnection, "exist", rb_connection_exist, 1);
-  rb_define_method(rb_cConnection, "replace", rb_connection_replace, 4);
-  rb_define_method(rb_cConnection, "prepend", rb_connection_prepend, 4);
-  rb_define_method(rb_cConnection, "append", rb_connection_append, 4);
-  rb_define_method(rb_cConnection, "get_behavior", rb_connection_get_behavior, 1);
-  rb_define_method(rb_cConnection, "set_behavior", rb_connection_set_behavior, 2);
-  rb_define_method(rb_cConnection, "set_prefix", rb_connection_set_prefix, 1);
-  rb_define_method(rb_cConnection, "get_prefix", rb_connection_get_prefix, 0);
+	rb_define_method(rb_cConnection, "clone", rb_connection_clone, 0);
+	rb_define_method(rb_cConnection, "servers", rb_connection_servers, 0);
+	rb_define_method(rb_cConnection, "flush", rb_connection_flush, 0);
+	rb_define_method(rb_cConnection, "set", rb_connection_set, 4);
+	rb_define_method(rb_cConnection, "get", rb_connection_get, 1);
+	rb_define_method(rb_cConnection, "get_multi", rb_connection_get_multi, 1);
+	rb_define_method(rb_cConnection, "delete", rb_connection_delete, 1);
+	rb_define_method(rb_cConnection, "add", rb_connection_add, 4);
+	rb_define_method(rb_cConnection, "increment", rb_connection_inc, 2);
+	rb_define_method(rb_cConnection, "decrement", rb_connection_dec, 2);
+	rb_define_method(rb_cConnection, "exist", rb_connection_exist, 1);
+	rb_define_method(rb_cConnection, "replace", rb_connection_replace, 4);
+	rb_define_method(rb_cConnection, "prepend", rb_connection_prepend, 4);
+	rb_define_method(rb_cConnection, "append", rb_connection_append, 4);
+	rb_define_method(rb_cConnection, "get_behavior", rb_connection_get_behavior, 1);
+	rb_define_method(rb_cConnection, "set_behavior", rb_connection_set_behavior, 2);
+	rb_define_method(rb_cConnection, "set_prefix", rb_connection_set_prefix, 1);
+	rb_define_method(rb_cConnection, "get_prefix", rb_connection_get_prefix, 0);
 
-  rb_cServer = rb_define_class_under(rb_mMemcached, "Server", rb_cObject);
-  rb_define_method(rb_cServer, "to_s", rb_server_to_s, 0);
+	id_tcp = rb_intern("tcp");
+	id_socket = rb_intern("socket");
 
-  rb_define_attr(rb_cServer, "hostname", 1, 0);
-  id_ivar_hostname = rb_intern("@hostname");
-  rb_define_attr(rb_cServer, "port", 1, 0);
-  id_ivar_port = rb_intern("@port");
-  rb_define_attr(rb_cServer, "weight", 1, 0);
-  id_ivar_weight = rb_intern("@weight");
-
-  id_tcp = rb_intern("tcp");
-  id_socket = rb_intern("socket");
+	Init_memcached_rb_behavior();
 }
