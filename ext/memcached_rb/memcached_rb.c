@@ -160,10 +160,12 @@ rb_connection_initialize(VALUE self, VALUE rb_servers)
 static VALUE
 rb_connection_clone(VALUE self)
 {
-  VALUE clone = rb_obj_clone(self);
-  memcached_ctx *ctx = get_ctx(clone);
-  ctx->memc = memcached_clone(NULL, ctx->memc);
-  return clone;
+  memcached_st * memc;
+  memcached_ctx *ctx = get_ctx(self);
+  memc = memcached_clone(NULL, ctx->memc);
+  VALUE rb_obj = Data_Make_Struct(rb_cConnection, memcached_ctx, NULL, free_memc, ctx);
+  ctx->memc = memc;
+  return rb_obj;
 }
 
 static memcached_return_t

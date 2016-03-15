@@ -140,6 +140,7 @@ class ClientTest < BaseTest
     assert_equal cache.servers, @cache.servers
     refute_equal cache, @cache
 
+    refute_nil cache.connection.servers
     # Definitely check that the connections are unlinked
     refute_equal @cache.connection.object_id, cache.connection.object_id
 
