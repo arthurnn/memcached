@@ -1,4 +1,4 @@
-#include "memcached_rb.h"
+#include "memcached.h"
 
 VALUE rb_mMemcached;
 
@@ -484,7 +484,7 @@ rb_connection_close(VALUE self)
 	return Qnil;
 }
 
-void Init_memcached_rb(void)
+void Init_memcached(void)
 {
 	size_t i;
 
@@ -528,5 +528,5 @@ void Init_memcached_rb(void)
 	id_tcp = rb_intern("tcp");
 	id_socket = rb_intern("socket");
 
-	Init_memcached_rb_behavior();
+	Init_memcached_behavior();
 }
