@@ -26,6 +26,7 @@ module Memcached
     attr_reader :servers, :options
 
     def initialize(servers = nil, options = {})
+      @connection = nil
       if servers
         @servers = normalize_servers(servers)
       else
@@ -35,15 +36,12 @@ module Memcached
 
       @codec = Memcached::MarshalCodec
       @default_ttl = @options.delete(:ttl) || 0
-      prefix = @options.delete(:prefix_key)
+      @prefix = @options.delete(:prefix_key)
 
       @default_weight = @options.delete(:default_weight) # TODO
       @options.delete(:credentials) # TODO
 
       @behaviors = normalize_behaviors(@options)
-
-      self.namespace = prefix if prefix
-
       @options.freeze
     end
 
@@ -141,6 +139,7 @@ module Memcached
 
     def connection
       @connection ||= Memcached::Connection.new(@servers).tap do |conn|
+        conn.set_prefix(@prefix)
         conn.set_behaviors(@behaviors)
       end
     end

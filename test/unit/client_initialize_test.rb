@@ -59,15 +59,6 @@ class ClientInitializeTest < BaseTest
     assert_equal false, cache.options[:ketama_weighted]
   end
 
-#  def test_options_are_set
-#    Memcached::DEFAULTS.merge(@noblock_options).each do |key, expected|
-#      value = @noblock_cache.options[key]
-#      unless key == :rcv_timeout or key == :poll_timeout or key == :prefix_key or key == :ketama_weighted or key == :snd_timeout
-#        assert(expected == value, "#{key} should be #{expected} but was #{value}")
-#      end
-#    end
-#  end
-
   def test_options_are_frozen
     assert_raises(TypeError, RuntimeError) do
       cache.options[:no_block] = true
@@ -167,5 +158,10 @@ class ClientInitializeTest < BaseTest
 
   def test_initialize_strange_argument
     assert_raises(ArgumentError) { Memcached::Client.new 1 }
+  end
+
+  def test_initialize_should_not_connect
+    cache = Memcached::Client.new(@servers, hash: :default, distribution: :modula, prefix_key: @prefix_key)
+    assert_nil cache.instance_variable_get(:@connection)
   end
 end
