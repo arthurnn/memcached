@@ -13,7 +13,7 @@ module Memcached
     def to_s
       s = hostname.dup
       s << ":#{port}" if 0 != port
-      s << ":#{weight}" if weight
+      s << "/?#{weight}" if weight
       s
     end
   end
