@@ -94,30 +94,12 @@ class ClientTest < BaseTest
     end
   end
 
-#  def test_verify_key_disabled
-#    cache = Memcached.new @servers, :verify_key => false
-#    key = "i have a space"
-#    assert_raises(Memcached::ProtocolError) do
-#      cache.set key, @value
-#    end
-#    assert_raises(Memcached::NotFound) do
-#      cache.get key, @value
-#    end
-#  end
-#
   def test_server_error_message
     err = assert_raises(Memcached::E2big) do
       cache.set key, "I'm big" * 1000000
     end
     assert_equal "ITEM TOO BIG", err.message
   end
-
-#  def test_errno_message
-#    Rlibmemcached::MemcachedServerSt.any_instance.stubs("cached_errno").returns(1)
-#    @cache.send(:check_return_code, Rlibmemcached::MEMCACHED_ERRNO, key)
-#  rescue Memcached::SystemError => e
-#    assert_match /^Errno 1: "Operation not permitted". Key/, e.message
-  #  end
 
   def test_clone_with_connection_loaded
     @cache = cache
