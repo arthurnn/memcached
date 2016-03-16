@@ -1,0 +1,36 @@
+# vim:ft=automake
+# included from Top Level Makefile.am
+# All paths should be given relative to the root
+
+
+lib_LTLIBRARIES+= libmemcached/libmemcachedprotocol.la
+
+noinst_HEADERS+= libmemcachedprotocol/ascii_handler.h 
+noinst_HEADERS+= libmemcachedprotocol/binary_handler.h 
+noinst_HEADERS+= libmemcachedprotocol/cache.h 
+noinst_HEADERS+= libmemcachedprotocol/common.h
+
+libmemcached_libmemcachedprotocol_la_SOURCES=
+libmemcached_libmemcachedprotocol_la_SOURCES+= libmemcached/byteorder.cc 
+libmemcached_libmemcachedprotocol_la_SOURCES+= libmemcachedprotocol/ascii_handler.c 
+libmemcached_libmemcachedprotocol_la_SOURCES+= libmemcachedprotocol/binary_handler.c 
+libmemcached_libmemcachedprotocol_la_SOURCES+= libmemcachedprotocol/cache.c 
+libmemcached_libmemcachedprotocol_la_SOURCES+= libmemcachedprotocol/handler.c 
+libmemcached_libmemcachedprotocol_la_SOURCES+= libmemcachedprotocol/pedantic.c
+
+libmemcached_libmemcachedprotocol_la_CFLAGS=
+libmemcached_libmemcachedprotocol_la_CFLAGS+= ${AM_CFLAGS}
+libmemcached_libmemcachedprotocol_la_CFLAGS+= ${NO_CONVERSION}
+libmemcached_libmemcachedprotocol_la_CFLAGS+= -DBUILDING_LIBMEMCACHED
+libmemcached_libmemcachedprotocol_la_CFLAGS+= @PTHREAD_CFLAGS@
+
+libmemcached_libmemcachedprotocol_la_CXXFLAGS=
+libmemcached_libmemcachedprotocol_la_CXXFLAGS+= ${AM_CXXFLAGS}
+libmemcached_libmemcachedprotocol_la_CXXFLAGS+= -DBUILDING_LIBMEMCACHED
+libmemcached_libmemcachedprotocol_la_CXXFLAGS+= @PTHREAD_CFLAGS@
+
+libmemcached_libmemcachedprotocol_la_LIBADD=
+libmemcached_libmemcachedprotocol_la_LIBADD+= @LIBEVENT_LIB@
+libmemcached_libmemcachedprotocol_la_LIBADD+= @PTHREAD_LIBS@
+libmemcached_libmemcachedprotocol_la_LDFLAGS= ${AM_LDFLAGS}
+libmemcached_libmemcachedprotocol_la_LDFLAGS+= -version-info ${MEMCACHED_PROTOCAL_LIBRARY_VERSION}

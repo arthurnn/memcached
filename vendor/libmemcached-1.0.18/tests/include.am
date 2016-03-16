@@ -1,0 +1,159 @@
+# vim:ft=automake
+# Copyright (C) 2011 Data Differential
+# All rights reserved.
+#
+# Use and distribution licensed under the BSD license.  See
+# the COPYING file in the parent directory for full text.
+#
+# included from Top Level Makefile.am
+# All paths should be given relative to the root
+
+TESTS_LDADDS=
+TESTS_LDADDS+= libmemcached/libmemcached.la
+TESTS_LDADDS+= libmemcached/libmemcachedutil.la
+TESTS_LDADDS+= libtest/libtest.la
+
+EXTRA_DIST+= tests/cpp_example.cc
+
+noinst_HEADERS+= tests/exist.h
+noinst_HEADERS+= tests/hash_results.h
+noinst_HEADERS+= tests/keys.hpp
+noinst_HEADERS+= tests/libmemcached_test_container.h
+noinst_HEADERS+= tests/libmemcached_world.h
+noinst_HEADERS+= tests/libmemcached_world_socket.h
+noinst_HEADERS+= tests/memc.hpp
+noinst_HEADERS+= tests/runner.h
+
+# Cycle should always run first
+tests_cycle_CFLAGS= $(AM_CFLAGS) $(NO_CONVERSION) $(NO_STRICT_ALIASING)
+tests_cycle_CXXFLAGS= $(AM_CXXFLAGS)
+tests_cycle_CXXFLAGS+= @PTHREAD_CFLAGS@
+tests_cycle_SOURCES= tests/cycle.cc
+tests_cycle_LDADD= $(TESTS_LDADDS)
+tests_cycle_LDADD+= @PTHREAD_LIBS@
+check_PROGRAMS+= tests/cycle
+noinst_PROGRAMS+= tests/cycle
+
+include tests/libmemcached-1.0/include.am
+
+include tests/parser.am
+
+tests_failure_SOURCES=
+tests_failure_SOURCES+= tests/failure.cc
+tests_failure_SOURCES+= clients/execute.cc
+tests_failure_SOURCES+= clients/generator.cc
+tests_failure_SOURCES+= tests/libmemcached-1.0/callback_counter.cc
+tests_failure_SOURCES+= tests/libmemcached-1.0/fetch_all_results.cc
+tests_failure_SOURCES+= tests/libmemcached-1.0/generate.cc
+tests_failure_SOURCES+= tests/libmemcached-1.0/print.cc
+
+tests_failure_CXXFLAGS = $(AM_CXXFLAGS)
+tests_failure_LDADD= $(TESTS_LDADDS)
+check_PROGRAMS+= tests/failure
+noinst_PROGRAMS+= tests/failure
+
+test-failure: tests/failure
+	@tests/failure
+
+gdb-failure: tests/failure
+	@$(GDB_COMMAND) tests/failure
+
+tests_testhashkit_SOURCES= tests/hashkit_functions.cc
+tests_testhashkit_LDADD= libtest/libtest.la libhashkit/libhashkit.la $(TESTS_LDADDS)
+check_PROGRAMS+= tests/testhashkit
+noinst_PROGRAMS+= tests/testhashkit
+
+test-hash: tests/testhashkit
+	@tests/testhashkit
+
+
+tests_hash_plus_SOURCES= tests/hash_plus.cc
+tests_hash_plus_CXXFLAGS= $(AM_CXXFLAGS) $(NO_EFF_CXX)
+tests_hash_plus_LDADD= $(tests_testhashkit_LDADD)
+check_PROGRAMS+= tests/hash_plus
+noinst_PROGRAMS+= tests/hash_plus
+
+include tests/cli.am
+
+test: check
+
+test-mem: tests/libmemcached-1.0/testapp
+	@tests/libmemcached-1.0/testapp
+
+test-atom: tests/atomsmasher
+	@tests/atomsmasher
+
+test-hashplus: tests/hash_plus
+	@tests/hash_plus
+
+test-cycle: tests/cycle
+	@tests/cycle
+
+test-memcapable: tests/memcapable
+	@tests/memcapable
+
+valgrind-memcapable: tests/memcapable
+	$(VALGRIND_COMMAND) tests/memcapable
+
+pahole-mem: tests/testapp
+	@$(PAHOLE_COMMAND)  tests/testapp
+
+pahole-hash: tests/testhashkit
+	@$(PAHOLE_COMMAND)  tests/testhashkit
+
+gdb-mem: tests/libmemcached-1.0/testapp
+	@$(GDB_COMMAND)  tests/libmemcached-1.0/testapp
+
+gdb-atom: tests/atomsmasher
+	@$(GDB_COMMAND) tests/atomsmasher
+
+gdb-hash: tests/testhashkit
+	@$(GDB_COMMAND) tests/testhashkit
+
+gdb-hashplus: tests/hash_plus
+	@$(GDB_COMMAND) tests/hash_plus
+
+gdb-cycle: tests/cycle
+	@$(GDB_COMMAND) tests/cycle
+
+valgrind-cycle: tests/cycle
+	$(VALGRIND_COMMAND) tests/cycle
+
+valgrind-mem: tests/libmemcached-1.0/testapp
+	@$(VALGRIND_COMMAND) tests/libmemcached-1.0/testapp
+
+valgrind-failure: tests/failure
+	@$(VALGRIND_COMMAND) tests/failure
+
+valgrind-atom: tests/atomsmasher
+	$(VALGRIND_COMMAND) tests/atomsmasher
+
+valgrind-sasl: tests/sasl
+	@$(VALGRIND_COMMAND) tests/sasl
+
+valgrind-hash: tests/testhashkit
+	@$(VALGRIND_COMMAND) tests/testhashkit
+
+valgrind-hashplus: tests/hash_plus
+	@$(VALGRIND_COMMAND) tests/hash_plus
+
+helgrind-cycle: tests/cycle
+	@$(HELGRIND_COMMAND) tests/cycle
+
+helgrind-mem: tests/libmemcached-1.0/testapp
+	@$(HELGRIND_COMMAND) tests/libmemcached-1.0/testapp
+
+helgrind-atom: tests/atomsmasher
+	@$(HELGRIND_COMMAND) tests/atomsmasher
+
+helgrind-hash: tests/testhashkit
+	@$(HELGRIND_COMMAND) tests/testhashkit
+
+helgrind-hashplus: tests/hash_plus
+	@$(HELGRIND_COMMAND) tests/hash_plus
+
+drd-mem: tests/libmemcached-1.0/testapp 
+	@$(DRD_COMMAND) tests/libmemcached-1.0/testapp
+
+drd-cycle: tests/cycle
+	@$(DRD_COMMAND) tests/cycle

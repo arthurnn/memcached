@@ -1,0 +1,271 @@
+# vim:ft=automake
+# Copyright (C) 2011 Data Differential
+# All rights reserved.
+#
+# Use and distribution licensed under the BSD license.  See
+# the COPYING file in the parent directory for full text.
+#
+# included from Top Level Makefile.am
+# All paths should be given relative to the root
+
+noinst_HEADERS+= tests/basic.h
+noinst_HEADERS+= tests/callbacks.h
+noinst_HEADERS+= tests/debug.h
+noinst_HEADERS+= tests/deprecated.h
+noinst_HEADERS+= tests/error_conditions.h
+noinst_HEADERS+= tests/exist.h
+noinst_HEADERS+= tests/ketama.h
+noinst_HEADERS+= tests/ketama_test_cases.h
+noinst_HEADERS+= tests/ketama_test_cases_spy.h
+noinst_HEADERS+= tests/libmemcached-1.0/all_tests.h
+noinst_HEADERS+= tests/libmemcached-1.0/callback_counter.h
+noinst_HEADERS+= tests/libmemcached-1.0/dump.h
+noinst_HEADERS+= tests/libmemcached-1.0/encoding_key.h
+noinst_HEADERS+= tests/libmemcached-1.0/fetch_all_results.h
+noinst_HEADERS+= tests/libmemcached-1.0/generate.h
+noinst_HEADERS+= tests/libmemcached-1.0/haldenbrand.h
+noinst_HEADERS+= tests/libmemcached-1.0/mem_functions.h
+noinst_HEADERS+= tests/libmemcached-1.0/memcached_get.h
+noinst_HEADERS+= tests/libmemcached-1.0/parser.h
+noinst_HEADERS+= tests/libmemcached-1.0/setup_and_teardowns.h
+noinst_HEADERS+= tests/libmemcached-1.0/stat.h
+noinst_HEADERS+= tests/namespace.h
+noinst_HEADERS+= tests/pool.h
+noinst_HEADERS+= tests/print.h
+noinst_HEADERS+= tests/replication.h
+noinst_HEADERS+= tests/server_add.h
+noinst_HEADERS+= tests/string.h
+noinst_HEADERS+= tests/touch.h
+noinst_HEADERS+= tests/virtual_buckets.h
+
+if HAVE_DTRACE
+else
+# Test internals
+tests_libmemcached_1_0_internals_CXXFLAGS=
+tests_libmemcached_1_0_internals_LDADD=
+tests_libmemcached_1_0_internals_SOURCES=
+
+tests_libmemcached_1_0_internals_SOURCES+= tests/libmemcached-1.0/internals.cc
+tests_libmemcached_1_0_internals_SOURCES+= tests/libmemcached-1.0/string.cc
+tests_libmemcached_1_0_internals_CXXFLAGS+= $(AM_CXXFLAGS)
+tests_libmemcached_1_0_internals_CXXFLAGS+= @PTHREAD_CFLAGS@
+tests_libmemcached_1_0_internals_LDADD+= libmemcachedinternal/libmemcachedinternal.la
+tests_libmemcached_1_0_internals_LDADD+= @PTHREAD_LIBS@
+tests_libmemcached_1_0_internals_LDADD+= libmemcachedinternal/libmemcachedutilinternal.la
+tests_libmemcached_1_0_internals_LDADD+= libtest/libtest.la
+check_PROGRAMS+= tests/libmemcached-1.0/internals
+noinst_PROGRAMS+= tests/libmemcached-1.0/internals
+
+test-internal: tests/libmemcached-1.0/internals
+	@tests/testplus
+
+endif
+
+tests_libmemcached_1_0_testapp_CXXFLAGS=
+tests_libmemcached_1_0_testapp_CFLAGS=
+tests_libmemcached_1_0_testapp_SOURCES=
+tests_libmemcached_1_0_testapp_LDADD=
+
+tests_libmemcached_1_0_testapp_CXXFLAGS+= $(AM_CXXFLAGS)
+tests_libmemcached_1_0_testapp_CXXFLAGS+= @PTHREAD_CFLAGS@
+tests_libmemcached_1_0_testapp_CFLAGS+= $(AM_CFLAGS)
+tests_libmemcached_1_0_testapp_CFLAGS+= $(NO_CONVERSION)
+tests_libmemcached_1_0_testapp_CFLAGS+= $(NO_STRICT_ALIASING)
+tests_libmemcached_1_0_testapp_SOURCES+= clients/generator.cc clients/execute.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/all_tests.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/basic.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/callback_counter.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/callbacks.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/debug.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/deprecated.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/dump.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/encoding_key.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/error_conditions.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/exist.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/fetch_all_results.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/generate.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/haldenbrand.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/ketama.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/mem_functions.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/memcached_get.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/namespace.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/parser.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/pool.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/print.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/replication.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/server_add.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/setup_and_teardowns.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/stat.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/touch.cc
+tests_libmemcached_1_0_testapp_SOURCES+= tests/libmemcached-1.0/virtual_buckets.cc
+
+tests_libmemcached_1_0_testapp_LDADD+= @LIBUUID_LIB@
+tests_libmemcached_1_0_testapp_LDADD+= @PTHREAD_LIBS@
+tests_libmemcached_1_0_testapp_LDADD+= libmemcached/libmemcached.la
+tests_libmemcached_1_0_testapp_LDADD+= libmemcached/libmemcachedutil.la
+tests_libmemcached_1_0_testapp_LDADD+= libtest/libtest.la
+tests_libmemcached_1_0_testapp_LDADD+= libhashkit/libhashkit.la
+
+check_PROGRAMS+= tests/libmemcached-1.0/testapp
+noinst_PROGRAMS+= tests/libmemcached-1.0/testapp
+
+tests_libmemcached_1_0_testsocket_CXXFLAGS=
+tests_libmemcached_1_0_testsocket_CFLAGS=
+tests_libmemcached_1_0_testsocket_SOURCES=
+tests_libmemcached_1_0_testsocket_LDADD=
+
+tests_libmemcached_1_0_testsocket_CXXFLAGS+= @PTHREAD_CFLAGS@
+tests_libmemcached_1_0_testsocket_CXXFLAGS+= $(AM_CXXFLAGS)
+tests_libmemcached_1_0_testsocket_CFLAGS+= $(AM_CFLAGS)
+tests_libmemcached_1_0_testsocket_CFLAGS+= $(NO_CONVERSION)
+tests_libmemcached_1_0_testsocket_CFLAGS+= $(NO_STRICT_ALIASING)
+
+tests_libmemcached_1_0_testsocket_SOURCES+= clients/execute.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= clients/generator.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/all_tests_socket.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/basic.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/callback_counter.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/callbacks.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/debug.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/deprecated.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/dump.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/encoding_key.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/error_conditions.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/exist.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/fetch_all_results.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/generate.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/haldenbrand.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/ketama.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/mem_functions.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/memcached_get.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/namespace.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/parser.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/pool.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/print.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/replication.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/server_add.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/setup_and_teardowns.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/stat.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/touch.cc
+tests_libmemcached_1_0_testsocket_SOURCES+= tests/libmemcached-1.0/virtual_buckets.cc
+
+tests_libmemcached_1_0_testsocket_LDADD+= @LIBUUID_LIB@
+tests_libmemcached_1_0_testsocket_LDADD+= @PTHREAD_LIBS@
+tests_libmemcached_1_0_testsocket_LDADD+= libmemcached/libmemcached.la
+tests_libmemcached_1_0_testsocket_LDADD+= libmemcached/libmemcachedutil.la
+tests_libmemcached_1_0_testsocket_LDADD+= libtest/libtest.la
+tests_libmemcached_1_0_testsocket_LDADD+= libhashkit/libhashkit.la
+
+check_PROGRAMS+= tests/libmemcached-1.0/testsocket
+noinst_PROGRAMS+= tests/libmemcached-1.0/testsocket
+
+test-socket: tests/libmemcached-1.0/testsocket
+	@tests/libmemcached-1.0/testsocket
+
+gdb-socket: tests/libmemcached-1.0/testsocket
+	@$(GDB_COMMAND) tests/libmemcached-1.0/testsocket
+
+tests_libmemcached_1_0_sasl_SOURCES=
+tests_libmemcached_1_0_sasl_LDADD=
+tests_libmemcached_1_0_sasl_CXXFLAGS=
+tests_libmemcached_1_0_sasl_CFLAGS=
+
+tests_libmemcached_1_0_sasl_CXXFLAGS+= $(AM_CXXFLAGS)
+tests_libmemcached_1_0_sasl_CXXFLAGS+= @PTHREAD_CFLAGS@
+tests_libmemcached_1_0_sasl_CFLAGS+= $(AM_CFLAGS)
+tests_libmemcached_1_0_sasl_CFLAGS+= $(NO_CONVERSION)
+tests_libmemcached_1_0_sasl_CFLAGS+= $(NO_STRICT_ALIASING)
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/basic.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/debug.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/deprecated.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/error_conditions.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/ketama.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/namespace.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/parser.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/pool.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/print.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/replication.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/sasl.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/virtual_buckets.cc
+tests_libmemcached_1_0_sasl_SOURCES+= clients/execute.cc
+tests_libmemcached_1_0_sasl_SOURCES+= clients/generator.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/callback_counter.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/fetch_all_results.cc
+tests_libmemcached_1_0_sasl_SOURCES+= tests/libmemcached-1.0/generate.cc
+
+tests_libmemcached_1_0_sasl_LDADD+= @PTHREAD_LIBS@
+tests_libmemcached_1_0_sasl_LDADD+= libmemcached/libmemcached.la
+tests_libmemcached_1_0_sasl_LDADD+= libmemcached/libmemcachedutil.la
+tests_libmemcached_1_0_sasl_LDADD+= libtest/libtest.la
+tests_libmemcached_1_0_sasl_LDADD+= libhashkit/libhashkit.la
+
+check_PROGRAMS+= tests/libmemcached-1.0/sasl
+noinst_PROGRAMS+= tests/libmemcached-1.0/sasl
+
+test-sasl: tests/libmemcached-1.0/sasl
+	@tests/libmemcached-1.0/sasl
+
+gdb-sasl: tests/libmemcached-1.0/sasl
+	@$(GDB_COMMAND)  tests/libmemcached-1.0/sasl
+
+tests_atomsmasher_SOURCES=
+tests_atomsmasher_LDADD=
+
+tests_atomsmasher_LDADD+= $(TESTS_LDADDS)
+tests_atomsmasher_SOURCES+= clients/execute.cc
+tests_atomsmasher_SOURCES+= clients/generator.cc
+tests_atomsmasher_SOURCES+= tests/libmemcached-1.0/atomsmasher.cc
+tests_atomsmasher_SOURCES+= tests/libmemcached-1.0/callback_counter.cc
+tests_atomsmasher_SOURCES+= tests/libmemcached-1.0/debug.cc
+tests_atomsmasher_SOURCES+= tests/libmemcached-1.0/fetch_all_results.cc
+tests_atomsmasher_SOURCES+= tests/libmemcached-1.0/generate.cc
+tests_atomsmasher_SOURCES+= tests/libmemcached-1.0/print.cc
+noinst_PROGRAMS+= tests/atomsmasher
+
+tests_testudp_CFLAGS=
+tests_testudp_SOURCES=
+tests_testudp_LDADD=
+
+tests_testudp_CFLAGS+= $(AM_CFLAGS) $(NO_CONVERSION) $(NO_STRICT_ALIASING)
+tests_testudp_SOURCES+= clients/execute.cc
+tests_testudp_SOURCES+= clients/generator.cc
+tests_testudp_SOURCES+= tests/libmemcached-1.0/callback_counter.cc
+tests_testudp_SOURCES+= tests/libmemcached-1.0/fetch_all_results.cc
+tests_testudp_SOURCES+= tests/libmemcached-1.0/generate.cc
+tests_testudp_SOURCES+= tests/libmemcached-1.0/print.cc
+tests_testudp_SOURCES+= tests/mem_udp.cc
+tests_testudp_LDADD+= $(TESTS_LDADDS)
+check_PROGRAMS+= tests/testudp
+noinst_PROGRAMS+= tests/testudp
+
+test-udp: tests/testudp
+	@tests/testudp
+
+tests_testplus_SOURCES=
+tests_testplus_CXXFLAGS=
+tests_testplus_LDADD=
+
+tests_testplus_SOURCES+= clients/execute.cc
+tests_testplus_SOURCES+= clients/generator.cc
+tests_testplus_SOURCES+= tests/libmemcached-1.0/callback_counter.cc
+tests_testplus_SOURCES+= tests/libmemcached-1.0/fetch_all_results.cc
+tests_testplus_SOURCES+= tests/libmemcached-1.0/generate.cc
+tests_testplus_SOURCES+= tests/libmemcached-1.0/plus.cpp
+tests_testplus_SOURCES+= tests/libmemcached-1.0/print.cc
+
+tests_testplus_CXXFLAGS+= $(AM_CXXFLAGS) $(NO_EFF_CXX)
+tests_testplus_LDADD+= $(TESTS_LDADDS)
+check_PROGRAMS+= tests/testplus
+noinst_PROGRAMS+= tests/testplus
+
+test-plus: tests/testplus
+	@tests/testplus
+
+gdb-plus: tests/testplus
+	$(GDB_COMMAND) tests/testplus
+
+valgrind-plus: tests/testplus
+	@$(VALGRIND_COMMAND) tests/testplus
+
+helgrind-plus: tests/testplus
+	@$(HELGRIND_COMMAND) tests/testplus

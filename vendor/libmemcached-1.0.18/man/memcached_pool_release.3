@@ -1,0 +1,166 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "MEMCACHED_POOL_RELEASE" "3" "February 09, 2014" "1.0.18" "libmemcached"
+.SH NAME
+memcached_pool_release \- libmemcached Documentation
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+#include <libmemcached/memcached_pool.h>
+.INDENT 0.0
+.TP
+.B memcached_pool_st
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \fI\%memcached_pool_st\fP* memcached_pool(const char\fI\ *option_string\fP, size_t\fI\ option_string_length\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \fI\%memcached_pool_st\fP* memcached_pool_create(memcached_st*\fI\ mmc\fP, int\fI\ initial\fP, int\fI\ max\fP)
+.UNINDENT
+.sp
+Deprecated since version 0.46: Use \fI\%memcached_pool()\fP
+.INDENT 0.0
+.TP
+.B memcached_st* memcached_pool_destroy(\fI\%memcached_pool_st\fP*\fI\ pool\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_st* memcached_pool_pop(\fI\%memcached_pool_st\fP*\fI\ pool\fP, bool\fI\ block\fP, memcached_return_t\fI\ *rc\fP)
+.UNINDENT
+.sp
+Deprecated since version 0.53: Use \fI\%memcached_pool_fetch()\fP
+.INDENT 0.0
+.TP
+.B memcached_st* memcached_pool_fetch(\fI\%memcached_pool_st\fP*, struct timespec*\fI\ relative_time\fP, memcached_return_t*\fI\ rc\fP)
+.UNINDENT
+.sp
+New in version 0.53: Synonym for memcached_pool_pop
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_pool_push(\fI\%memcached_pool_st\fP*\fI\ pool\fP, memcached_st\fI\ *mmc\fP)
+.UNINDENT
+.sp
+Deprecated since version 0.53: Use \fI\%memcached_pool_push()\fP
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_pool_release(\fI\%memcached_pool_st\fP*\fI\ pool\fP, memcached_st*\fI\ mmc\fP)
+.UNINDENT
+.sp
+New in version 0.53: Synonym for memcached_pool_push.
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_pool_behavior_set(\fI\%memcached_pool_st\fP\fI\ *pool\fP, memcached_behavior_t\fI\ flag\fP, uint64_t\fI\ data\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_pool_behavior_get(\fI\%memcached_pool_st\fP\fI\ *pool\fP, memcached_behavior_t\fI\ flag\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.sp
+Compile and link with \-lmemcachedutil \-lmemcached
+.SH DESCRIPTION
+.sp
+\fI\%memcached_pool()\fP is used to create a connection pool of objects you
+may use to remove the overhead of using memcached_clone for short lived
+\fBmemcached_st\fP objects. Please see \fBlibmemcached_configuration\fP for details on the format of the configuration string.
+.sp
+\fI\%memcached_pool_destroy()\fP is used to destroy the connection pool
+created with \fI\%memcached_pool_create()\fP and release all allocated
+resources. It will return the pointer to the \fBmemcached_st\fP structure
+passed as an argument to \fI\%memcached_pool_create()\fP, and returns the ownership of the pointer to the caller when created with \fI\%memcached_pool_create()\fP, otherwise NULL is returned..
+.sp
+\fI\%memcached_pool_fetch()\fP is used to fetch a connection structure from the
+connection pool. The relative_time argument specifies if the function should
+block and wait for a connection structure to be available if we try
+to exceed the maximum size. You need to specify time in relative time.
+.sp
+\fI\%memcached_pool_release()\fP is used to return a connection structure back to the pool.
+.sp
+\fI\%memcached_pool_behavior_get()\fP and \fI\%memcached_pool_behavior_set()\fP is used to get/set behavior flags on all connections in the pool.
+.sp
+Both \fI\%memcached_pool_release()\fP and \fI\%memcached_pool_fetch()\fP are thread safe.
+.SH RETURN
+.sp
+\fI\%memcached_pool_destroy()\fP returns the pointer (and ownership) to the \fBmemcached_st\fP structure used to create the pool. If connections are in use it returns NULL.
+.sp
+\fI\%memcached_pool_pop()\fP returns a pointer to a \fBmemcached_st\fP structure from the pool (or NULL if an allocation cannot be satisfied).
+.sp
+\fI\%memcached_pool_release()\fP returns \fBMEMCACHED_SUCCESS\fP upon success.
+.sp
+\fI\%memcached_pool_behavior_get()\fP and \fI\%memcached_pool_behavior_get()\fP returns \fBMEMCACHED_SUCCESS\fP upon success.
+.sp
+If any methods returns MEMCACHED_IN_PROGRESS then a lock on the pool could not be obtained. If any of the parameters passed to any of these functions is invalid, MEMCACHED_INVALID_ARGUMENTS will be returned.
+.sp
+memcached_pool_fetch may return MEMCACHED_TIMEOUT if a timeout occurs while waiting for a free memcached_st. MEMCACHED_NOTFOUND if no memcached_st was available.
+.SH HOME
+.sp
+To find out more information please check:
+\fI\%http://libmemcached.org/\fP
+.SH AUTHOR
+.sp
+Brian Aker, <\fI\%brian@tangent.org\fP>
+.sp
+Trond Norbye, <\fI\%trond.norbye@gmail.com\fP>
+.SH SEE ALSO
+.sp
+\fImemcached(1)\fP \fIlibmemcached(3)\fP \fImemcached_strerror(3)\fP \fIlibmemcached_configuration(3)\fP
+.SH AUTHOR
+Brian Aker
+.SH COPYRIGHT
+2011-2013, Brian Aker DataDifferential, http://datadifferential.com/
+.\" Generated by docutils manpage writer.
+.

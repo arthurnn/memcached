@@ -1,0 +1,232 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "LIBMEMCACHED" "3" "February 09, 2014" "1.0.18" "libmemcached"
+.SH NAME
+libmemcached \- Introducing the C Client Library for memcached
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+#include <libmemcached/memcached.h>
+.sp
+Compile and link with \-lmemcached
+
+.sp
+.ce
+----
+
+.ce 0
+.sp
+.sp
+libMemcached is an open source C/C++ client library and tools for the memcached server (\fI\%http://memcached.org/\fP). It has been designed to be light on memory usage, thread safe, and provide full access to server side methods.
+.sp
+libMemcached was designed to provide the greatest number of options to use Memcached. Some of the features provided:
+.INDENT 0.0
+.IP 1. 3
+Asynchronous and Synchronous Transport Support.
+.IP 2. 3
+Consistent Hashing and Distribution.
+.IP 3. 3
+Tunable Hashing algorithm to match keys.
+.IP 4. 3
+Access to large object support.
+.IP 5. 3
+Local replication.
+.IP 6. 3
+A complete reference guide and documentation to the API.
+.IP 7. 3
+Tools to Manage your Memcached networks.
+.UNINDENT
+.SH DESCRIPTION
+.sp
+"Memcached is a high\-performance, distributed memory object caching
+system, generic in nature, but intended for use in speeding up dynamic web
+applications by alleviating database load." \fI\%http://memcached.org/\fP
+.sp
+\fBlibmemcached\fP is a small, thread\-safe client library for the
+memcached protocol. The code has all been written to allow
+for both web and embedded usage. It handles the work behind routing
+individual keys to specific servers specified by the developer (and values are
+matched based on server order as supplied by the user). It implements
+a modular and consistent method of object distribution.
+.sp
+There are multiple implemented routing and hashing methods. See the
+\fBmemcached_behavior_set()\fP manpage for more information.
+.sp
+All operations are performed against a \fBmemcached_st\fP structure.
+These structures can either be dynamically allocated or statically
+allocated and then initialized by \fBmemcached_create()\fP\&. Functions have
+been written in order to encapsulate the \fBmemcached_st\fP\&. It is not
+recommended that you operate directly against the structure.
+.sp
+Nearly all functions return a \fBmemcached_return_t\fP value.
+This value can be translated to a printable string with
+\fBmemcached_strerror\fP\&.
+.sp
+Objects are stored on servers by hashing keys. The hash value maps the key to a particular server. All clients understand how this hashing works, so it is possibly to reliably both push data to a server and retrieve data from a server.
+.sp
+Group keys can be optionally used to group sets of objects with servers.
+.sp
+Namespaces are supported, and can be used to partition caches so that multiple applications can use the same memcached servers.
+.sp
+\fBmemcached_st\fP structures are thread\-safe, but each thread must
+contain its own structure (that is, if you want to share these among
+threads you must provide your own locking). No global variables are
+used in this library.
+.sp
+If you are working with GNU autotools you will want to add the following to
+your COPYING to properly include libmemcached in your application.
+.sp
+PKG_CHECK_MODULES(DEPS, libmemcached >= 0.8.0)
+AC_SUBST(DEPS_CFLAGS)
+AC_SUBST(DEPS_LIBS)
+.sp
+Some features of the library must be enabled through \fBmemcached_behavior_set()\fP\&.
+.sp
+Hope you enjoy it!
+.SH CONSTANTS
+.sp
+A number of constants have been provided for in the library.
+.INDENT 0.0
+.TP
+.B MEMCACHED_DEFAULT_PORT
+The default port used by memcached(3).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B MEMCACHED_MAX_KEY
+Default maximum size of a key (which includes the null pointer). Master keys
+have no limit, this only applies to keys used for storage.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B MEMCACHED_MAX_KEY
+Default size of key (which includes the null pointer).
+.UNINDENT
+.INDENT 0.0
+.TP
+.B MEMCACHED_STRIDE
+This is the "stride" used in the consistent hash used between replicas.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B MEMCACHED_MAX_HOST_LENGTH
+Maximum allowed size of the hostname.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B LIBMEMCACHED_VERSION_STRING
+String value of libmemcached version such as "1.23.4"
+.UNINDENT
+.INDENT 0.0
+.TP
+.B LIBMEMCACHED_VERSION_HEX
+Hex value of the version number. "0x00048000" This can be used for comparing versions based on number.
+.UNINDENT
+.INDENT 0.0
+.TP
+.B MEMCACHED_PREFIX_KEY_MAX_SIZE
+Maximum length allowed for namespacing of a key.
+.UNINDENT
+.SH THREADS AND PROCESSES
+.sp
+When using threads or forked processes it is important to keep one instance
+of \fBmemcached_st\fP per process or thread. Without creating your own
+locking structures you can not share a single \fBmemcached_st\fP\&. However,
+you can call \fBmemcached_quit()\fP on a \fBmemcached_st\fP and then use the resulting cloned structure.
+.SH HOME
+.sp
+To find out more information please check:
+\fI\%http://libmemcached.org/\fP
+.SH SEE ALSO
+.sp
+\fImemcached(1)\fP \fIlibmemcached_examples(3)\fP
+\fIlibmemcached(1)\fP \fImemcat(1)\fP \fImemcp(1)\fP
+\fImemflush(1)\fP \fImemrm(1)\fP \fImemslap(1)\fP
+\fImemstat(1)\fP \fImemcached_fetch(3)\fP
+\fImemcached_replace(3)\fP \fImemcached_server_list_free(3)\fP
+\fIlibmemcached_examples(3)\fP \fImemcached_clone(3)\fP
+\fImemcached_free(3)\fP \fImemcached_server_add(3)\fP
+\fImemcached_server_push(3)\fP \fImemcached_add(3)\fP
+\fImemcached_get(3)\fP \fImemcached_server_count(3)\fP
+\fImemcached_create(3)\fP \fImemcached_increment(3)\fP
+\fImemcached_server_list(3)\fP \fImemcached_set(3)\fP
+\fImemcached_decrement(3)\fP \fImemcached_mget(3)\fP
+\fImemcached_server_list_append(3)\fP \fImemcached_strerror(3)\fP
+\fImemcached_delete(3)\fP \fImemcached_quit(3)\fP
+\fImemcached_server_list_count(3)\fP \fImemcached_verbosity(3)\fP
+\fImemcached_server_add_unix_socket(3)\fP
+\fImemcached_result_create(3)\fP  \fImemcached_result_free(3)\fP
+\fImemcached_result_key_value(3)\fP
+\fImemcached_result_key_length(3)\fP
+\fImemcached_result_value(3)\fP  \fImemcached_result_length(3)\fP
+\fImemcached_result_flags(3)\fP  \fImemcached_result_cas(3)\fP
+\fImemcached_result_st(3)\fP \fImemcached_append(3)\fP
+\fImemcached_prepend(3)\fP \fImemcached_fetch_result(3)\fP
+\fImemerror(1)\fP \fImemcached_get_by_key(3)\fP
+\fImemcached_mget_by_key(3)\fP \fImemcached_delete_by_key(3)\fP
+\fImemcached_fetch_execute(3)\fP \fImemcached_callback_get(3)\fP
+\fImemcached_callback_set(3)\fP \fImemcached_version(3)\fP
+\fImemcached_lib_version(3)\fP \fImemcached_result_set_value(3)\fP
+\fImemcached_dump(3)\fP \fImemdump(1)\fP
+\fImemcached_set_memory_allocators(3)\fP
+\fImemcached_get_memory_allocators(3)\fP
+\fImemcached_get_user_data(3)\fP \fImemcached_set_user_data(3)\fP
+.SH AUTHOR
+Brian Aker
+.SH COPYRIGHT
+2011-2013, Brian Aker DataDifferential, http://datadifferential.com/
+.\" Generated by docutils manpage writer.
+.

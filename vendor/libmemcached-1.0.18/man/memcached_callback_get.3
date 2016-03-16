@@ -1,0 +1,209 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "MEMCACHED_CALLBACK_GET" "3" "February 09, 2014" "1.0.18" "libmemcached"
+.SH NAME
+memcached_callback_get \- libmemcached Documentation
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.sp
+Get and set a callback
+.SH SYNOPSIS
+.sp
+#include <libmemcached/memcached.h>
+.INDENT 0.0
+.TP
+.B memcached_callback_t
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_callback_set(memcached_st\fI\ *ptr\fP, \fI\%memcached_callback_t\fP\fI\ flag\fP, const void\fI\ *data\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B void * memcached_callback_get(memcached_st\fI\ *ptr\fP, \fI\%memcached_callback_t\fP\fI\ flag\fP, memcached_return_t\fI\ *error\fP)
+.UNINDENT
+.sp
+Compile and link with \-lmemcached
+.SH DESCRIPTION
+.sp
+libmemcached(3) can have callbacks set key execution points. These either
+provide function calls at points in the code, or return pointers to
+structures for particular usages.
+.sp
+\fI\%memcached_callback_get()\fP takes a callback flag and returns the
+structure or function set by \fI\%memcached_callback_set()\fP\&.
+.sp
+\fI\%memcached_callback_set()\fP changes the function/structure assigned by a
+callback flag. No connections are reset.
+.sp
+You can use \fI\%MEMCACHED_CALLBACK_USER_DATA\fP to provide custom context
+if required for any of the callbacks.
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_CLEANUP_FUNCTION
+.UNINDENT
+.sp
+When \fBmemcached_delete()\fP is called this function will be excuted. At
+the point of its execution all connections are closed.
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_CLONE_FUNCTION
+.UNINDENT
+.sp
+When \fBmemcached_delete()\fP is called this function will be excuted.
+At the point of its execution all connections are closed.
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_PREFIX_KEY
+See \fI\%MEMCACHED_CALLBACK_NAMESPACE\fP
+.UNINDENT
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_NAMESPACE
+.UNINDENT
+.sp
+You can set a value which will be used to create a domain for your keys.
+The value specified here will be prefixed to each of your keys. The value can
+not be greater then \fBMEMCACHED_PREFIX_KEY_MAX_SIZE\fP \- 1 and will
+reduce \fBMEMCACHED_MAX_KEY\fP by the value of your key.
+.sp
+The prefix key is only applied to the primary key, not the master key.
+\fBMEMCACHED_FAILURE\fP will be returned if no key is set. In the case of
+a key which is too long, \fBMEMCACHED_BAD_KEY_PROVIDED\fP will be returned.
+.sp
+If you set a value with the value being NULL then the prefix key is disabled.
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_USER_DATA
+.UNINDENT
+.sp
+This allows you to store a pointer to a specifc piece of data. This can be
+retrieved from inside of \fBmemcached_fetch_execute()\fP\&. Cloning a
+\fBmemcached_st\fP will copy the pointer to the clone.
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_MALLOC_FUNCTION
+.UNINDENT
+.sp
+Deprecated since version <0.32: Use \fBmemcached_set_memory_allocators\fP instead.
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_REALLOC_FUNCTION
+.UNINDENT
+.sp
+Deprecated since version <0.32: Use \fBmemcached_set_memory_allocators\fP instead.
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_FREE_FUNCTION
+.UNINDENT
+.sp
+Deprecated since version <0.32: Use \fBmemcached_set_memory_allocators\fP instead.
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_GET_FAILURE
+.UNINDENT
+.sp
+This function implements the read through cache behavior. On failure of retrieval this callback will be called.
+.sp
+You are responsible for populating the result object provided. This result object will then be stored in the server and returned to the calling process.
+.sp
+You must clone the \fBmemcached_st\fP in order to
+make use of it. The value will be stored only if you return
+\fBMEMCACHED_SUCCESS\fP or \fBMEMCACHED_BUFFERED\fP\&. Returning
+\fBMEMCACHED_BUFFERED\fP will cause the object to be buffered and not sent
+immediatly (if this is the default behavior based on your connection setup
+this will happen automatically).
+.sp
+The prototype for this is:
+.INDENT 0.0
+.TP
+.B memcached_return_t (*memcached_trigger_key)(memcached_st *ptr, char *key, size_t key_length, memcached_result_st *result);
+.UNINDENT
+.INDENT 0.0
+.TP
+.B MEMCACHED_CALLBACK_DELETE_TRIGGER
+.UNINDENT
+.sp
+This function implements a trigger upon successful deletion of a key. The memcached_st structure will need to be cloned in order to make use of it.
+.sp
+The prototype for this is:
+.INDENT 0.0
+.TP
+.B typedef memcached_return_t (*memcached_trigger_delete_key)(memcached_st *ptr, char *key, size_t key_length);
+.UNINDENT
+.SH RETURN
+.sp
+\fI\%memcached_callback_get()\fP return the function or structure that was
+provided. Upon error, nothing is set, null is returned, and the
+\fBmemcached_return_t\fP argument is set to \fBMEMCACHED_FAILURE\fP\&.
+.sp
+\fI\%memcached_callback_set()\fP returns \fBMEMCACHED_SUCCESS\fP upon
+successful setting, otherwise \fBMEMCACHED_FAILURE\fP on error.
+.SH HOME
+.sp
+To find out more information please check:
+\fI\%http://libmemcached.org/\fP
+.SH AUTHOR
+.sp
+Brian Aker, <\fI\%brian@tangent.org\fP>
+.SH SEE ALSO
+.sp
+\fImemcached(1)\fP \fIlibmemcached(3)\fP \fImemcached_strerror(3)\fP
+.SH AUTHOR
+Brian Aker
+.SH COPYRIGHT
+2011-2013, Brian Aker DataDifferential, http://datadifferential.com/
+.\" Generated by docutils manpage writer.
+.

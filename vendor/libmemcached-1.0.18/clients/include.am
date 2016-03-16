@@ -1,0 +1,128 @@
+# vim:ft=automake
+# included from Top Level Makefile.am
+# All paths should be given relative to the root
+
+CLIENTS_LDADDS=
+CLIENTS_LDADDS+= clients/libutilities.la
+CLIENTS_LDADDS+= libmemcached/libmemcached.la
+
+bin_PROGRAMS+= clients/memcapable 
+bin_PROGRAMS+= clients/memcat 
+bin_PROGRAMS+= clients/memcp 
+bin_PROGRAMS+= clients/memdump 
+bin_PROGRAMS+= clients/memerror 
+bin_PROGRAMS+= clients/memexist 
+bin_PROGRAMS+= clients/memtouch 
+bin_PROGRAMS+= clients/memflush 
+bin_PROGRAMS+= clients/memparse 
+bin_PROGRAMS+= clients/memping 
+bin_PROGRAMS+= clients/memrm 
+bin_PROGRAMS+= clients/memslap 
+bin_PROGRAMS+= clients/memstat
+
+if BUILD_MEMASLAP
+if HAVE_LIBEVENT
+if !BUILD_WIN32_WRAPPERS
+  bin_PROGRAMS+= clients/memaslap
+endif
+endif
+endif
+
+noinst_HEADERS+= clients/client_options.h 
+noinst_HEADERS+= clients/execute.h 
+noinst_HEADERS+= clients/generator.h 
+noinst_HEADERS+= clients/ms_atomic.h 
+noinst_HEADERS+= clients/ms_conn.h 
+noinst_HEADERS+= clients/ms_memslap.h 
+noinst_HEADERS+= clients/ms_setting.h 
+noinst_HEADERS+= clients/ms_sigsegv.h 
+noinst_HEADERS+= clients/ms_stats.h 
+noinst_HEADERS+= clients/ms_task.h 
+noinst_HEADERS+= clients/ms_thread.h 
+noinst_HEADERS+= clients/utilities.h
+
+noinst_LTLIBRARIES+= clients/libutilities.la
+clients_libutilities_la_SOURCES= clients/utilities.cc
+
+clients_memcat_SOURCES= clients/memcat.cc
+clients_memcat_LDADD= $(CLIENTS_LDADDS)
+
+clients_memparse_SOURCES= clients/memparse.cc
+clients_memparse_LDADD= $(CLIENTS_LDADDS)
+
+clients_memcp_SOURCES= clients/memcp.cc
+clients_memcp_LDADD= $(CLIENTS_LDADDS)
+
+clients_memdump_SOURCES= clients/memdump.cc
+clients_memdump_LDADD= $(CLIENTS_LDADDS)
+
+clients_memstat_SOURCES= clients/memstat.cc
+clients_memstat_LDADD= $(CLIENTS_LDADDS)
+
+clients_memrm_SOURCES= clients/memrm.cc
+clients_memrm_LDADD= $(CLIENTS_LDADDS)
+
+clients_memexist_SOURCES= clients/memexist.cc
+clients_memexist_LDADD= $(CLIENTS_LDADDS)
+
+clients_memtouch_SOURCES= clients/memtouch.cc
+clients_memtouch_LDADD= $(CLIENTS_LDADDS)
+
+clients_memflush_SOURCES= clients/memflush.cc
+clients_memflush_LDADD= $(CLIENTS_LDADDS)
+
+clients_memping_SOURCES= clients/memping.cc
+clients_memping_LDADD= $(CLIENTS_LDADDS) libmemcached/libmemcachedutil.la
+
+clients_memerror_SOURCES= clients/memerror.cc
+clients_memerror_LDADD= $(CLIENTS_LDADDS)
+
+clients_memslap_SOURCES = clients/memslap.cc
+clients_memslap_SOURCES+= clients/generator.cc clients/execute.cc
+clients_memslap_CXXFLAGS= @PTHREAD_CFLAGS@
+clients_memslap_LDADD= $(CLIENTS_LDADDS)
+clients_memslap_LDADD+= @PTHREAD_LIBS@
+
+clients_memaslap_SOURCES=
+clients_memaslap_SOURCES+= clients/memaslap.c 
+clients_memaslap_SOURCES+= clients/ms_conn.c 
+clients_memaslap_SOURCES+= clients/ms_setting.c 
+clients_memaslap_SOURCES+= clients/ms_sigsegv.c 
+clients_memaslap_SOURCES+= clients/ms_stats.c 
+clients_memaslap_SOURCES+= clients/ms_task.c 
+clients_memaslap_SOURCES+= clients/ms_thread.c
+
+clients_memaslap_SOURCES+= clients/generator.cc clients/execute.cc
+clients_memaslap_LDADD=
+clients_memaslap_LDADD+= @LIBEVENT_LIB@
+clients_memaslap_LDADD+= $(CLIENTS_LDADDS)
+
+clients_memcapable_CXXFLAGS= @PTHREAD_CFLAGS@
+clients_memcapable_SOURCES=
+clients_memcapable_SOURCES+= clients/memcapable.cc
+clients_memcapable_SOURCES+= libmemcached/byteorder.cc
+clients_memcapable_LDADD= $(CLIENTS_LDADDS)
+clients_memcapable_LDADD+= @PTHREAD_LIBS@
+
+test-start-server:
+	clients/memflush --servers=localhost
+	clients/memcp --servers=localhost /etc/services
+	clients/memcat --servers=localhost /etc/services
+	clients/memrm --servers=localhost /etc/services
+	clients/memstat --servers=localhost
+	clients/memslap --servers=localhost
+	clients/memslap --servers=localhost --concurrency=10
+	clients/memslap --servers=localhost --concurrency=10 --initial-load=1000
+	clients/memslap --servers=localhost --concurrency=10 --initial-load=1000 --execute-number=10
+	clients/memslap --servers=localhost --concurrency=10 --initial-load=1000 --execute-number=10 --test=get
+	clients/memslap --servers=localhost --concurrency=10 --initial-load=1000 --execute-number=10 --test=set
+	clients/memslap --servers=localhost --concurrency=10 --initial-load=1000 --execute-number=10 --test=set --non-blocking
+
+client-valgrind:
+	libtool --mode=execute valgrind --leak-check=yes --show-reachable=yes  clients/memslap --servers=localhost
+	libtool --mode=execute valgrind --leak-check=yes --show-reachable=yes  clients/memslap --servers=localhost --concurrency=10
+	libtool --mode=execute valgrind --leak-check=yes --show-reachable=yes  clients/memslap --servers=localhost --concurrency=10 --initial-load=1000
+	libtool --mode=execute valgrind --leak-check=yes --show-reachable=yes  clients/memslap --servers=localhost --concurrency=10 --initial-load=1000 --execute-number=10
+	libtool --mode=execute valgrind --leak-check=yes --show-reachable=yes  clients/memslap --servers=localhost --concurrency=10 --initial-load=1000 --execute-number=10 --test=get
+	libtool --mode=execute valgrind --leak-check=yes --show-reachable=yes  clients/memslap --servers=localhost --concurrency=10 --initial-load=1000 --execute-number=10 --test=set
+	libtool --mode=execute valgrind --leak-check=yes --show-reachable=yes  clients/memslap --servers=localhost --concurrency=10 --initial-load=1000 --execute-number=10 --test=set --non-blocking

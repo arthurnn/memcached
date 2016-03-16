@@ -1,0 +1,151 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "MEMCACHED_DECREMENT" "3" "February 09, 2014" "1.0.18" "libmemcached"
+.SH NAME
+memcached_decrement \- Incrementing and Decrementing Values
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+#include <libmemcached/memcached.h>
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_increment(memcached_st\fI\ *ptr\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, uint32_t\fI\ offset\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_decrement(memcached_st\fI\ *ptr\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, uint32_t\fI\ offset\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_increment_with_initial(memcached_st\fI\ *ptr\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, uint64_t\fI\ offset\fP, uint64_t\fI\ initial\fP, time_t\fI\ expiration\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_decrement_with_initial(memcached_st\fI\ *ptr\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, uint64_t\fI\ offset\fP, uint64_t\fI\ initial\fP, time_t\fI\ expiration\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_increment_by_key(memcached_st\fI\ *ptr\fP, const char\fI\ *group_key\fP, size_t\fI\ group_key_length\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, uint32_t\fI\ offset\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_decrement_by_key(memcached_st\fI\ *ptr\fP, const char\fI\ *group_key\fP, size_t\fI\ group_key_length\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, uint32_t\fI\ offset\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_increment_with_initial_by_key(memcached_st\fI\ *ptr\fP, const char\fI\ *group_key\fP, size_t\fI\ group_key_length\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, uint64_t\fI\ offset\fP, uint64_t\fI\ initial\fP, time_t\fI\ expiration\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_decrement_with_initial_by_key(memcached_st\fI\ *ptr\fP, const char\fI\ *group_key\fP, size_t\fI\ group_key_length\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, uint64_t\fI\ offset\fP, uint64_t\fI\ initial\fP, time_t\fI\ expiration\fP, uint64_t\fI\ *value\fP)
+.UNINDENT
+.sp
+Compile and link with \-lmemcached
+.SH DESCRIPTION
+.sp
+\fImemcached(1)\fP servers have the ability to increment and decrement keys
+(overflow and underflow are not detected). This gives you the ability to use
+memcached to generate shared sequences of values.
+.sp
+memcached_increment takes a key and keylength and increments the value by
+the offset passed to it. The value is then returned via the uint32_t
+value pointer you pass to it.
+.sp
+memcached_decrement takes a key and keylength and decrements the value by
+the offset passed to it. The value is then returned via the uint32_t
+value pointer you pass to it.
+.sp
+memcached_increment_with_initial takes a key and keylength and increments
+the value by the offset passed to it. If the object specified by key does
+not exist, one of two things may happen: If the expiration value is
+MEMCACHED_EXPIRATION_NOT_ADD, the operation will fail. For all other
+expiration values, the operation will succeed by seeding the value for that
+key with a initial value to expire with the provided expiration time. The
+flags will be set to zero.The value is then returned via the uint32_t
+value pointer you pass to it. memcached_increment_with_initial is only available
+when using the binary protocol.
+.sp
+memcached_decrement_with_initial takes a key and keylength and decrements
+the value by the offset passed to it. If the object specified by key does
+not exist, one of two things may happen: If the expiration value is
+MEMCACHED_EXPIRATION_NOT_ADD, the operation will fail. For all other
+expiration values, the operation will succeed by seeding the value for that
+key with a initial value to expire with the provided expiration time. The
+flags will be set to zero.The value is then returned via the uint32_t
+value pointer you pass to it. memcached_decrement_with_initial is only available
+when using the binary protocol.
+.sp
+\fI\%memcached_increment_by_key()\fP, \fI\%memcached_decrement_by_key()\fP,
+\fI\%memcached_increment_with_initial_by_key()\fP, and
+\fI\%memcached_decrement_with_initial_by_key()\fP are master key equivalents of the above.
+.SH RETURN
+.sp
+A value of type \fBmemcached_return_t\fP  is returned.
+On success that value will be \fBMEMCACHED_SUCCESS\fP\&.
+Use memcached_strerror to translate this value to a printable string.
+.SH HOME
+.sp
+To find out more information please check:
+\fI\%http://libmemcached.org/\fP
+.SH SEE ALSO
+.sp
+\fImemcached(1)\fP \fIlibmemcached(3)\fP \fImemcached_strerror(3)\fP
+.SH AUTHOR
+Brian Aker
+.SH COPYRIGHT
+2011-2013, Brian Aker DataDifferential, http://datadifferential.com/
+.\" Generated by docutils manpage writer.
+.

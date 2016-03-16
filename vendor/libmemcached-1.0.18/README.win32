@@ -1,0 +1,25 @@
+Hi, 
+
+So you want to know how to build libmemcached on Windows? In order to
+have a single build environment you need to install mingw to get a
+"unix environment" to run the configure script.
+
+An easy way to get started is to install the msysgit fullinstall
+package from: http://code.google.com/p/msysgit/downloads/list
+
+msysgit does not contain the "autotools" needed to generate a
+configure script, so you need to generate that on another box (this
+should not be a problem if you're trying to build from a tar archive).
+
+msysgit does not contain the tools to build the documentation, so you
+need to add --without-docs to configure.
+
+I'm normally building libmemcached with:
+
+Ex:
+$ ./configure --without-docs --with-memcached=../memcached/memcached.exe
+$ make all install
+
+Happy hacking,
+
+Trond Norbye

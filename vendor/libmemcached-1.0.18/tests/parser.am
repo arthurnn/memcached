@@ -1,0 +1,28 @@
+# vim:ft=automake
+# Copyright (C) 2012 Data Differential
+# All rights reserved.
+#
+# Use and distribution licensed under the BSD license.  See
+# the COPYING file in the parent directory for full text.
+#
+# included from Top Level Makefile.am
+# All paths should be given relative to the root
+
+noinst_HEADERS+= tests/libmemcached-1.0/parser.h
+
+tests_parser_SOURCES=
+tests_parser_CXXFLAGS=
+tests_parser_LDADD=
+
+tests_parser_SOURCES+= tests/parser.cc
+
+tests_parser_CXXFLAGS+= $(AM_CXXFLAGS) $(NO_EFF_CXX)
+tests_parser_LDADD+= $(TESTS_LDADDS)
+check_PROGRAMS+= tests/parser
+noinst_PROGRAMS+= tests/parser
+
+test-parser: tests/parser
+	@tests/parser
+
+valgrind-parser: tests/parser
+	@$(VALGRIND_COMMAND) tests/parser

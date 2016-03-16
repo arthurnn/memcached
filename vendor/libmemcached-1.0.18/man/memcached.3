@@ -1,0 +1,333 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "MEMCACHED" "3" "February 09, 2014" "1.0.18" "libmemcached"
+.SH NAME
+memcached \- libmemcached Documentation
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+#include <libmemcached\-1.0/memcached.h>
+.INDENT 0.0
+.TP
+.B LIBMEMCACHED
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_st *memcached(const char\fI\ *string\fP, size_t\fI\ string_length\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t libmemcached_check_configuration(const char\fI\ *option_string\fP, size_t\fI\ length\fP, char\fI\ *error_buffer\fP, size_t\fI\ error_buffer_size\fP)
+.UNINDENT
+.sp
+Compile and link with \-lmemcached
+.SH DESCRIPTION
+.sp
+Libmemcached implements a custom language for configuring and modifying
+servers. By passing in an option string you can generate a \fBmemcached_st\fP object
+that you can use in your application directly.
+.INDENT 0.0
+.TP
+.B \-\-SERVER=<servername>:<optional_port>/?<optional_weight>
+.UNINDENT
+.sp
+Provide a servername to be used by the client. Providing a weight will cause weighting to occur with all hosts with each server getting a default weight of 1.
+.INDENT 0.0
+.TP
+.B \-\-SOCKET="<filepath>/?<optional_weight>"
+.UNINDENT
+.sp
+Provide a filepath to a UNIX socket file. Providing a weight will cause weighting to occur with all hosts with each server getting a default weight of 1.
+.INDENT 0.0
+.TP
+.B \-\-VERIFY\-KEY
+.UNINDENT
+.sp
+Verify that keys that are being used fit within the design of the protocol being used.
+.INDENT 0.0
+.TP
+.B \-\-REMOVE_FAILED_SERVERS
+.UNINDENT
+.sp
+Enable the behavior \fBMEMCACHED_BEHAVIOR_REMOVE_FAILED_SERVERS\fP\&.
+.INDENT 0.0
+.TP
+.B \-\-BINARY\-PROTOCOL
+.UNINDENT
+.sp
+Force all connections to use the binary protocol.
+.INDENT 0.0
+.TP
+.B \-\-BUFFER\-REQUESTS
+.UNINDENT
+.sp
+Please see \fBMEMCACHED_BEHAVIOR_BUFFER_REQUESTS\fP\&.
+.INDENT 0.0
+.TP
+.B \-\-CONFIGURE\-FILE=
+.UNINDENT
+.sp
+Provide a configuration file to be used to load requests. Beware that by using a configuration file libmemcached will reset memcached_st based on information only contained in the file.
+.INDENT 0.0
+.TP
+.B \-\-CONNECT\-TIMEOUT=
+.UNINDENT
+.sp
+Please see \fBMEMCACHED_BEHAVIOR_CONNECT_TIMEOUT\fP\&.
+.INDENT 0.0
+.TP
+.B \-\-DISTRIBUTION=
+.UNINDENT
+.sp
+Set the distribution model used by the client.  See :manpage:\(ga\(ga for more details.
+.INDENT 0.0
+.TP
+.B \-\-HASH=
+.UNINDENT
+.sp
+Set the hashing alogrthm used for placing keys on servers.
+.INDENT 0.0
+.TP
+.B \-\-HASH\-WITH\-NAMESPACE
+.UNINDENT
+.sp
+When enabled the prefix key will be added to the key when determining which
+server to store the data in.
+.INDENT 0.0
+.TP
+.B \-\-NOREPLY
+.UNINDENT
+.sp
+Enable "no reply" for all calls that support this. It is highly recommended
+that you use this option with the binary protocol only.
+.INDENT 0.0
+.TP
+.B \-\-NUMBER\-OF\-REPLICAS=
+.UNINDENT
+.sp
+Set the nummber of servers that keys will be replicated to.
+.INDENT 0.0
+.TP
+.B \-\-RANDOMIZE\-REPLICA\-READ
+.UNINDENT
+.sp
+Select randomly the server within the replication pool to read from.
+.INDENT 0.0
+.TP
+.B \-\-SORT\-HOSTS
+.UNINDENT
+.sp
+When adding new servers always calculate their distribution based on sorted naming order.
+.INDENT 0.0
+.TP
+.B \-\-SUPPORT\-CAS
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for \fBMEMCACHED_BEHAVIOR_SUPPORT_CAS\fP
+.INDENT 0.0
+.TP
+.B \-\-USE\-UDP
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for \fBMEMCACHED_BEHAVIOR_USE_UDP\fP
+.INDENT 0.0
+.TP
+.B \-\-NAMESPACE=
+.UNINDENT
+.sp
+A namespace is a container that provides context for keys, only other
+requests that know the namespace can access these values. This is
+accomplished by prepending the namespace value to all keys.
+.SS Mecached Pool Options:
+.INDENT 0.0
+.TP
+.B \-\-POOL\-MIN
+.UNINDENT
+.sp
+Initial size of pool.
+.INDENT 0.0
+.TP
+.B \-\-POOL\-MAX
+.UNINDENT
+.sp
+Maximize size of the pool.
+.SS I/O Options:
+.INDENT 0.0
+.TP
+.B \-\-TCP\-NODELAY
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for MEMCACHED_BEHAVIOR_TCP_NODELAY
+.INDENT 0.0
+.TP
+.B \-\-TCP\-KEEPALIVE
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for MEMCACHED_BEHAVIOR_TCP_KEEPALIVE
+.INDENT 0.0
+.TP
+.B \-\-RETRY\-TIMEOUT=
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for MEMCACHED_BEHAVIOR_RETRY_TIMEOUT
+.INDENT 0.0
+.TP
+.B \-\-SERVER\-FAILURE\-LIMIT=
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for MEMCACHED_BEHAVIOR_SERVER_FAILURE_LIMIT
+.INDENT 0.0
+.TP
+.B \-\-SND\-TIMEOUT=
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for MEMCACHED_BEHAVIOR_SND_TIMEOUT
+.INDENT 0.0
+.TP
+.B \-\-SOCKET\-RECV\-SIZE=
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for MEMCACHED_BEHAVIOR_SOCKET_RECV_SIZE
+.INDENT 0.0
+.TP
+.B \-\-SOCKET\-SEND\-SIZE=
+.UNINDENT
+.sp
+See \fImemcached_behavior_set(3)\fP for MEMCACHED_BEHAVIOR_SOCKET_SEND_SIZE
+.INDENT 0.0
+.TP
+.B \-\-POLL\-TIMEOUT=
+.UNINDENT
+.sp
+That sets the value of the timeout used by :manpage: \fIpoll()\fP\&.
+.INDENT 0.0
+.TP
+.B \-\-IO\-BYTES\-WATERMARK=
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-IO\-KEY\-PREFETCH=
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-IO\-MSG\-WATERMARK=
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-TCP\-KEEPIDLE
+.UNINDENT
+.INDENT 0.0
+.TP
+.B \-\-RCV\-TIMEOUT=
+.UNINDENT
+.SS Other:
+.INDENT 0.0
+.TP
+.B INCLUDE
+.UNINDENT
+.sp
+Include a file in configuration. Unlike \-\-CONFIGURE\-FILE= this will not reset memcached_st
+.INDENT 0.0
+.TP
+.B RESET
+.UNINDENT
+.sp
+Reset memcached_st and continue to process.
+.INDENT 0.0
+.TP
+.B END
+.UNINDENT
+.sp
+End configutation processing.
+.INDENT 0.0
+.TP
+.B ERROR
+.UNINDENT
+.sp
+End configutation processing and throw an error.
+.SH RETURN
+.sp
+\fI\%memcached()\fP returns a pointer to the memcached_st that was
+created (or initialized).  On an allocation failure, it returns NULL.
+.SH EXAMPLE
+.INDENT 0.0
+.INDENT 3.5
+.sp
+.nf
+.ft C
+const char *config_string= "\-\-SERVER=host10.example.com \-\-SERVER=host11.example.com \-\-SERVER=host10.example.com"
+memcached_st *memc= memcached(config_string, strlen(config_string);
+{
+ ...
+}
+memcached_free(memc);
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH HOME
+.sp
+To find out more information please check:
+\fI\%http://libmemcached.org/\fP
+.SH SEE ALSO
+.sp
+\fImemcached(1)\fP \fIlibmemcached(3)\fP \fImemcached_strerror(3)\fP
+.SH AUTHOR
+Brian Aker
+.SH COPYRIGHT
+2011-2013, Brian Aker DataDifferential, http://datadifferential.com/
+.\" Generated by docutils manpage writer.
+.

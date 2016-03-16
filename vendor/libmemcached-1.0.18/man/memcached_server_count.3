@@ -1,0 +1,157 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "MEMCACHED_SERVER_COUNT" "3" "February 09, 2014" "1.0.18" "libmemcached"
+.SH NAME
+memcached_server_count \- libmemcached Documentation
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+#include <libmemcached/memcached.h>
+.INDENT 0.0
+.TP
+.B memcached_server_fn
+.UNINDENT
+.INDENT 0.0
+.TP
+.B uint32_t memcached_server_count(memcached_st\fI\ *ptr\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_server_add(memcached_st\fI\ *ptr\fP, const char\fI\ *hostname\fP, in_port_t\fI\ port\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_server_add_udp(memcached_st\fI\ *ptr\fP, const char\fI\ *hostname\fP, in_port_t\fI\ port\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_server_add_unix_socket(memcached_st\fI\ *ptr\fP, const char\fI\ *socket\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_server_push(memcached_st\fI\ *ptr\fP, const memcached_server_st\fI\ *list\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B const memcached_instance_st * memcached_server_by_key(memcached_st\fI\ *ptr\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, memcached_return_t\fI\ *error\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B const memcached_instance_st * memcached_server_get_last_disconnect(const memcached_st\fI\ *ptr\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_server_cursor(const memcached_st\fI\ *ptr\fP, const \fI\%memcached_server_fn\fP\fI\ *callback\fP, void\fI\ *context\fP, uint32_t\fI\ number_of_callbacks\fP)
+.UNINDENT
+.sp
+compile and link with \-lmemcached
+.SH DESCRIPTION
+.sp
+\fBlibmemcached\fP performs operations on a list of hosts. The order of
+these hosts determine routing to keys. Functions are provided to add keys to
+memcached_st structures. To manipulate lists of servers see
+memcached_server_st(3).
+.sp
+\fI\%memcached_server_count()\fP provides you a count of the current number of
+servers being used by a \fBmemcached_st\fP structure.
+.INDENT 0.0
+.TP
+.B \fI\%memcached_server_add()\fP pushes a single TCP server into the \fBmemcached_st\fP structure. This server will be placed at the end. Duplicate servers
+are allowed, so duplication is not checked. Executing this function with the \fBMEMCACHED_BEHAVIOR_USE_UDP\fP behavior set will result in a \fBMEMCACHED_INVALID_HOST_PROTOCOL\fP\&.
+.UNINDENT
+.sp
+\fI\%memcached_server_add_udp()\fP pushes a single UDP server into the \fBmemcached_st\fP structure. This server will be placed at the end. Duplicate
+servers are allowed, so duplication is not checked. Executing this function with out setting the \fBMEMCACHED_BEHAVIOR_USE_UDP\fP behavior will result in a
+\fBMEMCACHED_INVALID_HOST_PROTOCOL\fP\&.
+.sp
+\fI\%memcached_server_add_unix_socket()\fP pushes a single UNIX socket into the \fBmemcached_st\fP structure. This UNIX socket will be placed at the end.
+Duplicate servers are allowed, so duplication is not checked. The length
+of the filename must be one character less than \fBMEMCACHED_MAX_HOST_LENGTH\fP\&.
+.sp
+\fI\%memcached_server_push()\fP pushes an array of \fBmemcached_server_st\fP into the \fBmemcached_st\fP structure. These servers will be placed at
+the end. Duplicate servers are allowed, so duplication is not checked. A
+copy is made of structure so the list provided (and any operations on
+the list) are not saved.
+.sp
+\fI\%memcached_server_by_key()\fP allows you to provide a key and retrieve the
+server which would be used for assignment.
+.sp
+\fI\%memcached_server_get_last_disconnect()\fP returns a pointer to the last
+server for which there was a connection problem. It does not mean this
+particular server is currently dead but if the library is reporting a server
+is, the returned server is a very good candidate.
+.sp
+\fI\%memcached_server_cursor()\fP takes a memcached_st and loops through the
+list of hosts currently in the cursor calling the list of callback
+functions provided. You can optionally pass in a value via
+context which will be provided to each callback function. An error
+return from any callback will terminate the loop. \fI\%memcached_server_cursor()\fP is passed the original caller \fBmemcached_st\fP in its current state.
+.SH RETURN
+.sp
+Varies, see particular functions.
+.SH HOME
+.sp
+To find out more information please check:
+\fI\%http://libmemcached.org/\fP
+.SH SEE ALSO
+.sp
+\fImemcached(1)\fP \fIlibmemcached(3)\fP \fImemcached_strerror(3)\fP
+.SH AUTHOR
+Brian Aker
+.SH COPYRIGHT
+2011-2013, Brian Aker DataDifferential, http://datadifferential.com/
+.\" Generated by docutils manpage writer.
+.
