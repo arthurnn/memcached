@@ -209,4 +209,10 @@ class ClientTest < BaseTest
     sleep(2.02)
     refute cache.get(key)
   end
+
+  def test_reset
+    con = cache.connection
+    cache.reset
+    refute_equal cache.connection, con
+  end
 end

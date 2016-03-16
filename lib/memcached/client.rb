@@ -132,6 +132,13 @@ module Memcached
       client
     end
 
+    def reset
+      if @connection
+        @connection.close
+        @connection = nil
+      end
+    end
+
     def connection
       @connection ||= Memcached::Connection.new(@servers).tap do |conn|
         conn.set_behaviors(@behaviors)
