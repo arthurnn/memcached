@@ -20,6 +20,7 @@ module Memcached
       :hash_with_prefix_key => true,
       :server_failure_limit => 2,
       :verify_key => true,
+      :io_key_prefetch => true,
     }
 
     attr_reader :config, :behaviors

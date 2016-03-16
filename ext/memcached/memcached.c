@@ -270,12 +270,19 @@ rb_connection_get_multi(VALUE self, VALUE rb_keys)
 		c_lengths[i] = RSTRING_LEN(rb_key);
 	}
 
-	rc = memcached_mget(mc, c_keys, c_lengths, (size_t)keys_len);
-	rb_memcached_error_check(rc);
-
 	rb_result = rb_hash_new();
-	rc = memcached_fetch_execute(mc, callbacks, (void *)rb_result, 1);
-	rb_memcached_error_check(rc);
+
+	if (memcached_behavior_get(mc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL)) {
+		rc = memcached_mget_execute(mc, c_keys, c_lengths, (size_t)keys_len,
+				callbacks, (void *)rb_result, 1);
+		rb_memcached_error_check(rc);
+	} else {
+		rc = memcached_mget(mc, c_keys, c_lengths, (size_t)keys_len);
+		rb_memcached_error_check(rc);
+
+		rc = memcached_fetch_execute(mc, callbacks, (void *)rb_result, 1);
+		rb_memcached_error_check(rc);
+	}
 
 	return rb_result;
 }
