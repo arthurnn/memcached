@@ -34,19 +34,16 @@ if ENV['DEBUG']
   $EXTRA_CONF = ""
 end
 
-def check_libmemcached
+def compile_libmemcached
   return if ENV["EXTERNAL_LIB"]
 
   Dir.chdir(LIBMEMCACHED_DIR) do
     Dir.mkdir("build") if !Dir.exists?("build")
     build_folder = File.join(LIBMEMCACHED_DIR, "build")
 
-    ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
-    run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
     run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
     run("#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' 2>&1")
     run("#{GMAKE_CMD} install 2>&1")
-
 
     pcfile = File.join(LIBMEMCACHED_DIR, "build", "lib", "pkgconfig", "libmemcached.pc")
     $LDFLAGS << " -lsasl2 " + `pkg-config --libs --static #{pcfile}`.strip
@@ -61,8 +58,7 @@ def run(cmd, reason = nil)
   raise "'#{cmd}' failed" unless system(cmd)
 end
 
-## TODO: Disable vendored version for now
-#check_libmemcached
+compile_libmemcached
 pkg_config 'libmemcached-1.0.18'
 
 unless have_library 'memcached' and have_header 'libmemcached/memcached.h'
