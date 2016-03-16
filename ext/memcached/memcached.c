@@ -279,10 +279,10 @@ rb_connection_get_multi(VALUE self, VALUE rb_keys)
 	} else {
 		rc = memcached_mget(mc, c_keys, c_lengths, (size_t)keys_len);
 		rb_memcached_error_check(rc);
-
-		rc = memcached_fetch_execute(mc, callbacks, (void *)rb_result, 1);
-		rb_memcached_error_check(rc);
 	}
+
+	rc = memcached_fetch_execute(mc, callbacks, (void *)rb_result, 1);
+	rb_memcached_error_check(rc);
 
 	return rb_result;
 }
