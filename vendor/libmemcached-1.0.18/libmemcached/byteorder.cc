@@ -1,5 +1,5 @@
 /*  vim:expandtab:shiftwidth=2:tabstop=2:smarttab:
- * 
+ *
  *  Libmemcached library
  *
  *  Copyright (C) 2011 Data Differential, http://datadifferential.com/
@@ -37,6 +37,9 @@
 
 #include "mem_config.h"
 #include "libmemcached/byteorder.h"
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
 
 /* Byte swap a 64-bit number. */
 #ifndef swap64
