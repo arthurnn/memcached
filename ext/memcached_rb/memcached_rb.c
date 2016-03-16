@@ -154,11 +154,9 @@ rb_connection_new(VALUE klass, VALUE rb_servers)
 static VALUE
 rb_connection_clone(VALUE self)
 {
-  memcached_st *mc, *clone;
+	memcached_st *mc;
 	UnwrapMemcached(self, mc);
-	clone = memcached_clone(NULL, mc);
-	VALUE rb_obj = Data_Wrap_Struct(rb_cConnection, NULL, memcached_free, clone);
-  return rb_obj;
+	return Data_Wrap_Struct(rb_cConnection, NULL, memcached_free, memcached_clone(NULL, mc));
 }
 
 static memcached_return_t
