@@ -56,17 +56,18 @@ class ClientTest < BaseTest
     end
   end
 
-#  def test_key_with_null
-#    key = "with\000null"
-#    #assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-#      cache.set key, @value
-#    #end
-#    #assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-#      cache.get(key)
-#    #end
-#      #assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-#      cache.get_multi([key])
-#  end
+  def test_key_with_null
+    key = "with\000null"
+    assert_raises(Memcached::BadKeyProvided) do
+      cache.set key, @value
+    end
+    assert_raises(Memcached::BadKeyProvided) do
+      cache.get(key)
+    end
+    assert_raises(Memcached::BadKeyProvided) do
+      cache.get_multi([key])
+    end
+  end
 
   def test_key_with_invalid_control_characters
     key = "ch\303\242teau"
