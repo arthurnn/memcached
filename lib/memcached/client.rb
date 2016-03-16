@@ -18,7 +18,6 @@ module Memcached
 #      :poll_max_retries => 1, TODO: doesnt exist anymore
       :connect_timeout => 0.25,
       :hash_with_prefix_key => true,
-      :default_weight => 8,
       :server_failure_limit => 2,
       :verify_key => true,
     }
@@ -30,7 +29,6 @@ module Memcached
 
       @codec = Memcached::MarshalCodec
       @default_ttl = options.delete(:ttl) || 0
-      @default_weight = options.delete(:default_weight) || 1
       @prefix = options.delete(:prefix_key)
 
       @connection = nil
@@ -139,7 +137,7 @@ module Memcached
     end
 
     private
-    def create_config_str(servers, extra = nil)
+    def create_config_str(servers)
       if servers.is_a?(String)
         return servers if servers.include? '--'
         servers = [servers]
@@ -149,18 +147,18 @@ module Memcached
 
       config = servers.map do |server|
         server = server.to_s
-        if File.socket?(server)
+        hostname = server.gsub(/\/\?\d+$/, '')
+
+        if hostname =~ /^[\w\.-]+(:\d{1,5})?$/
+          "--SERVER=#{server}"
+        elsif File.socket?(hostname)
           "--SOCKET=\"#{server}\""
         else
-          host, port, weight = server.split(":")
-          port = (port && !port.empty?) ? ":#{port}" : ""
-          weight = (weight && !weight.empty?) ? "/?#{weight}" : ""
-          "--SERVER=#{host}#{port}#{weight}"
+          raise ArgumentError, "not a valid server address: #{server}"
         end
-      end.join(' ')
-      config << " #{extra.strip}" if extra
-      config << " --VERIFY-KEY" unless config.include? "--VERIFY-KEY"
-      config
+      end
+      config << "--VERIFY-KEY"
+      config.join(' ')
     end
 
     def normalize_behaviors(options)

@@ -42,7 +42,7 @@ class ClientInitializeTest < BaseTest
   end
 
   def test_initialize_with_ports_and_weights
-    client = Memcached::Client.new ['localhost:43042:2', 'localhost:43043:10']
+    client = Memcached::Client.new ['localhost:43042/?2', 'localhost:43043/?10']
     assert_includes client.config, '--SERVER=localhost:43042/?2'
     assert_includes client.config, '--SERVER=localhost:43043/?10'
   end
