@@ -526,6 +526,7 @@ void Init_memcached_rb(void)
 	rb_define_singleton_method(rb_cConnection, "new", rb_connection_new, 1);
 
 	rb_define_method(rb_cConnection, "clone", rb_connection_clone, 0);
+	rb_define_method(rb_cConnection, "dup", rb_connection_clone, 0);
 	rb_define_method(rb_cConnection, "servers", rb_connection_servers, 0);
 	rb_define_method(rb_cConnection, "flush", rb_connection_flush, 0);
 	rb_define_method(rb_cConnection, "set", rb_connection_set, 4);
@@ -536,6 +537,7 @@ void Init_memcached_rb(void)
 	rb_define_method(rb_cConnection, "increment", rb_connection_inc, 2);
 	rb_define_method(rb_cConnection, "decrement", rb_connection_dec, 2);
 	rb_define_method(rb_cConnection, "exist", rb_connection_exist, 1);
+	rb_define_method(rb_cConnection, "exist?", rb_connection_exist, 1);
 	rb_define_method(rb_cConnection, "replace", rb_connection_replace, 4);
 	rb_define_method(rb_cConnection, "prepend", rb_connection_prepend, 4);
 	rb_define_method(rb_cConnection, "append", rb_connection_append, 4);
