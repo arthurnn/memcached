@@ -122,7 +122,7 @@ class ClientTest < BaseTest
   def test_clone_with_connection_loaded
     @cache = cache
     cache = @cache.clone
-    assert_equal cache.servers, @cache.servers
+    assert_equal cache.config, @cache.config
     refute_equal cache, @cache
 
     # Definitely check that the connections are unlinked
@@ -137,7 +137,7 @@ class ClientTest < BaseTest
     @cache.set key, @value
 
     cache = @cache.clone
-    assert_equal cache.servers, @cache.servers
+    assert_equal cache.config, @cache.config
     refute_equal cache, @cache
 
     refute_nil cache.connection.servers

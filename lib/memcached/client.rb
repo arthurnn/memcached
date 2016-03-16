@@ -23,26 +23,20 @@ module Memcached
       :verify_key => true,
     }
 
-    attr_reader :servers, :options
+    attr_reader :config, :behaviors
 
-    def initialize(servers = nil, options = {})
-      @connection = nil
-      if servers
-        @servers = normalize_servers(servers)
-      else
-        @servers = [[:tcp, "localhost", 11211]]
-      end
-      @options = DEFAULTS.merge(options)
+    def initialize(config = "localhost:11211", options = {})
+      options = DEFAULTS.merge(options)
 
       @codec = Memcached::MarshalCodec
-      @default_ttl = @options.delete(:ttl) || 0
-      @prefix = @options.delete(:prefix_key)
+      @default_ttl = options.delete(:ttl) || 0
+      @default_weight = options.delete(:default_weight) || 1
+      @prefix = options.delete(:prefix_key)
 
-      @default_weight = @options.delete(:default_weight) # TODO
-      @options.delete(:credentials) # TODO
-
-      @behaviors = normalize_behaviors(@options)
-      @options.freeze
+      @connection = nil
+      @behaviors = normalize_behaviors(options)
+      @config = create_config_str(config)
+      Memcached::Connection.check_config!(@config)
     end
 
     def flush
@@ -138,33 +132,35 @@ module Memcached
     end
 
     def connection
-      @connection ||= Memcached::Connection.new(@servers).tap do |conn|
+      @connection ||= Memcached::Connection.new(@config).tap do |conn|
         conn.set_prefix(@prefix)
         conn.set_behaviors(@behaviors)
       end
     end
 
     private
-    def normalize_servers(servers)
-      servers = [servers] if servers.is_a?(String)
-      servers.map do |server|
-        server = server.to_s
-        if server =~ /^[\w\.-]+(:\d{1,5}){0,2}$/
-          host, port, _weight = server.split(":")
-          # TODO weight
-          [:tcp, host, port.to_i]
-        elsif File.socket?(server)
-          # TODO weight, default = 8
-          [:socket, server]
-        else
-          raise
-        end
+    def create_config_str(servers, extra = nil)
+      if servers.is_a?(String)
+        return servers if servers.include? '--'
+        servers = [servers]
       end
-    rescue
-      raise ArgumentError, <<-MSG
-      Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or 'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached).
-But it was #{servers.inspect}.
-          MSG
+
+      raise ArgumentError unless servers.is_a?(Array)
+
+      config = servers.map do |server|
+        server = server.to_s
+        if File.socket?(server)
+          "--SOCKET=\"#{server}\""
+        else
+          host, port, weight = server.split(":")
+          port = (port && !port.empty?) ? ":#{port}" : ""
+          weight = (weight && !weight.empty?) ? "/?#{weight}" : ""
+          "--SERVER=#{host}#{port}#{weight}"
+        end
+      end.join(' ')
+      config << " #{extra.strip}" if extra
+      config << " --VERIFY-KEY" unless config.include? "--VERIFY-KEY"
+      config
     end
 
     def normalize_behaviors(options)

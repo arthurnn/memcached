@@ -95,60 +95,36 @@ rb_memcached_error_check(memcached_return_t rc)
 		case MEMCACHED_SUCCESS: return Qtrue; \
 		default: return Qfalse; }}
 
-
 static VALUE
-rb_memcached_alloc(VALUE klass)
+rb_connection_check_cfg(VALUE klass, VALUE rb_config)
 {
-	memcached_st *mc = memcached_create(NULL);
-	return Data_Wrap_Struct(klass, NULL, memcached_free, mc);
+	char error_buffer[512];
+	memcached_return_t rc;
+
+	Check_Type(rb_config, T_STRING);
+
+	rc = libmemcached_check_configuration(
+		RSTRING_PTR(rb_config), RSTRING_LEN(rb_config),
+		error_buffer, sizeof(error_buffer));
+
+	if (rc != MEMCACHED_SUCCESS)
+		rb_raise(rb_eArgError, "failed to parse config string\nconfig: '%s'\nmessage: %s",
+				StringValueCStr(rb_config), error_buffer);
+
+	return Qnil;
 }
 
 static VALUE
-rb_connection_new(VALUE klass, VALUE rb_servers)
+rb_connection_new(VALUE klass, VALUE rb_config)
 {
-	VALUE rb_mc = rb_memcached_alloc(klass);
-
 	memcached_st *mc;
-	memcached_return_t rc;
-	long i;
-
-	UnwrapMemcached(rb_mc, mc);
-	Check_Type(rb_servers, T_ARRAY);
-
-	for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
-		VALUE rb_server, rb_backend;
-
-		rb_server = rb_ary_entry(rb_servers, i);
-		Check_Type(rb_server, T_ARRAY);
-
-		rb_backend = rb_ary_entry(rb_server, 0);
-		Check_Type(rb_backend, T_SYMBOL);
-
-		if (SYM2ID(rb_backend) == id_tcp) {
-			VALUE rb_hostname = rb_ary_entry(rb_server, 1);
-			VALUE rb_port = rb_ary_entry(rb_server, 2);
-
-			Check_Type(rb_hostname, T_STRING);
-			Check_Type(rb_port, T_FIXNUM);
-
-			// TODO: add weight
-			//VALUE rb_weight = rb_ary_entry(rb_server, 3);
-			rc = memcached_server_add(mc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
-			rb_memcached_error_check(rc);
-		}
-		else if (SYM2ID(rb_backend) == id_socket) {
-			VALUE rb_fd = rb_ary_entry(rb_server, 1);
-			Check_Type(rb_fd, T_STRING);
-			rc = memcached_server_add_unix_socket(mc, StringValueCStr(rb_fd));
-			rb_memcached_error_check(rc);
-		}
+	Check_Type(rb_config, T_STRING);
+	mc = memcached(RSTRING_PTR(rb_config), RSTRING_LEN(rb_config));
+	if (!mc) {
+		rb_connection_check_cfg(rb_cConnection, rb_config);
+		rb_raise(rb_eNoMemError, "failed to allocate memcached");
 	}
-
-	// Verify keys by default
-	rc = memcached_behavior_set(mc, MEMCACHED_BEHAVIOR_VERIFY_KEY, true);
-	rb_memcached_error_check(rc);
-
-	return rb_mc;
+	return Data_Wrap_Struct(klass, NULL, memcached_free, mc);
 }
 
 static VALUE
@@ -524,6 +500,7 @@ void Init_memcached_rb(void)
 
 	rb_cConnection = rb_define_class_under(rb_mMemcached, "Connection", rb_cObject);
 	rb_define_singleton_method(rb_cConnection, "new", rb_connection_new, 1);
+	rb_define_singleton_method(rb_cConnection, "check_config!", rb_connection_check_cfg, 1);
 
 	rb_define_method(rb_cConnection, "clone", rb_connection_clone, 0);
 	rb_define_method(rb_cConnection, "dup", rb_connection_clone, 0);
