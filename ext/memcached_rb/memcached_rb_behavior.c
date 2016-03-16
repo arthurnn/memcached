@@ -72,28 +72,6 @@ const char* MEMCACHED_DISTRIBUTION_NAMES[] = {
 };
 #define MEMCACHED_DISTRIBUTION_COUNT (ARRAY_SIZE(MEMCACHED_DISTRIBUTION_NAMES))
 
-static uint64_t lookup_behavior_const(memcached_behavior_t behavior, const char *cname)
-{
-	uint64_t i;
-
-	if (behavior == MEMCACHED_BEHAVIOR_HASH) {
-		for (i = 0; i < MEMCACHED_HASH_COUNT; ++i) {
-			if (!strcmp(MEMCACHED_HASH_NAMES[i], cname))
-				return i;
-		}
-	}
-
-	if (behavior == MEMCACHED_BEHAVIOR_DISTRIBUTION) {
-		for (i = 0; i < MEMCACHED_DISTRIBUTION_COUNT; ++i) {
-			if (!strcmp(MEMCACHED_DISTRIBUTION_NAMES[i], cname))
-				return i;
-		}
-	}
-
-	rb_raise(rb_eTypeError, "unexpected String value for '%s'",
-		MEMCACHED_BEHAVIOR_NAMES[behavior]);
-}
-
 VALUE
 rb_connection_get_behavior(VALUE self, VALUE rb_behavior)
 {
@@ -132,9 +110,6 @@ rb_connection_set_behavior(VALUE self, VALUE rb_behavior, VALUE rb_value)
 	switch (TYPE(rb_value)) {
 	case T_TRUE:
 		value = 1;
-		break;
-	case T_STRING:
-		value = lookup_behavior_const(behavior, StringValueCStr(rb_value));
 		break;
 	case T_FIXNUM:
 		value = FIX2INT(rb_value);

@@ -541,8 +541,8 @@ void Init_memcached_rb(void)
 	rb_define_method(rb_cConnection, "replace", rb_connection_replace, 4);
 	rb_define_method(rb_cConnection, "prepend", rb_connection_prepend, 4);
 	rb_define_method(rb_cConnection, "append", rb_connection_append, 4);
-	rb_define_method(rb_cConnection, "get_behavior", rb_connection_get_behavior, 1);
-	rb_define_method(rb_cConnection, "set_behavior", rb_connection_set_behavior, 2);
+	rb_define_method(rb_cConnection, "_get_behavior", rb_connection_get_behavior, 1);
+	rb_define_method(rb_cConnection, "_set_behavior", rb_connection_set_behavior, 2);
 	rb_define_method(rb_cConnection, "set_prefix", rb_connection_set_prefix, 1);
 	rb_define_method(rb_cConnection, "get_prefix", rb_connection_get_prefix, 0);
 	rb_define_method(rb_cConnection, "touch", rb_connection_touch, 2);

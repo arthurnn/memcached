@@ -68,9 +68,9 @@ class ClientInitializeTest < BaseTest
   def test_behaviors_are_set
     conn = cache.connection
 
-    refute conn.get_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK)
-    conn.set_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK, true)
-    assert conn.get_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK)
+    refute conn.get_behavior('no_block')
+    conn.set_behavior('no_block', true)
+    assert conn.get_behavior('no_block')
   end
 
   def test_initialize_with_invalid_server_strings
