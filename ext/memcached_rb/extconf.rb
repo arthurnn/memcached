@@ -38,6 +38,9 @@ def compile_libmemcached
   return if ENV["EXTERNAL_LIB"]
 
   Dir.chdir(LIBMEMCACHED_DIR) do
+    # Apply OSX fix
+    run("git apply ../patches/osx_fixes.patch")
+
     Dir.mkdir("build") if !Dir.exists?("build")
     build_folder = File.join(LIBMEMCACHED_DIR, "build")
 
