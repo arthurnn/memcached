@@ -1,0 +1,56 @@
+From 6d5796c79d626832c4d953d3428cb83b91a91a5c Mon Sep 17 00:00:00 2001
+From: Arthur Neves <arthurnn@gmail.com>
+Date: Tue, 15 Mar 2016 22:15:22 -0400
+Subject: [PATCH] Fix OSX compilation errors
+
+---
+ vendor/libmemcached-1.0.18/clients/memflush.cc       | 4 ++--
+ vendor/libmemcached-1.0.18/libmemcached/byteorder.cc | 5 ++++-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/vendor/libmemcached-1.0.18/clients/memflush.cc b/vendor/libmemcached-1.0.18/clients/memflush.cc
+index 8bd0dbf..71545ea 100644
+--- a/vendor/libmemcached-1.0.18/clients/memflush.cc
++++ b/vendor/libmemcached-1.0.18/clients/memflush.cc
+@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
+ {
+   options_parse(argc, argv);
+ 
+-  if (opt_servers == false)
++  if (opt_servers == NULL)
+   {
+     char *temp;
+ 
+@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
+       opt_servers= strdup(temp);
+     }
+ 
+-    if (opt_servers == false)
++    if (opt_servers == NULL)
+     {
+       std::cerr << "No Servers provided" << std::endl;
+       exit(EXIT_FAILURE);
+diff --git a/vendor/libmemcached-1.0.18/libmemcached/byteorder.cc b/vendor/libmemcached-1.0.18/libmemcached/byteorder.cc
+index 9f11aa8..1930f93 100644
+--- a/vendor/libmemcached-1.0.18/libmemcached/byteorder.cc
++++ b/vendor/libmemcached-1.0.18/libmemcached/byteorder.cc
+@@ -1,5 +1,5 @@
+ /*  vim:expandtab:shiftwidth=2:tabstop=2:smarttab:
+- * 
++ *
+  *  Libmemcached library
+  *
+  *  Copyright (C) 2011 Data Differential, http://datadifferential.com/
+@@ -37,6 +37,9 @@
+ 
+ #include "mem_config.h"
+ #include "libmemcached/byteorder.h"
++#ifdef HAVE_SYS_TYPES_H
++# include <sys/types.h>
++#endif
+ 
+ /* Byte swap a 64-bit number. */
+ #ifndef swap64
+-- 
+2.5.4 (Apple Git-61)
+
