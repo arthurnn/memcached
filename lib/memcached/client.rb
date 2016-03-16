@@ -149,7 +149,7 @@ module Memcached
       servers = [servers] if servers.is_a?(String)
       servers.map do |server|
         server = server.to_s
-        if server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
+        if server =~ /^[\w\.-]+(:\d{1,5}){0,2}$/
           host, port, _weight = server.split(":")
           # TODO weight
           [:tcp, host, port.to_i]

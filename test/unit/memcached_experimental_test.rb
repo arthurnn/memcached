@@ -89,7 +89,7 @@ class MemcachedExperimentalTest # TODO
       value = "Test that we cannot get 0 bytes with a get_len call."
       @experimental_cache.set key, value, 0, false
       assert_raises(Memcached::Failure) do
-        result = @experimental_cache.get_len 0, key
+        @experimental_cache.get_len 0, key
       end
     end
   end
@@ -119,7 +119,7 @@ class MemcachedExperimentalTest # TODO
     server_get_len_capable do
       @experimental_binary_protocol_cache.set key, @value
       assert_raises(Memcached::ActionNotSupported) do
-        result = @experimental_binary_protocol_cache.get_len 2, key
+        @experimental_binary_protocol_cache.get_len 2, key
       end
     end
   end
@@ -173,7 +173,7 @@ class MemcachedExperimentalTest # TODO
       @experimental_binary_protocol_cache.set key_1, value_1, 0, false
       @experimental_binary_protocol_cache.set key_2, value_2, 0, false
       assert_raises(Memcached::ActionNotSupported) do
-        result = @experimental_binary_protocol_cache.get_len 2, keys
+        @experimental_binary_protocol_cache.get_len 2, keys
       end
     end
   end
@@ -191,9 +191,9 @@ class MemcachedExperimentalTest # TODO
 
   def test_get_len_failure
     server_get_len_capable do
-      value = "Test that we cannot use get_len without setting the :experimental_features config."
+      # Test that we cannot use get_len without setting the :experimental_features config
       assert_raises(NoMethodError) do
-        result = @cache.get_len 10, key
+        @cache.get_len 10, key
       end
     end
   end
