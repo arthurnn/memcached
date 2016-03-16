@@ -13,14 +13,7 @@ module Memcached
       :hash => :fnv1_32,
       :distribution => :consistent_ketama,
       :ketama_weighted => true,
-      :retry_timeout => 60,
-      :timeout => 0.25,
-#      :poll_max_retries => 1, TODO: doesnt exist anymore
-      :connect_timeout => 0.25,
-      :hash_with_prefix_key => true,
-      :server_failure_limit => 2,
       :verify_key => true,
-      :io_key_prefetch => true,
     }
 
     attr_reader :config, :behaviors
@@ -146,7 +139,7 @@ module Memcached
 
       raise ArgumentError unless servers.is_a?(Array)
 
-      config = servers.map do |server|
+      servers.map do |server|
         server = server.to_s
         hostname = server.gsub(/\/\?\d+$/, '')
 
@@ -157,9 +150,7 @@ module Memcached
         else
           raise ArgumentError, "not a valid server address: #{server}"
         end
-      end
-      config << "--VERIFY-KEY"
-      config.join(' ')
+      end.join(' ')
     end
 
     def normalize_behaviors(options)
