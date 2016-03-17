@@ -44,8 +44,8 @@ def compile_libmemcached
     Dir.mkdir("build") if !Dir.exists?("build")
     build_folder = File.join(LIBMEMCACHED_DIR, "build")
 
-    # touch files to fix: aclocal-1.13: command not found
-    run("touch configure.ac aclocal.m4 configure Makefile.am Makefile.in")
+    ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
+    run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
     run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
     run("#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' 2>&1")
     run("#{GMAKE_CMD} install 2>&1")
