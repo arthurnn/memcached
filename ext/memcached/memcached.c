@@ -1,4 +1,4 @@
-#include "memcached_rb.h"
+#include "memcached.h"
 
 VALUE rb_mMemcached;
 
@@ -95,70 +95,44 @@ rb_memcached_error_check(memcached_return_t rc)
 		case MEMCACHED_SUCCESS: return Qtrue; \
 		default: return Qfalse; }}
 
-
 static VALUE
-rb_memcached_alloc(VALUE klass)
+rb_connection_check_cfg(VALUE klass, VALUE rb_config)
 {
-	memcached_st *mc = memcached_create(NULL);
-	return Data_Wrap_Struct(klass, NULL, memcached_free, mc);
+	char error_buffer[512];
+	memcached_return_t rc;
+
+	Check_Type(rb_config, T_STRING);
+
+	rc = libmemcached_check_configuration(
+		RSTRING_PTR(rb_config), RSTRING_LEN(rb_config),
+		error_buffer, sizeof(error_buffer));
+
+	if (rc != MEMCACHED_SUCCESS)
+		rb_raise(rb_eArgError, "failed to parse config string\nconfig: '%s'\nmessage: %s",
+				StringValueCStr(rb_config), error_buffer);
+
+	return Qnil;
 }
 
 static VALUE
-rb_connection_new(VALUE klass, VALUE rb_servers)
+rb_connection_new(VALUE klass, VALUE rb_config)
 {
-	VALUE rb_mc = rb_memcached_alloc(klass);
-
 	memcached_st *mc;
-	memcached_return_t rc;
-	long i;
-
-	UnwrapMemcached(rb_mc, mc);
-	Check_Type(rb_servers, T_ARRAY);
-
-	for (i = 0; i < RARRAY_LEN(rb_servers); ++i) {
-		VALUE rb_server, rb_backend;
-
-		rb_server = rb_ary_entry(rb_servers, i);
-		Check_Type(rb_server, T_ARRAY);
-
-		rb_backend = rb_ary_entry(rb_server, 0);
-		Check_Type(rb_backend, T_SYMBOL);
-
-		if (SYM2ID(rb_backend) == id_tcp) {
-			VALUE rb_hostname = rb_ary_entry(rb_server, 1);
-			VALUE rb_port = rb_ary_entry(rb_server, 2);
-
-			Check_Type(rb_hostname, T_STRING);
-			Check_Type(rb_port, T_FIXNUM);
-
-			// TODO: add weight
-			//VALUE rb_weight = rb_ary_entry(rb_server, 3);
-			rc = memcached_server_add(mc, StringValueCStr(rb_hostname), NUM2INT(rb_port));
-			rb_memcached_error_check(rc);
-		}
-		else if (SYM2ID(rb_backend) == id_socket) {
-			VALUE rb_fd = rb_ary_entry(rb_server, 1);
-			Check_Type(rb_fd, T_STRING);
-			rc = memcached_server_add_unix_socket(mc, StringValueCStr(rb_fd));
-			rb_memcached_error_check(rc);
-		}
+	Check_Type(rb_config, T_STRING);
+	mc = memcached(RSTRING_PTR(rb_config), RSTRING_LEN(rb_config));
+	if (!mc) {
+		rb_connection_check_cfg(rb_cConnection, rb_config);
+		rb_raise(rb_eNoMemError, "failed to allocate memcached");
 	}
-
-	// Verify keys by default
-	rc = memcached_behavior_set(mc, MEMCACHED_BEHAVIOR_VERIFY_KEY, true);
-	rb_memcached_error_check(rc);
-
-	return rb_mc;
+	return Data_Wrap_Struct(klass, NULL, memcached_free, mc);
 }
 
 static VALUE
 rb_connection_clone(VALUE self)
 {
-  memcached_st *mc, *clone;
+	memcached_st *mc;
 	UnwrapMemcached(self, mc);
-	clone = memcached_clone(NULL, mc);
-	VALUE rb_obj = Data_Wrap_Struct(rb_cConnection, NULL, memcached_free, clone);
-  return rb_obj;
+	return Data_Wrap_Struct(rb_cConnection, NULL, memcached_free, memcached_clone(NULL, mc));
 }
 
 static memcached_return_t
@@ -296,10 +270,17 @@ rb_connection_get_multi(VALUE self, VALUE rb_keys)
 		c_lengths[i] = RSTRING_LEN(rb_key);
 	}
 
-	rc = memcached_mget(mc, c_keys, c_lengths, (size_t)keys_len);
-	rb_memcached_error_check(rc);
-
 	rb_result = rb_hash_new();
+
+	if (memcached_behavior_get(mc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL)) {
+		rc = memcached_mget_execute(mc, c_keys, c_lengths, (size_t)keys_len,
+				callbacks, (void *)rb_result, 1);
+		rb_memcached_error_check(rc);
+	} else {
+		rc = memcached_mget(mc, c_keys, c_lengths, (size_t)keys_len);
+		rb_memcached_error_check(rc);
+	}
+
 	rc = memcached_fetch_execute(mc, callbacks, (void *)rb_result, 1);
 	rb_memcached_error_check(rc);
 
@@ -510,7 +491,7 @@ rb_connection_close(VALUE self)
 	return Qnil;
 }
 
-void Init_memcached_rb(void)
+void Init_memcached(void)
 {
 	size_t i;
 
@@ -526,8 +507,10 @@ void Init_memcached_rb(void)
 
 	rb_cConnection = rb_define_class_under(rb_mMemcached, "Connection", rb_cObject);
 	rb_define_singleton_method(rb_cConnection, "new", rb_connection_new, 1);
+	rb_define_singleton_method(rb_cConnection, "check_config!", rb_connection_check_cfg, 1);
 
 	rb_define_method(rb_cConnection, "clone", rb_connection_clone, 0);
+	rb_define_method(rb_cConnection, "dup", rb_connection_clone, 0);
 	rb_define_method(rb_cConnection, "servers", rb_connection_servers, 0);
 	rb_define_method(rb_cConnection, "flush", rb_connection_flush, 0);
 	rb_define_method(rb_cConnection, "set", rb_connection_set, 4);
@@ -538,11 +521,12 @@ void Init_memcached_rb(void)
 	rb_define_method(rb_cConnection, "increment", rb_connection_inc, 2);
 	rb_define_method(rb_cConnection, "decrement", rb_connection_dec, 2);
 	rb_define_method(rb_cConnection, "exist", rb_connection_exist, 1);
+	rb_define_method(rb_cConnection, "exist?", rb_connection_exist, 1);
 	rb_define_method(rb_cConnection, "replace", rb_connection_replace, 4);
 	rb_define_method(rb_cConnection, "prepend", rb_connection_prepend, 4);
 	rb_define_method(rb_cConnection, "append", rb_connection_append, 4);
-	rb_define_method(rb_cConnection, "get_behavior", rb_connection_get_behavior, 1);
-	rb_define_method(rb_cConnection, "set_behavior", rb_connection_set_behavior, 2);
+	rb_define_method(rb_cConnection, "_get_behavior", rb_connection_get_behavior, 1);
+	rb_define_method(rb_cConnection, "_set_behavior", rb_connection_set_behavior, 2);
 	rb_define_method(rb_cConnection, "set_prefix", rb_connection_set_prefix, 1);
 	rb_define_method(rb_cConnection, "get_prefix", rb_connection_get_prefix, 0);
 	rb_define_method(rb_cConnection, "touch", rb_connection_touch, 2);
@@ -551,5 +535,5 @@ void Init_memcached_rb(void)
 	id_tcp = rb_intern("tcp");
 	id_socket = rb_intern("socket");
 
-	Init_memcached_rb_behavior();
+	Init_memcached_behavior();
 }

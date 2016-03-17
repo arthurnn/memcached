@@ -1,6 +1,22 @@
 module Memcached
   module Behaviors
+    def set_behavior(behavior, value)
+      behavior = convert_behavior(behavior)
+      value = convert_value(behavior, value)
+      _set_behavior(behavior, value)
+    rescue Memcached::Deprecated
+      warn "Behavior #{behavior_string} is deprecated, and won't work anymore."
+    end
 
+    def get_behavior(behavior)
+      _get_behavior(convert_behavior(behavior))
+    end
+
+    def set_behaviors(hash)
+      hash.each { |key, value| set_behavior(key, value) } if hash
+    end
+
+    protected
     CONVERSION_FACTORS = {
       MEMCACHED_BEHAVIOR_RCV_TIMEOUT => 1_000_000,
       MEMCACHED_BEHAVIOR_SND_TIMEOUT => 1_000_000,
@@ -8,47 +24,38 @@ module Memcached
       MEMCACHED_BEHAVIOR_CONNECT_TIMEOUT => 1_000
     }
 
-    BASE_VALUES = {
-      MEMCACHED_BEHAVIOR_HASH => "MEMCACHED_HASH_%s",
-      MEMCACHED_BEHAVIOR_DISTRIBUTION => "MEMCACHED_DISTRIBUTION_%s",
+    VALUE_PREFIXES = {
+      MEMCACHED_BEHAVIOR_HASH => "MEMCACHED_HASH_",
+      MEMCACHED_BEHAVIOR_DISTRIBUTION => "MEMCACHED_DISTRIBUTION_",
     }
 
-    def lookup_value(behavior, value)
-      base_value = BASE_VALUES[behavior]
-      raise ArgumentError unless base_value
-      value = base_value % value.to_s.upcase
-      Behaviors.const_get(value)
+    def convert_behavior(behavior)
+      case behavior
+      when Numeric
+        behavior
+      else
+        lookup_constant('MEMCACHED_BEHAVIOR_', behavior)
+      end
     end
 
-    def set_behaviors(hash)
-      return unless hash
-      hash.each do |key, value|
-        behavior_string = "MEMCACHED_BEHAVIOR_#{key.to_s.upcase}"
-        begin
-          behavior = Behaviors.const_get(behavior_string)
-        rescue NameError
-          raise ArgumentError, "No behavior #{behavior_string.inspect}"
-        end
-
-        if value.is_a? Symbol
-          begin
-            value = lookup_value(behavior, value)
-          rescue NameError, ArgumentError
-            msg =  "Invalid behavior value #{value.inspect} for #{behavior_string.inspect}"
-            raise ArgumentError, msg
-          end
-        end
-
-        if value.is_a? Numeric
-          value *= (CONVERSION_FACTORS[behavior] || 1)
-        end
-
-        begin
-          set_behavior(behavior, value)
-        rescue Memcached::Deprecated
-          warn "Behavior #{behavior_string} is deprecated, and won't work anymore."
-        end
+    def convert_value(behavior, value)
+      case value
+      when Symbol, String
+        lookup_constant(VALUE_PREFIXES[behavior], value)
+      when Numeric
+        value * (CONVERSION_FACTORS[behavior] || 1)
+      else
+        value
       end
+    end
+
+    def lookup_constant(prefix, ct)
+      raise ArgumentError unless prefix
+      ct = ct.to_s.upcase
+      ct = prefix + ct unless ct.start_with? prefix
+      Behaviors.const_get(ct)
+    rescue NameError, ArgumentError
+      raise ArgumentError, "Invalid constant #{ct.inspect}"
     end
   end
 end

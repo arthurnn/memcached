@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.require_paths = ["lib", "ext"]
-  s.extensions = ["ext/memcached_rb/extconf.rb"]
+  s.extensions = ["ext/memcached/extconf.rb"]
 
   s.licenses = ["Academic Free License 3.0 (AFL-3.0)"]
 

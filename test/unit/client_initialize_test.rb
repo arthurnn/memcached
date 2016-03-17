@@ -1,24 +1,29 @@
 require 'test_helper'
 
 class ClientInitializeTest < BaseTest
+  def setup
+    super
+    @servers = ['localhost:43042', 'localhost:43043']
+  end
 
   def test_initialize_without_servers
     client = Memcached::Client.new
-    assert_equal [[:tcp, "localhost", 11211]], client.servers
+    assert_includes client.config, '--SERVER=localhost:11211'
     assert_equal "localhost", client.connection.servers.first.hostname
     assert_equal 11211, client.connection.servers.first.port
   end
 
   def test_initialize_with_multiple_servers
-    @servers = ['localhost:43042', 'localhost:43043']
     client = Memcached::Client.new @servers
-    assert_equal [[:tcp, "localhost", 43042], [:tcp, "localhost", 43043]], client.servers
+    assert_includes client.config, '--SERVER=localhost:43042'
+    assert_includes client.config, '--SERVER=localhost:43043'
   end
 
   def test_initialize_with_multiple_servers_and_socket
-    @servers = ['localhost:43042', 'localhost:43043']
     client = Memcached::Client.new(@servers + ['/tmp/memcached0'])
-    assert_equal [[:tcp, "localhost", 43042], [:tcp, "localhost", 43043], [:socket, '/tmp/memcached0']], client.servers
+    assert_includes client.config, '--SERVER=localhost:43042'
+    assert_includes client.config, '--SERVER=localhost:43043'
+    assert_includes client.config, '--SOCKET="/tmp/memcached0"'
 
     servers = client.connection.servers
     assert_equal [["localhost", 43042], ["localhost", 43043], ['/tmp/memcached0', 0]], servers.map { |s| [s.hostname, s.port] }
@@ -36,13 +41,11 @@ class ClientInitializeTest < BaseTest
     assert_equal 11211, cache.connection.servers.first.port
   end
 
-## TODO
-#  def test_initialize_with_ports_and_weights
-#    cache = Memcached.new ['localhost:43042:2', 'localhost:43043:10']
-#    assert_equal 2, cache.send(:server_structs).first.weight
-#    assert_equal 43043, cache.send(:server_structs).last.port
-#    assert_equal 10, cache.send(:server_structs).last.weight
-#  end
+  def test_initialize_with_ports_and_weights
+    client = Memcached::Client.new ['localhost:43042/?2', 'localhost:43043/?10']
+    assert_includes client.config, '--SERVER=localhost:43042/?2'
+    assert_includes client.config, '--SERVER=localhost:43043/?10'
+  end
 
   def test_initialize_with_hostname_only
     addresses = (1..8).map { |i| "app-cache-%02d" % i }
@@ -56,21 +59,15 @@ class ClientInitializeTest < BaseTest
   def test_initialize_with_ip_address_and_options
     cache = Memcached::Client.new '127.0.0.1:43042', :ketama_weighted => false
     assert_equal '127.0.0.1', cache.connection.servers.first.hostname
-    assert_equal false, cache.options[:ketama_weighted]
-  end
-
-  def test_options_are_frozen
-    assert_raises(TypeError, RuntimeError) do
-      cache.options[:no_block] = true
-    end
+    assert_equal false, cache.behaviors[:ketama_weighted]
   end
 
   def test_behaviors_are_set
     conn = cache.connection
 
-    refute conn.get_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK)
-    conn.set_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK, true)
-    assert conn.get_behavior(Memcached::Behaviors::MEMCACHED_BEHAVIOR_NO_BLOCK)
+    refute conn.get_behavior('no_block')
+    conn.set_behavior('no_block', true)
+    assert conn.get_behavior('no_block')
   end
 
   def test_initialize_with_invalid_server_strings
