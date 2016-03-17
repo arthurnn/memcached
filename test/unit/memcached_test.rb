@@ -260,7 +260,7 @@ class MemcachedTest # TODO
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     # Hit first server on retry
@@ -335,7 +335,7 @@ class MemcachedTest # TODO
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     assert_nothing_raised do
@@ -349,7 +349,7 @@ class MemcachedTest # TODO
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     assert_nothing_raised do
@@ -380,7 +380,7 @@ class MemcachedTest # TODO
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     sleep(2)
@@ -390,7 +390,7 @@ class MemcachedTest # TODO
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
   ensure
     socket.close
@@ -443,7 +443,7 @@ class MemcachedTest # TODO
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     # Hit first server on retry

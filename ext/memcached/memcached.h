@@ -1,5 +1,5 @@
-#ifndef _RUBY_MEMCACHED_RB
-#define _RUBY_MEMCACHED_RB
+#ifndef _RUBY_MEMCACHED_H
+#define _RUBY_MEMCACHED_H
 
 #include <ruby.h>
 #include <libmemcached/memcached.h>
@@ -10,7 +10,7 @@
 extern VALUE rb_mMemcached;
 void rb_memcached_error_check(memcached_return_t rc);
 
-void Init_memcached_rb_behavior(void);
+void Init_memcached_behavior(void);
 VALUE rb_connection_get_behavior(VALUE self, VALUE rb_behavior);
 VALUE rb_connection_set_behavior(VALUE self, VALUE rb_behavior, VALUE rb_value);
 

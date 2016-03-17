@@ -3,7 +3,7 @@ require 'rake/testtask'
 require 'rake/extensiontask'
 
 spec = Gem::Specification.load('memcached.gemspec')
-Rake::ExtensionTask.new('memcached_rb', spec) do |ext|
+Rake::ExtensionTask.new('memcached', spec) do |ext|
   ext.lib_dir = 'lib'
 end
 

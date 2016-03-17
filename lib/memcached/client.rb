@@ -13,36 +13,22 @@ module Memcached
       :hash => :fnv1_32,
       :distribution => :consistent_ketama,
       :ketama_weighted => true,
-      :retry_timeout => 60,
-      :timeout => 0.25,
-#      :poll_max_retries => 1, TODO: doesnt exist anymore
-      :connect_timeout => 0.25,
-      :hash_with_prefix_key => true,
-      :default_weight => 8,
-      :server_failure_limit => 2,
       :verify_key => true,
     }
 
-    attr_reader :servers, :options
+    attr_reader :config, :behaviors
 
-    def initialize(servers = nil, options = {})
-      @connection = nil
-      if servers
-        @servers = normalize_servers(servers)
-      else
-        @servers = [[:tcp, "localhost", 11211]]
-      end
-      @options = DEFAULTS.merge(options)
+    def initialize(config = "localhost:11211", options = {})
+      options = DEFAULTS.merge(options)
 
       @codec = Memcached::MarshalCodec
-      @default_ttl = @options.delete(:ttl) || 0
-      @prefix = @options.delete(:prefix_key)
+      @default_ttl = options.delete(:ttl) || 0
+      @prefix = options.delete(:prefix_key)
 
-      @default_weight = @options.delete(:default_weight) # TODO
-      @options.delete(:credentials) # TODO
-
-      @behaviors = normalize_behaviors(@options)
-      @options.freeze
+      @connection = nil
+      @behaviors = normalize_behaviors(options)
+      @config = create_config_str(config)
+      Memcached::Connection.check_config!(@config)
     end
 
     def flush
@@ -138,33 +124,33 @@ module Memcached
     end
 
     def connection
-      @connection ||= Memcached::Connection.new(@servers).tap do |conn|
+      @connection ||= Memcached::Connection.new(@config).tap do |conn|
         conn.set_prefix(@prefix)
         conn.set_behaviors(@behaviors)
       end
     end
 
     private
-    def normalize_servers(servers)
-      servers = [servers] if servers.is_a?(String)
+    def create_config_str(servers)
+      if servers.is_a?(String)
+        return servers if servers.include? '--'
+        servers = [servers]
+      end
+
+      raise ArgumentError unless servers.is_a?(Array)
+
       servers.map do |server|
         server = server.to_s
-        if server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
-          host, port, _weight = server.split(":")
-          # TODO weight
-          [:tcp, host, port.to_i]
-        elsif File.socket?(server)
-          # TODO weight, default = 8
-          [:socket, server]
+        hostname = server.gsub(/\/\?\d+$/, '')
+
+        if hostname =~ /^[\w\.-]+(:\d{1,5})?$/
+          "--SERVER=#{server}"
+        elsif File.socket?(hostname)
+          "--SOCKET=\"#{server}\""
         else
-          raise
+          raise ArgumentError, "not a valid server address: #{server}"
         end
-      end
-    rescue
-      raise ArgumentError, <<-MSG
-      Servers must be either in the format 'host:port[:weight]' (e.g., 'localhost:11211' or 'localhost:11211:10') for a network server, or a valid path to a Unix domain socket (e.g., /var/run/memcached).
-But it was #{servers.inspect}.
-          MSG
+      end.join(' ')
     end
 
     def normalize_behaviors(options)
