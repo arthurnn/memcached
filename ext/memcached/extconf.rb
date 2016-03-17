@@ -14,6 +14,7 @@ BSD = RbConfig::CONFIG['host_os'].downcase =~ /bsd/
 $CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "").gsub("-Werror=declaration-after-statement", "")
 $CFLAGS << " -Os"
 $CFLAGS << " -std=gnu99" if SOLARIS_32
+$CFLAGS << " -std=c++11"
 $CFLAGS << " -I/usr/local/include" if BSD
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
 $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{RbConfig::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
