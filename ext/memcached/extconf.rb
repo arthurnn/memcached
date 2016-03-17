@@ -43,7 +43,7 @@ def compile_libmemcached
 
     ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
     run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
-    run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
+    run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --with-pic --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
     run("#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' 2>&1")
     run("#{GMAKE_CMD} install 2>&1")
 
