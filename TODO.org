@@ -1,9 +1,7 @@
 * Primary
 
-** TODO CAS
 ** TODO embed libmemcached-1.0.18
 ** TODO add shim for compatibility with version 1
-** TODO Add stats operation
 ** TODO Add login support and tests for it
 ** TODO Update README
 
@@ -12,6 +10,6 @@
 
 ** TODO add AS::Cache wrappper instead of Rails class
 ** TODO Add resiliency around the client
-** TODO Return flags on get, so we dont need to pass a raw: true
 ** TODO Implement connection pool
+** TODO CAS
 ** TODO add a better pipeline API
