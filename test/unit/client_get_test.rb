@@ -15,12 +15,12 @@ class ClientGetTest < BaseTest
     assert_equal @value, binary_protocol_cache.get(key)
   end
 
-#  def test_udp_get
-#    @udp_cache.set(key, @value)
-#    assert_raises(Memcached::ActionNotSupported) do
-#      @udp_cache.get(key)
-#    end
-#  end
+  def test_udp_get
+    udp_cache.set(key, @value)
+    assert_raises(Memcached::NotSupported) do
+      udp_cache.get(key)
+    end
+  end
 
   def test_get_nil
     cache.set key, nil, ttl:  0

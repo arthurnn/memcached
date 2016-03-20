@@ -20,6 +20,7 @@ class BaseTest < Minitest::Test
     @marshalled_value = Marshal.dump(@value)
     @cache = nil
     @binary_protocol_cache = nil
+    @udp_cache = nil
   end
 
   def teardown
@@ -43,6 +44,17 @@ class BaseTest < Minitest::Test
       :binary_protocol => true
     }
     @binary_protocol_cache = Memcached::Client.new(@servers, binary_protocol_options)
+  end
+
+  def udp_cache
+    return @udp_cache if @udp_cache
+    @udp_options = {
+      :prefix_key => @prefix_key,
+      :hash => :default,
+      :use_udp => true,
+      :distribution => :modula
+    }
+    @udp_cache = Memcached::Client.new(@udp_servers, @udp_options)
   end
 
   def key
