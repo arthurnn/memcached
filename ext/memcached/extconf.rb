@@ -35,6 +35,7 @@ def compile_libmemcached
     run("./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --with-pic --without-memcached --disable-shared --disable-utils --disable-dependency-tracking 2>&1", "Configuring libmemcached.")
     run("#{GMAKE_CMD} clean 2>&1")
     run("#{GMAKE_CMD} CXXFLAGS='-fPIC -std=c++0x -lstdc++' 2>&1")
+    run("#{GMAKE_CMD} install 2>&1")
 
     pcfile = File.join(LIBMEMCACHED_DIR, "build", "lib", "pkgconfig", "libmemcached.pc")
     $LDFLAGS << " -lsasl2 " + `pkg-config --libs --static #{pcfile}`.strip
