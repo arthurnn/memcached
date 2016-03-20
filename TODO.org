@@ -1,14 +1,9 @@
 * Primary
 
-** DONE Remove SWIG and modify libmemcached to accept and return Ruby objects directly
-** DONE basic operations
 ** TODO CAS
 ** TODO embed libmemcached-1.0.18
 ** TODO add shim for compatibility with version 1
-** TODO test udp operations
 ** TODO Add stats operation
-** DONE Add clone operation
-** DONE Add reset operation
 ** TODO Add login support and tests for it
 ** TODO Update README
 
