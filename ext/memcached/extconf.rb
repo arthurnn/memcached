@@ -18,6 +18,7 @@ $CFLAGS << " -std=c++0x"
 $CFLAGS << " -I/usr/local/include" if BSD
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
 $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{RbConfig::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
+$CXXFLAGS = "#{RbConfig::CONFIG['CXXFLAGS']} -std=gnu++98"
 $CC = "CC=#{RbConfig::MAKEFILE_CONFIG["CC"].inspect}"
 
 # JRuby's default configure options can't build libmemcached properly
@@ -44,7 +45,7 @@ def compile_libmemcached
     ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
     run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
     run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --with-pic --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
-    run("#{GMAKE_CMD} 2>&1")
+    run("#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' 2>&1")
     run("#{GMAKE_CMD} install 2>&1")
 
     pcfile = File.join(LIBMEMCACHED_DIR, "build", "lib", "pkgconfig", "libmemcached.pc")
