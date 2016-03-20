@@ -22,7 +22,6 @@ class ClientAddTest < BaseTest
 
   def test_unmarshalled_add
     cache.add key, @marshalled_value, raw: true
-    assert_equal @marshalled_value, cache.get(key, raw: true)
-    assert_equal @value, cache.get(key)
+    assert_equal @marshalled_value, cache.get(key)
   end
 end

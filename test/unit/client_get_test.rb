@@ -152,11 +152,11 @@ class ClientGetTest < BaseTest
     cache.set "#{key}_1", 1
     cache.set "#{key}_2", "2", raw: true
 
-    assert cache.get_multi(["#{key}_1", "#{key}_2"], raw: true)
+    values = {"#{key}_1" => Marshal.dump(1), "#{key}_2" => "2"}
+    assert_equal(values, cache.get_multi(["#{key}_1", "#{key}_2"], raw: true), "should return raw values from memcached, apart of the flags")
 
-    assert_raises(ArgumentError, TypeError) do
-      cache.get_multi(["#{key}_1", "#{key}_2"])
-    end
+    values = {"#{key}_1" => 1, "#{key}_2" => "2"}
+    assert_equal(values, cache.get_multi(["#{key}_1", "#{key}_2"]), "should use the flags to decode the right values")
   end
 
 #  def test_random_distribution_is_statistically_random

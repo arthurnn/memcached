@@ -222,8 +222,7 @@ rb_connection_get(VALUE self, VALUE rb_key)
 	rb_val = rb_str_new(ret, ret_len);
 	free(ret);
 
-	/* TODO: return the flags too, maybe */
-	return rb_val;
+	return rb_ary_new3(2, rb_val, INT2FIX(ret_flags));
 }
 
 memcached_return_t
@@ -236,8 +235,9 @@ rb_connection__mget_callback(const memcached_st *mc, memcached_result_st *result
 	VALUE rb_value = rb_str_new(
 			memcached_result_value(result),
 			memcached_result_length(result));
+	uint32_t ret_flags = memcached_result_flags(result);
 
-	rb_hash_aset(rb_result, rb_key, rb_value);
+	rb_hash_aset(rb_result, rb_key, rb_ary_new3(2, rb_value, INT2FIX(ret_flags)));
 	return MEMCACHED_SUCCESS;
 }
 

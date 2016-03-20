@@ -1,4 +1,3 @@
-require 'memcached/marshal_codec'
 require 'memcached/behaviors'
 
 module Memcached
@@ -7,7 +6,10 @@ module Memcached
   end
 
   class Client
-    FLAGS = 0x0
+    FLAGS = 0b0
+    FLAG_ENCODED = 0b1
+
+    require 'memcached/marshal_codec'
 
     DEFAULTS = {
       :hash => :fnv1_32,
@@ -42,19 +44,24 @@ module Memcached
       connection.set(key, value, ttl, flags)
     end
 
-    def get(key, raw: false)
-      value = connection.get(key)
+    def get(key, raw: nil)
+      value, flags = connection.get(key)
       return nil unless value
-      value = @codec.decode(key, value, FLAGS) unless raw
+      if raw != true
+        value = @codec.decode(key, value, flags)
+      end
+
       value
     end
 
-    def get_multi(keys, raw: false)
+    def get_multi(keys, raw: nil)
       keys = keys.compact
       hash = connection.get_multi(keys)
-      unless raw
-        hash.each do |key, value|
-          hash[key] = @codec.decode(key, value, FLAGS)
+      hash.each do |key, (value, flags)|
+        if raw != true
+          hash[key] = @codec.decode(key, value, flags)
+        else
+          hash[key] = value
         end
       end
       hash
