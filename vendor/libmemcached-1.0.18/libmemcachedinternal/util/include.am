@@ -1,0 +1,17 @@
+# vim:ft=automake
+# included from Top Level Makefile.am
+# All paths should be given relative to the root
+
+# This noinst lib contains things we want to be ABI private but still want to
+# either use in client programs or be able to test in test cases These symbols
+# will not be exposed in the shipped .so
+noinst_LTLIBRARIES+= libmemcachedinternal/libmemcachedutilinternal.la
+
+libmemcachedinternal_libmemcachedutilinternal_la_SOURCES= $(libmemcached_libmemcachedutil_la_SOURCES)
+libmemcachedinternal_libmemcachedutilinternal_la_CXXFLAGS= \
+							   ${AM_CXXFLAGS} \
+							   ${NO_CONVERSION} \
+							   -DBUILDING_LIBMEMCACHEDINTERNAL
+libmemcachedinternal_libmemcachedutilinternal_la_CXXFLAGS+= @PTHREAD_CFLAGS@
+libmemcachedinternal_libmemcachedutilinternal_la_LIBADD= libmemcachedinternal/libmemcachedinternal.la
+libmemcachedinternal_libmemcachedutilinternal_la_LIBADD+= @PTHREAD_LIBS@

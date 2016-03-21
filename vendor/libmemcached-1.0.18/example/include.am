@@ -1,0 +1,26 @@
+# vim:ft=automake
+# included from Top Level Makefile.am
+# All paths should be given relative to the root
+
+if HAVE_LIBEVENT
+noinst_PROGRAMS+= example/memcached_light
+endif
+
+noinst_HEADERS+= example/byteorder.h
+noinst_HEADERS+= example/memcached_light.h
+noinst_HEADERS+= example/storage.h
+
+example_memcached_light_SOURCES=
+example_memcached_light_LDADD= 
+example_memcached_light_LDFLAGS=
+
+example_memcached_light_SOURCES+= example/byteorder.cc
+example_memcached_light_SOURCES+= example/interface_v0.cc
+example_memcached_light_SOURCES+= example/interface_v1.cc
+example_memcached_light_SOURCES+= example/memcached_light.cc
+example_memcached_light_SOURCES+= example/storage.cc
+example_memcached_light_SOURCES+= util/daemon.cc
+example_memcached_light_SOURCES+= util/pidfile.cc
+
+example_memcached_light_LDADD+= libmemcached/libmemcachedprotocol.la
+example_memcached_light_LDADD+= @LIBEVENT_LIB@

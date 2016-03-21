@@ -1,0 +1,187 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "MEMCACHED_MGET" "3" "February 09, 2014" "1.0.18" "libmemcached"
+.SH NAME
+memcached_mget \- Retrieving data from the server
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.SH SYNOPSIS
+.sp
+#include <libmemcached/memcached.h>
+.INDENT 0.0
+.TP
+.B memcached_result_st * memcached_fetch_result(memcached_st\fI\ *ptr\fP, memcached_result_st\fI\ *result\fP, memcached_return_t\fI\ *error\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B char * memcached_get(memcached_st\fI\ *ptr\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, size_t\fI\ *value_length\fP, uint32_t\fI\ *flags\fP, memcached_return_t\fI\ *error\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_mget(memcached_st\fI\ *ptr\fP, const char * const\fI\ *keys\fP, const size_t\fI\ *key_length\fP, size_t\fI\ number_of_keys\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B char * memcached_get_by_key(memcached_st\fI\ *ptr\fP, const char\fI\ *group_key\fP, size_t\fI\ group_key_length\fP, const char\fI\ *key\fP, size_t\fI\ key_length\fP, size_t\fI\ *value_length\fP, uint32_t\fI\ *flags\fP, memcached_return_t\fI\ *error\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_mget_by_key(memcached_st\fI\ *ptr\fP, const char\fI\ *group_key\fP, size_t\fI\ group_key_length\fP, const char * const\fI\ *keys\fP, const size_t\fI\ *key_length\fP, size_t\fI\ number_of_keys\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_fetch_execute(memcached_st\fI\ *ptr\fP, \fI\%memcached_execute_fn\fP\fI\ *callback\fP, void\fI\ *context\fP, uint32_t\fI\ number_of_callbacks\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_mget_execute(memcached_st\fI\ *ptr\fP, const char * const\fI\ *keys\fP, const size_t\fI\ *key_length\fP, size_t\fI\ number_of_keys\fP, \fI\%memcached_execute_fn\fP\fI\ *callback\fP, void\fI\ *context\fP, uint32_t\fI\ number_of_callbacks\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t memcached_mget_execute_by_key(memcached_st\fI\ *ptr\fP, const char\fI\ *group_key\fP, size_t\fI\ group_key_length\fP, const char * const\fI\ *keys\fP, const size_t\fI\ *key_length\fP, size_t\fI\ number_of_keys\fP, \fI\%memcached_execute_fn\fP\fI\ *callback\fP, void\fI\ *context\fP, uint32_t\fI\ number_of_callbacks\fP)
+.UNINDENT
+.INDENT 0.0
+.TP
+.B memcached_return_t (*memcached_execute_fn)(const memcached_st\fI\ *ptr\fP, memcached_result_st\fI\ *result\fP, void\fI\ *context\fP)
+.UNINDENT
+.sp
+Compile and link with \-lmemcached
+.SH DESCRIPTION
+.sp
+\fI\%memcached_get()\fP is used to fetch an individual value from the server.
+You must pass in a key and its length to fetch the object. You must supply
+three pointer variables which will give you the state of the returned
+object.  A \fBuint32_t\fP pointer to contain whatever flags you stored with the value, a \fBsize_t\fP pointer which will be filled with size of of
+the object, and a \fBmemcached_return_t\fP pointer to hold any error. The
+object will be returned upon success and NULL will be returned on failure. Any
+object returned by \fI\%memcached_get()\fP must be released by the caller
+application.
+.sp
+\fI\%memcached_mget()\fP is used to select multiple keys at once. For
+multiple key operations it is always faster to use this function. This function always works asynchronously.
+.sp
+To retrieve data after a successful execution of \fI\%memcached_mget()\fP, you will need to
+call \fI\%memcached_fetch_result()\fP\&.  You should continue to call this function until
+it returns a NULL (i.e. no more values). If you need to quit in the middle of a
+\fI\%memcached_mget()\fP call, you can execute a \fBmemcached_quit()\fP, those this is not required.
+.sp
+\fI\%memcached_fetch_result()\fP is used to fetch an individual value from the server. \fI\%memcached_mget()\fP must always be called before using this method.
+You must pass in a key and its length to fetch the object. You must supply
+three pointer variables which will give you the state of the returned
+object.  A \fBuint32_t\fP pointer to contain whatever flags you stored with the value, a \fBsize_t\fP pointer which will be filled with size of of the
+object, and a \fBmemcached_return_t\fP pointer to hold any error. The
+object will be returned upon success and NULL will be returned on failure. \fBMEMCACHED_END\fP is returned by the *error value when all objects that have been found are returned. The final value upon \fBMEMCACHED_END\fP is null.
+.sp
+\fI\%memcached_fetch_result()\fP is used to return a \fBmemcached_result_st\fP structure from a memcached server. The result object is forward compatible
+with changes to the server. For more information please refer to the
+\fBmemcached_result_st\fP help. This function will dynamically allocate a
+result structure for you if you do not pass one to the function.
+.sp
+\fI\%memcached_fetch_execute()\fP is a callback function for result sets.
+Instead of returning the results to you for processing, it passes each of the
+result sets to the list of functions you provide. It passes to the function
+a \fBmemcached_st\fP that can be cloned for use in the called
+function (it can not be used directly). It also passes a result set which does
+not need to be freed. Finally it passes a "context". This is just a pointer to
+a memory reference you supply the calling function. Currently only one value
+is being passed to each function call. In the future there will be an option
+to allow this to be an array.
+.sp
+\fI\%memcached_mget_execute()\fP and \fI\%memcached_mget_execute_by_key()\fP
+is similar to \fI\%memcached_mget()\fP, but it may trigger the supplied
+callbacks with result sets while sending out the queries. If you try to
+perform a really large multiget with \fI\%memcached_mget()\fP you may
+encounter a deadlock in the OS kernel (it will fail to write data to the
+socket because the input buffer is full). \fI\%memcached_mget_execute()\fP
+solves this problem by processing some of the results before continuing
+sending out requests. Please note that this function is only available in
+the binary protocol.
+.sp
+\fI\%memcached_get_by_key()\fP and \fI\%memcached_mget_by_key()\fP behave
+in a similar nature as \fI\%memcached_get()\fP and \fI\%memcached_mget()\fP\&.
+The difference is that they take a master key that is used for determining
+which server an object was stored if key partitioning was used for storage.
+.sp
+All of the above functions are not tested when the
+\fBMEMCACHED_BEHAVIOR_USE_UDP\fP has been set. Executing any of these
+functions with this behavior on will result in \fBMEMCACHED_NOT_SUPPORTED\fP being returned, or for those functions which do not return a \fBmemcached_return_t\fP, the error function parameter will be set to \fBMEMCACHED_NOT_SUPPORTED\fP\&.
+.SH RETURN
+.sp
+All objects retrieved via \fI\%memcached_get()\fP or \fI\%memcached_get_by_key()\fP must be freed with \fIfree(3)\fP\&.
+.sp
+\fI\%memcached_get()\fP will return NULL on
+error. You must look at the value of error to determine what the actual error
+was.
+.sp
+\fI\%memcached_fetch_execute()\fP return \fBMEMCACHED_SUCCESS\fP if
+all keys were successful. \fBMEMCACHED_NOTFOUND\fP will be return if no
+keys at all were found.
+.sp
+\fI\%memcached_fetch_result()\fP sets error
+to \fBMEMCACHED_END\fP upon successful conclusion.
+\fBMEMCACHED_NOTFOUND\fP will be return if no keys at all were found.
+.SH HOME
+.sp
+To find out more information please check:
+\fI\%http://libmemcached.org/\fP
+.SH SEE ALSO
+.sp
+\fImemcached(1)\fP \fIlibmemcached(3)\fP \fImemcached_strerror(3)\fP
+.SH AUTHOR
+Brian Aker
+.SH COPYRIGHT
+2011-2013, Brian Aker DataDifferential, http://datadifferential.com/
+.\" Generated by docutils manpage writer.
+.

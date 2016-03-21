@@ -11,13 +11,13 @@ LIBMEMCACHED_DIR = Dir.glob(File.join(HERE, '..', '..', 'vendor',"libmemcached-*
 SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
 BSD = RbConfig::CONFIG['host_os'].downcase =~ /bsd/
 
-$CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "").gsub("-Werror=declaration-after-statement", "")
+$CFLAGS = "#{RbConfig::CONFIG['CFLAGS']} #{$CFLAGS}".gsub("$(cflags)", "").gsub("-fno-common", "").gsub("-Wdeclaration-after-statement", "")
 $CFLAGS << " -Os"
 $CFLAGS << " -std=gnu99" if SOLARIS_32
 $CFLAGS << " -I/usr/local/include" if BSD
 $EXTRA_CONF = " --disable-64bit" if SOLARIS_32
 $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{RbConfig::CONFIG['libdir']}".gsub("$(ldflags)", "").gsub("-fno-common", "")
-$CXXFLAGS = "#{RbConfig::CONFIG['CXXFLAGS']} -std=gnu++98"
+$CXXFLAGS = "#{RbConfig::CONFIG['CXXFLAGS']} -fPIC"
 $CC = "CC=#{RbConfig::MAKEFILE_CONFIG["CC"].inspect}"
 
 # JRuby's default configure options can't build libmemcached properly
@@ -25,8 +25,6 @@ LIBM_CFLAGS = defined?(JRUBY_VERSION) ? "-fPIC -g -O2" : $CFLAGS
 LIBM_LDFLAGS = defined?(JRUBY_VERSION) ? "-fPIC -lsasl2 -lm" : $LDFLAGS
 
 GMAKE_CMD = RbConfig::CONFIG['host_os'].downcase =~ /bsd|solaris/ ? "gmake" : "make"
-TAR_CMD = SOLARIS_32 ? 'gtar' : 'tar'
-PATCH_CMD = SOLARIS_32 ? 'gpatch' : 'patch'
 
 if ENV['DEBUG']
   puts "Setting debug flags."
@@ -34,7 +32,7 @@ if ENV['DEBUG']
   $EXTRA_CONF = ""
 end
 
-def check_libmemcached
+def compile_libmemcached
   return if ENV["EXTERNAL_LIB"]
 
   Dir.chdir(LIBMEMCACHED_DIR) do
@@ -43,10 +41,11 @@ def check_libmemcached
 
     ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
     run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
-    run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
+    run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --with-pic --without-memcached --disable-shared --disable-util\
+s --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
+    run("#{GMAKE_CMD} clean 2>&1")
     run("#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' 2>&1")
     run("#{GMAKE_CMD} install 2>&1")
-
 
     pcfile = File.join(LIBMEMCACHED_DIR, "build", "lib", "pkgconfig", "libmemcached.pc")
     $LDFLAGS << " -lsasl2 " + `pkg-config --libs --static #{pcfile}`.strip
@@ -61,9 +60,9 @@ def run(cmd, reason = nil)
   raise "'#{cmd}' failed" unless system(cmd)
 end
 
-## TODO: Disable vendored version for now
-#check_libmemcached
-pkg_config 'libmemcached-1.0.18'
+compile_libmemcached
+
+$libs = append_library($libs, "stdc++")
 
 unless have_library 'memcached' and have_header 'libmemcached/memcached.h'
   abort "ERROR: Failed to build libmemcached"
