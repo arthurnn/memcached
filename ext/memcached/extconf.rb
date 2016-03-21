@@ -39,8 +39,8 @@ def compile_libmemcached
     Dir.mkdir("build") if !Dir.exists?("build")
     build_folder = File.join(LIBMEMCACHED_DIR, "build")
 
-#    ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
-#    run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
+    ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
+    run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
     run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --with-pic --without-memcached --disable-shared --disable-util\
 s --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
     run("#{GMAKE_CMD} clean 2>&1")
