@@ -1,14 +1,44 @@
-FROM ruby:2.2.4
-ENV LC_ALL C
+FROM ubuntu:precise
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update -qq && apt-get install -y build-essential libsasl2-dev emacs
+# Install packages for building ruby
+RUN apt-get update
+RUN apt-get install -y --force-yes build-essential pkg-config curl git
+RUN apt-get install -y --force-yes zlib1g-dev libssl-dev libreadline-dev libyaml-dev libxml2-dev libxslt-dev
+RUN apt-get install -y libsasl2-dev memcached
+RUN apt-get clean
 
-ENV APP_HOME /usr/src
+# Setup user
+RUN useradd -ms /bin/bash runner
+
+# Install rbenv and ruby-build
+RUN git clone https://github.com/sstephenson/rbenv.git /home/runner/.rbenv
+RUN git clone https://github.com/sstephenson/ruby-build.git /home/runner/.rbenv/plugins/ruby-build
+RUN ["/bin/bash", "-c", "/home/runner/.rbenv/plugins/ruby-build/install.sh"]
+RUN echo 'eval "$(rbenv init -)"' >> /home/runner/.bashrc
+RUN echo 'eval "$(rbenv init -)"' >> /etc/profile
+
+RUN chown -R runner /home/runner
+USER runner
+
+ENV PATH /home/runner/.rbenv/bin:$PATH
+
+# install ruby
+RUN ["/bin/bash", "-c", "rbenv install 2.1.7"]
+RUN ["/bin/bash", "-c", "rbenv global 2.1.7"]
+ENV PATH /home/runner/.rbenv/shims:$PATH
+
+ENV APP_HOME /home/runner/src
 
 WORKDIR $APP_HOME
 ADD . $APP_HOME
-RUN bundle install --without benchmark
-RUN bundle exec ruby -Ilib:test test/setup.rb
 
-CMD bundle exec rake
+USER root
+RUN chown -R runner /home/runner
+USER runner
+
+RUN gem install bundler
+RUN bundle install
+
+
+CMD bundle exec ruby -Ilib:test test/setup.rb && bundle exec rake
