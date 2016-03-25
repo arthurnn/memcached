@@ -483,6 +483,17 @@ rb_connection_touch(VALUE self, VALUE rb_key, VALUE rb_ttl)
 }
 
 static VALUE
+rb_set_credentials(VALUE self, VALUE rb_username, VALUE rb_password)
+{
+	memcached_st *mc;
+	memcached_return_t rc;
+
+	UnwrapMemcached(self, mc);
+	rc = memcached_set_sasl_auth_data(mc, RSTRING_PTR(rb_username), RSTRING_PTR(rb_password));
+	rb_memcached_return(rc);
+}
+
+static VALUE
 rb_connection_close(VALUE self)
 {
 	memcached_st *mc;
@@ -530,6 +541,7 @@ void Init_memcached(void)
 	rb_define_method(rb_cConnection, "set_prefix", rb_connection_set_prefix, 1);
 	rb_define_method(rb_cConnection, "get_prefix", rb_connection_get_prefix, 0);
 	rb_define_method(rb_cConnection, "touch", rb_connection_touch, 2);
+	rb_define_method(rb_cConnection, "set_credentials", rb_set_credentials, 2);
 	rb_define_method(rb_cConnection, "close", rb_connection_close, 0);
 
 	id_tcp = rb_intern("tcp");

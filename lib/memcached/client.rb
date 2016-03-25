@@ -26,6 +26,12 @@ module Memcached
       @codec = Memcached::MarshalCodec
       @default_ttl = options.delete(:ttl) || 0
       @prefix = options.delete(:prefix_key)
+      @credentials = options.delete(:credentials)
+      if !@credentials && ENV["MEMCACHE_USERNAME"] && ENV["MEMCACHE_PASSWORD"]
+        @credentials = [ENV["MEMCACHE_USERNAME"], ENV["MEMCACHE_PASSWORD"]]
+      end
+      # SASL requires binary protocol
+      options[:binary_protocol] = true if @credentials
 
       @connection = nil
       @behaviors = normalize_behaviors(options)
@@ -134,6 +140,7 @@ module Memcached
       @connection ||= Memcached::Connection.new(@config).tap do |conn|
         conn.set_prefix(@prefix)
         conn.set_behaviors(@behaviors)
+        conn.set_credentials(*@credentials) if @credentials
       end
     end
 
