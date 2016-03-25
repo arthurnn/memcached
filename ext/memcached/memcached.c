@@ -489,6 +489,9 @@ rb_set_credentials(VALUE self, VALUE rb_username, VALUE rb_password)
 	memcached_return_t rc;
 
 	UnwrapMemcached(self, mc);
+	Check_Type(rb_username, T_STRING);
+	Check_Type(rb_password, T_STRING);
+
 	rc = memcached_set_sasl_auth_data(mc, RSTRING_PTR(rb_username), RSTRING_PTR(rb_password));
 	rb_memcached_return(rc);
 }
