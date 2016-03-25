@@ -1,7 +1,6 @@
 * Primary
 
 ** TODO add shim for compatibility with version 1
-** TODO Add login support and tests for it
 ** TODO Update README
 
 
