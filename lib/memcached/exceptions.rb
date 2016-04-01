@@ -1,4 +1,3 @@
-
 class Memcached
 
 =begin rdoc
@@ -48,6 +47,11 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
 =end
   class Error < RuntimeError
     attr_accessor :no_backtrace
+
+    def initialize(*args)
+      @no_backtrace = nil
+      super(*args)
+    end
 
     def set_backtrace(*args)
       @no_backtrace ? [] : super
