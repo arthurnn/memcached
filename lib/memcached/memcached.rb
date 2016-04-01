@@ -634,8 +634,8 @@ But it was #{server}.
   # FIXME Is this still necessary with cached_errno?
   def detect_failure
     time = Time.now
-    server = server_structs.detect do |server|
-      server.next_retry > time
+    server = server_structs.detect do |server_struct|
+      server_struct.next_retry > time
     end
     inspect_server(server) if server
   end
@@ -697,8 +697,8 @@ But it was #{server}.
       value, key, flags, ret = Lib.memcached_fetch_rvalue(@struct)
     end
     if decode
-      hash.each do |key, value_and_flags|
-        hash[key] = @codec.decode(key, *value_and_flags)
+      hash.each do |inner_key, value_and_flags|
+        hash[inner_key] = @codec.decode(inner_key, *value_and_flags)
       end
     end
     [hash, flags_and_cas]
