@@ -197,7 +197,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
           args = [@struct, server, options[:default_weight].to_i]
           Lib.memcached_server_add_unix_socket_with_weight(*args)
         # Network
-        elsif server.is_a?(String) and server =~ /^[\w\d\.-]+(:\d{1,5}){0,2}$/
+        elsif server.is_a?(String) and server =~ /^[\w\.-]+(:\d{1,5}){0,2}$/
           host, port, weight = server.split(":")
           args = [@struct, host, port.to_i, (weight || options[:default_weight]).to_i]
           if options[:use_udp]
