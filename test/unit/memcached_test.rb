@@ -993,21 +993,21 @@ class MemcachedTest < Test::Unit::TestCase
     @cache.get key, @value
     assert false # Never reached
   rescue Memcached::ABadKeyWasProvidedOrCharactersOutOfRange => e
-    assert_match /#{key}/, e.message
+    assert_match(/#{key}/, e.message)
   end
 
   def test_server_error_message
     @cache.set key, "I'm big" * 1000000
     assert false # Never reached
   rescue Memcached::ServerError => e
-    assert_match /^"object too large for cache". Key/, e.message
+    assert_match(/^"object too large for cache". Key/, e.message)
   end
 
   def test_errno_message
     Rlibmemcached::MemcachedServerSt.any_instance.stubs("cached_errno").returns(1)
     @cache.send(:check_return_code, Rlibmemcached::MEMCACHED_ERRNO, key)
   rescue Memcached::SystemError => e
-    assert_match /^Errno 1: "Operation not permitted". Key/, e.message
+    assert_match(/^Errno 1: "Operation not permitted". Key/, e.message)
   end
 
   # Stats
@@ -1160,7 +1160,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     # Hit first server on retry
@@ -1235,7 +1235,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     assert_nothing_raised do
@@ -1249,7 +1249,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     assert_nothing_raised do
@@ -1280,7 +1280,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     sleep(2)
@@ -1290,7 +1290,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
   ensure
     socket.close
@@ -1343,7 +1343,7 @@ class MemcachedTest < Test::Unit::TestCase
       cache.get(key2)
     rescue => e
       assert_equal Memcached::ServerIsMarkedDead, e.class
-      assert_match /localhost:43041/, e.message
+      assert_match(/localhost:43041/, e.message)
     end
 
     # Hit first server on retry
