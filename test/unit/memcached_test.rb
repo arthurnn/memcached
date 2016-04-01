@@ -274,7 +274,7 @@ class MemcachedTest < Test::Unit::TestCase
   def test_get_missing
     @cache.delete key rescue nil
     assert_raise(Memcached::NotFound) do
-      result = @cache.get key
+      @cache.get key
     end
   end
 
@@ -292,21 +292,21 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new("localhost:43047:1", :timeout => 0.5, :exception_retry_limit => 0)
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.001, :rcv_timeout => 0.5, :exception_retry_limit => 0)
     assert 0.49 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43047:1", :poll_timeout => 0.25, :rcv_timeout => 0.25, :exception_retry_limit => 0)
     assert 0.51 > (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
   ensure
@@ -318,14 +318,14 @@ class MemcachedTest < Test::Unit::TestCase
     cache = Memcached.new("localhost:43048:1", :no_block => true, :timeout => 0.25, :exception_retry_limit => 0)
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
     cache = Memcached.new("localhost:43048:1", :no_block => true, :poll_timeout => 0.25, :rcv_timeout => 0.001, :exception_retry_limit => 0)
     assert 0.24 < (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
@@ -336,7 +336,7 @@ class MemcachedTest < Test::Unit::TestCase
     )
     assert 0.24 > (Benchmark.measure do
       assert_raise(Memcached::ATimeoutOccurred) do
-        result = cache.get key
+        cache.get key
       end
     end).real
 
@@ -946,7 +946,7 @@ class MemcachedTest < Test::Unit::TestCase
     end
 
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-      response = @cache.get([key])
+      @cache.get([key])
     end
   end
 
@@ -960,7 +960,7 @@ class MemcachedTest < Test::Unit::TestCase
     end
 
     assert_raises(Memcached::ABadKeyWasProvidedOrCharactersOutOfRange) do
-      response = @cache.get([key])
+      @cache.get([key])
     end
   end
 
