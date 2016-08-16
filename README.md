@@ -132,7 +132,7 @@ Memcached::Rails.
 
 ## Reporting problems
 
-The support forum is [here](http://github.com/evan/memcached/issues).
+The support forum is [here](http://github.com/arthurnn/memcached/issues).
 
 Patches and contributions are very welcome. Please note that contributors are
 required to assign copyright for their additions to Cloudburst, LLC.
@@ -140,5 +140,5 @@ required to assign copyright for their additions to Cloudburst, LLC.
 ## Further resources
 
 *   [Memcached wiki](https://github.com/memcached/memcached/wiki)
-*   [Libmemcached homepage](libmemcached.org)
+*   [Libmemcached homepage](http://libmemcached.org)
 
