@@ -198,4 +198,26 @@ class ClientTest < BaseTest
     cache.reset
     refute_equal cache.connection, con
   end
+
+  # Namespace
+
+  def test_namespace
+    cache.namespace = nil
+    cache.set('ns:key', @value)
+
+    cache.namespace = 'ns:'
+
+    assert_equal 'ns:', cache.namespace
+    assert_equal @value, cache.get('key')
+  end
+
+  def test_namespace_after_reset
+    cache.namespace = 'ns:'
+    cache.set('key', @value)
+
+    cache.reset
+
+    assert_equal 'ns:', cache.namespace
+    assert_equal @value, cache.get('key')
+  end
 end

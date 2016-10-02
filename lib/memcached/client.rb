@@ -112,11 +112,12 @@ module Memcached
     end
 
     def namespace
-      connection.get_prefix
+      @prefix
     end
 
     def namespace=(value)
       connection.set_prefix(value)
+      @prefix = value
     end
 
     def touch(key, ttl = @default_ttl)
