@@ -14,7 +14,7 @@ static memcached_return set_hostinfo(memcached_server_st *server)
 
   memset(&hints, 0, sizeof(hints));
 
- // hints.ai_family= AF_INET;
+  hints.ai_family= AF_INET;
   if (server->type == MEMCACHED_CONNECTION_UDP)
   {
     hints.ai_protocol= IPPROTO_UDP;

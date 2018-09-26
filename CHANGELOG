@@ -1,3 +1,5 @@
+v1.8.1. Disable ipv6 queries (shivnagarajan).
+
 v1.8.0. Add support for multi-entry CAS (fbogsany).
 	Make rails client .delete method more consistent with other APIs
 
