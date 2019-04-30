@@ -32,8 +32,12 @@ if ENV['DEBUG']
   $EXTRA_CONF = ""
 end
 
+def using_system_libraries?
+  arg_config('--use-system-libraries', !!ENV['EXTERNAL_LIB'])
+end
+
 def compile_libmemcached
-  return if ENV["EXTERNAL_LIB"]
+  return if using_system_libraries?
 
   Dir.chdir(LIBMEMCACHED_DIR) do
     Dir.mkdir("build") if !Dir.exists?("build")
