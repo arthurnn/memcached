@@ -2,6 +2,7 @@ require 'memcached'
 
 require 'ostruct'
 require 'securerandom'
+require 'socket'
 
 require 'minitest/autorun'
 require 'mocha/mini_test'
