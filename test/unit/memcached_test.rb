@@ -114,7 +114,7 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_options_are_frozen
-    assert_raise(TypeError, RuntimeError) do
+    assert_raise(FrozenError) do
       @cache.options[:no_block] = true
     end
   end
