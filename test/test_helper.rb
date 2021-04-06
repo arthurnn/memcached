@@ -2,9 +2,10 @@ require 'memcached'
 
 require 'ostruct'
 require 'securerandom'
+require 'socket'
 
 require 'minitest/autorun'
-require 'mocha/mini_test'
+require 'mocha/minitest'
 
 class BaseTest < Minitest::Test
   UNIX_SOCKET_NAME = File.join('/tmp', 'memcached')

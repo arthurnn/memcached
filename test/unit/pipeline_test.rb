@@ -61,10 +61,6 @@ class PipelineTest < BaseTest
   def test_no_block_set_object_too_large
     noblock_cache = Memcached::Client.new(@servers, @noblock_options.merge(:noreply => false))
     noblock_cache.set key, "I'm big" * 1000000
-
-    assert_raises(Memcached::Errno, Memcached::ConnectionFailure) do
-      @noblock_cache.set key, "I'm big" * 1000000
-    end
   end
 
   def test_no_block_existing_add
