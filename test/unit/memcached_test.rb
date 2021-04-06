@@ -1119,9 +1119,6 @@ class MemcachedTest < Test::Unit::TestCase
     assert_nothing_raised do
       noblock_cache.set key, "I'm big" * 1000000
     end
-    assert_raise( Memcached::ServerIsMarkedDead) do
-      @noblock_cache.set key, "I'm big" * 1000000
-    end
   end
 
   def test_no_block_existing_add
