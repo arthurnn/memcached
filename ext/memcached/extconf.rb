@@ -6,7 +6,7 @@ unless find_header('sasl/sasl.h')
 end
 
 HERE = File.expand_path(File.dirname(__FILE__))
-LIBMEMCACHED_DIR = Dir.glob(File.join(HERE, '..', '..', 'vendor',"libmemcached-*")).first
+LIBMEMCACHED_DIR = Dir.glob(File.join(HERE, '..', '..', 'vendor','libmemcached-1.0.18')).first
 
 SOLARIS_32 = RbConfig::CONFIG['target'] == "i386-pc-solaris2.10"
 BSD = RbConfig::CONFIG['host_os'].downcase =~ /bsd/
