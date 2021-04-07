@@ -511,6 +511,8 @@ void Init_memcached(void)
 
 	rb_mMemcached = rb_define_module("Memcached");
 	rb_cServer = rb_const_get(rb_mMemcached, rb_intern("Server"));
+	rb_global_variable(&rb_cServer);
+
 	rb_eMemcachedError = rb_define_class_under(rb_mMemcached, "Error", rb_eStandardError);
 
 	for (i = 1; i < MEMCACHED_ERROR_COUNT; i++) {
