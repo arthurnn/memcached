@@ -11,6 +11,7 @@ require 'test/unit'
 require 'test/unit/assertions'
 require 'mocha/test_unit'
 require 'ostruct'
+require 'socket'
 
 require_relative 'setup'
 

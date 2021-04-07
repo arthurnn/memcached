@@ -1,0 +1,24 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby:
+          - '2.5' # earliest supported
+          - '3.0' # latest release
+
+    steps:
+    - run: |
+        sudo apt-get update
+        sudo apt-get -y install memcached libsasl2-dev
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    - run: bundle exec ruby test/setup.rb
+    - run: bundle exec rake
+    - run: bundle exec rake install

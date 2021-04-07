@@ -114,7 +114,7 @@ class MemcachedTest < Test::Unit::TestCase
   end
 
   def test_options_are_frozen
-    assert_raise(TypeError, RuntimeError) do
+    assert_raise(FrozenError) do
       @cache.options[:no_block] = true
     end
   end
@@ -1118,9 +1118,6 @@ class MemcachedTest < Test::Unit::TestCase
     noblock_cache = Memcached.new(@servers, @noblock_options.merge(:noreply => false))
     assert_nothing_raised do
       noblock_cache.set key, "I'm big" * 1000000
-    end
-    assert_raise( Memcached::ServerIsMarkedDead) do
-      @noblock_cache.set key, "I'm big" * 1000000
     end
   end
 
