@@ -84,11 +84,8 @@ class RailsTest < Test::Unit::TestCase
 
     # Missing set
     cache.delete key
-    assert_nothing_raised do
-      cache.cas(key) { @called = true }
-    end
+    cache.cas(key) { flunk("unexpected yield") }
     assert_nil cache.get(key)
-    assert_nil @called
 
     # Conflicting set after a gets
     cache.set key, @value
