@@ -10,9 +10,9 @@ Gem::Specification.new do |s|
   s.summary = "An interface to the libmemcached C client."
   s.homepage = "http://evan.github.com/evan/memcached/"
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.require_paths = ["lib", "ext"]
+  s.files = Dir.chdir(__dir__) do
+    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^test/}) }
+  end
   s.extensions = ["ext/rlibmemcached/extconf.rb"]
 
   s.licenses = ["Academic Free License 3.0 (AFL-3.0)"]
