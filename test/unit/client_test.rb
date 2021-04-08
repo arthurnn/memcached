@@ -175,6 +175,31 @@ class ClientTest < BaseTest
     assert(failed < keys.size / 3, "#{failed} failed out of #{keys.size}")
   end
 
+  module YAMLCodec
+    extend self
+
+    FLAG = Memcached::Client::FLAG_ENCODED
+
+    def encode(key, value, flags)
+      [ YAML.dump(value), flags | FLAG ]
+    end
+
+    def decode(key, value, flags)
+      if (flags & FLAG) != 0
+        YAML.load(value)
+      else
+        value
+      end
+    end
+  end
+
+  def test_custom_codec
+    cache = Memcached::Client.new(@servers, codec: YAMLCodec)
+    cache.set("yaml", :symbol)
+    assert_equal :symbol, cache.get("yaml")
+    assert_equal YAML.dump(:symbol), cache.get("yaml", raw: true)
+  end
+
   # Touch command
 
   def test_touch_missing_key
