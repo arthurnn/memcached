@@ -38,7 +38,7 @@ Now, in Ruby, require the library and instantiate a Memcached object at a
 global level:
 
     require 'memcached'
-    $cache = Memcached.new("localhost:11211")
+    $cache = Memcached::Client.new("localhost:11211")
 
 Now you can set things and get things:
 
@@ -51,7 +51,7 @@ You can set with an expiration timeout:
     value = 'hello'
     $cache.set 'test', value, 1
     sleep(2)
-    $cache.get 'test' #=> raises Memcached::NotFound
+    $cache.get 'test' #=> nil
 
 You can get multiple values at once:
 
@@ -73,17 +73,6 @@ an integer, encoded as an unmarshalled ASCII string:
 You can get some server stats:
 
     $cache.stats #=> {..., :bytes_written=>[62], :version=>["1.2.4"] ...}
-
-Note that the API is not the same as that of **Ruby-MemCache** or
-**memcache-client**. In particular, `nil` is a valid record value.
-Memcached#get does not return `nil` on failure, rather it raises
-**Memcached::NotFound**. This is consistent with the behavior of memcached
-itself. For example:
-
-    $cache.set 'test', nil
-    $cache.get 'test' #=> nil
-    $cache.delete 'test'
-    $cache.get 'test' #=> raises Memcached::NotFound
 
 ## Rails 3 and 4
 
