@@ -23,7 +23,7 @@ module Memcached
     def initialize(config = "localhost:11211", options = {})
       options = DEFAULTS.merge(options)
 
-      @codec = Memcached::MarshalCodec
+      @codec = options.delete(:codec) || Memcached::MarshalCodec
       @default_ttl = options.delete(:ttl) || 0
       @prefix = options.delete(:prefix_key)
       @credentials = options.delete(:credentials)
