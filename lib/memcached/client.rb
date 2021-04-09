@@ -73,6 +73,35 @@ module Memcached
       hash
     end
 
+    def cas(keys, ttl: @default_ttl, raw: nil)
+      responses = connection.get_multi(keys)
+      return false if responses.empty?
+
+      values_hash = if raw
+        responses.transform_values(&:first)
+      else
+        hash = responses.dup
+        hash.each do |key, (raw_value, flags)|
+          hash[key] = @codec.decode(key, raw_value, flags)
+        end
+      end
+      values_hash = yield values_hash
+
+      success = true
+      responses.each do |key, (_orig_value, flags, cas)|
+        if values_hash.key?(key)
+          new_value = values_hash[key]
+          unless raw
+            new_value, flags = @codec.encode(key, new_value, flags)
+          end
+          success &= connection.cas(key, new_value, ttl, flags, cas)
+        else
+          success = false
+        end
+      end
+      success
+    end
+
     def delete(key)
       connection.delete(key)
     end

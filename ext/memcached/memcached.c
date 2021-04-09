@@ -22,7 +22,7 @@ const char *MEMCACHED_ERROR_NAMES[] = {
 	"ClientError", // MEMCACHED_CLIENT_ERROR
 	"ServerError", // MEMCACHED_SERVER_ERROR
 	"StdError", // MEMCACHED_ERROR
-	"DataExist", // MEMCACHED_DATA_EXISTS
+	NULL, // MEMCACHED_DATA_EXISTS
 	"DataDoesNotExist", // MEMCACHED_DATA_DOES_NOT_EXIST
 	NULL, // MEMCACHED_NOTSTORED
 	NULL, // MEMCACHED_STORED
@@ -176,6 +176,28 @@ rb_connection_flush(VALUE self)
 }
 
 static VALUE
+rb_connection_cas(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags, VALUE rb_cas)
+{
+	memcached_st *mc;
+	memcached_return_t rc;
+
+	UnwrapMemcached(self, mc);
+	Check_Type(rb_key, T_STRING);
+	Check_Type(rb_value, T_STRING);
+	Check_Type(rb_ttl, T_FIXNUM);
+	Check_Type(rb_flags, T_FIXNUM);
+	Check_Type(rb_cas, T_FIXNUM);
+
+	rc = memcached_cas(mc,
+		RSTRING_PTR(rb_key), RSTRING_LEN(rb_key),
+		RSTRING_PTR(rb_value), RSTRING_LEN(rb_value),
+		FIX2INT(rb_ttl), FIX2INT(rb_flags), FIX2INT(rb_cas)
+	);
+
+	rb_memcached_return(rc);
+}
+
+static VALUE
 rb_connection_set(VALUE self, VALUE rb_key, VALUE rb_value, VALUE rb_ttl, VALUE rb_flags)
 {
 	memcached_st *mc;
@@ -236,8 +258,9 @@ rb_connection__mget_callback(const memcached_st *mc, memcached_result_st *result
 			memcached_result_value(result),
 			memcached_result_length(result));
 	uint32_t ret_flags = memcached_result_flags(result);
+	uint64_t cas = memcached_result_cas(result);
 
-	rb_hash_aset(rb_result, rb_key, rb_ary_new3(2, rb_value, INT2FIX(ret_flags)));
+	rb_hash_aset(rb_result, rb_key, rb_ary_new3(3, rb_value, INT2FIX(ret_flags), INT2FIX(cas)));
 	return MEMCACHED_SUCCESS;
 }
 
@@ -530,6 +553,7 @@ void Init_memcached(void)
 	rb_define_method(rb_cConnection, "servers", rb_connection_servers, 0);
 	rb_define_method(rb_cConnection, "flush", rb_connection_flush, 0);
 	rb_define_method(rb_cConnection, "set", rb_connection_set, 4);
+	rb_define_method(rb_cConnection, "cas", rb_connection_cas, 5);
 	rb_define_method(rb_cConnection, "get", rb_connection_get, 1);
 	rb_define_method(rb_cConnection, "get_multi", rb_connection_get_multi, 1);
 	rb_define_method(rb_cConnection, "delete", rb_connection_delete, 1);
