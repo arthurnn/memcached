@@ -156,27 +156,13 @@ VALUE rb_str_new_by_ref(char *ptr, long len);
 VALUE rb_str_new_by_ref(char *ptr, long len)
 {
 #ifdef OBJSETUP
-    NEWOBJ(str, struct RString);
-    OBJSETUP(str, rb_cString, T_STRING);
-    #ifdef RSTRING_NOEMBED
-        /* Ruby 1.9 */
-        str->as.heap.ptr = ptr;
-        str->as.heap.len = len;
-        str->as.heap.aux.capa = len + 1;
-        // Set STR_NOEMBED
-        FL_SET(str, FL_USER1);
-    #else
-        /* Ruby 1.8 */
-        str->ptr = ptr;
-        str->len = len;
-        str->aux.capa = 0;
-    #endif
+    VALUE str = rb_external_str_new_with_enc(ptr, len, rb_ascii8bit_encoding());
 #else
     /* Rubinius, JRuby */
     VALUE str = rb_str_new(ptr, len);
     free(ptr);
 #endif
-    return (VALUE)str;
+    return str;
 }
 %}
 
