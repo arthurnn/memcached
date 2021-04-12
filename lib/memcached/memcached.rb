@@ -326,7 +326,6 @@ But it was #{server}.
       )
     rescue => e
       tries ||= 0
-      retry if e.instance_of?(ClientError) && !tries
       raise unless tries < options[:exception_retry_limit] && should_retry(e)
       tries += 1
       retry
