@@ -155,14 +155,7 @@ VALUE rb_str_new_by_ref(char *ptr, long len);
 %{
 VALUE rb_str_new_by_ref(char *ptr, long len)
 {
-#ifdef OBJSETUP
-    VALUE str = rb_external_str_new_with_enc(ptr, len, rb_ascii8bit_encoding());
-#else
-    /* Rubinius, JRuby */
-    VALUE str = rb_str_new(ptr, len);
-    free(ptr);
-#endif
-    return str;
+    return rb_external_str_new_with_enc(ptr, len, rb_ascii8bit_encoding());
 }
 %}
 

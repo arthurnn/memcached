@@ -6,7 +6,6 @@ pkg/*
 *.l[ao]
 *.[1,3]
 .libs
-ext/rlibmemcached/rlibmemcached_wrap.c.in
 ext/mkmf.log
 /vendor/libmemcached-*/build
 /vendor/libmemcached-*/**/Makefile
