@@ -1,13 +1,10 @@
 HERE = File.dirname(__FILE__)
 $LOAD_PATH << "#{HERE}/../../lib/"
 UNIX_SOCKET_NAME = File.join(ENV['TMPDIR']||'/tmp','memcached')
-JRUBY = defined?(JRUBY_VERSION)
 
-require 'ffi/times' if JRUBY
 require 'memcached'
 require 'benchmark'
 require 'rubygems'
-require 'ruby-debug' if ENV['DEBUG'] && !JRUBY
 if ENV['PROFILE']
   require 'ruby-prof'
   require 'fileutils'
@@ -24,7 +21,7 @@ puts "Ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}"
 [
   ["memcached"],
   ["remix-stash", "remix/stash"],
-  [JRUBY ? "jruby-memcache-client" : "memcache-client", "memcache"],
+  ["memcache-client", "memcache"],
   ["kgio"], ["dalli"]
 ].each do |gem_name, requirement|
   begin
@@ -156,7 +153,7 @@ class Bench
         # Force any JITs to run
         10003.times { yield client }
 
-        GC.disable if !JRUBY
+        GC.disable
         RubyProf.start if ENV['PROFILE']
         @benchmark.report("#{test_name}: #{client_name}") { @loops.times { yield client } }
         if ENV['PROFILE']
@@ -167,7 +164,7 @@ class Bench
         puts "#{test_name}: #{client_name} => #{e.inspect}" if ENV["DEBUG"]
         reset_clients
       end
-      GC.enable if !JRUBY
+      GC.enable
     end
     puts
   end
