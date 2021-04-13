@@ -20,9 +20,8 @@ $LDFLAGS = "#{RbConfig::CONFIG['LDFLAGS']} #{$LDFLAGS} -L#{RbConfig::CONFIG['lib
 $CXXFLAGS = "#{RbConfig::CONFIG['CXXFLAGS']} -std=gnu++98"
 $CC = "CC=#{RbConfig::MAKEFILE_CONFIG["CC"].inspect}"
 
-# JRuby's default configure options can't build libmemcached properly
-LIBM_CFLAGS = defined?(JRUBY_VERSION) ? "-fPIC -g -O2" : $CFLAGS
-LIBM_LDFLAGS = defined?(JRUBY_VERSION) ? "-fPIC -lsasl2 -lm" : $LDFLAGS
+LIBM_CFLAGS = $CFLAGS
+LIBM_LDFLAGS = $LDFLAGS
 
 GMAKE_CMD = RbConfig::CONFIG['host_os'].downcase =~ /bsd|solaris/ ? "gmake" : "make"
 TAR_CMD = SOLARIS_32 ? 'gtar' : 'tar'
