@@ -9,5 +9,4 @@
 ** TODO add AS::Cache wrappper instead of Rails class
 ** TODO Add resiliency around the client
 ** TODO Implement connection pool
-** TODO CAS
 ** TODO add a better pipeline API

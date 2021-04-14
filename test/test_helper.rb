@@ -40,7 +40,7 @@ class BaseTest < Minitest::Test
 
   def cache
     return @cache if @cache
-    @cache = Memcached::Client.new(@servers, hash: :default, distribution: :modula, prefix_key: @prefix_key)
+    @cache = Memcached::Client.new(@servers, hash: :default, distribution: :modula, prefix_key: @prefix_key, support_cas: true)
   end
 
   def binary_protocol_cache
