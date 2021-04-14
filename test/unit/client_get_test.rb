@@ -172,11 +172,8 @@ class ClientGetTest < BaseTest
 #
 #      hits = 0
 #      20.times do |i|
-#        begin
-#          read_cache.get "#{key}#{i}"
-#          hits += 1
-#        rescue Memcached::NotFound
-#        end
+#        read_cache.get "#{key}#{i}"
+#        hits += 1
 #      end
 #    end
 #
