@@ -2320,7 +2320,9 @@ SWIG_From_unsigned_SS_int  (unsigned int value)
 
 VALUE rb_str_new_by_ref(char *ptr, long len)
 {
-    return rb_external_str_new_with_enc(ptr, len, rb_ascii8bit_encoding());
+    VALUE str = rb_str_new(ptr, len);
+    free(ptr);
+    return str;
 }
 
 
