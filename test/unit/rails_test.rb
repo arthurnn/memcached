@@ -3,12 +3,19 @@ require 'active_support/duration'
 require 'logger'
 
 class RailsTest < Test::Unit::TestCase
+  old_verbose = $VERBOSE
+  begin
+    $VERBOSE = false
+    MemcachedRails = Memcached::Rails
+  ensure
+    $VERBOSE = old_verbose
+  end
 
   def setup
     @servers = ['127.0.0.1:43042', '127.0.0.1:43043', "#{UNIX_SOCKET_NAME}0"]
     @duration = ActiveSupport::Duration.new(2592000, [[:months, 1]])
     @namespace = 'rails_test'
-    @cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :logger => Logger.new(File.open("/dev/null", "w")))
+    @cache = MemcachedRails.new(:servers => @servers, :namespace => @namespace, :logger => Logger.new(File.open("/dev/null", "w")))
     @value = OpenStruct.new(:a => 1, :b => 2, :c => GenericClass)
     @marshalled_value = Marshal.dump(@value)
   end
@@ -71,7 +78,7 @@ class RailsTest < Test::Unit::TestCase
   end
 
   def test_cas
-    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
+    cache = MemcachedRails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
 
     # Existing set
@@ -130,15 +137,15 @@ class RailsTest < Test::Unit::TestCase
   end
 
   def test_set_servers
-    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace)
+    cache = MemcachedRails.new(:servers => @servers, :namespace => @namespace)
     compare_servers cache, @servers
     cache.set_servers cache.servers
-    cache = Memcached::Rails.new(:servers => @servers.first, :namespace => @namespace)
+    cache = MemcachedRails.new(:servers => @servers.first, :namespace => @namespace)
     cache.set_servers @servers.first
   end
 
   def test_cas_with_duration
-    cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
+    cache = MemcachedRails.new(:servers => @servers, :namespace => @namespace, :support_cas => true)
     value2 = OpenStruct.new(:d => 3, :e => 4, :f => GenericClass)
     cache.set key, @value
     cache.cas(key, @duration) do |current|
@@ -167,7 +174,7 @@ class RailsTest < Test::Unit::TestCase
     assert_equal @value, result
 
     # should use correct ttl
-    @cache = Memcached::Rails.new(:servers => @servers, :namespace => @namespace, :default_ttl => 123)
+    @cache = MemcachedRails.new(:servers => @servers, :namespace => @namespace, :default_ttl => 123)
     @cache.expects(:set).with(key, @value, 123, nil)
     @cache.write key, @value
   end

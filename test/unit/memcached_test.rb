@@ -7,6 +7,7 @@ class NilClass
 end
 
 class MemcachedTest < Test::Unit::TestCase
+  Rlibmemcached = Memcached.const_get(:Lib)
 
   def setup
     @servers = ['localhost:43042', 'localhost:43043', "#{UNIX_SOCKET_NAME}0"]
@@ -265,6 +266,9 @@ class MemcachedTest < Test::Unit::TestCase
 
   def test_get_from_last
     cache = Memcached.new(@servers, :distribution => :random)
+    Warning.expects(:warn).with(regexp_matches(
+      /Memcached#get_from_last is deprecated/
+    ), optionally(anything)).at_least_once
     10.times { |n| cache.set key, n }
     10.times do
       assert_equal cache.get(key), cache.get_from_last(key)
@@ -1298,7 +1302,7 @@ class MemcachedTest < Test::Unit::TestCase
     # This is an abuse of knowledge, but it's necessary to verify that
     # the library is handling the counter properly.
     struct = cache.instance_variable_get(:@struct)
-    server = Memcached::Lib.memcached_server_by_key(struct, "marmotte").first
+    server = Rlibmemcached.memcached_server_by_key(struct, "marmotte").first
 
     # set to ensure connectivity
     cache.set("marmotte", "milk")
