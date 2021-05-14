@@ -15,6 +15,10 @@ Rake::TestTask.new do |t|
 end
 task :default => [:compile, :test]
 
+Rake::Task[:clean].enhance do
+  FileUtils.rm_rf(File.read(".gitignore").lines.flat_map { |l| Dir["**/#{l.chomp}"] })
+end
+
 task :swig do
   run("swig -DLIBMEMCACHED_WITH_SASL_SUPPORT -Ivendor/libmemcached-0.32 -ruby -autorename -o ext/rlibmemcached/rlibmemcached_wrap.c ext/rlibmemcached/rlibmemcached.i", "Running SWIG")
 end
