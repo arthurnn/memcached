@@ -1,5 +1,6 @@
 require 'mkmf'
 require 'rbconfig'
+require 'fileutils'
 
 unless find_header('sasl/sasl.h')
   abort 'Please install SASL to continue. The package is called libsasl2-dev on Ubuntu and cyrus-sasl on Gentoo.'
@@ -37,11 +38,15 @@ def check_libmemcached
   return if ENV["EXTERNAL_LIB"]
 
   Dir.chdir(LIBMEMCACHED_DIR) do
-    Dir.mkdir("build") if !Dir.exists?("build")
-    build_folder = File.join(LIBMEMCACHED_DIR, "build")
-
+    # Cleanup any previously built files since the following touch all files command
+    # could make them seem rebuilt when there are changes that require recompiling them.
+    FileUtils.rm_rf("build")
+    run("#{GMAKE_CMD} clean 2>&1") if File.exists?("Makefile")
     ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
     run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
+
+    Dir.mkdir("build")
+    build_folder = File.join(LIBMEMCACHED_DIR, "build")
     run("env CFLAGS='-fPIC #{LIBM_CFLAGS}' LDFLAGS='-fPIC #{LIBM_LDFLAGS}' ./configure --prefix=#{build_folder} --libdir=#{build_folder}/lib --without-memcached --disable-shared --disable-utils --disable-dependency-tracking #{$CC} #{$EXTRA_CONF} 2>&1", "Configuring libmemcached.")
     run("#{GMAKE_CMD} CXXFLAGS='#{$CXXFLAGS}' 2>&1")
     run("#{GMAKE_CMD} install 2>&1")
