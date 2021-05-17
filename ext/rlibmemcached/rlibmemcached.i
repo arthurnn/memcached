@@ -109,12 +109,16 @@
  $result = UINT2NUM($1);
 };
 
+%typemap(in, numinputs=0) (const char **key, size_t *key_length) {
+  const char *key_ptr;
+  size_t key_length_ptr;
+  $1 = &key_ptr;
+  $2 = &key_length_ptr;
+}
+
 // String for memcached_fetch
-%typemap(in, numinputs=0) (char *key, size_t *key_length) {
-  char string[256];
-  size_t length = 0;
-  $1 = string;
-  $2 = &length;
+%typemap(argout) (const char **key, size_t *key_length) {
+  rb_ary_push($result, rb_str_new(*$1, *$2));
 };
 
 // Strings with lengths
@@ -149,49 +153,60 @@
 %include "libmemcached/memcached_touch.h"
 %include "libmemcached/memcached_exist.h"
 
-//// Custom C functions
-
-VALUE rb_str_new_by_ref(char *ptr, long len);
-%{
-VALUE rb_str_new_by_ref(char *ptr, long len)
-{
-    return rb_external_str_new_with_enc(ptr, len, rb_ascii8bit_encoding());
-}
-%}
-
 //// Manual wrappers
-
-// Single get
-VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
-%{
-VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
-  size_t value_length = 0;
-  char *value = memcached_get(ptr, key, key_length, &value_length, flags, error);
-  return rb_str_new_by_ref(value, value_length);
-};
-%}
 
 VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
 %{
 VALUE memcached_get_from_last_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
   size_t value_length = 0;
   char *value = memcached_get_from_last(ptr, key, key_length, &value_length, flags, error);
-  return rb_str_new_by_ref(value, value_length);
+  VALUE str = rb_str_new(value, value_length);
+  free(value);
+  return str;
 };
 %}
 
 // Multi get
-VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error);
+VALUE memcached_fetch_rvalue(memcached_st *ptr, const char **key, size_t *key_length, uint32_t *flags, memcached_return *error);
 %{
-VALUE memcached_fetch_rvalue(memcached_st *ptr, char *key, size_t *key_length, uint32_t *flags, memcached_return *error) {
-  size_t value_length = 0;
+VALUE memcached_fetch_rvalue(memcached_st *ptr, const char **key, size_t *key_length, uint32_t *flags, memcached_return *error) {
   VALUE ary = rb_ary_new();
-  *key_length = 0;
-  if (error) *error = MEMCACHED_TIMEOUT; // timeouts leave error uninitialized
-  char *value = memcached_fetch(ptr, key, key_length, &value_length, flags, error);
-  VALUE str = rb_str_new_by_ref(value, value_length);
+
+  *error = MEMCACHED_TIMEOUT; // timeouts leave error uninitialized
+  memcached_result_st *result = memcached_fetch_result(ptr, &ptr->result, error);
+  VALUE str = Qnil;
+  if (result == NULL || *error != MEMCACHED_SUCCESS) {
+    *key = NULL;
+    *key_length = 0;
+    *flags = 0;
+    str = Qnil;
+  } else {
+    *key = memcached_result_key_value(result);
+    *key_length = memcached_result_key_length(result);
+    *flags = memcached_result_flags(result);
+    str = rb_str_new(memcached_result_value(result), memcached_result_length(result));
+  }
   rb_ary_push(ary, str);
   return ary;
+};
+%}
+
+// Single get
+VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error);
+%{
+VALUE memcached_get_rvalue(memcached_st *ptr, const char *key, size_t key_length, uint32_t *flags, memcached_return *error) {
+  *error = memcached_mget(ptr, &key, &key_length, 1);
+  if (*error != MEMCACHED_SUCCESS) {
+    return rb_ary_new_from_args(1, Qnil);
+  }
+  VALUE ret = memcached_fetch_rvalue(ptr, &key, &key_length, flags, error);
+  if (*error == MEMCACHED_END) {
+    *error = MEMCACHED_NOTFOUND;
+  } else {
+    memcached_return end_error;
+    memcached_fetch_result(ptr, &ptr->result, &end_error);
+  }
+  return ret;
 };
 %}
 
