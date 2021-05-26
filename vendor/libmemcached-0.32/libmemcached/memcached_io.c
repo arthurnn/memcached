@@ -46,21 +46,24 @@ static memcached_return io_wait(memcached_server_st *ptr,
        return MEMCACHED_FAILURE;
   }
 
-  error= poll(fds, 1, ptr->root->poll_timeout);
-
-  if (error == 1)
-    return MEMCACHED_SUCCESS;
-  else if (error == 0)
+  while(1)
   {
-    return MEMCACHED_TIMEOUT;
+    error= poll(fds, 1, ptr->root->poll_timeout);
+    if (error == 1)
+      return MEMCACHED_SUCCESS;
+    else if (error == 0)
+    {
+      return MEMCACHED_TIMEOUT;
+    }
+
+    if (errno != EINTR) {
+      /* Imposssible for anything other then -1 */
+      WATCHPOINT_ASSERT(error == -1);
+      memcached_quit_server(ptr, 1);
+
+      return MEMCACHED_FAILURE;
+    }
   }
-
-  /* Imposssible for anything other then -1 */
-  WATCHPOINT_ASSERT(error == -1);
-  memcached_quit_server(ptr, 1);
-
-  return MEMCACHED_FAILURE;
-
 }
 
 #ifdef UNUSED
@@ -115,8 +118,9 @@ memcached_return memcached_io_read(memcached_server_st *ptr,
           rc= MEMCACHED_UNKNOWN_READ_FAILURE;
           switch (errno)
           {
-          case EAGAIN:
           case EINTR:
+            continue;
+          case EAGAIN:
             if ((rc= io_wait(ptr, MEM_READ)) == MEMCACHED_SUCCESS)
               continue;
           /* fall through */
@@ -422,6 +426,7 @@ static ssize_t io_flush(memcached_server_st *ptr,
       case ENOBUFS:
         continue;
       case EAGAIN:
+      case EINTR:
       {
         memcached_return rc;
         rc= io_wait(ptr, MEM_WRITE);

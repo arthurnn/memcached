@@ -248,22 +248,32 @@ static memcached_return network_connect(memcached_server_st *ptr)
           struct pollfd fds[1];
           fds[0].fd = ptr->fd;
           fds[0].events = POLLOUT;
-          int error= poll(fds, 1, ptr->root->connect_timeout);
-
-          if (error != 1 || fds[0].revents & POLLERR)
+          while (1)
           {
-            ptr->cached_errno = 0;
-
-            if (fds[0].revents & POLLERR)
+            int error= poll(fds, 1, ptr->root->connect_timeout);
+            if (error < 0 && errno == EINTR)
             {
-              int err;
-              socklen_t len = sizeof (err);
-              (void)getsockopt(ptr->fd, SOL_SOCKET, SO_ERROR, &err, &len);
-              ptr->cached_errno= (err == 0) ? errno : err;
+              /* retry */
             }
+            else
+            {
+              if (error != 1 || fds[0].revents & POLLERR)
+              {
+                ptr->cached_errno = 0;
 
-            (void)close(ptr->fd);
-            ptr->fd= -1;
+                if (fds[0].revents & POLLERR)
+                {
+                  int err;
+                  socklen_t len = sizeof (err);
+                  (void)getsockopt(ptr->fd, SOL_SOCKET, SO_ERROR, &err, &len);
+                  ptr->cached_errno= (err == 0) ? errno : err;
+                }
+
+                (void)close(ptr->fd);
+                ptr->fd= -1;
+              }
+              break;
+            }
           }
         } 
         else if (errno == EISCONN) /* we are connected :-) */

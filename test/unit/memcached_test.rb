@@ -1463,7 +1463,49 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
+  def test_interrupt_handling
+    interrupt_test_with_options(key, @cas_options)
+  end
+
+  def test_interrupt_handling_no_block
+    interrupt_test_with_options(key, @noblock_options)
+  end
+
   private
+
+  def interrupt_test_with_options(key, options)
+    require "stackprof"
+    cache = Memcached.new(@servers.first, options)
+    cache.set(key, "bar")
+    cache.set("#{key}_1", "bar")
+    cache.set("#{key}_2", "bar")
+
+    cache.reset
+    assert_equal "bar", cache.get(key)
+
+    StackProf.run(mode: :wall, interval: 100, out: File::NULL) do
+      1_000.times do |i|
+        cache.set(key, "bar-#{i}")
+        assert_equal "bar-#{i}", cache.get(key)
+      end
+
+      1_000.times do |i|
+        cache.reset
+        cache.set(key, "bar-#{i}")
+        assert_equal "bar-#{i}", cache.get(key)
+      end
+
+      cache.set(key, "bar")
+      expected = {
+        key => "bar",
+        "#{key}_1" => "bar",
+        "#{key}_2" => "bar",
+      }
+      1_000.times do
+        assert_equal expected, cache.get(expected.keys)
+      end
+    end
+  end
 
   def key
     caller.first[/.*[` ](.*)'/, 1] # '
