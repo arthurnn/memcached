@@ -8,7 +8,7 @@ class Memcached
       )
     rescue => e
       tries ||= 0
-      raise unless tries < options[:exception_retry_limit] && should_retry(e)
+      raise unless should_retry(e, tries)
       tries += 1
       retry
     end

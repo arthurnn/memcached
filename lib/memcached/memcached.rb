@@ -281,8 +281,14 @@ But it was #{server}.
   end
 
   # Should retry the exception
-  def should_retry(e)
-    options[:exceptions_to_retry].each {|ex_class| return true if e.instance_of?(ex_class)}
+  def should_retry(exception, tries)
+    return false unless options[:exception_retry_limit]
+    return false unless tries < options[:exception_retry_limit]
+
+    options[:exceptions_to_retry].each do |ex_class|
+      return true if exception.instance_of?(ex_class)
+    end
+
     false
   end
 
@@ -326,7 +332,7 @@ But it was #{server}.
       )
     rescue => e
       tries ||= 0
-      raise unless tries < options[:exception_retry_limit] && should_retry(e)
+      raise unless should_retry(e, tries)
       tries += 1
       retry
     end
@@ -342,7 +348,7 @@ But it was #{server}.
       )
     rescue => e
       tries ||= 0
-      raise unless tries < options[:exception_retry_limit] && should_retry(e)
+      raise unless should_retry(e, tries)
       tries += 1
       retry
     end
@@ -359,7 +365,7 @@ But it was #{server}.
     value
   rescue => e
     tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    raise unless should_retry(e, tries)
     tries += 1
     retry
   end
@@ -371,7 +377,7 @@ But it was #{server}.
     value
   rescue => e
     tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    raise unless should_retry(e, tries)
     tries += 1
     retry
   end
@@ -391,7 +397,7 @@ But it was #{server}.
       )
     rescue => e
       tries ||= 0
-      raise unless tries < options[:exception_retry_limit] && should_retry(e)
+      raise unless should_retry(e, tries)
       tries += 1
       retry
     end
@@ -408,7 +414,7 @@ But it was #{server}.
     )
   rescue => e
     tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    raise unless should_retry(e, tries)
     tries += 1
     retry
   end
@@ -422,7 +428,7 @@ But it was #{server}.
     )
   rescue => e
     tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    raise unless should_retry(e, tries)
     tries += 1
     retry
   end
@@ -454,7 +460,7 @@ But it was #{server}.
       single_cas(keys, value, ttl, flags, cas, decode)
     end
   rescue => e
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    raise unless should_retry(e, tries)
     tries += 1
     retry
   end
@@ -471,7 +477,7 @@ But it was #{server}.
     )
   rescue => e
     tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    raise unless should_retry(e, tries)
     tries += 1
     retry
   end
@@ -483,7 +489,7 @@ But it was #{server}.
     )
   rescue => e
     tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    raise unless should_retry(e, tries)
     tries += 1
     retry
   end
@@ -508,7 +514,7 @@ But it was #{server}.
     end
   rescue => e
     tries ||= 0
-    raise unless tries < options[:exception_retry_limit] && should_retry(e)
+    raise unless should_retry(e, tries)
     tries += 1
     retry
   end
@@ -724,7 +730,7 @@ But it was #{server}.
           check_return_code(ret, key)
         end
       rescue => e
-        raise unless tries < options[:exception_retry_limit] && should_retry(e)
+        raise unless should_retry(e, tries)
         tries += 1
         retry
       end
