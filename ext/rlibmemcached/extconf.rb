@@ -41,7 +41,7 @@ def check_libmemcached
     # Cleanup any previously built files since the following touch all files command
     # could make them seem rebuilt when there are changes that require recompiling them.
     FileUtils.rm_rf("build")
-    run("#{GMAKE_CMD} clean 2>&1") if File.exists?("Makefile")
+    run("#{GMAKE_CMD} clean 2>&1") if File.exist?("Makefile")
     ts_now=Time.now.strftime("%Y%m%d%H%M.%S")
     run("find . | xargs touch -t #{ts_now}", "Touching all files so autoconf doesn't run.")
 
