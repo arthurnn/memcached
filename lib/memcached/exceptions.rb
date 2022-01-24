@@ -45,21 +45,7 @@ Subclasses correspond one-to-one with server response strings or libmemcached er
 * Memcached::WriteFailure
 
 =end
-  class Error < RuntimeError
-    attr_accessor :no_backtrace
-
-    def initialize(*args)
-      super(*args)
-    end
-
-    def set_backtrace(*args)
-      no_backtrace ? [] : super
-    end
-
-    def backtrace(*args)
-      no_backtrace ? [] : super
-    end
-  end
+  Error = Class.new(RuntimeError)
 
 #:stopdoc:
 

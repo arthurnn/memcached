@@ -3,6 +3,7 @@ The Memcached client class.
 =end
 class Memcached
   FLAGS = 0x0
+  EMPTY_ARRAY = [].freeze
 
   DEFAULTS = {
     :hash => :fnv1_32,
@@ -174,17 +175,7 @@ Please note that when <tt>:no_block => true</tt>, update methods do not raise on
     set_servers(servers)
 
     # Not found exceptions
-    if options[:show_backtraces]
-      # Raise classes for full context
-      @not_found = NotFound
-      @not_stored = NotStored
-    else
-      # Raise fast context-free exception instances
-      @not_found = NotFound.new
-      @not_found.no_backtrace = true
-      @not_stored = NotStored.new
-      @not_stored.no_backtrace = true
-    end
+    @show_backtraces = options[:show_backtraces] ? nil : EMPTY_ARRAY
   end
 
   # Set the server list.
@@ -597,9 +588,9 @@ But it was #{server}.
     if ret == 0 # Lib::MEMCACHED_SUCCESS
     elsif ret == 32 # Lib::MEMCACHED_BUFFERED
     elsif ret == 16
-      raise @not_found # Lib::MEMCACHED_NOTFOUND
+      raise NotFound, "NOTFOUND".freeze, @show_backtraces, cause: nil # Lib::MEMCACHED_NOTFOUND
     elsif ret == 14
-      raise @not_stored # Lib::MEMCACHED_NOTSTORED
+      raise NotStored, "NOTSTORED".freeze, @show_backtraces, cause: nil # Lib::MEMCACHED_NOTSTORED
     else
       reraise(key, ret)
     end

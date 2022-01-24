@@ -192,6 +192,33 @@ class MemcachedTest < Test::Unit::TestCase
     end
   end
 
+  def test_without_backtrace_no_cause
+    cache = Memcached.new @servers, show_backtraces: false
+
+    # show_backtraces: false was implemented by always re-raising the same instance.
+    # This was likely fine back in Ruby 1.9.3. But since then now Ruby automatically
+    # attach a `cause` if you raise from a `rescue` or `ensure` and it's never cleared
+    # from the instance causing information to leak.
+
+    rescued = false
+
+    begin
+      raise "foo"
+    rescue RuntimeError => error
+      begin
+        cache.get key
+      rescue Memcached::NotFound
+        rescued = true
+      end
+    end
+    assert rescued
+
+    error = assert_raises Memcached::NotFound do
+      cache.get key
+    end
+    assert_nil error.cause
+  end
+
   def test_initialize_with_backtraces
     cache = Memcached.new @servers, :show_backtraces => true
     cache.delete key rescue nil
