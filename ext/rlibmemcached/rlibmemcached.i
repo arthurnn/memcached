@@ -109,11 +109,11 @@
  $result = UINT2NUM($1);
 };
 
-%typemap(in, numinputs=0) (const char **key, size_t *key_length) {
-  const char *key_ptr;
-  size_t key_length_ptr;
-  $1 = &key_ptr;
-  $2 = &key_length_ptr;
+%typemap(in, numinputs=0, noblock=1) (const char **key, size_t *key_length) {
+  char *key_ptr$argnum;
+  size_t key_length_ptr$argnum;
+  $1 = &key_ptr$argnum;
+  $2 = &key_length_ptr$argnum;
 }
 
 // String for memcached_fetch
