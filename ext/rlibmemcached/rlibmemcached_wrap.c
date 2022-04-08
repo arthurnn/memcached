@@ -12866,12 +12866,10 @@ _wrap_memcached_fetch_rvalue(int argc, VALUE *argv, VALUE self) {
   VALUE result;
   VALUE vresult = Qnil;
   
-  {
-    const char *key_ptr;
-    size_t key_length_ptr;
-    arg2 = &key_ptr;
-    arg3 = &key_length_ptr;
-  }
+  char *key_ptr2;
+  size_t key_length_ptr2;
+  arg2 = &key_ptr2;
+  arg3 = &key_length_ptr2;
   arg4 = &temp4;
   arg5 = &temp5;
   if ((argc < 1) || (argc > 1)) {
