@@ -13,7 +13,7 @@ GEM
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
     concurrent-ruby (1.1.8)
-    dalli (2.7.11)
+    dalli (3.2.3)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     memcache-client (1.8.5)
