@@ -1,0 +1,52 @@
+name: Build and release ruby gem
+
+on:
+  pull_request: 
+    branches: [ v1.8.x, feature/build_gem ]
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-release-pipeline:
+    runs-on: ubuntu-latest
+    container: ruby:3.2.2
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup
+        run: |
+          bundle install
+
+      - name: Test
+        run: bundle exec rspec
+
+      - name: Build
+        id: build
+        if: success() && github.ref == 'refs/heads/master'
+        run: |
+          bundle exec rake build
+          echo "::set-output name=gem_version::v$(bundle exec rake version)"
+
+      - name: Release
+        if: success() && github.ref == 'refs/heads/master'
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 600 $HOME/.gem/credentials
+          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+          gem push pkg/*
+        env:
+          GEM_HOST_API_KEY: "${{ secrets.RUBYGEMS_AUTH_TOKEN }}"
+
+      - name: Tag repo with new gem version
+        if: success() && github.ref == 'refs/heads/master'
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            github.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ steps.build.outputs.gem_version }}",
+              sha: context.sha
+            })
+            
