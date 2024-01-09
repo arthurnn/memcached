@@ -3,6 +3,7 @@
 #include <libmemcached/visibility.h>
 #include <libmemcached/memcached.h>
 #include <libmemcached/memcached_exist.h>
+#include <ruby/version.h>
 %}
 
 %warnfilter(SWIGWARN_RUBY_WRONG_NAME) memcached_st;
@@ -161,7 +162,12 @@ VALUE rb_str_new_by_ref(char *ptr, long len)
     #ifdef RSTRING_NOEMBED
         /* Ruby 1.9 */
         str->as.heap.ptr = ptr;
-        str->as.heap.len = len;
+        #if RUBY_API_VERSION_MAJOR < 3 || (RUBY_API_VERSION_MAJOR == 3 && RUBY_API_VERSION_MINOR < 3)
+            str->as.heap.len = len;
+        #else
+            // Ruby 3.3.0 moved the len field out of heap into toplevel RString
+            str->len = len;
+        #endif
         str->as.heap.aux.capa = len + 1;
         // Set STR_NOEMBED
         FL_SET(str, FL_USER1);
