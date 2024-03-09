@@ -4,7 +4,7 @@
 
 Gem::Specification.new do |s|
   s.name = "memcached".freeze
-  s.version = "1.8.1.bc1"
+  s.version = "1.8.1.bc2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze, "ext".freeze]
